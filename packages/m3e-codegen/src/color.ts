@@ -52,7 +52,33 @@ export function expressiveLightOverrides(colorSchemeKt: string): {
   return { overrides, line: src.slice(0, match.index).split('\n').length };
 }
 
-export function baselineColors(parsed: Parsed, colorSchemeKt: string): Baseline {
+/** Compose `Color` constants used by the UI defaults read here (ui-graphics `Color.kt`). */
+const NAMED_COLORS: Readonly<Record<string, string>> = { Black: '#000000', White: '#ffffff' };
+
+/**
+ * `DefaultShadowColor` from compose/ui GraphicsLayerScope.kt: the color of every layer shadow.
+ * ColorScheme has no shadow role, so this is the baseline `shadow` (MCU's `shadow` for themes).
+ */
+export function defaultShadowColor(graphicsLayerScopeKt: string): BaselineColor {
+  const src = graphicsLayerScopeKt.replace(/\r\n/g, '\n');
+  const match = /public val DefaultShadowColor: Color\n\s*get\(\) = Color\.(\w+)\n/.exec(src);
+  const hex = match ? NAMED_COLORS[match[1]!] : undefined;
+  if (!match || !hex) throw new Error('GraphicsLayerScope.kt: DefaultShadowColor not found');
+  return {
+    role: 'shadow',
+    hex,
+    via: `DefaultShadowColor → Color.${match[1]!}`,
+    file: 'GraphicsLayerScope.kt',
+    line: src.slice(0, match.index).split('\n').length,
+    note: 'Compose UI default; ColorScheme has no shadow role',
+  };
+}
+
+export function baselineColors(
+  parsed: Parsed,
+  colorSchemeKt: string,
+  graphicsLayerScopeKt: string,
+): Baseline {
   const palette = parsed.get('PaletteTokens');
   if (!palette) throw new Error('PaletteTokens missing');
   const paletteHex = (member: string): string => {
@@ -100,5 +126,6 @@ export function baselineColors(parsed: Parsed, colorSchemeKt: string): Baseline 
     entry.line = line;
     entry.note = 'expressive override (MaterialExpressiveTheme default)';
   }
-  return { light, dark: scheme('ColorDarkTokens') };
+  const shadow = defaultShadowColor(graphicsLayerScopeKt);
+  return { light: [...light, shadow], dark: [...scheme('ColorDarkTokens'), { ...shadow }] };
 }

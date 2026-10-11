@@ -1,0 +1,13 @@
+{
+  "repo": "https://registry.npmjs.org/@material/web/-/web-2.5.0.tgz",
+  "commit": "2.5.0",
+  "path": "@material/web",
+  "files": {
+    "_elevation.scss": "23205ad06de68370182fdb6928afe67d66a658a25ac0b7b3b1ee30337be351e4",
+    "LICENSE": "295cdb4364b782931c914f5ca8c47fac87c732fa7e448b788a47aa5b25728212"
+  },
+  "upstream": {
+    "_elevation.scss": "elevation/internal/_elevation.scss"
+  },
+  "sha256": "sha512-x2Uovyq8E/Zc1xHXd9s1eBMXF5pMHVAt70pISKd0fL3Ajj4L6zQaQUY/awcfR2RDAMKXC7i4+vr0arv1YaOR/g=="
+}

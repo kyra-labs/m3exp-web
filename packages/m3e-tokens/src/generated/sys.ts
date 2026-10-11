@@ -285,6 +285,21 @@ export const elevation = {
   level4: 8,
   level5: 12
 } as const;
+export const elevationShadow = {
+  level0: "none",
+  level1: "0 1px 2px 0 color-mix(in srgb, var(--m3e-sys-color-shadow) 30%, transparent), 0 1px 3px 1px color-mix(in srgb, var(--m3e-sys-color-shadow) 15%, transparent)",
+  level2: "0 1px 2px 0 color-mix(in srgb, var(--m3e-sys-color-shadow) 30%, transparent), 0 2px 6px 2px color-mix(in srgb, var(--m3e-sys-color-shadow) 15%, transparent)",
+  level3: "0 1px 3px 0 color-mix(in srgb, var(--m3e-sys-color-shadow) 30%, transparent), 0 4px 8px 3px color-mix(in srgb, var(--m3e-sys-color-shadow) 15%, transparent)",
+  level4: "0 2px 3px 0 color-mix(in srgb, var(--m3e-sys-color-shadow) 30%, transparent), 0 6px 10px 4px color-mix(in srgb, var(--m3e-sys-color-shadow) 15%, transparent)",
+  level5: "0 4px 4px 0 color-mix(in srgb, var(--m3e-sys-color-shadow) 30%, transparent), 0 8px 12px 6px color-mix(in srgb, var(--m3e-sys-color-shadow) 15%, transparent)"
+} as const;
+export const iconAxisDefaults = {
+  fill: 0,
+  grade: 0,
+  opticalSize: 24,
+  weight: 400,
+  filled: 1
+} as const;
 
 export const state = {
   draggedStateLayerOpacity: 0.16,

@@ -51,7 +51,8 @@ export const baselineColors = {
     tertiary: "#7d5260",
     tertiaryContainer: "#ffd8e4",
     tertiaryFixed: "#ffd8e4",
-    tertiaryFixedDim: "#efb8c8"
+    tertiaryFixedDim: "#efb8c8",
+    shadow: "#000000"
   },
   dark: {
     background: "#141218",
@@ -101,6 +102,7 @@ export const baselineColors = {
     tertiary: "#efb8c8",
     tertiaryContainer: "#633b48",
     tertiaryFixed: "#ffd8e4",
-    tertiaryFixedDim: "#efb8c8"
+    tertiaryFixedDim: "#efb8c8",
+    shadow: "#000000"
   }
 } as const;

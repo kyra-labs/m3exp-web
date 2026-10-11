@@ -11,3 +11,8 @@
   font-weight: 100 700;
   src: url("./material-symbols-rounded.woff2") format("woff2");
 }
+@layer m3e.tokens {
+  :root {
+    --m3e-ref-typeface-icon: "Material Symbols Rounded";
+  }
+}

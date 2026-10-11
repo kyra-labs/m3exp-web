@@ -108,4 +108,10 @@ describe('helpers', () => {
       'src: url("./icons.woff2") format("woff2");',
     );
   });
+
+  it('points .m3e-icon at the subset family', () => {
+    expect(iconFontFace({ family: 'My Icons', url: './icons.woff2' })).toContain(
+      '--m3e-ref-typeface-icon: "My Icons";',
+    );
+  });
 });
