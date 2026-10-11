@@ -108,12 +108,14 @@ describe('licensing (D9)', () => {
     expect(read('LICENSE')).toMatch(/Apache License\s+Version 2\.0, January 2004/);
   });
 
-  it.each(['AndroidX Compose Material3', 'AndroidX graphics-shapes', 'material-color-utilities'])(
-    'NOTICE lists %s',
-    (project) => {
-      expect(notice).toContain(project);
-    },
-  );
+  it.each([
+    'AndroidX Compose Material3',
+    'AndroidX Compose Animation',
+    'AndroidX graphics-shapes',
+    'material-color-utilities',
+  ])('NOTICE lists %s', (project) => {
+    expect(notice).toContain(project);
+  });
 
   it('NOTICE references the pinned androidx commit', () => {
     const commit = /^androidx_commit=(\w+)$/m.exec(read('SOURCE_PIN'))?.[1];

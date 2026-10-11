@@ -13,6 +13,8 @@ import { generate } from './generate.js';
 import { buildIconCss, fetchIconSources } from './icons.js';
 import { findRepoRoot, readPin, requirePin } from './pin.js';
 import {
+  ANIMATION_CORE_PATH,
+  ANIMATION_CORE_SOURCES,
   MATERIAL3_PATH,
   MATERIAL3_SOURCES,
   fetchTokens,
@@ -23,6 +25,7 @@ import {
 const root = findRepoRoot(process.cwd());
 const vendorDir = join(root, 'packages/m3e-codegen/vendor/androidx-material3-tokens');
 const sourcesDir = join(root, 'packages/m3e-codegen/vendor/androidx-material3-sources');
+const animationDir = join(root, 'packages/m3e-codegen/vendor/androidx-animation-core');
 const outDir = join(root, 'packages/m3e-tokens/src/generated');
 const fontVendorDir = join(root, 'packages/m3e-codegen/vendor/google-fonts-googlesansflex');
 const fontOutDir = join(root, 'packages/m3e-tokens/fonts');
@@ -133,6 +136,7 @@ async function main(command: string | undefined, flags: readonly string[]): Prom
     const repo = requirePin(pin, 'androidx_repo');
     const manifest = await fetchTokens(repo, commit, vendorDir);
     await fetchVendor(repo, commit, MATERIAL3_PATH, sourcesDir, MATERIAL3_SOURCES);
+    await fetchVendor(repo, commit, ANIMATION_CORE_PATH, animationDir, ANIMATION_CORE_SOURCES);
     console.log(
       `fetched ${String(Object.keys(manifest.files).length)} token files + ${MATERIAL3_SOURCES.join(', ')} @ ${commit}`,
     );

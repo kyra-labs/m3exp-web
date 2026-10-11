@@ -14,6 +14,7 @@
 | React Aria | `TODO(verify)`: latest react-aria on npm | | |
 | Motion (motion.dev) | `TODO(verify)`: latest "motion" on npm | | |
 | Astro | 7.3.8 (npm latest, 2026-10-11) | npmjs.com/package/astro | Docs/playground app (M1) |
+| Kotlin (JVM reference harnesses) | 2.4.21 (JetBrains release, sha256-verified by `tools/jvm/kotlin.mjs`) | github.com/JetBrains/kotlin/releases/tag/v2.4.21 | Compiles vendored androidx sources unmodified to export reference fixtures (ROADMAP M3) |
 | Tooling | pnpm 12.11.2, Vitest 5.0.3 (+ happy-dom 20.14.6), Playwright 1.64.0 (image `mcr.microsoft.com/playwright:v1.64.0-noble`), @axe-core/playwright 4.13.0, size-limit 14.2.0, Changesets 3.0.3, tsup 8.5.1, ESLint 10.12.0, typescript-eslint 8.71.1, stylelint 17.16.0, Prettier 3.9.10 (npm latest, 2026-10-11) | npmjs.com | Exact versions in `pnpm-lock.yaml` |
 | TypeScript | 6.0.3 — not npm latest (7.0.2): typescript-eslint 8.71.1 supports `>=4.8.4 <6.1.0` | npmjs.com/package/typescript | Bump to 7.x when typescript-eslint and tsup support it |
 

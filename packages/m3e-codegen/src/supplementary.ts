@@ -38,3 +38,36 @@ export const SPACE: readonly SupplementaryToken[] = [
   name: `--m3e-sys-space-${String(step)}`,
   cite: `${DSDB} set md.sys.measurement; matches material-web v2.5.0 labs/gb/styles/space/md-space-tokens.scss L6-27`,
 }));
+
+export interface SpringCurve {
+  scheme: 'standard' | 'expressive';
+  /** camelCase spring token, e.g. `fastSpatial`. */
+  token: string;
+  bezier: readonly [number, number, number, number];
+  durationMillis: number;
+}
+
+export const SPRING_CURVES_CITE =
+  'm3.material.io/styles/motion/overview/specs "Web: Convert springs to curves" (_dsm/content/m3/2026-09-23_06-10-05/ccf2c3e9-82b5-4c4a-9570-b0d08d95c0c1.json sections[1].contentBlocks[5], updated 2026-06-23)';
+
+/**
+ * Official cubic-bezier + duration stand-ins for the motion-scheme springs, for platforms without
+ * springs. Verbatim from the m3.material.io table (the page lists "Curve" as four numbers; they are
+ * cubic-bezier control points). No official token names exist for these.
+ */
+export const SPRING_CURVES: readonly SpringCurve[] = (
+  [
+    ['expressive', 'fastSpatial', [0.42, 1.67, 0.21, 0.9], 350],
+    ['expressive', 'defaultSpatial', [0.38, 1.21, 0.22, 1.0], 500],
+    ['expressive', 'slowSpatial', [0.39, 1.29, 0.35, 0.98], 650],
+    ['expressive', 'fastEffects', [0.31, 0.94, 0.34, 1.0], 150],
+    ['expressive', 'defaultEffects', [0.34, 0.8, 0.34, 1.0], 200],
+    ['expressive', 'slowEffects', [0.34, 0.88, 0.34, 1.0], 300],
+    ['standard', 'fastSpatial', [0.27, 1.06, 0.18, 1.0], 350],
+    ['standard', 'defaultSpatial', [0.27, 1.06, 0.18, 1.0], 500],
+    ['standard', 'slowSpatial', [0.27, 1.06, 0.18, 1.0], 750],
+    ['standard', 'fastEffects', [0.31, 0.94, 0.34, 1.0], 150],
+    ['standard', 'defaultEffects', [0.34, 0.8, 0.34, 1.0], 200],
+    ['standard', 'slowEffects', [0.34, 0.88, 0.34, 1.0], 300],
+  ] as const
+).map(([scheme, token, bezier, durationMillis]) => ({ scheme, token, bezier, durationMillis }));

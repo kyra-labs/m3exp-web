@@ -12,6 +12,11 @@ export const TOKENS_PATH = `${MATERIAL3_PATH}/tokens`;
 /** Non-token Material3 sources the generator reads (e.g. expressiveLightColorScheme overrides). */
 export const MATERIAL3_SOURCES = ['ColorScheme.kt'] as const;
 
+/** Compose spring physics ported by m3e-motion (and compiled as-is by its JVM reference harness). */
+export const ANIMATION_CORE_PATH =
+  'compose/animation/animation-core/src/commonMain/kotlin/androidx/compose/animation/core';
+export const ANIMATION_CORE_SOURCES = ['SpringSimulation.kt', 'SpringEstimation.kt'] as const;
+
 export interface Manifest {
   repo: string;
   commit: string;

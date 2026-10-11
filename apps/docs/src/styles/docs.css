@@ -108,3 +108,39 @@ a {
 .docs-icon--filled {
   font-variation-settings: 'FILL' 1;
 }
+
+.docs-motion {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr));
+  gap: var(--m3e-sys-space-300);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.docs-motion svg {
+  display: block;
+  inline-size: 100%;
+  block-size: auto;
+  border-radius: var(--m3e-sys-shape-corner-small);
+  background: var(--m3e-sys-color-surface-container);
+}
+
+.docs-motion polyline,
+.docs-motion line {
+  fill: none;
+  stroke-width: var(--m3e-sys-state-focus-indicator-thickness);
+}
+
+.docs-motion__spring {
+  stroke: var(--m3e-sys-color-primary);
+}
+
+.docs-motion__bezier {
+  stroke: var(--m3e-sys-color-tertiary);
+  stroke-dasharray: var(--m3e-sys-space-75);
+}
+
+.docs-motion__target {
+  stroke: var(--m3e-sys-color-outline-variant);
+}

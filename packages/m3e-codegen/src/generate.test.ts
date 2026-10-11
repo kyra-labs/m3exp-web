@@ -25,7 +25,8 @@ const source = (name: string) => files.find((f) => f.name === name)!.content;
 /** Reads `--name: value;` declarations from generated CSS. */
 const declarations = (css: string) =>
   new Map([...css.matchAll(/^\s*(--[\w-]+): (.+);$/gm)].map((m) => [m[1]!, m[2]!]));
-const sys = declarations(tokensCss);
+// Main :root block only; the reduced-motion @media block re-declares some variables.
+const sys = declarations(tokensCss.slice(0, tokensCss.indexOf('@media')));
 const allComponentCss = [...output].filter(([p]) => p.startsWith('components/')).map(([, c]) => c);
 
 describe('vendored sources', () => {
@@ -223,5 +224,46 @@ describe('supplementary m3.material.io tokens (register items 15–16)', () => {
     expect(sys.get('--m3e-sys-space-100')).toBe('8px');
     expect(sys.get('--m3e-sys-space-450')).toBe('36px');
     expect(sys.get('--m3e-sys-space-900')).toBe('72px');
+  });
+});
+
+describe('spring curves (M3: linear() + m3.material.io bezier stand-ins)', () => {
+  it('emits the official bezier table verbatim for all 12 springs', async () => {
+    const { SPRING_CURVES } = await import('./supplementary.js');
+    expect(SPRING_CURVES).toHaveLength(12);
+    for (const c of SPRING_CURVES) {
+      const tk = c.token.replace(/[A-Z]/g, (ch) => `-${ch.toLowerCase()}`);
+      const base = `--m3e-sys-motion-spring-${c.scheme}-${tk}`;
+      expect(sys.get(`${base}-bezier`)).toBe(
+        `cubic-bezier(${c.bezier.map((n) => String(n)).join(', ')})`,
+      );
+      expect(sys.get(`${base}-bezier-duration`)).toBe(`${String(c.durationMillis)}ms`);
+      expect(sys.get(`${base}-easing`)).toMatch(/^linear\(0, .+, 1\)$/);
+      expect(sys.get(`${base}-duration`)).toMatch(/^\d+ms$/);
+    }
+  });
+
+  it('aliases the active scheme (expressive) for every curve field', () => {
+    for (const field of ['easing', 'duration', 'bezier', 'bezier-duration']) {
+      expect(sys.get(`--m3e-sys-motion-spring-default-spatial-${field}`)).toBe(
+        `var(--m3e-sys-motion-spring-expressive-default-spatial-${field})`,
+      );
+    }
+  });
+
+  it('reduced motion snaps spatial springs and speeds up effects (FOUNDATIONS §4)', () => {
+    const media =
+      /@media \(prefers-reduced-motion: reduce\) \{([\s\S]*?)\n {2}\}/.exec(tokensCss)?.[1] ?? '';
+    for (const scheme of ['standard', 'expressive']) {
+      for (const speed of ['fast', 'default', 'slow']) {
+        expect(media).toContain(
+          `--m3e-sys-motion-spring-${scheme}-${speed}-spatial-duration: 0ms;`,
+        );
+      }
+      expect(media).toContain(
+        `--m3e-sys-motion-spring-${scheme}-slow-effects-duration: var(--m3e-sys-motion-spring-${scheme}-fast-effects-duration);`,
+      );
+      expect(media).not.toContain(`--m3e-sys-motion-spring-${scheme}-fast-effects-duration:`);
+    }
   });
 });
