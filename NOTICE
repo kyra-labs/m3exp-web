@@ -1,0 +1,32 @@
+m3exp-web
+Copyright 2026 Kyra Labs
+
+This product is licensed under the Apache License, Version 2.0 (see LICENSE).
+
+This product includes software from the projects listed below, each licensed
+under the Apache License, Version 2.0 (http://www.apache.org/licenses/LICENSE-2.0).
+Portions have been modified and ported to TypeScript by Kyra Labs. Every ported
+file keeps its original copyright and license header and names its source path
+and commit.
+
+--------------------------------------------------------------------------------
+AndroidX Compose Material3 (design tokens, component logic)
+https://android.googlesource.com/platform/frameworks/support/+/19991f2c0858aadfcb442ce02b2c8e4743c96898/compose/material3/
+Copyright (C) The Android Open Source Project
+Licensed under the Apache License, Version 2.0
+
+--------------------------------------------------------------------------------
+AndroidX graphics-shapes (androidx.graphics:graphics-shapes 1.1.0)
+https://android.googlesource.com/platform/frameworks/support/+/refs/heads/androidx-main/graphics/graphics-shapes/
+Copyright (C) The Android Open Source Project
+Licensed under the Apache License, Version 2.0
+
+--------------------------------------------------------------------------------
+material-color-utilities (@material/material-color-utilities 0.4.0)
+https://github.com/material-foundation/material-color-utilities
+Copyright 2021 Google LLC
+Licensed under the Apache License, Version 2.0
+
+--------------------------------------------------------------------------------
+Bundled fonts are distributed under their own licenses, included beside each
+font file in packages/m3e-tokens/fonts/.

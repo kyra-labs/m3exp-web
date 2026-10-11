@@ -1,0 +1,8 @@
+/*
+ * @kyralabs/m3e-css — framework-free Material 3 Expressive classes. No JavaScript.
+ *
+ * Cascade layers, lowest to highest priority. Tokens (from @kyralabs/m3e-tokens) define
+ * custom properties; components reference them only through var(--m3e-…).
+ * One file per component is imported below as components land: src/<component>.css.
+ */
+@layer m3e.tokens, m3e.base, m3e.components;

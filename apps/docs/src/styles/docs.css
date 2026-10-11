@@ -1,0 +1,14 @@
+/* Docs shell only. Theme tokens arrive with @kyralabs/m3e-tokens in M2. */
+:root {
+  color-scheme: light dark;
+
+  /* Explicit system colors so the canvas is a real computed background (axe, Firefox). */
+  background-color: Canvas;
+  color: CanvasText;
+}
+
+/* UA link colors fail contrast on the dark canvas; links stay underlined. Replaced by
+   --m3e-sys-color-* once tokens land (M2). */
+a {
+  color: inherit;
+}

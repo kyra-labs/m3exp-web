@@ -1,0 +1,39 @@
+{
+  "name": "@kyralabs/m3e-icons",
+  "version": "0.0.0",
+  "description": "Material Symbols subsetting CLI for m3exp-web.",
+  "license": "Apache-2.0",
+  "author": "Kyra Labs",
+  "homepage": "https://github.com/kyra-labs/m3exp-web#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kyra-labs/m3exp-web.git",
+    "directory": "packages/m3e-icons"
+  },
+  "bugs": "https://github.com/kyra-labs/m3exp-web/issues",
+  "type": "module",
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "@kyralabs/source": "./src/index.ts",
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist",
+    "LICENSE",
+    "NOTICE"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "prepack": "node ../../tools/copy-legal.js"
+  },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  }
+}

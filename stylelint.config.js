@@ -1,0 +1,93 @@
+// Literal-value bans for component CSS (CLAUDE.md "Tokens only"). Generated token CSS is exempt.
+const LENGTH_AND_TIME_UNITS = [
+  'px',
+  'rem',
+  'em',
+  'ex',
+  'ch',
+  'cap',
+  'ic',
+  'lh',
+  'rlh',
+  'pt',
+  'pc',
+  'cm',
+  'mm',
+  'q',
+  'in',
+  's',
+  'ms',
+];
+const MEDIA_SIZE_FEATURES = [
+  'width',
+  'min-width',
+  'max-width',
+  'height',
+  'min-height',
+  'max-height',
+];
+
+/** @type {import('stylelint').Config} */
+export default {
+  extends: ['stylelint-config-standard'],
+  plugins: ['./tools/lint/stylelint-plugin-m3e.js'],
+  ignoreFiles: [
+    '**/node_modules/**',
+    '**/dist/**',
+    '**/.astro/**',
+    'packages/m3e-tokens/src/generated/**',
+    'apps/visual/playwright-report/**',
+  ],
+  rules: {
+    'import-notation': 'string',
+    // BEM: .m3e-<component>__<part>--<modifier>
+    'selector-class-pattern': [
+      '^m3e-[a-z0-9]+(-[a-z0-9]+)*(__[a-z0-9]+(-[a-z0-9]+)*)?(--[a-z0-9]+(-[a-z0-9]+)*)?$',
+      { message: 'Use .m3e-<component>[__<part>][--<modifier>] (CLAUDE.md Naming).' },
+    ],
+    'custom-property-pattern': [
+      '^(m3e-(ref|sys|comp)-[a-z0-9-]+|_[a-z0-9-]+)$',
+      {
+        message:
+          'Custom properties are --m3e-{ref|sys|comp}-… tokens or private --_… (CLAUDE.md Naming).',
+      },
+    ],
+  },
+  overrides: [
+    {
+      files: ['packages/*/src/**/*.css'],
+      rules: {
+        'color-no-hex': true,
+        'color-named': 'never',
+        'function-disallowed-list': [
+          [
+            'rgb',
+            'rgba',
+            'hsl',
+            'hsla',
+            'hwb',
+            'lab',
+            'lch',
+            'oklab',
+            'oklch',
+            'color',
+            'cubic-bezier',
+            'steps',
+            'linear',
+          ],
+          { message: 'Colors and easings come from m3e tokens (CLAUDE.md "Tokens only").' },
+        ],
+        'unit-disallowed-list': [
+          LENGTH_AND_TIME_UNITS,
+          {
+            ignoreMediaFeatureNames: Object.fromEntries(
+              LENGTH_AND_TIME_UNITS.map((unit) => [unit, MEDIA_SIZE_FEATURES]),
+            ),
+            message: 'Sizes and durations come from m3e tokens (CLAUDE.md "Tokens only").',
+          },
+        ],
+        'm3e/no-literal-values': true,
+      },
+    },
+  ],
+};
