@@ -8,6 +8,7 @@
     --m3e-comp-secondary-navigation-tab-active-label-text-color: var(--m3e-sys-color-on-surface);
     --m3e-comp-secondary-navigation-tab-container-color: var(--m3e-sys-color-surface);
     --m3e-comp-secondary-navigation-tab-container-elevation: var(--m3e-sys-elevation-level0);
+    --m3e-comp-secondary-navigation-tab-container-shadow: var(--m3e-sys-elevation-level0-shadow);
     --m3e-comp-secondary-navigation-tab-container-height: 48px;
     --m3e-comp-secondary-navigation-tab-container-shape: var(--m3e-sys-shape-corner-none);
     --m3e-comp-secondary-navigation-tab-divider-color: var(--m3e-sys-color-surface-variant);

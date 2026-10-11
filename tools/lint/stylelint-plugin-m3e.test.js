@@ -41,6 +41,7 @@ describe('stylelint: no literal values in component CSS', () => {
     [
       '.m3e-button { background: color-mix(in srgb, var(--m3e-sys-color-primary) calc(var(--m3e-sys-state-hover-state-layer-opacity) * 100%), transparent); }',
     ],
+    ['.m3e-button { border-radius: calc(var(--m3e-comp-button-small-container-height) / 2); }'],
   ])('accepts %s', async (code) => {
     expect(await lint(code)).toEqual([]);
   });
@@ -62,6 +63,8 @@ describe('stylelint: no literal values in component CSS', () => {
       'm3e/no-literal-values',
     ],
     ['.m3e-button { font-weight: 500; }', 'm3e/no-literal-values'],
+    ['.m3e-button { inline-size: calc(var(--m3e-sys-space-100) / 3); }', 'm3e/no-literal-values'],
+    ['.m3e-button { --_half: 2; }', 'm3e/no-literal-values'],
     ['.m3e-button { transform: scale(0.95); }', 'm3e/no-literal-values'],
     ['.m3e-button { --_opacity: 0.12; }', 'm3e/no-literal-values'],
     ['.m3e-button { font-family: "Google Sans Flex", sans-serif; }', 'm3e/no-literal-values'],

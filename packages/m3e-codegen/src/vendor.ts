@@ -10,8 +10,13 @@ export const MATERIAL3_PATH =
   'compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3';
 export const TOKENS_PATH = `${MATERIAL3_PATH}/tokens`;
 
-/** Non-token Material3 sources the generator reads (e.g. expressiveLightColorScheme overrides). */
-export const MATERIAL3_SOURCES = ['ColorScheme.kt'] as const;
+/** Non-token Material3 sources the generator reads (expressiveLightColorScheme overrides, ButtonDefaults). */
+export const MATERIAL3_SOURCES = [
+  'ColorScheme.kt',
+  'Button.kt',
+  'ToggleButton.kt',
+  'InteractiveComponentSize.kt',
+] as const;
 
 /** Compose spring physics ported by m3e-motion (and compiled as-is by its JVM reference harness). */
 export const ANIMATION_CORE_PATH =

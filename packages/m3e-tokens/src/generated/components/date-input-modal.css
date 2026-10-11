@@ -7,6 +7,7 @@
   :root {
     --m3e-comp-date-input-modal-container-color: var(--m3e-sys-color-surface);
     --m3e-comp-date-input-modal-container-elevation: var(--m3e-sys-elevation-level3);
+    --m3e-comp-date-input-modal-container-shadow: var(--m3e-sys-elevation-level3-shadow);
     --m3e-comp-date-input-modal-container-height: 512px;
     --m3e-comp-date-input-modal-container-shape: var(--m3e-sys-shape-corner-extra-large);
     --m3e-comp-date-input-modal-container-surface-tint-layer-color: var(--m3e-sys-color-surface-tint);

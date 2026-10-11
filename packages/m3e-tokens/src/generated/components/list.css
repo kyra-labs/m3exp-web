@@ -15,6 +15,7 @@
     --m3e-comp-list-item-bottom-space: 10px;
     --m3e-comp-list-item-container-color: var(--m3e-sys-color-surface);
     --m3e-comp-list-item-container-elevation: var(--m3e-sys-elevation-level0);
+    --m3e-comp-list-item-container-shadow: var(--m3e-sys-elevation-level0-shadow);
     --m3e-comp-list-item-container-expressive-shape: var(--m3e-sys-shape-corner-extra-small);
     --m3e-comp-list-item-container-shape: var(--m3e-sys-shape-corner-none);
     --m3e-comp-list-item-container-expressive-shape-disabled: var(--m3e-sys-shape-corner-extra-small);
@@ -30,6 +31,7 @@
     --m3e-comp-list-item-trailing-icon-color-disabled: var(--m3e-sys-color-on-surface);
     --m3e-comp-list-item-trailing-icon-opacity-disabled: 0.38;
     --m3e-comp-list-item-container-elevation-dragged: var(--m3e-sys-elevation-level4);
+    --m3e-comp-list-item-container-shadow-dragged: var(--m3e-sys-elevation-level4-shadow);
     --m3e-comp-list-item-container-expressive-shape-dragged: var(--m3e-sys-shape-corner-large);
     --m3e-comp-list-item-label-text-color-dragged: var(--m3e-sys-color-on-surface);
     --m3e-comp-list-item-leading-icon-icon-color-dragged: var(--m3e-sys-color-on-surface-variant);

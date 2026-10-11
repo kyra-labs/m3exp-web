@@ -71,7 +71,10 @@ const rule = (primary) => (root, result) => {
 
     /** @param {import('postcss-value-parser').Node[]} nodes @param {string | null} fn */
     const walk = (nodes, fn) => {
+      let prev = null;
       for (const node of nodes) {
+        const before = prev;
+        if (node.type !== 'space') prev = node;
         if (node.type === 'function') {
           const name = node.value.toLowerCase();
           if (name === 'var') {
@@ -117,6 +120,8 @@ const rule = (primary) => (root, result) => {
         if (dim.unit === '' && UNITLESS.test(word)) {
           const n = Number(dim.number);
           if (n === 0 || Math.abs(n) === 1) continue;
+          // Halving (`calc(x / 2)`: centering, half of a token height) is geometry, not a value.
+          if (n === 2 && fn === 'calc' && before?.type === 'word' && before.value === '/') continue;
           if (!isCustomProp && NUMBER_OK_PROPS.test(prop)) continue;
           reject(word);
         }

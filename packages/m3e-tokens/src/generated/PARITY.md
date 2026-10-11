@@ -4,7 +4,7 @@
 > Source: compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/tokens @ 19991f2c0858aadfcb442ce02b2c8e4743c96898  
 > Values: Copyright (C) The Android Open Source Project, Apache License 2.0 (see NOTICE).  
 
-Emitted: 370 system and 2443 component variables from 104 component token objects.
+Emitted: 370 system and 2577 component variables from 105 component token objects.
 
 ## Not emitted here
 
@@ -502,6 +502,7 @@ Emitted: 370 system and 2443 component variables from 104 component token object
 | `AppBarTokens.AvatarSize` | `32.0.dp` | AppBarTokens.kt:25 | `--m3e-comp-app-bar-avatar-size` | `32px` |  |
 | `AppBarTokens.ContainerColor` | `ColorSchemeKeyTokens.Surface` | AppBarTokens.kt:28 | `--m3e-comp-app-bar-container-color` | `var(--m3e-sys-color-surface)` |  |
 | `AppBarTokens.ContainerElevation` | `ElevationTokens.Level0` | AppBarTokens.kt:31 | `--m3e-comp-app-bar-container-elevation` | `var(--m3e-sys-elevation-level0)` |  |
+| `AppBarTokens.ContainerElevation` | `ElevationTokens.Level0` | AppBarTokens.kt:31 | `--m3e-comp-app-bar-container-shadow` | `var(--m3e-sys-elevation-level0-shadow)` | derived: box-shadow of the referenced elevation level |
 | `AppBarTokens.ContainerShape` | `ShapeKeyTokens.CornerNone` | AppBarTokens.kt:34 | `--m3e-comp-app-bar-container-shape` | `var(--m3e-sys-shape-corner-none)` |  |
 | `AppBarTokens.IconButtonSpace` | `0.0.dp` | AppBarTokens.kt:37 | `--m3e-comp-app-bar-icon-button-space` | `0` |  |
 | `AppBarTokens.IconSize` | `24.0.dp` | AppBarTokens.kt:40 | `--m3e-comp-app-bar-icon-size` | `24px` |  |
@@ -509,6 +510,7 @@ Emitted: 370 system and 2443 component variables from 104 component token object
 | `AppBarTokens.LeadingSpace` | `4.0.dp` | AppBarTokens.kt:46 | `--m3e-comp-app-bar-leading-space` | `4px` |  |
 | `AppBarTokens.OnScrollContainerColor` | `ColorSchemeKeyTokens.SurfaceContainer` | AppBarTokens.kt:49 | `--m3e-comp-app-bar-on-scroll-container-color` | `var(--m3e-sys-color-surface-container)` |  |
 | `AppBarTokens.OnScrollContainerElevation` | `ElevationTokens.Level2` | AppBarTokens.kt:52 | `--m3e-comp-app-bar-on-scroll-container-elevation` | `var(--m3e-sys-elevation-level2)` |  |
+| `AppBarTokens.OnScrollContainerElevation` | `ElevationTokens.Level2` | AppBarTokens.kt:52 | `--m3e-comp-app-bar-on-scroll-container-shadow` | `var(--m3e-sys-elevation-level2-shadow)` | derived: box-shadow of the referenced elevation level |
 | `AppBarTokens.SubtitleColor` | `ColorSchemeKeyTokens.OnSurfaceVariant` | AppBarTokens.kt:55 | `--m3e-comp-app-bar-subtitle-color` | `var(--m3e-sys-color-on-surface-variant)` |  |
 | `AppBarTokens.TitleColor` | `ColorSchemeKeyTokens.OnSurface` | AppBarTokens.kt:58 | `--m3e-comp-app-bar-title-color` | `var(--m3e-sys-color-on-surface)` |  |
 | `AppBarTokens.TrailingIconColor` | `ColorSchemeKeyTokens.OnSurfaceVariant` | AppBarTokens.kt:61 | `--m3e-comp-app-bar-trailing-icon-color` | `var(--m3e-sys-color-on-surface-variant)` |  |
@@ -595,16 +597,23 @@ Emitted: 370 system and 2443 component variables from 104 component token object
 | `AssistChipTokens.DisabledLabelTextColor` | `ColorSchemeKeyTokens.OnSurface` | AssistChipTokens.kt:30 | `--m3e-comp-assist-chip-label-text-color-disabled` | `var(--m3e-sys-color-on-surface)` |  |
 | `AssistChipTokens.DisabledLabelTextOpacity` | `0.38f` | AssistChipTokens.kt:33 | `--m3e-comp-assist-chip-label-text-opacity-disabled` | `0.38` |  |
 | `AssistChipTokens.DraggedContainerElevation` | `ElevationTokens.Level4` | AssistChipTokens.kt:34 | `--m3e-comp-assist-chip-container-elevation-dragged` | `var(--m3e-sys-elevation-level4)` |  |
+| `AssistChipTokens.DraggedContainerElevation` | `ElevationTokens.Level4` | AssistChipTokens.kt:34 | `--m3e-comp-assist-chip-container-shadow-dragged` | `var(--m3e-sys-elevation-level4-shadow)` | derived: box-shadow of the referenced elevation level |
 | `AssistChipTokens.DraggedLabelTextColor` | `ColorSchemeKeyTokens.OnSurface` | AssistChipTokens.kt:37 | `--m3e-comp-assist-chip-label-text-color-dragged` | `var(--m3e-sys-color-on-surface)` |  |
 | `AssistChipTokens.ElevatedContainerColor` | `ColorSchemeKeyTokens.SurfaceContainerLow` | AssistChipTokens.kt:40 | `--m3e-comp-assist-chip-elevated-container-color` | `var(--m3e-sys-color-surface-container-low)` |  |
 | `AssistChipTokens.ElevatedContainerElevation` | `ElevationTokens.Level1` | AssistChipTokens.kt:43 | `--m3e-comp-assist-chip-elevated-container-elevation` | `var(--m3e-sys-elevation-level1)` |  |
+| `AssistChipTokens.ElevatedContainerElevation` | `ElevationTokens.Level1` | AssistChipTokens.kt:43 | `--m3e-comp-assist-chip-elevated-container-shadow` | `var(--m3e-sys-elevation-level1-shadow)` | derived: box-shadow of the referenced elevation level |
 | `AssistChipTokens.ElevatedDisabledContainerColor` | `ColorSchemeKeyTokens.OnSurface` | AssistChipTokens.kt:46 | `--m3e-comp-assist-chip-elevated-container-color-disabled` | `var(--m3e-sys-color-on-surface)` |  |
 | `AssistChipTokens.ElevatedDisabledContainerElevation` | `ElevationTokens.Level0` | AssistChipTokens.kt:49 | `--m3e-comp-assist-chip-elevated-container-elevation-disabled` | `var(--m3e-sys-elevation-level0)` |  |
+| `AssistChipTokens.ElevatedDisabledContainerElevation` | `ElevationTokens.Level0` | AssistChipTokens.kt:49 | `--m3e-comp-assist-chip-elevated-container-shadow-disabled` | `var(--m3e-sys-elevation-level0-shadow)` | derived: box-shadow of the referenced elevation level |
 | `AssistChipTokens.ElevatedDisabledContainerOpacity` | `0.12f` | AssistChipTokens.kt:52 | `--m3e-comp-assist-chip-elevated-container-opacity-disabled` | `0.12` |  |
 | `AssistChipTokens.ElevatedFocusContainerElevation` | `ElevationTokens.Level1` | AssistChipTokens.kt:53 | `--m3e-comp-assist-chip-elevated-container-elevation-focus` | `var(--m3e-sys-elevation-level1)` |  |
+| `AssistChipTokens.ElevatedFocusContainerElevation` | `ElevationTokens.Level1` | AssistChipTokens.kt:53 | `--m3e-comp-assist-chip-elevated-container-shadow-focus` | `var(--m3e-sys-elevation-level1-shadow)` | derived: box-shadow of the referenced elevation level |
 | `AssistChipTokens.ElevatedHoverContainerElevation` | `ElevationTokens.Level2` | AssistChipTokens.kt:56 | `--m3e-comp-assist-chip-elevated-container-elevation-hover` | `var(--m3e-sys-elevation-level2)` |  |
+| `AssistChipTokens.ElevatedHoverContainerElevation` | `ElevationTokens.Level2` | AssistChipTokens.kt:56 | `--m3e-comp-assist-chip-elevated-container-shadow-hover` | `var(--m3e-sys-elevation-level2-shadow)` | derived: box-shadow of the referenced elevation level |
 | `AssistChipTokens.ElevatedPressedContainerElevation` | `ElevationTokens.Level1` | AssistChipTokens.kt:59 | `--m3e-comp-assist-chip-elevated-container-elevation-pressed` | `var(--m3e-sys-elevation-level1)` |  |
+| `AssistChipTokens.ElevatedPressedContainerElevation` | `ElevationTokens.Level1` | AssistChipTokens.kt:59 | `--m3e-comp-assist-chip-elevated-container-shadow-pressed` | `var(--m3e-sys-elevation-level1-shadow)` | derived: box-shadow of the referenced elevation level |
 | `AssistChipTokens.FlatContainerElevation` | `ElevationTokens.Level0` | AssistChipTokens.kt:62 | `--m3e-comp-assist-chip-flat-container-elevation` | `var(--m3e-sys-elevation-level0)` |  |
+| `AssistChipTokens.FlatContainerElevation` | `ElevationTokens.Level0` | AssistChipTokens.kt:62 | `--m3e-comp-assist-chip-flat-container-shadow` | `var(--m3e-sys-elevation-level0-shadow)` | derived: box-shadow of the referenced elevation level |
 | `AssistChipTokens.FlatDisabledOutlineColor` | `ColorSchemeKeyTokens.OnSurface` | AssistChipTokens.kt:65 | `--m3e-comp-assist-chip-flat-outline-color-disabled` | `var(--m3e-sys-color-on-surface)` |  |
 | `AssistChipTokens.FlatDisabledOutlineOpacity` | `0.12f` | AssistChipTokens.kt:68 | `--m3e-comp-assist-chip-flat-outline-opacity-disabled` | `0.12` |  |
 | `AssistChipTokens.FlatFocusOutlineColor` | `ColorSchemeKeyTokens.OnSurface` | AssistChipTokens.kt:69 | `--m3e-comp-assist-chip-flat-outline-color-focus` | `var(--m3e-sys-color-on-surface)` |  |
@@ -652,20 +661,24 @@ Emitted: 370 system and 2443 component variables from 104 component token object
 |---|---|---|---|---|---|
 | `BaselineButtonTokens.ContainerColor` | `ColorSchemeKeyTokens.Primary` | BaselineButtonTokens.kt:24 | `--m3e-comp-baseline-button-container-color` | `var(--m3e-sys-color-primary)` |  |
 | `BaselineButtonTokens.ContainerElevation` | `ElevationTokens.Level0` | BaselineButtonTokens.kt:27 | `--m3e-comp-baseline-button-container-elevation` | `var(--m3e-sys-elevation-level0)` |  |
+| `BaselineButtonTokens.ContainerElevation` | `ElevationTokens.Level0` | BaselineButtonTokens.kt:27 | `--m3e-comp-baseline-button-container-shadow` | `var(--m3e-sys-elevation-level0-shadow)` | derived: box-shadow of the referenced elevation level |
 | `BaselineButtonTokens.ContainerHeight` | `40.0.dp` | BaselineButtonTokens.kt:30 | `--m3e-comp-baseline-button-container-height` | `40px` |  |
 | `BaselineButtonTokens.ContainerShapeRound` | `ShapeKeyTokens.CornerFull` | BaselineButtonTokens.kt:33 | `--m3e-comp-baseline-button-container-shape-round` | `var(--m3e-sys-shape-corner-full)` |  |
 | `BaselineButtonTokens.ContainerShapeSquare` | `ShapeKeyTokens.CornerMedium` | BaselineButtonTokens.kt:36 | `--m3e-comp-baseline-button-container-shape-square` | `var(--m3e-sys-shape-corner-medium)` |  |
 | `BaselineButtonTokens.DisabledContainerColor` | `ColorSchemeKeyTokens.OnSurface` | BaselineButtonTokens.kt:39 | `--m3e-comp-baseline-button-container-color-disabled` | `var(--m3e-sys-color-on-surface)` |  |
 | `BaselineButtonTokens.DisabledContainerElevation` | `ElevationTokens.Level0` | BaselineButtonTokens.kt:42 | `--m3e-comp-baseline-button-container-elevation-disabled` | `var(--m3e-sys-elevation-level0)` |  |
+| `BaselineButtonTokens.DisabledContainerElevation` | `ElevationTokens.Level0` | BaselineButtonTokens.kt:42 | `--m3e-comp-baseline-button-container-shadow-disabled` | `var(--m3e-sys-elevation-level0-shadow)` | derived: box-shadow of the referenced elevation level |
 | `BaselineButtonTokens.DisabledContainerOpacity` | `0.1f` | BaselineButtonTokens.kt:45 | `--m3e-comp-baseline-button-container-opacity-disabled` | `0.1` |  |
 | `BaselineButtonTokens.DisabledIconColor` | `ColorSchemeKeyTokens.OnSurfaceVariant` | BaselineButtonTokens.kt:46 | `--m3e-comp-baseline-button-icon-color-disabled` | `var(--m3e-sys-color-on-surface-variant)` |  |
 | `BaselineButtonTokens.DisabledIconOpacity` | `0.38f` | BaselineButtonTokens.kt:49 | `--m3e-comp-baseline-button-icon-opacity-disabled` | `0.38` |  |
 | `BaselineButtonTokens.DisabledLabelTextColor` | `ColorSchemeKeyTokens.OnSurfaceVariant` | BaselineButtonTokens.kt:50 | `--m3e-comp-baseline-button-label-text-color-disabled` | `var(--m3e-sys-color-on-surface-variant)` |  |
 | `BaselineButtonTokens.DisabledLabelTextOpacity` | `0.38f` | BaselineButtonTokens.kt:53 | `--m3e-comp-baseline-button-label-text-opacity-disabled` | `0.38` |  |
 | `BaselineButtonTokens.FocusedContainerElevation` | `ElevationTokens.Level0` | BaselineButtonTokens.kt:54 | `--m3e-comp-baseline-button-container-elevation-focused` | `var(--m3e-sys-elevation-level0)` |  |
+| `BaselineButtonTokens.FocusedContainerElevation` | `ElevationTokens.Level0` | BaselineButtonTokens.kt:54 | `--m3e-comp-baseline-button-container-shadow-focused` | `var(--m3e-sys-elevation-level0-shadow)` | derived: box-shadow of the referenced elevation level |
 | `BaselineButtonTokens.FocusedIconColor` | `ColorSchemeKeyTokens.OnPrimary` | BaselineButtonTokens.kt:57 | `--m3e-comp-baseline-button-icon-color-focused` | `var(--m3e-sys-color-on-primary)` |  |
 | `BaselineButtonTokens.FocusedLabelTextColor` | `ColorSchemeKeyTokens.OnPrimary` | BaselineButtonTokens.kt:60 | `--m3e-comp-baseline-button-label-text-color-focused` | `var(--m3e-sys-color-on-primary)` |  |
 | `BaselineButtonTokens.HoveredContainerElevation` | `ElevationTokens.Level1` | BaselineButtonTokens.kt:63 | `--m3e-comp-baseline-button-container-elevation-hovered` | `var(--m3e-sys-elevation-level1)` |  |
+| `BaselineButtonTokens.HoveredContainerElevation` | `ElevationTokens.Level1` | BaselineButtonTokens.kt:63 | `--m3e-comp-baseline-button-container-shadow-hovered` | `var(--m3e-sys-elevation-level1-shadow)` | derived: box-shadow of the referenced elevation level |
 | `BaselineButtonTokens.HoveredIconColor` | `ColorSchemeKeyTokens.OnPrimary` | BaselineButtonTokens.kt:66 | `--m3e-comp-baseline-button-icon-color-hovered` | `var(--m3e-sys-color-on-primary)` |  |
 | `BaselineButtonTokens.HoveredLabelTextColor` | `ColorSchemeKeyTokens.OnPrimary` | BaselineButtonTokens.kt:69 | `--m3e-comp-baseline-button-label-text-color-hovered` | `var(--m3e-sys-color-on-primary)` |  |
 | `BaselineButtonTokens.IconColor` | `ColorSchemeKeyTokens.OnPrimary` | BaselineButtonTokens.kt:72 | `--m3e-comp-baseline-button-icon-color` | `var(--m3e-sys-color-on-primary)` |  |
@@ -676,6 +689,7 @@ Emitted: 370 system and 2443 component variables from 104 component token object
 | `BaselineButtonTokens.LabelTextUnselectedColor` | `ColorSchemeKeyTokens.OnSurfaceVariant` | BaselineButtonTokens.kt:87 | `--m3e-comp-baseline-button-label-text-color-unselected` | `var(--m3e-sys-color-on-surface-variant)` |  |
 | `BaselineButtonTokens.LeadingSpace` | `24.0.dp` | BaselineButtonTokens.kt:90 | `--m3e-comp-baseline-button-leading-space` | `24px` |  |
 | `BaselineButtonTokens.PressedContainerElevation` | `ElevationTokens.Level0` | BaselineButtonTokens.kt:93 | `--m3e-comp-baseline-button-container-elevation-pressed` | `var(--m3e-sys-elevation-level0)` |  |
+| `BaselineButtonTokens.PressedContainerElevation` | `ElevationTokens.Level0` | BaselineButtonTokens.kt:93 | `--m3e-comp-baseline-button-container-shadow-pressed` | `var(--m3e-sys-elevation-level0-shadow)` | derived: box-shadow of the referenced elevation level |
 | `BaselineButtonTokens.PressedContainerShape` | `ShapeKeyTokens.CornerSmall` | BaselineButtonTokens.kt:96 | `--m3e-comp-baseline-button-container-shape-pressed` | `var(--m3e-sys-shape-corner-small)` |  |
 | `BaselineButtonTokens.PressedIconColor` | `ColorSchemeKeyTokens.OnPrimary` | BaselineButtonTokens.kt:99 | `--m3e-comp-baseline-button-icon-color-pressed` | `var(--m3e-sys-color-on-primary)` |  |
 | `BaselineButtonTokens.PressedLabelTextColor` | `ColorSchemeKeyTokens.OnPrimary` | BaselineButtonTokens.kt:102 | `--m3e-comp-baseline-button-label-text-color-pressed` | `var(--m3e-sys-color-on-primary)` |  |
@@ -705,8 +719,24 @@ Emitted: 370 system and 2443 component variables from 104 component token object
 |---|---|---|---|---|---|
 | `BottomAppBarTokens.ContainerColor` | `ColorSchemeKeyTokens.SurfaceContainer` | BottomAppBarTokens.kt:24 | `--m3e-comp-bottom-app-bar-container-color` | `var(--m3e-sys-color-surface-container)` |  |
 | `BottomAppBarTokens.ContainerElevation` | `ElevationTokens.Level2` | BottomAppBarTokens.kt:27 | `--m3e-comp-bottom-app-bar-container-elevation` | `var(--m3e-sys-elevation-level2)` |  |
+| `BottomAppBarTokens.ContainerElevation` | `ElevationTokens.Level2` | BottomAppBarTokens.kt:27 | `--m3e-comp-bottom-app-bar-container-shadow` | `var(--m3e-sys-elevation-level2-shadow)` | derived: box-shadow of the referenced elevation level |
 | `BottomAppBarTokens.ContainerHeight` | `80.0.dp` | BottomAppBarTokens.kt:30 | `--m3e-comp-bottom-app-bar-container-height` | `80px` |  |
 | `BottomAppBarTokens.ContainerShape` | `ShapeKeyTokens.CornerNone` | BottomAppBarTokens.kt:33 | `--m3e-comp-bottom-app-bar-container-shape` | `var(--m3e-sys-shape-corner-none)` |  |
+
+## button-defaults
+
+| Source token | Source value | Line | CSS variable | Emitted | Note |
+|---|---|---|---|---|---|
+| `ButtonDefaults.MinWidth` | `58.dp` | compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/Button.kt@19991f2c0858aadfcb442ce02b2c8e4743c96898 L1053 | `--m3e-comp-button-min-width` | `58px` |  |
+| `ButtonDefaults.ExtraSmallContentPadding (start/end)` | `12.dp` | compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/Button.kt@19991f2c0858aadfcb442ce02b2c8e4743c96898 L959 | `--m3e-comp-button-x-small-content-padding-horizontal` | `12px` | upstream TODO: ButtonXSmallTokens.LeadingSpace (16dp) awaits correction |
+| `ButtonDefaults.ExtraSmallContentPadding (top/bottom)` | `6.dp` | compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/Button.kt@19991f2c0858aadfcb442ce02b2c8e4743c96898 L959 | `--m3e-comp-button-x-small-content-padding-vertical` | `6px` |  |
+| `ButtonDefaults.ExtraSmallIconSpacing` | `4.dp` | compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/Button.kt@19991f2c0858aadfcb442ce02b2c8e4743c96898 L1108 | `--m3e-comp-button-x-small-icon-spacing` | `4px` | upstream TODO: ButtonXSmallTokens.IconLabelSpace (8dp) awaits correction |
+| `ButtonDefaults.smallVerticalPadding (touch)` | `10.dp` | compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/Button.kt@19991f2c0858aadfcb442ce02b2c8e4743c96898 L1652 | `--m3e-comp-button-small-vertical-padding` | `10px` | precision-pointer (desktop) sizing not used |
+| `ButtonDefaults.MediumVerticalPadding` | `16.dp` | compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/Button.kt@19991f2c0858aadfcb442ce02b2c8e4743c96898 L1660 | `--m3e-comp-button-medium-vertical-padding` | `16px` |  |
+| `ButtonDefaults.LargeVerticalPadding` | `32.dp` | compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/Button.kt@19991f2c0858aadfcb442ce02b2c8e4743c96898 L1663 | `--m3e-comp-button-large-vertical-padding` | `32px` |  |
+| `ButtonDefaults.ExtraLargeContentPadding (top/bottom)` | `48.dp` | compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/Button.kt@19991f2c0858aadfcb442ce02b2c8e4743c96898 L1006 | `--m3e-comp-button-x-large-vertical-padding` | `48px` |  |
+| `ToggleButtonDefaults.pressedShape` | `6.dp` | compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/ToggleButton.kt@19991f2c0858aadfcb442ce02b2c8e4743c96898 L710 | `--m3e-comp-toggle-button-small-pressed-shape` | `6px` | ButtonSmallTokens.PressedContainerShape is CornerSmall (8dp); toggle buttons use 6dp |
+| `InteractiveComponentSize.kt.LocalMinimumInteractiveComponentSize` | `48.dp` | compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/InteractiveComponentSize.kt@19991f2c0858aadfcb442ce02b2c8e4743c96898 L266 | `--m3e-comp-minimum-interactive-component-size` | `48px` |  |
 
 ## button-group-small
 
@@ -852,10 +882,12 @@ Emitted: 370 system and 2443 component variables from 104 component token object
 | `ChipsTokens.AvatarShape` | `ShapeKeyTokens.CornerFull` | ChipsTokens.kt:24 | `--m3e-comp-chips-avatar-shape` | `var(--m3e-sys-shape-corner-full)` |  |
 | `ChipsTokens.AvatarSize` | `24.0.dp` | ChipsTokens.kt:27 | `--m3e-comp-chips-avatar-size` | `24px` |  |
 | `ChipsTokens.ContainerElevation` | `ElevationTokens.Level0` | ChipsTokens.kt:30 | `--m3e-comp-chips-container-elevation` | `var(--m3e-sys-elevation-level0)` |  |
+| `ChipsTokens.ContainerElevation` | `ElevationTokens.Level0` | ChipsTokens.kt:30 | `--m3e-comp-chips-container-shadow` | `var(--m3e-sys-elevation-level0-shadow)` | derived: box-shadow of the referenced elevation level |
 | `ChipsTokens.DisabledLabelTextColor` | `ColorSchemeKeyTokens.OnSurface` | ChipsTokens.kt:33 | `--m3e-comp-chips-label-text-color-disabled` | `var(--m3e-sys-color-on-surface)` |  |
 | `ChipsTokens.DisabledLeadingIconColor` | `ColorSchemeKeyTokens.OnSurface` | ChipsTokens.kt:36 | `--m3e-comp-chips-leading-icon-color-disabled` | `var(--m3e-sys-color-on-surface)` |  |
 | `ChipsTokens.DisabledTrailingIconColor` | `ColorSchemeKeyTokens.OnSurface` | ChipsTokens.kt:39 | `--m3e-comp-chips-trailing-icon-color-disabled` | `var(--m3e-sys-color-on-surface)` |  |
 | `ChipsTokens.DraggedContainerElevation` | `ElevationTokens.Level4` | ChipsTokens.kt:42 | `--m3e-comp-chips-container-elevation-dragged` | `var(--m3e-sys-elevation-level4)` |  |
+| `ChipsTokens.DraggedContainerElevation` | `ElevationTokens.Level4` | ChipsTokens.kt:42 | `--m3e-comp-chips-container-shadow-dragged` | `var(--m3e-sys-elevation-level4-shadow)` | derived: box-shadow of the referenced elevation level |
 | `ChipsTokens.FocusedIndicatorColor` | `ColorSchemeKeyTokens.Secondary` | ChipsTokens.kt:45 | `--m3e-comp-chips-focused-indicator-color` | `var(--m3e-sys-color-secondary)` |  |
 | `ChipsTokens.Height` | `32.0.dp` | ChipsTokens.kt:48 | `--m3e-comp-chips-height` | `32px` |  |
 | `ChipsTokens.LabelText` | `TypographyKeyTokens.LabelLarge` | ChipsTokens.kt:51 | `--m3e-comp-chips-label-text-font` | `var(--m3e-sys-typescale-label-large-font)` |  |
@@ -912,6 +944,7 @@ Emitted: 370 system and 2443 component variables from 104 component token object
 |---|---|---|---|---|---|
 | `DateInputModalTokens.ContainerColor` | `ColorSchemeKeyTokens.Surface` | DateInputModalTokens.kt:24 | `--m3e-comp-date-input-modal-container-color` | `var(--m3e-sys-color-surface)` |  |
 | `DateInputModalTokens.ContainerElevation` | `ElevationTokens.Level3` | DateInputModalTokens.kt:27 | `--m3e-comp-date-input-modal-container-elevation` | `var(--m3e-sys-elevation-level3)` |  |
+| `DateInputModalTokens.ContainerElevation` | `ElevationTokens.Level3` | DateInputModalTokens.kt:27 | `--m3e-comp-date-input-modal-container-shadow` | `var(--m3e-sys-elevation-level3-shadow)` | derived: box-shadow of the referenced elevation level |
 | `DateInputModalTokens.ContainerHeight` | `512.0.dp` | DateInputModalTokens.kt:30 | `--m3e-comp-date-input-modal-container-height` | `512px` |  |
 | `DateInputModalTokens.ContainerShape` | `ShapeKeyTokens.CornerExtraLarge` | DateInputModalTokens.kt:33 | `--m3e-comp-date-input-modal-container-shape` | `var(--m3e-sys-shape-corner-extra-large)` |  |
 | `DateInputModalTokens.ContainerSurfaceTintLayerColor` | `ColorSchemeKeyTokens.SurfaceTint` | DateInputModalTokens.kt:36 | `--m3e-comp-date-input-modal-container-surface-tint-layer-color` | `var(--m3e-sys-color-surface-tint)` |  |
@@ -937,6 +970,7 @@ Emitted: 370 system and 2443 component variables from 104 component token object
 |---|---|---|---|---|---|
 | `DatePickerModalTokens.ContainerColor` | `ColorSchemeKeyTokens.SurfaceContainerHigh` | DatePickerModalTokens.kt:24 | `--m3e-comp-date-picker-modal-container-color` | `var(--m3e-sys-color-surface-container-high)` |  |
 | `DatePickerModalTokens.ContainerElevation` | `ElevationTokens.Level3` | DatePickerModalTokens.kt:27 | `--m3e-comp-date-picker-modal-container-elevation` | `var(--m3e-sys-elevation-level3)` |  |
+| `DatePickerModalTokens.ContainerElevation` | `ElevationTokens.Level3` | DatePickerModalTokens.kt:27 | `--m3e-comp-date-picker-modal-container-shadow` | `var(--m3e-sys-elevation-level3-shadow)` | derived: box-shadow of the referenced elevation level |
 | `DatePickerModalTokens.ContainerHeight` | `568.0.dp` | DatePickerModalTokens.kt:30 | `--m3e-comp-date-picker-modal-container-height` | `568px` |  |
 | `DatePickerModalTokens.ContainerShape` | `ShapeKeyTokens.CornerExtraLarge` | DatePickerModalTokens.kt:33 | `--m3e-comp-date-picker-modal-container-shape` | `var(--m3e-sys-shape-corner-extra-large)` |  |
 | `DatePickerModalTokens.ContainerWidth` | `360.0.dp` | DatePickerModalTokens.kt:36 | `--m3e-comp-date-picker-modal-container-width` | `360px` |  |
@@ -975,6 +1009,7 @@ Emitted: 370 system and 2443 component variables from 104 component token object
 | `DatePickerModalTokens.RangeSelectionActiveIndicatorContainerHeight` | `40.0.dp` | DatePickerModalTokens.kt:99 | `--m3e-comp-date-picker-modal-range-selection-active-indicator-container-height` | `40px` |  |
 | `DatePickerModalTokens.RangeSelectionActiveIndicatorContainerShape` | `ShapeKeyTokens.CornerFull` | DatePickerModalTokens.kt:102 | `--m3e-comp-date-picker-modal-range-selection-active-indicator-container-shape` | `var(--m3e-sys-shape-corner-full)` |  |
 | `DatePickerModalTokens.RangeSelectionContainerElevation` | `ElevationTokens.Level0` | DatePickerModalTokens.kt:105 | `--m3e-comp-date-picker-modal-range-selection-container-elevation` | `var(--m3e-sys-elevation-level0)` |  |
+| `DatePickerModalTokens.RangeSelectionContainerElevation` | `ElevationTokens.Level0` | DatePickerModalTokens.kt:105 | `--m3e-comp-date-picker-modal-range-selection-container-shadow` | `var(--m3e-sys-elevation-level0-shadow)` | derived: box-shadow of the referenced elevation level |
 | `DatePickerModalTokens.RangeSelectionContainerShape` | `ShapeKeyTokens.CornerNone` | DatePickerModalTokens.kt:108 | `--m3e-comp-date-picker-modal-range-selection-container-shape` | `var(--m3e-sys-shape-corner-none)` |  |
 | `DatePickerModalTokens.SelectionDateInRangeLabelTextColor` | `ColorSchemeKeyTokens.OnSecondaryContainer` | DatePickerModalTokens.kt:111 | `--m3e-comp-date-picker-modal-selection-date-in-range-label-text-color` | `var(--m3e-sys-color-on-secondary-container)` |  |
 | `DatePickerModalTokens.RangeSelectionHeaderContainerHeight` | `128.0.dp` | DatePickerModalTokens.kt:114 | `--m3e-comp-date-picker-modal-range-selection-header-container-height` | `128px` |  |
@@ -1024,6 +1059,7 @@ Emitted: 370 system and 2443 component variables from 104 component token object
 | `DialogTokens.ActionPressedLabelTextColor` | `ColorSchemeKeyTokens.Primary` | DialogTokens.kt:36 | `--m3e-comp-dialog-action-label-text-color-pressed` | `var(--m3e-sys-color-primary)` |  |
 | `DialogTokens.ContainerColor` | `ColorSchemeKeyTokens.SurfaceContainerHigh` | DialogTokens.kt:39 | `--m3e-comp-dialog-container-color` | `var(--m3e-sys-color-surface-container-high)` |  |
 | `DialogTokens.ContainerElevation` | `ElevationTokens.Level3` | DialogTokens.kt:42 | `--m3e-comp-dialog-container-elevation` | `var(--m3e-sys-elevation-level3)` |  |
+| `DialogTokens.ContainerElevation` | `ElevationTokens.Level3` | DialogTokens.kt:42 | `--m3e-comp-dialog-container-shadow` | `var(--m3e-sys-elevation-level3-shadow)` | derived: box-shadow of the referenced elevation level |
 | `DialogTokens.ContainerShape` | `ShapeKeyTokens.CornerExtraLarge` | DialogTokens.kt:45 | `--m3e-comp-dialog-container-shape` | `var(--m3e-sys-shape-corner-extra-large)` |  |
 | `DialogTokens.HeadlineColor` | `ColorSchemeKeyTokens.OnSurface` | DialogTokens.kt:48 | `--m3e-comp-dialog-headline-color` | `var(--m3e-sys-color-on-surface)` |  |
 | `DialogTokens.HeadlineFont` | `TypographyKeyTokens.HeadlineSmall` | DialogTokens.kt:51 | `--m3e-comp-dialog-headline-font` | `var(--m3e-sys-typescale-headline-small-font)` |  |
@@ -1067,13 +1103,16 @@ Emitted: 370 system and 2443 component variables from 104 component token object
 | `DragHandleTokens.ContainerWidth` | `24.0.dp` | DragHandleTokens.kt:27 | `--m3e-comp-drag-handle-container-width` | `24px` |  |
 | `DragHandleTokens.DraggedColor` | `ColorSchemeKeyTokens.OnSurface` | DragHandleTokens.kt:30 | `--m3e-comp-drag-handle-color-dragged` | `var(--m3e-sys-color-on-surface)` |  |
 | `DragHandleTokens.DraggedElevation` | `ElevationTokens.Level0` | DragHandleTokens.kt:33 | `--m3e-comp-drag-handle-elevation-dragged` | `var(--m3e-sys-elevation-level0)` |  |
+| `DragHandleTokens.DraggedElevation` | `ElevationTokens.Level0` | DragHandleTokens.kt:33 | `--m3e-comp-drag-handle-shadow-dragged` | `var(--m3e-sys-elevation-level0-shadow)` | derived: box-shadow of the referenced elevation level |
 | `DragHandleTokens.DraggedHeight` | `52.0.dp` | DragHandleTokens.kt:36 | `--m3e-comp-drag-handle-height-dragged` | `52px` |  |
 | `DragHandleTokens.DraggedShape` | `ShapeKeyTokens.CornerMedium` | DragHandleTokens.kt:39 | `--m3e-comp-drag-handle-shape-dragged` | `var(--m3e-sys-shape-corner-medium)` |  |
 | `DragHandleTokens.DraggedWidth` | `12.0.dp` | DragHandleTokens.kt:42 | `--m3e-comp-drag-handle-width-dragged` | `12px` |  |
 | `DragHandleTokens.Elevation` | `ElevationTokens.Level0` | DragHandleTokens.kt:45 | `--m3e-comp-drag-handle-elevation` | `var(--m3e-sys-elevation-level0)` |  |
+| `DragHandleTokens.Elevation` | `ElevationTokens.Level0` | DragHandleTokens.kt:45 | `--m3e-comp-drag-handle-shadow` | `var(--m3e-sys-elevation-level0-shadow)` | derived: box-shadow of the referenced elevation level |
 | `DragHandleTokens.Height` | `48.0.dp` | DragHandleTokens.kt:46 | `--m3e-comp-drag-handle-height` | `48px` |  |
 | `DragHandleTokens.PressedColor` | `ColorSchemeKeyTokens.OnSurface` | DragHandleTokens.kt:49 | `--m3e-comp-drag-handle-color-pressed` | `var(--m3e-sys-color-on-surface)` |  |
 | `DragHandleTokens.PressedElevation` | `ElevationTokens.Level0` | DragHandleTokens.kt:52 | `--m3e-comp-drag-handle-elevation-pressed` | `var(--m3e-sys-elevation-level0)` |  |
+| `DragHandleTokens.PressedElevation` | `ElevationTokens.Level0` | DragHandleTokens.kt:52 | `--m3e-comp-drag-handle-shadow-pressed` | `var(--m3e-sys-elevation-level0-shadow)` | derived: box-shadow of the referenced elevation level |
 | `DragHandleTokens.PressedHeight` | `52.0.dp` | DragHandleTokens.kt:55 | `--m3e-comp-drag-handle-height-pressed` | `52px` |  |
 | `DragHandleTokens.PressedShape` | `ShapeKeyTokens.CornerMedium` | DragHandleTokens.kt:58 | `--m3e-comp-drag-handle-shape-pressed` | `var(--m3e-sys-shape-corner-medium)` |  |
 | `DragHandleTokens.PressedWidth` | `12.0.dp` | DragHandleTokens.kt:61 | `--m3e-comp-drag-handle-width-pressed` | `12px` |  |
@@ -1086,17 +1125,21 @@ Emitted: 370 system and 2443 component variables from 104 component token object
 |---|---|---|---|---|---|
 | `ElevatedButtonTokens.ContainerColor` | `ColorSchemeKeyTokens.SurfaceContainerLow` | ElevatedButtonTokens.kt:22 | `--m3e-comp-elevated-button-container-color` | `var(--m3e-sys-color-surface-container-low)` |  |
 | `ElevatedButtonTokens.ContainerElevation` | `ElevationTokens.Level1` | ElevatedButtonTokens.kt:25 | `--m3e-comp-elevated-button-container-elevation` | `var(--m3e-sys-elevation-level1)` |  |
+| `ElevatedButtonTokens.ContainerElevation` | `ElevationTokens.Level1` | ElevatedButtonTokens.kt:25 | `--m3e-comp-elevated-button-container-shadow` | `var(--m3e-sys-elevation-level1-shadow)` | derived: box-shadow of the referenced elevation level |
 | `ElevatedButtonTokens.DisabledContainerColor` | `ColorSchemeKeyTokens.OnSurface` | ElevatedButtonTokens.kt:28 | `--m3e-comp-elevated-button-container-color-disabled` | `var(--m3e-sys-color-on-surface)` |  |
 | `ElevatedButtonTokens.DisabledContainerElevation` | `ElevationTokens.Level0` | ElevatedButtonTokens.kt:31 | `--m3e-comp-elevated-button-container-elevation-disabled` | `var(--m3e-sys-elevation-level0)` |  |
+| `ElevatedButtonTokens.DisabledContainerElevation` | `ElevationTokens.Level0` | ElevatedButtonTokens.kt:31 | `--m3e-comp-elevated-button-container-shadow-disabled` | `var(--m3e-sys-elevation-level0-shadow)` | derived: box-shadow of the referenced elevation level |
 | `ElevatedButtonTokens.DisabledContainerOpacity` | `0.1f` | ElevatedButtonTokens.kt:34 | `--m3e-comp-elevated-button-container-opacity-disabled` | `0.1` |  |
 | `ElevatedButtonTokens.DisabledIconColor` | `ColorSchemeKeyTokens.OnSurfaceVariant` | ElevatedButtonTokens.kt:35 | `--m3e-comp-elevated-button-icon-color-disabled` | `var(--m3e-sys-color-on-surface-variant)` |  |
 | `ElevatedButtonTokens.DisabledIconOpacity` | `0.38f` | ElevatedButtonTokens.kt:38 | `--m3e-comp-elevated-button-icon-opacity-disabled` | `0.38` |  |
 | `ElevatedButtonTokens.DisabledLabelTextColor` | `ColorSchemeKeyTokens.OnSurfaceVariant` | ElevatedButtonTokens.kt:39 | `--m3e-comp-elevated-button-label-text-color-disabled` | `var(--m3e-sys-color-on-surface-variant)` |  |
 | `ElevatedButtonTokens.DisabledLabelTextOpacity` | `0.38f` | ElevatedButtonTokens.kt:42 | `--m3e-comp-elevated-button-label-text-opacity-disabled` | `0.38` |  |
 | `ElevatedButtonTokens.FocusedContainerElevation` | `ElevationTokens.Level1` | ElevatedButtonTokens.kt:43 | `--m3e-comp-elevated-button-container-elevation-focused` | `var(--m3e-sys-elevation-level1)` |  |
+| `ElevatedButtonTokens.FocusedContainerElevation` | `ElevationTokens.Level1` | ElevatedButtonTokens.kt:43 | `--m3e-comp-elevated-button-container-shadow-focused` | `var(--m3e-sys-elevation-level1-shadow)` | derived: box-shadow of the referenced elevation level |
 | `ElevatedButtonTokens.FocusedIconColor` | `ColorSchemeKeyTokens.Primary` | ElevatedButtonTokens.kt:46 | `--m3e-comp-elevated-button-icon-color-focused` | `var(--m3e-sys-color-primary)` |  |
 | `ElevatedButtonTokens.FocusedLabelTextColor` | `ColorSchemeKeyTokens.Primary` | ElevatedButtonTokens.kt:49 | `--m3e-comp-elevated-button-label-text-color-focused` | `var(--m3e-sys-color-primary)` |  |
 | `ElevatedButtonTokens.HoveredContainerElevation` | `ElevationTokens.Level2` | ElevatedButtonTokens.kt:52 | `--m3e-comp-elevated-button-container-elevation-hovered` | `var(--m3e-sys-elevation-level2)` |  |
+| `ElevatedButtonTokens.HoveredContainerElevation` | `ElevationTokens.Level2` | ElevatedButtonTokens.kt:52 | `--m3e-comp-elevated-button-container-shadow-hovered` | `var(--m3e-sys-elevation-level2-shadow)` | derived: box-shadow of the referenced elevation level |
 | `ElevatedButtonTokens.HoveredIconColor` | `ColorSchemeKeyTokens.Primary` | ElevatedButtonTokens.kt:55 | `--m3e-comp-elevated-button-icon-color-hovered` | `var(--m3e-sys-color-primary)` |  |
 | `ElevatedButtonTokens.HoveredLabelTextColor` | `ColorSchemeKeyTokens.Primary` | ElevatedButtonTokens.kt:58 | `--m3e-comp-elevated-button-label-text-color-hovered` | `var(--m3e-sys-color-primary)` |  |
 | `ElevatedButtonTokens.IconColor` | `ColorSchemeKeyTokens.Primary` | ElevatedButtonTokens.kt:61 | `--m3e-comp-elevated-button-icon-color` | `var(--m3e-sys-color-primary)` |  |
@@ -1104,6 +1147,7 @@ Emitted: 370 system and 2443 component variables from 104 component token object
 | `ElevatedButtonTokens.LabelTextSelectedColor` | `ColorSchemeKeyTokens.OnPrimary` | ElevatedButtonTokens.kt:67 | `--m3e-comp-elevated-button-label-text-color-selected` | `var(--m3e-sys-color-on-primary)` |  |
 | `ElevatedButtonTokens.LabelTextUnselectedColor` | `ColorSchemeKeyTokens.Primary` | ElevatedButtonTokens.kt:70 | `--m3e-comp-elevated-button-label-text-color-unselected` | `var(--m3e-sys-color-primary)` |  |
 | `ElevatedButtonTokens.PressedContainerElevation` | `ElevationTokens.Level1` | ElevatedButtonTokens.kt:73 | `--m3e-comp-elevated-button-container-elevation-pressed` | `var(--m3e-sys-elevation-level1)` |  |
+| `ElevatedButtonTokens.PressedContainerElevation` | `ElevationTokens.Level1` | ElevatedButtonTokens.kt:73 | `--m3e-comp-elevated-button-container-shadow-pressed` | `var(--m3e-sys-elevation-level1-shadow)` | derived: box-shadow of the referenced elevation level |
 | `ElevatedButtonTokens.PressedIconColor` | `ColorSchemeKeyTokens.Primary` | ElevatedButtonTokens.kt:76 | `--m3e-comp-elevated-button-icon-color-pressed` | `var(--m3e-sys-color-primary)` |  |
 | `ElevatedButtonTokens.PressedLabelTextColor` | `ColorSchemeKeyTokens.Primary` | ElevatedButtonTokens.kt:79 | `--m3e-comp-elevated-button-label-text-color-pressed` | `var(--m3e-sys-color-primary)` |  |
 | `ElevatedButtonTokens.SelectedContainerColor` | `ColorSchemeKeyTokens.Primary` | ElevatedButtonTokens.kt:82 | `--m3e-comp-elevated-button-container-color-selected` | `var(--m3e-sys-color-primary)` |  |
@@ -1129,17 +1173,23 @@ Emitted: 370 system and 2443 component variables from 104 component token object
 |---|---|---|---|---|---|
 | `ElevatedCardTokens.ContainerColor` | `ColorSchemeKeyTokens.SurfaceContainerLow` | ElevatedCardTokens.kt:24 | `--m3e-comp-elevated-card-container-color` | `var(--m3e-sys-color-surface-container-low)` |  |
 | `ElevatedCardTokens.ContainerElevation` | `ElevationTokens.Level1` | ElevatedCardTokens.kt:27 | `--m3e-comp-elevated-card-container-elevation` | `var(--m3e-sys-elevation-level1)` |  |
+| `ElevatedCardTokens.ContainerElevation` | `ElevationTokens.Level1` | ElevatedCardTokens.kt:27 | `--m3e-comp-elevated-card-container-shadow` | `var(--m3e-sys-elevation-level1-shadow)` | derived: box-shadow of the referenced elevation level |
 | `ElevatedCardTokens.ContainerShape` | `ShapeKeyTokens.CornerMedium` | ElevatedCardTokens.kt:30 | `--m3e-comp-elevated-card-container-shape` | `var(--m3e-sys-shape-corner-medium)` |  |
 | `ElevatedCardTokens.DisabledContainerColor` | `ColorSchemeKeyTokens.Surface` | ElevatedCardTokens.kt:33 | `--m3e-comp-elevated-card-container-color-disabled` | `var(--m3e-sys-color-surface)` |  |
 | `ElevatedCardTokens.DisabledContainerElevation` | `ElevationTokens.Level1` | ElevatedCardTokens.kt:36 | `--m3e-comp-elevated-card-container-elevation-disabled` | `var(--m3e-sys-elevation-level1)` |  |
+| `ElevatedCardTokens.DisabledContainerElevation` | `ElevationTokens.Level1` | ElevatedCardTokens.kt:36 | `--m3e-comp-elevated-card-container-shadow-disabled` | `var(--m3e-sys-elevation-level1-shadow)` | derived: box-shadow of the referenced elevation level |
 | `ElevatedCardTokens.DisabledContainerOpacity` | `0.38f` | ElevatedCardTokens.kt:39 | `--m3e-comp-elevated-card-container-opacity-disabled` | `0.38` |  |
 | `ElevatedCardTokens.DraggedContainerElevation` | `ElevationTokens.Level4` | ElevatedCardTokens.kt:40 | `--m3e-comp-elevated-card-container-elevation-dragged` | `var(--m3e-sys-elevation-level4)` |  |
+| `ElevatedCardTokens.DraggedContainerElevation` | `ElevationTokens.Level4` | ElevatedCardTokens.kt:40 | `--m3e-comp-elevated-card-container-shadow-dragged` | `var(--m3e-sys-elevation-level4-shadow)` | derived: box-shadow of the referenced elevation level |
 | `ElevatedCardTokens.FocusContainerElevation` | `ElevationTokens.Level1` | ElevatedCardTokens.kt:43 | `--m3e-comp-elevated-card-container-elevation-focus` | `var(--m3e-sys-elevation-level1)` |  |
+| `ElevatedCardTokens.FocusContainerElevation` | `ElevationTokens.Level1` | ElevatedCardTokens.kt:43 | `--m3e-comp-elevated-card-container-shadow-focus` | `var(--m3e-sys-elevation-level1-shadow)` | derived: box-shadow of the referenced elevation level |
 | `ElevatedCardTokens.FocusIndicatorColor` | `ColorSchemeKeyTokens.Secondary` | ElevatedCardTokens.kt:46 | `--m3e-comp-elevated-card-focus-indicator-color` | `var(--m3e-sys-color-secondary)` |  |
 | `ElevatedCardTokens.HoverContainerElevation` | `ElevationTokens.Level2` | ElevatedCardTokens.kt:49 | `--m3e-comp-elevated-card-container-elevation-hover` | `var(--m3e-sys-elevation-level2)` |  |
+| `ElevatedCardTokens.HoverContainerElevation` | `ElevationTokens.Level2` | ElevatedCardTokens.kt:49 | `--m3e-comp-elevated-card-container-shadow-hover` | `var(--m3e-sys-elevation-level2-shadow)` | derived: box-shadow of the referenced elevation level |
 | `ElevatedCardTokens.IconColor` | `ColorSchemeKeyTokens.Primary` | ElevatedCardTokens.kt:52 | `--m3e-comp-elevated-card-icon-color` | `var(--m3e-sys-color-primary)` |  |
 | `ElevatedCardTokens.IconSize` | `24.0.dp` | ElevatedCardTokens.kt:55 | `--m3e-comp-elevated-card-icon-size` | `24px` |  |
 | `ElevatedCardTokens.PressedContainerElevation` | `ElevationTokens.Level1` | ElevatedCardTokens.kt:58 | `--m3e-comp-elevated-card-container-elevation-pressed` | `var(--m3e-sys-elevation-level1)` |  |
+| `ElevatedCardTokens.PressedContainerElevation` | `ElevationTokens.Level1` | ElevatedCardTokens.kt:58 | `--m3e-comp-elevated-card-container-shadow-pressed` | `var(--m3e-sys-elevation-level1-shadow)` | derived: box-shadow of the referenced elevation level |
 
 ## expanded-list
 
@@ -1181,12 +1231,15 @@ Emitted: 370 system and 2443 component variables from 104 component token object
 |---|---|---|---|---|---|
 | `ExtendedFabPrimaryTokens.ContainerColor` | `ColorSchemeKeyTokens.PrimaryContainer` | ExtendedFabPrimaryTokens.kt:24 | `--m3e-comp-extended-fab-primary-container-color` | `var(--m3e-sys-color-primary-container)` |  |
 | `ExtendedFabPrimaryTokens.ContainerElevation` | `ElevationTokens.Level3` | ExtendedFabPrimaryTokens.kt:27 | `--m3e-comp-extended-fab-primary-container-elevation` | `var(--m3e-sys-elevation-level3)` |  |
+| `ExtendedFabPrimaryTokens.ContainerElevation` | `ElevationTokens.Level3` | ExtendedFabPrimaryTokens.kt:27 | `--m3e-comp-extended-fab-primary-container-shadow` | `var(--m3e-sys-elevation-level3-shadow)` | derived: box-shadow of the referenced elevation level |
 | `ExtendedFabPrimaryTokens.ContainerHeight` | `56.0.dp` | ExtendedFabPrimaryTokens.kt:30 | `--m3e-comp-extended-fab-primary-container-height` | `56px` |  |
 | `ExtendedFabPrimaryTokens.ContainerShape` | `ShapeKeyTokens.CornerLarge` | ExtendedFabPrimaryTokens.kt:33 | `--m3e-comp-extended-fab-primary-container-shape` | `var(--m3e-sys-shape-corner-large)` |  |
 | `ExtendedFabPrimaryTokens.FocusContainerElevation` | `ElevationTokens.Level3` | ExtendedFabPrimaryTokens.kt:36 | `--m3e-comp-extended-fab-primary-container-elevation-focus` | `var(--m3e-sys-elevation-level3)` |  |
+| `ExtendedFabPrimaryTokens.FocusContainerElevation` | `ElevationTokens.Level3` | ExtendedFabPrimaryTokens.kt:36 | `--m3e-comp-extended-fab-primary-container-shadow-focus` | `var(--m3e-sys-elevation-level3-shadow)` | derived: box-shadow of the referenced elevation level |
 | `ExtendedFabPrimaryTokens.FocusIconColor` | `ColorSchemeKeyTokens.OnPrimaryContainer` | ExtendedFabPrimaryTokens.kt:39 | `--m3e-comp-extended-fab-primary-icon-color-focus` | `var(--m3e-sys-color-on-primary-container)` |  |
 | `ExtendedFabPrimaryTokens.FocusLabelTextColor` | `ColorSchemeKeyTokens.OnPrimaryContainer` | ExtendedFabPrimaryTokens.kt:42 | `--m3e-comp-extended-fab-primary-label-text-color-focus` | `var(--m3e-sys-color-on-primary-container)` |  |
 | `ExtendedFabPrimaryTokens.HoverContainerElevation` | `ElevationTokens.Level4` | ExtendedFabPrimaryTokens.kt:45 | `--m3e-comp-extended-fab-primary-container-elevation-hover` | `var(--m3e-sys-elevation-level4)` |  |
+| `ExtendedFabPrimaryTokens.HoverContainerElevation` | `ElevationTokens.Level4` | ExtendedFabPrimaryTokens.kt:45 | `--m3e-comp-extended-fab-primary-container-shadow-hover` | `var(--m3e-sys-elevation-level4-shadow)` | derived: box-shadow of the referenced elevation level |
 | `ExtendedFabPrimaryTokens.HoverIconColor` | `ColorSchemeKeyTokens.OnPrimaryContainer` | ExtendedFabPrimaryTokens.kt:48 | `--m3e-comp-extended-fab-primary-icon-color-hover` | `var(--m3e-sys-color-on-primary-container)` |  |
 | `ExtendedFabPrimaryTokens.HoverLabelTextColor` | `ColorSchemeKeyTokens.OnPrimaryContainer` | ExtendedFabPrimaryTokens.kt:51 | `--m3e-comp-extended-fab-primary-label-text-color-hover` | `var(--m3e-sys-color-on-primary-container)` |  |
 | `ExtendedFabPrimaryTokens.IconColor` | `ColorSchemeKeyTokens.OnPrimaryContainer` | ExtendedFabPrimaryTokens.kt:54 | `--m3e-comp-extended-fab-primary-icon-color` | `var(--m3e-sys-color-on-primary-container)` |  |
@@ -1198,10 +1251,15 @@ Emitted: 370 system and 2443 component variables from 104 component token object
 | `ExtendedFabPrimaryTokens.LabelTextFont` | `TypographyKeyTokens.LabelLarge` | ExtendedFabPrimaryTokens.kt:63 | `--m3e-comp-extended-fab-primary-label-text-line-height` | `var(--m3e-sys-typescale-label-large-line-height)` |  |
 | `ExtendedFabPrimaryTokens.LabelTextFont` | `TypographyKeyTokens.LabelLarge` | ExtendedFabPrimaryTokens.kt:63 | `--m3e-comp-extended-fab-primary-label-text-tracking` | `var(--m3e-sys-typescale-label-large-tracking)` |  |
 | `ExtendedFabPrimaryTokens.LoweredContainerElevation` | `ElevationTokens.Level1` | ExtendedFabPrimaryTokens.kt:66 | `--m3e-comp-extended-fab-primary-lowered-container-elevation` | `var(--m3e-sys-elevation-level1)` |  |
+| `ExtendedFabPrimaryTokens.LoweredContainerElevation` | `ElevationTokens.Level1` | ExtendedFabPrimaryTokens.kt:66 | `--m3e-comp-extended-fab-primary-lowered-container-shadow` | `var(--m3e-sys-elevation-level1-shadow)` | derived: box-shadow of the referenced elevation level |
 | `ExtendedFabPrimaryTokens.LoweredFocusContainerElevation` | `ElevationTokens.Level1` | ExtendedFabPrimaryTokens.kt:69 | `--m3e-comp-extended-fab-primary-lowered-container-elevation-focus` | `var(--m3e-sys-elevation-level1)` |  |
+| `ExtendedFabPrimaryTokens.LoweredFocusContainerElevation` | `ElevationTokens.Level1` | ExtendedFabPrimaryTokens.kt:69 | `--m3e-comp-extended-fab-primary-lowered-container-shadow-focus` | `var(--m3e-sys-elevation-level1-shadow)` | derived: box-shadow of the referenced elevation level |
 | `ExtendedFabPrimaryTokens.LoweredHoverContainerElevation` | `ElevationTokens.Level2` | ExtendedFabPrimaryTokens.kt:72 | `--m3e-comp-extended-fab-primary-lowered-container-elevation-hover` | `var(--m3e-sys-elevation-level2)` |  |
+| `ExtendedFabPrimaryTokens.LoweredHoverContainerElevation` | `ElevationTokens.Level2` | ExtendedFabPrimaryTokens.kt:72 | `--m3e-comp-extended-fab-primary-lowered-container-shadow-hover` | `var(--m3e-sys-elevation-level2-shadow)` | derived: box-shadow of the referenced elevation level |
 | `ExtendedFabPrimaryTokens.LoweredPressedContainerElevation` | `ElevationTokens.Level1` | ExtendedFabPrimaryTokens.kt:75 | `--m3e-comp-extended-fab-primary-lowered-container-elevation-pressed` | `var(--m3e-sys-elevation-level1)` |  |
+| `ExtendedFabPrimaryTokens.LoweredPressedContainerElevation` | `ElevationTokens.Level1` | ExtendedFabPrimaryTokens.kt:75 | `--m3e-comp-extended-fab-primary-lowered-container-shadow-pressed` | `var(--m3e-sys-elevation-level1-shadow)` | derived: box-shadow of the referenced elevation level |
 | `ExtendedFabPrimaryTokens.PressedContainerElevation` | `ElevationTokens.Level3` | ExtendedFabPrimaryTokens.kt:78 | `--m3e-comp-extended-fab-primary-container-elevation-pressed` | `var(--m3e-sys-elevation-level3)` |  |
+| `ExtendedFabPrimaryTokens.PressedContainerElevation` | `ElevationTokens.Level3` | ExtendedFabPrimaryTokens.kt:78 | `--m3e-comp-extended-fab-primary-container-shadow-pressed` | `var(--m3e-sys-elevation-level3-shadow)` | derived: box-shadow of the referenced elevation level |
 | `ExtendedFabPrimaryTokens.PressedIconColor` | `ColorSchemeKeyTokens.OnPrimaryContainer` | ExtendedFabPrimaryTokens.kt:81 | `--m3e-comp-extended-fab-primary-icon-color-pressed` | `var(--m3e-sys-color-on-primary-container)` |  |
 | `ExtendedFabPrimaryTokens.PressedLabelTextColor` | `ColorSchemeKeyTokens.OnPrimaryContainer` | ExtendedFabPrimaryTokens.kt:84 | `--m3e-comp-extended-fab-primary-label-text-color-pressed` | `var(--m3e-sys-color-on-primary-container)` |  |
 
@@ -1248,12 +1306,14 @@ Emitted: 370 system and 2443 component variables from 104 component token object
 |---|---|---|---|---|---|
 | `FabMenuBaselineTokens.CloseButtonBetweenSpace` | `8.0.dp` | FabMenuBaselineTokens.kt:24 | `--m3e-comp-fab-menu-baseline-close-button-between-space` | `8px` |  |
 | `FabMenuBaselineTokens.CloseButtonContainerElevation` | `ElevationTokens.Level3` | FabMenuBaselineTokens.kt:27 | `--m3e-comp-fab-menu-baseline-close-button-container-elevation` | `var(--m3e-sys-elevation-level3)` |  |
+| `FabMenuBaselineTokens.CloseButtonContainerElevation` | `ElevationTokens.Level3` | FabMenuBaselineTokens.kt:27 | `--m3e-comp-fab-menu-baseline-close-button-container-shadow` | `var(--m3e-sys-elevation-level3-shadow)` | derived: box-shadow of the referenced elevation level |
 | `FabMenuBaselineTokens.CloseButtonContainerHeight` | `56.0.dp` | FabMenuBaselineTokens.kt:30 | `--m3e-comp-fab-menu-baseline-close-button-container-height` | `56px` |  |
 | `FabMenuBaselineTokens.CloseButtonContainerShape` | `ShapeKeyTokens.CornerFull` | FabMenuBaselineTokens.kt:33 | `--m3e-comp-fab-menu-baseline-close-button-container-shape` | `var(--m3e-sys-shape-corner-full)` |  |
 | `FabMenuBaselineTokens.CloseButtonContainerWidth` | `56.0.dp` | FabMenuBaselineTokens.kt:36 | `--m3e-comp-fab-menu-baseline-close-button-container-width` | `56px` |  |
 | `FabMenuBaselineTokens.CloseButtonIconSize` | `20.0.dp` | FabMenuBaselineTokens.kt:39 | `--m3e-comp-fab-menu-baseline-close-button-icon-size` | `20px` |  |
 | `FabMenuBaselineTokens.ListItemBetweenSpace` | `4.0.dp` | FabMenuBaselineTokens.kt:42 | `--m3e-comp-fab-menu-baseline-list-item-between-space` | `4px` |  |
 | `FabMenuBaselineTokens.ListItemContainerElevation` | `ElevationTokens.Level3` | FabMenuBaselineTokens.kt:45 | `--m3e-comp-fab-menu-baseline-list-item-container-elevation` | `var(--m3e-sys-elevation-level3)` |  |
+| `FabMenuBaselineTokens.ListItemContainerElevation` | `ElevationTokens.Level3` | FabMenuBaselineTokens.kt:45 | `--m3e-comp-fab-menu-baseline-list-item-container-shadow` | `var(--m3e-sys-elevation-level3-shadow)` | derived: box-shadow of the referenced elevation level |
 | `FabMenuBaselineTokens.ListItemContainerHeight` | `56.0.dp` | FabMenuBaselineTokens.kt:48 | `--m3e-comp-fab-menu-baseline-list-item-container-height` | `56px` |  |
 | `FabMenuBaselineTokens.ListItemContainerShape` | `ShapeKeyTokens.CornerFull` | FabMenuBaselineTokens.kt:51 | `--m3e-comp-fab-menu-baseline-list-item-container-shape` | `var(--m3e-sys-shape-corner-full)` |  |
 | `FabMenuBaselineTokens.ListItemIconLabelSpace` | `8.0.dp` | FabMenuBaselineTokens.kt:54 | `--m3e-comp-fab-menu-baseline-list-item-icon-label-space` | `8px` |  |
@@ -1267,12 +1327,16 @@ Emitted: 370 system and 2443 component variables from 104 component token object
 |---|---|---|---|---|---|
 | `FabPrimaryContainerTokens.ContainerColor` | `ColorSchemeKeyTokens.PrimaryContainer` | FabPrimaryContainerTokens.kt:22 | `--m3e-comp-fab-primary-container-container-color` | `var(--m3e-sys-color-primary-container)` |  |
 | `FabPrimaryContainerTokens.ContainerElevation` | `ElevationTokens.Level3` | FabPrimaryContainerTokens.kt:25 | `--m3e-comp-fab-primary-container-container-elevation` | `var(--m3e-sys-elevation-level3)` |  |
+| `FabPrimaryContainerTokens.ContainerElevation` | `ElevationTokens.Level3` | FabPrimaryContainerTokens.kt:25 | `--m3e-comp-fab-primary-container-container-shadow` | `var(--m3e-sys-elevation-level3-shadow)` | derived: box-shadow of the referenced elevation level |
 | `FabPrimaryContainerTokens.FocusedContainerElevation` | `ElevationTokens.Level3` | FabPrimaryContainerTokens.kt:28 | `--m3e-comp-fab-primary-container-container-elevation-focused` | `var(--m3e-sys-elevation-level3)` |  |
+| `FabPrimaryContainerTokens.FocusedContainerElevation` | `ElevationTokens.Level3` | FabPrimaryContainerTokens.kt:28 | `--m3e-comp-fab-primary-container-container-shadow-focused` | `var(--m3e-sys-elevation-level3-shadow)` | derived: box-shadow of the referenced elevation level |
 | `FabPrimaryContainerTokens.FocusedIconColor` | `ColorSchemeKeyTokens.OnPrimaryContainer` | FabPrimaryContainerTokens.kt:31 | `--m3e-comp-fab-primary-container-icon-color-focused` | `var(--m3e-sys-color-on-primary-container)` |  |
 | `FabPrimaryContainerTokens.HoveredContainerElevation` | `ElevationTokens.Level4` | FabPrimaryContainerTokens.kt:34 | `--m3e-comp-fab-primary-container-container-elevation-hovered` | `var(--m3e-sys-elevation-level4)` |  |
+| `FabPrimaryContainerTokens.HoveredContainerElevation` | `ElevationTokens.Level4` | FabPrimaryContainerTokens.kt:34 | `--m3e-comp-fab-primary-container-container-shadow-hovered` | `var(--m3e-sys-elevation-level4-shadow)` | derived: box-shadow of the referenced elevation level |
 | `FabPrimaryContainerTokens.HoveredIconColor` | `ColorSchemeKeyTokens.OnPrimaryContainer` | FabPrimaryContainerTokens.kt:37 | `--m3e-comp-fab-primary-container-icon-color-hovered` | `var(--m3e-sys-color-on-primary-container)` |  |
 | `FabPrimaryContainerTokens.IconColor` | `ColorSchemeKeyTokens.OnPrimaryContainer` | FabPrimaryContainerTokens.kt:40 | `--m3e-comp-fab-primary-container-icon-color` | `var(--m3e-sys-color-on-primary-container)` |  |
 | `FabPrimaryContainerTokens.PressedContainerElevation` | `ElevationTokens.Level3` | FabPrimaryContainerTokens.kt:43 | `--m3e-comp-fab-primary-container-container-elevation-pressed` | `var(--m3e-sys-elevation-level3)` |  |
+| `FabPrimaryContainerTokens.PressedContainerElevation` | `ElevationTokens.Level3` | FabPrimaryContainerTokens.kt:43 | `--m3e-comp-fab-primary-container-container-shadow-pressed` | `var(--m3e-sys-elevation-level3-shadow)` | derived: box-shadow of the referenced elevation level |
 | `FabPrimaryContainerTokens.PressedIconColor` | `ColorSchemeKeyTokens.OnPrimaryContainer` | FabPrimaryContainerTokens.kt:46 | `--m3e-comp-fab-primary-container-icon-color-pressed` | `var(--m3e-sys-color-on-primary-container)` |  |
 
 ## fab-secondary-container
@@ -1281,12 +1345,16 @@ Emitted: 370 system and 2443 component variables from 104 component token object
 |---|---|---|---|---|---|
 | `FabSecondaryContainerTokens.ContainerColor` | `ColorSchemeKeyTokens.SecondaryContainer` | FabSecondaryContainerTokens.kt:22 | `--m3e-comp-fab-secondary-container-container-color` | `var(--m3e-sys-color-secondary-container)` |  |
 | `FabSecondaryContainerTokens.ContainerElevation` | `ElevationTokens.Level3` | FabSecondaryContainerTokens.kt:25 | `--m3e-comp-fab-secondary-container-container-elevation` | `var(--m3e-sys-elevation-level3)` |  |
+| `FabSecondaryContainerTokens.ContainerElevation` | `ElevationTokens.Level3` | FabSecondaryContainerTokens.kt:25 | `--m3e-comp-fab-secondary-container-container-shadow` | `var(--m3e-sys-elevation-level3-shadow)` | derived: box-shadow of the referenced elevation level |
 | `FabSecondaryContainerTokens.FocusedContainerElevation` | `ElevationTokens.Level3` | FabSecondaryContainerTokens.kt:28 | `--m3e-comp-fab-secondary-container-container-elevation-focused` | `var(--m3e-sys-elevation-level3)` |  |
+| `FabSecondaryContainerTokens.FocusedContainerElevation` | `ElevationTokens.Level3` | FabSecondaryContainerTokens.kt:28 | `--m3e-comp-fab-secondary-container-container-shadow-focused` | `var(--m3e-sys-elevation-level3-shadow)` | derived: box-shadow of the referenced elevation level |
 | `FabSecondaryContainerTokens.FocusedIconColor` | `ColorSchemeKeyTokens.OnSecondaryContainer` | FabSecondaryContainerTokens.kt:31 | `--m3e-comp-fab-secondary-container-icon-color-focused` | `var(--m3e-sys-color-on-secondary-container)` |  |
 | `FabSecondaryContainerTokens.HoveredContainerElevation` | `ElevationTokens.Level4` | FabSecondaryContainerTokens.kt:34 | `--m3e-comp-fab-secondary-container-container-elevation-hovered` | `var(--m3e-sys-elevation-level4)` |  |
+| `FabSecondaryContainerTokens.HoveredContainerElevation` | `ElevationTokens.Level4` | FabSecondaryContainerTokens.kt:34 | `--m3e-comp-fab-secondary-container-container-shadow-hovered` | `var(--m3e-sys-elevation-level4-shadow)` | derived: box-shadow of the referenced elevation level |
 | `FabSecondaryContainerTokens.HoveredIconColor` | `ColorSchemeKeyTokens.OnSecondaryContainer` | FabSecondaryContainerTokens.kt:37 | `--m3e-comp-fab-secondary-container-icon-color-hovered` | `var(--m3e-sys-color-on-secondary-container)` |  |
 | `FabSecondaryContainerTokens.IconColor` | `ColorSchemeKeyTokens.OnSecondaryContainer` | FabSecondaryContainerTokens.kt:40 | `--m3e-comp-fab-secondary-container-icon-color` | `var(--m3e-sys-color-on-secondary-container)` |  |
 | `FabSecondaryContainerTokens.PressedContainerElevation` | `ElevationTokens.Level3` | FabSecondaryContainerTokens.kt:43 | `--m3e-comp-fab-secondary-container-container-elevation-pressed` | `var(--m3e-sys-elevation-level3)` |  |
+| `FabSecondaryContainerTokens.PressedContainerElevation` | `ElevationTokens.Level3` | FabSecondaryContainerTokens.kt:43 | `--m3e-comp-fab-secondary-container-container-shadow-pressed` | `var(--m3e-sys-elevation-level3-shadow)` | derived: box-shadow of the referenced elevation level |
 | `FabSecondaryContainerTokens.PressedIconColor` | `ColorSchemeKeyTokens.OnSecondaryContainer` | FabSecondaryContainerTokens.kt:46 | `--m3e-comp-fab-secondary-container-icon-color-pressed` | `var(--m3e-sys-color-on-secondary-container)` |  |
 
 ## fab-small
@@ -1304,6 +1372,7 @@ Emitted: 370 system and 2443 component variables from 104 component token object
 |---|---|---|---|---|---|
 | `FilledAutocompleteTokens.MenuContainerColor` | `ColorSchemeKeyTokens.SurfaceContainer` | FilledAutocompleteTokens.kt:24 | `--m3e-comp-filled-autocomplete-menu-container-color` | `var(--m3e-sys-color-surface-container)` |  |
 | `FilledAutocompleteTokens.MenuContainerElevation` | `ElevationTokens.Level2` | FilledAutocompleteTokens.kt:27 | `--m3e-comp-filled-autocomplete-menu-container-elevation` | `var(--m3e-sys-elevation-level2)` |  |
+| `FilledAutocompleteTokens.MenuContainerElevation` | `ElevationTokens.Level2` | FilledAutocompleteTokens.kt:27 | `--m3e-comp-filled-autocomplete-menu-container-shadow` | `var(--m3e-sys-elevation-level2-shadow)` | derived: box-shadow of the referenced elevation level |
 | `FilledAutocompleteTokens.MenuContainerShape` | `ShapeKeyTokens.CornerExtraSmall` | FilledAutocompleteTokens.kt:30 | `--m3e-comp-filled-autocomplete-menu-container-shape` | `var(--m3e-sys-shape-corner-extra-small)` |  |
 | `FilledAutocompleteTokens.TextFieldActiveIndicatorColor` | `ColorSchemeKeyTokens.OnSurfaceVariant` | FilledAutocompleteTokens.kt:33 | `--m3e-comp-filled-autocomplete-text-field-active-indicator-color` | `var(--m3e-sys-color-on-surface-variant)` |  |
 | `FilledAutocompleteTokens.TextFieldActiveIndicatorHeight` | `1.0.dp` | FilledAutocompleteTokens.kt:36 | `--m3e-comp-filled-autocomplete-text-field-active-indicator-height` | `1px` |  |
@@ -1390,17 +1459,21 @@ Emitted: 370 system and 2443 component variables from 104 component token object
 |---|---|---|---|---|---|
 | `FilledButtonTokens.ContainerColor` | `ColorSchemeKeyTokens.Primary` | FilledButtonTokens.kt:22 | `--m3e-comp-filled-button-container-color` | `var(--m3e-sys-color-primary)` |  |
 | `FilledButtonTokens.ContainerElevation` | `ElevationTokens.Level0` | FilledButtonTokens.kt:25 | `--m3e-comp-filled-button-container-elevation` | `var(--m3e-sys-elevation-level0)` |  |
+| `FilledButtonTokens.ContainerElevation` | `ElevationTokens.Level0` | FilledButtonTokens.kt:25 | `--m3e-comp-filled-button-container-shadow` | `var(--m3e-sys-elevation-level0-shadow)` | derived: box-shadow of the referenced elevation level |
 | `FilledButtonTokens.DisabledContainerColor` | `ColorSchemeKeyTokens.OnSurface` | FilledButtonTokens.kt:28 | `--m3e-comp-filled-button-container-color-disabled` | `var(--m3e-sys-color-on-surface)` |  |
 | `FilledButtonTokens.DisabledContainerElevation` | `ElevationTokens.Level0` | FilledButtonTokens.kt:31 | `--m3e-comp-filled-button-container-elevation-disabled` | `var(--m3e-sys-elevation-level0)` |  |
+| `FilledButtonTokens.DisabledContainerElevation` | `ElevationTokens.Level0` | FilledButtonTokens.kt:31 | `--m3e-comp-filled-button-container-shadow-disabled` | `var(--m3e-sys-elevation-level0-shadow)` | derived: box-shadow of the referenced elevation level |
 | `FilledButtonTokens.DisabledContainerOpacity` | `0.1f` | FilledButtonTokens.kt:34 | `--m3e-comp-filled-button-container-opacity-disabled` | `0.1` |  |
 | `FilledButtonTokens.DisabledIconColor` | `ColorSchemeKeyTokens.OnSurfaceVariant` | FilledButtonTokens.kt:35 | `--m3e-comp-filled-button-icon-color-disabled` | `var(--m3e-sys-color-on-surface-variant)` |  |
 | `FilledButtonTokens.DisabledIconOpacity` | `0.38f` | FilledButtonTokens.kt:38 | `--m3e-comp-filled-button-icon-opacity-disabled` | `0.38` |  |
 | `FilledButtonTokens.DisabledLabelTextColor` | `ColorSchemeKeyTokens.OnSurfaceVariant` | FilledButtonTokens.kt:39 | `--m3e-comp-filled-button-label-text-color-disabled` | `var(--m3e-sys-color-on-surface-variant)` |  |
 | `FilledButtonTokens.DisabledLabelTextOpacity` | `0.38f` | FilledButtonTokens.kt:42 | `--m3e-comp-filled-button-label-text-opacity-disabled` | `0.38` |  |
 | `FilledButtonTokens.FocusedContainerElevation` | `ElevationTokens.Level0` | FilledButtonTokens.kt:43 | `--m3e-comp-filled-button-container-elevation-focused` | `var(--m3e-sys-elevation-level0)` |  |
+| `FilledButtonTokens.FocusedContainerElevation` | `ElevationTokens.Level0` | FilledButtonTokens.kt:43 | `--m3e-comp-filled-button-container-shadow-focused` | `var(--m3e-sys-elevation-level0-shadow)` | derived: box-shadow of the referenced elevation level |
 | `FilledButtonTokens.FocusedIconColor` | `ColorSchemeKeyTokens.OnPrimary` | FilledButtonTokens.kt:46 | `--m3e-comp-filled-button-icon-color-focused` | `var(--m3e-sys-color-on-primary)` |  |
 | `FilledButtonTokens.FocusedLabelTextColor` | `ColorSchemeKeyTokens.OnPrimary` | FilledButtonTokens.kt:49 | `--m3e-comp-filled-button-label-text-color-focused` | `var(--m3e-sys-color-on-primary)` |  |
 | `FilledButtonTokens.HoveredContainerElevation` | `ElevationTokens.Level1` | FilledButtonTokens.kt:52 | `--m3e-comp-filled-button-container-elevation-hovered` | `var(--m3e-sys-elevation-level1)` |  |
+| `FilledButtonTokens.HoveredContainerElevation` | `ElevationTokens.Level1` | FilledButtonTokens.kt:52 | `--m3e-comp-filled-button-container-shadow-hovered` | `var(--m3e-sys-elevation-level1-shadow)` | derived: box-shadow of the referenced elevation level |
 | `FilledButtonTokens.HoveredIconColor` | `ColorSchemeKeyTokens.OnPrimary` | FilledButtonTokens.kt:55 | `--m3e-comp-filled-button-icon-color-hovered` | `var(--m3e-sys-color-on-primary)` |  |
 | `FilledButtonTokens.HoveredLabelTextColor` | `ColorSchemeKeyTokens.OnPrimary` | FilledButtonTokens.kt:58 | `--m3e-comp-filled-button-label-text-color-hovered` | `var(--m3e-sys-color-on-primary)` |  |
 | `FilledButtonTokens.IconColor` | `ColorSchemeKeyTokens.OnPrimary` | FilledButtonTokens.kt:61 | `--m3e-comp-filled-button-icon-color` | `var(--m3e-sys-color-on-primary)` |  |
@@ -1408,6 +1481,7 @@ Emitted: 370 system and 2443 component variables from 104 component token object
 | `FilledButtonTokens.LabelTextSelectedColor` | `ColorSchemeKeyTokens.OnPrimary` | FilledButtonTokens.kt:67 | `--m3e-comp-filled-button-label-text-color-selected` | `var(--m3e-sys-color-on-primary)` |  |
 | `FilledButtonTokens.LabelTextUnselectedColor` | `ColorSchemeKeyTokens.OnSurfaceVariant` | FilledButtonTokens.kt:70 | `--m3e-comp-filled-button-label-text-color-unselected` | `var(--m3e-sys-color-on-surface-variant)` |  |
 | `FilledButtonTokens.PressedContainerElevation` | `ElevationTokens.Level0` | FilledButtonTokens.kt:73 | `--m3e-comp-filled-button-container-elevation-pressed` | `var(--m3e-sys-elevation-level0)` |  |
+| `FilledButtonTokens.PressedContainerElevation` | `ElevationTokens.Level0` | FilledButtonTokens.kt:73 | `--m3e-comp-filled-button-container-shadow-pressed` | `var(--m3e-sys-elevation-level0-shadow)` | derived: box-shadow of the referenced elevation level |
 | `FilledButtonTokens.PressedIconColor` | `ColorSchemeKeyTokens.OnPrimary` | FilledButtonTokens.kt:76 | `--m3e-comp-filled-button-icon-color-pressed` | `var(--m3e-sys-color-on-primary)` |  |
 | `FilledButtonTokens.PressedLabelTextColor` | `ColorSchemeKeyTokens.OnPrimary` | FilledButtonTokens.kt:79 | `--m3e-comp-filled-button-label-text-color-pressed` | `var(--m3e-sys-color-on-primary)` |  |
 | `FilledButtonTokens.SelectedContainerColor` | `ColorSchemeKeyTokens.Primary` | FilledButtonTokens.kt:82 | `--m3e-comp-filled-button-container-color-selected` | `var(--m3e-sys-color-primary)` |  |
@@ -1433,17 +1507,23 @@ Emitted: 370 system and 2443 component variables from 104 component token object
 |---|---|---|---|---|---|
 | `FilledCardTokens.ContainerColor` | `ColorSchemeKeyTokens.SurfaceContainerHighest` | FilledCardTokens.kt:24 | `--m3e-comp-filled-card-container-color` | `var(--m3e-sys-color-surface-container-highest)` |  |
 | `FilledCardTokens.ContainerElevation` | `ElevationTokens.Level0` | FilledCardTokens.kt:27 | `--m3e-comp-filled-card-container-elevation` | `var(--m3e-sys-elevation-level0)` |  |
+| `FilledCardTokens.ContainerElevation` | `ElevationTokens.Level0` | FilledCardTokens.kt:27 | `--m3e-comp-filled-card-container-shadow` | `var(--m3e-sys-elevation-level0-shadow)` | derived: box-shadow of the referenced elevation level |
 | `FilledCardTokens.ContainerShape` | `ShapeKeyTokens.CornerMedium` | FilledCardTokens.kt:30 | `--m3e-comp-filled-card-container-shape` | `var(--m3e-sys-shape-corner-medium)` |  |
 | `FilledCardTokens.DisabledContainerColor` | `ColorSchemeKeyTokens.SurfaceVariant` | FilledCardTokens.kt:33 | `--m3e-comp-filled-card-container-color-disabled` | `var(--m3e-sys-color-surface-variant)` |  |
 | `FilledCardTokens.DisabledContainerElevation` | `ElevationTokens.Level0` | FilledCardTokens.kt:36 | `--m3e-comp-filled-card-container-elevation-disabled` | `var(--m3e-sys-elevation-level0)` |  |
+| `FilledCardTokens.DisabledContainerElevation` | `ElevationTokens.Level0` | FilledCardTokens.kt:36 | `--m3e-comp-filled-card-container-shadow-disabled` | `var(--m3e-sys-elevation-level0-shadow)` | derived: box-shadow of the referenced elevation level |
 | `FilledCardTokens.DisabledContainerOpacity` | `0.38f` | FilledCardTokens.kt:39 | `--m3e-comp-filled-card-container-opacity-disabled` | `0.38` |  |
 | `FilledCardTokens.DraggedContainerElevation` | `ElevationTokens.Level3` | FilledCardTokens.kt:40 | `--m3e-comp-filled-card-container-elevation-dragged` | `var(--m3e-sys-elevation-level3)` |  |
+| `FilledCardTokens.DraggedContainerElevation` | `ElevationTokens.Level3` | FilledCardTokens.kt:40 | `--m3e-comp-filled-card-container-shadow-dragged` | `var(--m3e-sys-elevation-level3-shadow)` | derived: box-shadow of the referenced elevation level |
 | `FilledCardTokens.FocusContainerElevation` | `ElevationTokens.Level0` | FilledCardTokens.kt:43 | `--m3e-comp-filled-card-container-elevation-focus` | `var(--m3e-sys-elevation-level0)` |  |
+| `FilledCardTokens.FocusContainerElevation` | `ElevationTokens.Level0` | FilledCardTokens.kt:43 | `--m3e-comp-filled-card-container-shadow-focus` | `var(--m3e-sys-elevation-level0-shadow)` | derived: box-shadow of the referenced elevation level |
 | `FilledCardTokens.FocusIndicatorColor` | `ColorSchemeKeyTokens.Secondary` | FilledCardTokens.kt:46 | `--m3e-comp-filled-card-focus-indicator-color` | `var(--m3e-sys-color-secondary)` |  |
 | `FilledCardTokens.HoverContainerElevation` | `ElevationTokens.Level1` | FilledCardTokens.kt:49 | `--m3e-comp-filled-card-container-elevation-hover` | `var(--m3e-sys-elevation-level1)` |  |
+| `FilledCardTokens.HoverContainerElevation` | `ElevationTokens.Level1` | FilledCardTokens.kt:49 | `--m3e-comp-filled-card-container-shadow-hover` | `var(--m3e-sys-elevation-level1-shadow)` | derived: box-shadow of the referenced elevation level |
 | `FilledCardTokens.IconColor` | `ColorSchemeKeyTokens.Primary` | FilledCardTokens.kt:52 | `--m3e-comp-filled-card-icon-color` | `var(--m3e-sys-color-primary)` |  |
 | `FilledCardTokens.IconSize` | `24.0.dp` | FilledCardTokens.kt:55 | `--m3e-comp-filled-card-icon-size` | `24px` |  |
 | `FilledCardTokens.PressedContainerElevation` | `ElevationTokens.Level0` | FilledCardTokens.kt:58 | `--m3e-comp-filled-card-container-elevation-pressed` | `var(--m3e-sys-elevation-level0)` |  |
+| `FilledCardTokens.PressedContainerElevation` | `ElevationTokens.Level0` | FilledCardTokens.kt:58 | `--m3e-comp-filled-card-container-shadow-pressed` | `var(--m3e-sys-elevation-level0-shadow)` | derived: box-shadow of the referenced elevation level |
 
 ## filled-icon-button
 
@@ -1561,16 +1641,20 @@ Emitted: 370 system and 2443 component variables from 104 component token object
 |---|---|---|---|---|---|
 | `FilledTonalButtonTokens.ContainerColor` | `ColorSchemeKeyTokens.SecondaryContainer` | FilledTonalButtonTokens.kt:24 | `--m3e-comp-filled-tonal-button-container-color` | `var(--m3e-sys-color-secondary-container)` |  |
 | `FilledTonalButtonTokens.ContainerElevation` | `ElevationTokens.Level0` | FilledTonalButtonTokens.kt:27 | `--m3e-comp-filled-tonal-button-container-elevation` | `var(--m3e-sys-elevation-level0)` |  |
+| `FilledTonalButtonTokens.ContainerElevation` | `ElevationTokens.Level0` | FilledTonalButtonTokens.kt:27 | `--m3e-comp-filled-tonal-button-container-shadow` | `var(--m3e-sys-elevation-level0-shadow)` | derived: box-shadow of the referenced elevation level |
 | `FilledTonalButtonTokens.ContainerHeight` | `40.0.dp` | FilledTonalButtonTokens.kt:30 | `--m3e-comp-filled-tonal-button-container-height` | `40px` |  |
 | `FilledTonalButtonTokens.ContainerShape` | `ShapeKeyTokens.CornerFull` | FilledTonalButtonTokens.kt:33 | `--m3e-comp-filled-tonal-button-container-shape` | `var(--m3e-sys-shape-corner-full)` |  |
 | `FilledTonalButtonTokens.DisabledContainerColor` | `ColorSchemeKeyTokens.OnSurface` | FilledTonalButtonTokens.kt:36 | `--m3e-comp-filled-tonal-button-container-color-disabled` | `var(--m3e-sys-color-on-surface)` |  |
 | `FilledTonalButtonTokens.DisabledContainerElevation` | `ElevationTokens.Level0` | FilledTonalButtonTokens.kt:39 | `--m3e-comp-filled-tonal-button-container-elevation-disabled` | `var(--m3e-sys-elevation-level0)` |  |
+| `FilledTonalButtonTokens.DisabledContainerElevation` | `ElevationTokens.Level0` | FilledTonalButtonTokens.kt:39 | `--m3e-comp-filled-tonal-button-container-shadow-disabled` | `var(--m3e-sys-elevation-level0-shadow)` | derived: box-shadow of the referenced elevation level |
 | `FilledTonalButtonTokens.DisabledContainerOpacity` | `0.12f` | FilledTonalButtonTokens.kt:42 | `--m3e-comp-filled-tonal-button-container-opacity-disabled` | `0.12` |  |
 | `FilledTonalButtonTokens.DisabledLabelTextColor` | `ColorSchemeKeyTokens.OnSurface` | FilledTonalButtonTokens.kt:43 | `--m3e-comp-filled-tonal-button-label-text-color-disabled` | `var(--m3e-sys-color-on-surface)` |  |
 | `FilledTonalButtonTokens.DisabledLabelTextOpacity` | `0.38f` | FilledTonalButtonTokens.kt:46 | `--m3e-comp-filled-tonal-button-label-text-opacity-disabled` | `0.38` |  |
 | `FilledTonalButtonTokens.FocusContainerElevation` | `ElevationTokens.Level0` | FilledTonalButtonTokens.kt:47 | `--m3e-comp-filled-tonal-button-container-elevation-focus` | `var(--m3e-sys-elevation-level0)` |  |
+| `FilledTonalButtonTokens.FocusContainerElevation` | `ElevationTokens.Level0` | FilledTonalButtonTokens.kt:47 | `--m3e-comp-filled-tonal-button-container-shadow-focus` | `var(--m3e-sys-elevation-level0-shadow)` | derived: box-shadow of the referenced elevation level |
 | `FilledTonalButtonTokens.FocusLabelTextColor` | `ColorSchemeKeyTokens.OnSecondaryContainer` | FilledTonalButtonTokens.kt:50 | `--m3e-comp-filled-tonal-button-label-text-color-focus` | `var(--m3e-sys-color-on-secondary-container)` |  |
 | `FilledTonalButtonTokens.HoverContainerElevation` | `ElevationTokens.Level1` | FilledTonalButtonTokens.kt:53 | `--m3e-comp-filled-tonal-button-container-elevation-hover` | `var(--m3e-sys-elevation-level1)` |  |
+| `FilledTonalButtonTokens.HoverContainerElevation` | `ElevationTokens.Level1` | FilledTonalButtonTokens.kt:53 | `--m3e-comp-filled-tonal-button-container-shadow-hover` | `var(--m3e-sys-elevation-level1-shadow)` | derived: box-shadow of the referenced elevation level |
 | `FilledTonalButtonTokens.HoverLabelTextColor` | `ColorSchemeKeyTokens.OnSecondaryContainer` | FilledTonalButtonTokens.kt:56 | `--m3e-comp-filled-tonal-button-label-text-color-hover` | `var(--m3e-sys-color-on-secondary-container)` |  |
 | `FilledTonalButtonTokens.LabelTextColor` | `ColorSchemeKeyTokens.OnSecondaryContainer` | FilledTonalButtonTokens.kt:59 | `--m3e-comp-filled-tonal-button-label-text-color` | `var(--m3e-sys-color-on-secondary-container)` |  |
 | `FilledTonalButtonTokens.LabelTextFont` | `TypographyKeyTokens.LabelLarge` | FilledTonalButtonTokens.kt:62 | `--m3e-comp-filled-tonal-button-label-text-font` | `var(--m3e-sys-typescale-label-large-font)` |  |
@@ -1579,6 +1663,7 @@ Emitted: 370 system and 2443 component variables from 104 component token object
 | `FilledTonalButtonTokens.LabelTextFont` | `TypographyKeyTokens.LabelLarge` | FilledTonalButtonTokens.kt:62 | `--m3e-comp-filled-tonal-button-label-text-line-height` | `var(--m3e-sys-typescale-label-large-line-height)` |  |
 | `FilledTonalButtonTokens.LabelTextFont` | `TypographyKeyTokens.LabelLarge` | FilledTonalButtonTokens.kt:62 | `--m3e-comp-filled-tonal-button-label-text-tracking` | `var(--m3e-sys-typescale-label-large-tracking)` |  |
 | `FilledTonalButtonTokens.PressedContainerElevation` | `ElevationTokens.Level0` | FilledTonalButtonTokens.kt:65 | `--m3e-comp-filled-tonal-button-container-elevation-pressed` | `var(--m3e-sys-elevation-level0)` |  |
+| `FilledTonalButtonTokens.PressedContainerElevation` | `ElevationTokens.Level0` | FilledTonalButtonTokens.kt:65 | `--m3e-comp-filled-tonal-button-container-shadow-pressed` | `var(--m3e-sys-elevation-level0-shadow)` | derived: box-shadow of the referenced elevation level |
 | `FilledTonalButtonTokens.PressedLabelTextColor` | `ColorSchemeKeyTokens.OnSecondaryContainer` | FilledTonalButtonTokens.kt:68 | `--m3e-comp-filled-tonal-button-label-text-color-pressed` | `var(--m3e-sys-color-on-secondary-container)` |  |
 | `FilledTonalButtonTokens.DisabledIconColor` | `ColorSchemeKeyTokens.OnSurface` | FilledTonalButtonTokens.kt:71 | `--m3e-comp-filled-tonal-button-icon-color-disabled` | `var(--m3e-sys-color-on-surface)` |  |
 | `FilledTonalButtonTokens.DisabledIconOpacity` | `0.38f` | FilledTonalButtonTokens.kt:74 | `--m3e-comp-filled-tonal-button-icon-opacity-disabled` | `0.38` |  |
@@ -1621,31 +1706,44 @@ Emitted: 370 system and 2443 component variables from 104 component token object
 | `FilterChipTokens.DisabledLabelTextColor` | `ColorSchemeKeyTokens.OnSurface` | FilterChipTokens.kt:30 | `--m3e-comp-filter-chip-label-text-color-disabled` | `var(--m3e-sys-color-on-surface)` |  |
 | `FilterChipTokens.DisabledLabelTextOpacity` | `0.38f` | FilterChipTokens.kt:33 | `--m3e-comp-filter-chip-label-text-opacity-disabled` | `0.38` |  |
 | `FilterChipTokens.DraggedContainerElevation` | `ElevationTokens.Level4` | FilterChipTokens.kt:34 | `--m3e-comp-filter-chip-container-elevation-dragged` | `var(--m3e-sys-elevation-level4)` |  |
+| `FilterChipTokens.DraggedContainerElevation` | `ElevationTokens.Level4` | FilterChipTokens.kt:34 | `--m3e-comp-filter-chip-container-shadow-dragged` | `var(--m3e-sys-elevation-level4-shadow)` | derived: box-shadow of the referenced elevation level |
 | `FilterChipTokens.ElevatedContainerElevation` | `ElevationTokens.Level1` | FilterChipTokens.kt:37 | `--m3e-comp-filter-chip-elevated-container-elevation` | `var(--m3e-sys-elevation-level1)` |  |
+| `FilterChipTokens.ElevatedContainerElevation` | `ElevationTokens.Level1` | FilterChipTokens.kt:37 | `--m3e-comp-filter-chip-elevated-container-shadow` | `var(--m3e-sys-elevation-level1-shadow)` | derived: box-shadow of the referenced elevation level |
 | `FilterChipTokens.ElevatedDisabledContainerColor` | `ColorSchemeKeyTokens.OnSurface` | FilterChipTokens.kt:40 | `--m3e-comp-filter-chip-elevated-container-color-disabled` | `var(--m3e-sys-color-on-surface)` |  |
 | `FilterChipTokens.ElevatedDisabledContainerElevation` | `ElevationTokens.Level0` | FilterChipTokens.kt:43 | `--m3e-comp-filter-chip-elevated-container-elevation-disabled` | `var(--m3e-sys-elevation-level0)` |  |
+| `FilterChipTokens.ElevatedDisabledContainerElevation` | `ElevationTokens.Level0` | FilterChipTokens.kt:43 | `--m3e-comp-filter-chip-elevated-container-shadow-disabled` | `var(--m3e-sys-elevation-level0-shadow)` | derived: box-shadow of the referenced elevation level |
 | `FilterChipTokens.ElevatedDisabledContainerOpacity` | `0.12f` | FilterChipTokens.kt:46 | `--m3e-comp-filter-chip-elevated-container-opacity-disabled` | `0.12` |  |
 | `FilterChipTokens.ElevatedFocusContainerElevation` | `ElevationTokens.Level1` | FilterChipTokens.kt:47 | `--m3e-comp-filter-chip-elevated-container-elevation-focus` | `var(--m3e-sys-elevation-level1)` |  |
+| `FilterChipTokens.ElevatedFocusContainerElevation` | `ElevationTokens.Level1` | FilterChipTokens.kt:47 | `--m3e-comp-filter-chip-elevated-container-shadow-focus` | `var(--m3e-sys-elevation-level1-shadow)` | derived: box-shadow of the referenced elevation level |
 | `FilterChipTokens.ElevatedHoverContainerElevation` | `ElevationTokens.Level2` | FilterChipTokens.kt:50 | `--m3e-comp-filter-chip-elevated-container-elevation-hover` | `var(--m3e-sys-elevation-level2)` |  |
+| `FilterChipTokens.ElevatedHoverContainerElevation` | `ElevationTokens.Level2` | FilterChipTokens.kt:50 | `--m3e-comp-filter-chip-elevated-container-shadow-hover` | `var(--m3e-sys-elevation-level2-shadow)` | derived: box-shadow of the referenced elevation level |
 | `FilterChipTokens.ElevatedPressedContainerElevation` | `ElevationTokens.Level1` | FilterChipTokens.kt:53 | `--m3e-comp-filter-chip-elevated-container-elevation-pressed` | `var(--m3e-sys-elevation-level1)` |  |
+| `FilterChipTokens.ElevatedPressedContainerElevation` | `ElevationTokens.Level1` | FilterChipTokens.kt:53 | `--m3e-comp-filter-chip-elevated-container-shadow-pressed` | `var(--m3e-sys-elevation-level1-shadow)` | derived: box-shadow of the referenced elevation level |
 | `FilterChipTokens.ElevatedSelectedContainerColor` | `ColorSchemeKeyTokens.SecondaryContainer` | FilterChipTokens.kt:56 | `--m3e-comp-filter-chip-elevated-container-color-selected` | `var(--m3e-sys-color-secondary-container)` |  |
 | `FilterChipTokens.ElevatedUnselectedContainerColor` | `ColorSchemeKeyTokens.SurfaceContainerLow` | FilterChipTokens.kt:59 | `--m3e-comp-filter-chip-elevated-container-color-unselected` | `var(--m3e-sys-color-surface-container-low)` |  |
 | `FilterChipTokens.FlatContainerElevation` | `ElevationTokens.Level0` | FilterChipTokens.kt:62 | `--m3e-comp-filter-chip-flat-container-elevation` | `var(--m3e-sys-elevation-level0)` |  |
+| `FilterChipTokens.FlatContainerElevation` | `ElevationTokens.Level0` | FilterChipTokens.kt:62 | `--m3e-comp-filter-chip-flat-container-shadow` | `var(--m3e-sys-elevation-level0-shadow)` | derived: box-shadow of the referenced elevation level |
 | `FilterChipTokens.FlatDisabledSelectedContainerColor` | `ColorSchemeKeyTokens.OnSurface` | FilterChipTokens.kt:65 | `--m3e-comp-filter-chip-flat-container-color-disabled-selected` | `var(--m3e-sys-color-on-surface)` |  |
 | `FilterChipTokens.FlatDisabledSelectedContainerOpacity` | `0.12f` | FilterChipTokens.kt:68 | `--m3e-comp-filter-chip-flat-container-opacity-disabled-selected` | `0.12` |  |
 | `FilterChipTokens.FlatDisabledUnselectedOutlineColor` | `ColorSchemeKeyTokens.OnSurface` | FilterChipTokens.kt:69 | `--m3e-comp-filter-chip-flat-outline-color-disabled-unselected` | `var(--m3e-sys-color-on-surface)` |  |
 | `FilterChipTokens.FlatDisabledUnselectedOutlineOpacity` | `0.12f` | FilterChipTokens.kt:72 | `--m3e-comp-filter-chip-flat-outline-opacity-disabled-unselected` | `0.12` |  |
 | `FilterChipTokens.FlatSelectedContainerColor` | `ColorSchemeKeyTokens.SecondaryContainer` | FilterChipTokens.kt:73 | `--m3e-comp-filter-chip-flat-container-color-selected` | `var(--m3e-sys-color-secondary-container)` |  |
 | `FilterChipTokens.FlatSelectedFocusContainerElevation` | `ElevationTokens.Level0` | FilterChipTokens.kt:76 | `--m3e-comp-filter-chip-flat-container-elevation-selected-focus` | `var(--m3e-sys-elevation-level0)` |  |
+| `FilterChipTokens.FlatSelectedFocusContainerElevation` | `ElevationTokens.Level0` | FilterChipTokens.kt:76 | `--m3e-comp-filter-chip-flat-container-shadow-selected-focus` | `var(--m3e-sys-elevation-level0-shadow)` | derived: box-shadow of the referenced elevation level |
 | `FilterChipTokens.FlatSelectedHoverContainerElevation` | `ElevationTokens.Level1` | FilterChipTokens.kt:79 | `--m3e-comp-filter-chip-flat-container-elevation-selected-hover` | `var(--m3e-sys-elevation-level1)` |  |
+| `FilterChipTokens.FlatSelectedHoverContainerElevation` | `ElevationTokens.Level1` | FilterChipTokens.kt:79 | `--m3e-comp-filter-chip-flat-container-shadow-selected-hover` | `var(--m3e-sys-elevation-level1-shadow)` | derived: box-shadow of the referenced elevation level |
 | `FilterChipTokens.FlatSelectedOutlineWidth` | `0.0.dp` | FilterChipTokens.kt:82 | `--m3e-comp-filter-chip-flat-outline-width-selected` | `0` |  |
 | `FilterChipTokens.FlatSelectedPressedContainerElevation` | `ElevationTokens.Level0` | FilterChipTokens.kt:85 | `--m3e-comp-filter-chip-flat-container-elevation-selected-pressed` | `var(--m3e-sys-elevation-level0)` |  |
+| `FilterChipTokens.FlatSelectedPressedContainerElevation` | `ElevationTokens.Level0` | FilterChipTokens.kt:85 | `--m3e-comp-filter-chip-flat-container-shadow-selected-pressed` | `var(--m3e-sys-elevation-level0-shadow)` | derived: box-shadow of the referenced elevation level |
 | `FilterChipTokens.FlatUnselectedFocusContainerElevation` | `ElevationTokens.Level0` | FilterChipTokens.kt:88 | `--m3e-comp-filter-chip-flat-container-elevation-unselected-focus` | `var(--m3e-sys-elevation-level0)` |  |
+| `FilterChipTokens.FlatUnselectedFocusContainerElevation` | `ElevationTokens.Level0` | FilterChipTokens.kt:88 | `--m3e-comp-filter-chip-flat-container-shadow-unselected-focus` | `var(--m3e-sys-elevation-level0-shadow)` | derived: box-shadow of the referenced elevation level |
 | `FilterChipTokens.FlatUnselectedFocusOutlineColor` | `ColorSchemeKeyTokens.OnSurfaceVariant` | FilterChipTokens.kt:91 | `--m3e-comp-filter-chip-flat-outline-color-unselected-focus` | `var(--m3e-sys-color-on-surface-variant)` |  |
 | `FilterChipTokens.FlatUnselectedHoverContainerElevation` | `ElevationTokens.Level0` | FilterChipTokens.kt:94 | `--m3e-comp-filter-chip-flat-container-elevation-unselected-hover` | `var(--m3e-sys-elevation-level0)` |  |
+| `FilterChipTokens.FlatUnselectedHoverContainerElevation` | `ElevationTokens.Level0` | FilterChipTokens.kt:94 | `--m3e-comp-filter-chip-flat-container-shadow-unselected-hover` | `var(--m3e-sys-elevation-level0-shadow)` | derived: box-shadow of the referenced elevation level |
 | `FilterChipTokens.FlatUnselectedOutlineColor` | `ColorSchemeKeyTokens.OutlineVariant` | FilterChipTokens.kt:97 | `--m3e-comp-filter-chip-flat-outline-color-unselected` | `var(--m3e-sys-color-outline-variant)` |  |
 | `FilterChipTokens.FlatUnselectedOutlineWidth` | `1.0.dp` | FilterChipTokens.kt:100 | `--m3e-comp-filter-chip-flat-outline-width-unselected` | `1px` |  |
 | `FilterChipTokens.FlatUnselectedPressedContainerElevation` | `ElevationTokens.Level0` | FilterChipTokens.kt:103 | `--m3e-comp-filter-chip-flat-container-elevation-unselected-pressed` | `var(--m3e-sys-elevation-level0)` |  |
+| `FilterChipTokens.FlatUnselectedPressedContainerElevation` | `ElevationTokens.Level0` | FilterChipTokens.kt:103 | `--m3e-comp-filter-chip-flat-container-shadow-unselected-pressed` | `var(--m3e-sys-elevation-level0-shadow)` | derived: box-shadow of the referenced elevation level |
 | `FilterChipTokens.FocusIndicatorColor` | `ColorSchemeKeyTokens.Secondary` | FilterChipTokens.kt:106 | `--m3e-comp-filter-chip-focus-indicator-color` | `var(--m3e-sys-color-secondary)` |  |
 | `FilterChipTokens.LabelTextFont` | `TypographyKeyTokens.LabelLarge` | FilterChipTokens.kt:109 | `--m3e-comp-filter-chip-label-text-font` | `var(--m3e-sys-typescale-label-large-font)` |  |
 | `FilterChipTokens.LabelTextFont` | `TypographyKeyTokens.LabelLarge` | FilterChipTokens.kt:109 | `--m3e-comp-filter-chip-label-text-weight` | `var(--m3e-sys-typescale-label-large-weight)` |  |
@@ -1711,6 +1809,7 @@ Emitted: 370 system and 2443 component variables from 104 component token object
 | Source token | Source value | Line | CSS variable | Emitted | Note |
 |---|---|---|---|---|---|
 | `InputChipTokens.ContainerElevation` | `ElevationTokens.Level0` | InputChipTokens.kt:24 | `--m3e-comp-input-chip-container-elevation` | `var(--m3e-sys-elevation-level0)` |  |
+| `InputChipTokens.ContainerElevation` | `ElevationTokens.Level0` | InputChipTokens.kt:24 | `--m3e-comp-input-chip-container-shadow` | `var(--m3e-sys-elevation-level0-shadow)` | derived: box-shadow of the referenced elevation level |
 | `InputChipTokens.ContainerHeight` | `32.0.dp` | InputChipTokens.kt:27 | `--m3e-comp-input-chip-container-height` | `32px` |  |
 | `InputChipTokens.ContainerShape` | `ShapeKeyTokens.CornerSmall` | InputChipTokens.kt:30 | `--m3e-comp-input-chip-container-shape` | `var(--m3e-sys-shape-corner-small)` |  |
 | `InputChipTokens.DisabledLabelTextColor` | `ColorSchemeKeyTokens.OnSurface` | InputChipTokens.kt:33 | `--m3e-comp-input-chip-label-text-color-disabled` | `var(--m3e-sys-color-on-surface)` |  |
@@ -1720,6 +1819,7 @@ Emitted: 370 system and 2443 component variables from 104 component token object
 | `InputChipTokens.DisabledUnselectedOutlineColor` | `ColorSchemeKeyTokens.OnSurface` | InputChipTokens.kt:41 | `--m3e-comp-input-chip-outline-color-disabled-unselected` | `var(--m3e-sys-color-on-surface)` |  |
 | `InputChipTokens.DisabledUnselectedOutlineOpacity` | `0.12f` | InputChipTokens.kt:44 | `--m3e-comp-input-chip-outline-opacity-disabled-unselected` | `0.12` |  |
 | `InputChipTokens.DraggedContainerElevation` | `ElevationTokens.Level4` | InputChipTokens.kt:45 | `--m3e-comp-input-chip-container-elevation-dragged` | `var(--m3e-sys-elevation-level4)` |  |
+| `InputChipTokens.DraggedContainerElevation` | `ElevationTokens.Level4` | InputChipTokens.kt:45 | `--m3e-comp-input-chip-container-shadow-dragged` | `var(--m3e-sys-elevation-level4-shadow)` | derived: box-shadow of the referenced elevation level |
 | `InputChipTokens.FocusIndicatorColor` | `ColorSchemeKeyTokens.Secondary` | InputChipTokens.kt:48 | `--m3e-comp-input-chip-focus-indicator-color` | `var(--m3e-sys-color-secondary)` |  |
 | `InputChipTokens.LabelTextFont` | `TypographyKeyTokens.LabelLarge` | InputChipTokens.kt:51 | `--m3e-comp-input-chip-label-text-font` | `var(--m3e-sys-typescale-label-large-font)` |  |
 | `InputChipTokens.LabelTextFont` | `TypographyKeyTokens.LabelLarge` | InputChipTokens.kt:51 | `--m3e-comp-input-chip-label-text-weight` | `var(--m3e-sys-typescale-label-large-weight)` |  |
@@ -1819,6 +1919,7 @@ Emitted: 370 system and 2443 component variables from 104 component token object
 | `ListTokens.ItemBottomSpace` | `10.0.dp` | ListTokens.kt:45 | `--m3e-comp-list-item-bottom-space` | `10px` |  |
 | `ListTokens.ItemContainerColor` | `ColorSchemeKeyTokens.Surface` | ListTokens.kt:48 | `--m3e-comp-list-item-container-color` | `var(--m3e-sys-color-surface)` |  |
 | `ListTokens.ItemContainerElevation` | `ElevationTokens.Level0` | ListTokens.kt:51 | `--m3e-comp-list-item-container-elevation` | `var(--m3e-sys-elevation-level0)` |  |
+| `ListTokens.ItemContainerElevation` | `ElevationTokens.Level0` | ListTokens.kt:51 | `--m3e-comp-list-item-container-shadow` | `var(--m3e-sys-elevation-level0-shadow)` | derived: box-shadow of the referenced elevation level |
 | `ListTokens.ItemContainerExpressiveShape` | `ShapeKeyTokens.CornerExtraSmall` | ListTokens.kt:54 | `--m3e-comp-list-item-container-expressive-shape` | `var(--m3e-sys-shape-corner-extra-small)` |  |
 | `ListTokens.ItemContainerShape` | `ShapeKeyTokens.CornerNone` | ListTokens.kt:57 | `--m3e-comp-list-item-container-shape` | `var(--m3e-sys-shape-corner-none)` |  |
 | `ListTokens.ItemDisabledContainerExpressiveShape` | `ShapeKeyTokens.CornerExtraSmall` | ListTokens.kt:60 | `--m3e-comp-list-item-container-expressive-shape-disabled` | `var(--m3e-sys-shape-corner-extra-small)` |  |
@@ -1834,6 +1935,7 @@ Emitted: 370 system and 2443 component variables from 104 component token object
 | `ListTokens.ItemDisabledTrailingIconColor` | `ColorSchemeKeyTokens.OnSurface` | ListTokens.kt:80 | `--m3e-comp-list-item-trailing-icon-color-disabled` | `var(--m3e-sys-color-on-surface)` |  |
 | `ListTokens.ItemDisabledTrailingIconOpacity` | `0.38f` | ListTokens.kt:83 | `--m3e-comp-list-item-trailing-icon-opacity-disabled` | `0.38` |  |
 | `ListTokens.ItemDraggedContainerElevation` | `ElevationTokens.Level4` | ListTokens.kt:84 | `--m3e-comp-list-item-container-elevation-dragged` | `var(--m3e-sys-elevation-level4)` |  |
+| `ListTokens.ItemDraggedContainerElevation` | `ElevationTokens.Level4` | ListTokens.kt:84 | `--m3e-comp-list-item-container-shadow-dragged` | `var(--m3e-sys-elevation-level4-shadow)` | derived: box-shadow of the referenced elevation level |
 | `ListTokens.ItemDraggedContainerExpressiveShape` | `ShapeKeyTokens.CornerLarge` | ListTokens.kt:87 | `--m3e-comp-list-item-container-expressive-shape-dragged` | `var(--m3e-sys-shape-corner-large)` |  |
 | `ListTokens.ItemDraggedLabelTextColor` | `ColorSchemeKeyTokens.OnSurface` | ListTokens.kt:90 | `--m3e-comp-list-item-label-text-color-dragged` | `var(--m3e-sys-color-on-surface)` |  |
 | `ListTokens.ItemDraggedLeadingIconIconColor` | `ColorSchemeKeyTokens.OnSurfaceVariant` | ListTokens.kt:93 | `--m3e-comp-list-item-leading-icon-icon-color-dragged` | `var(--m3e-sys-color-on-surface-variant)` |  |
@@ -1987,6 +2089,7 @@ Emitted: 370 system and 2443 component variables from 104 component token object
 |---|---|---|---|---|---|
 | `MenuTokens.ContainerColor` | `ColorSchemeKeyTokens.SurfaceContainer` | MenuTokens.kt:22 | `--m3e-comp-menu-container-color` | `var(--m3e-sys-color-surface-container)` |  |
 | `MenuTokens.ContainerElevation` | `ElevationTokens.Level2` | MenuTokens.kt:25 | `--m3e-comp-menu-container-elevation` | `var(--m3e-sys-elevation-level2)` |  |
+| `MenuTokens.ContainerElevation` | `ElevationTokens.Level2` | MenuTokens.kt:25 | `--m3e-comp-menu-container-shadow` | `var(--m3e-sys-elevation-level2-shadow)` | derived: box-shadow of the referenced elevation level |
 | `MenuTokens.ContainerShape` | `ShapeKeyTokens.CornerExtraSmall` | MenuTokens.kt:28 | `--m3e-comp-menu-container-shape` | `var(--m3e-sys-shape-corner-extra-small)` |  |
 | `MenuTokens.FocusIndicatorColor` | `ColorSchemeKeyTokens.Secondary` | MenuTokens.kt:31 | `--m3e-comp-menu-focus-indicator-color` | `var(--m3e-sys-color-secondary)` |  |
 | `MenuTokens.ListItemSelectedContainerColor` | `ColorSchemeKeyTokens.SecondaryContainer` | MenuTokens.kt:34 | `--m3e-comp-menu-list-item-container-color-selected` | `var(--m3e-sys-color-secondary-container)` |  |
@@ -2000,6 +2103,7 @@ Emitted: 370 system and 2443 component variables from 104 component token object
 |---|---|---|---|---|---|
 | `NavigationBarTokens.ContainerColor` | `ColorSchemeKeyTokens.SurfaceContainer` | NavigationBarTokens.kt:24 | `--m3e-comp-navigation-bar-container-color` | `var(--m3e-sys-color-surface-container)` |  |
 | `NavigationBarTokens.ContainerElevation` | `ElevationTokens.Level2` | NavigationBarTokens.kt:27 | `--m3e-comp-navigation-bar-container-elevation` | `var(--m3e-sys-elevation-level2)` |  |
+| `NavigationBarTokens.ContainerElevation` | `ElevationTokens.Level2` | NavigationBarTokens.kt:27 | `--m3e-comp-navigation-bar-container-shadow` | `var(--m3e-sys-elevation-level2-shadow)` | derived: box-shadow of the referenced elevation level |
 | `NavigationBarTokens.ContainerHeight` | `64.0.dp` | NavigationBarTokens.kt:30 | `--m3e-comp-navigation-bar-container-height` | `64px` |  |
 | `NavigationBarTokens.ItemActiveIconColor` | `ColorSchemeKeyTokens.OnSecondaryContainer` | NavigationBarTokens.kt:33 | `--m3e-comp-navigation-bar-item-active-icon-color` | `var(--m3e-sys-color-on-secondary-container)` |  |
 | `NavigationBarTokens.ItemActiveIndicatorColor` | `ColorSchemeKeyTokens.SecondaryContainer` | NavigationBarTokens.kt:36 | `--m3e-comp-navigation-bar-item-active-indicator-color` | `var(--m3e-sys-color-secondary-container)` |  |
@@ -2090,8 +2194,10 @@ Emitted: 370 system and 2443 component variables from 104 component token object
 | `NavigationDrawerTokens.LargeBadgeLabelFont` | `TypographyKeyTokens.LabelLarge` | NavigationDrawerTokens.kt:112 | `--m3e-comp-navigation-drawer-large-badge-label-tracking` | `var(--m3e-sys-typescale-label-large-tracking)` |  |
 | `NavigationDrawerTokens.ModalContainerColor` | `ColorSchemeKeyTokens.SurfaceContainerLow` | NavigationDrawerTokens.kt:115 | `--m3e-comp-navigation-drawer-modal-container-color` | `var(--m3e-sys-color-surface-container-low)` |  |
 | `NavigationDrawerTokens.ModalContainerElevation` | `ElevationTokens.Level1` | NavigationDrawerTokens.kt:118 | `--m3e-comp-navigation-drawer-modal-container-elevation` | `var(--m3e-sys-elevation-level1)` |  |
+| `NavigationDrawerTokens.ModalContainerElevation` | `ElevationTokens.Level1` | NavigationDrawerTokens.kt:118 | `--m3e-comp-navigation-drawer-modal-container-shadow` | `var(--m3e-sys-elevation-level1-shadow)` | derived: box-shadow of the referenced elevation level |
 | `NavigationDrawerTokens.StandardContainerColor` | `ColorSchemeKeyTokens.Surface` | NavigationDrawerTokens.kt:121 | `--m3e-comp-navigation-drawer-standard-container-color` | `var(--m3e-sys-color-surface)` |  |
 | `NavigationDrawerTokens.StandardContainerElevation` | `ElevationTokens.Level0` | NavigationDrawerTokens.kt:124 | `--m3e-comp-navigation-drawer-standard-container-elevation` | `var(--m3e-sys-elevation-level0)` |  |
+| `NavigationDrawerTokens.StandardContainerElevation` | `ElevationTokens.Level0` | NavigationDrawerTokens.kt:124 | `--m3e-comp-navigation-drawer-standard-container-shadow` | `var(--m3e-sys-elevation-level0-shadow)` | derived: box-shadow of the referenced elevation level |
 
 ## navigation-rail-baseline-item
 
@@ -2112,6 +2218,7 @@ Emitted: 370 system and 2443 component variables from 104 component token object
 | Source token | Source value | Line | CSS variable | Emitted | Note |
 |---|---|---|---|---|---|
 | `NavigationRailCollapsedTokens.ContainerElevation` | `ElevationTokens.Level0` | NavigationRailCollapsedTokens.kt:24 | `--m3e-comp-navigation-rail-collapsed-container-elevation` | `var(--m3e-sys-elevation-level0)` |  |
+| `NavigationRailCollapsedTokens.ContainerElevation` | `ElevationTokens.Level0` | NavigationRailCollapsedTokens.kt:24 | `--m3e-comp-navigation-rail-collapsed-container-shadow` | `var(--m3e-sys-elevation-level0-shadow)` | derived: box-shadow of the referenced elevation level |
 | `NavigationRailCollapsedTokens.ContainerShape` | `ShapeKeyTokens.CornerNone` | NavigationRailCollapsedTokens.kt:27 | `--m3e-comp-navigation-rail-collapsed-container-shape` | `var(--m3e-sys-shape-corner-none)` |  |
 | `NavigationRailCollapsedTokens.ContainerWidth` | `96.0.dp` | NavigationRailCollapsedTokens.kt:30 | `--m3e-comp-navigation-rail-collapsed-container-width` | `96px` |  |
 | `NavigationRailCollapsedTokens.ItemVerticalSpace` | `4.0.dp` | NavigationRailCollapsedTokens.kt:33 | `--m3e-comp-navigation-rail-collapsed-item-vertical-space` | `4px` |  |
@@ -2140,10 +2247,12 @@ Emitted: 370 system and 2443 component variables from 104 component token object
 | Source token | Source value | Line | CSS variable | Emitted | Note |
 |---|---|---|---|---|---|
 | `NavigationRailExpandedTokens.ContainerElevation` | `ElevationTokens.Level0` | NavigationRailExpandedTokens.kt:24 | `--m3e-comp-navigation-rail-expanded-container-elevation` | `var(--m3e-sys-elevation-level0)` |  |
+| `NavigationRailExpandedTokens.ContainerElevation` | `ElevationTokens.Level0` | NavigationRailExpandedTokens.kt:24 | `--m3e-comp-navigation-rail-expanded-container-shadow` | `var(--m3e-sys-elevation-level0-shadow)` | derived: box-shadow of the referenced elevation level |
 | `NavigationRailExpandedTokens.ContainerShape` | `ShapeKeyTokens.CornerNone` | NavigationRailExpandedTokens.kt:27 | `--m3e-comp-navigation-rail-expanded-container-shape` | `var(--m3e-sys-shape-corner-none)` |  |
 | `NavigationRailExpandedTokens.ContainerWidthMaximum` | `360.0.dp` | NavigationRailExpandedTokens.kt:30 | `--m3e-comp-navigation-rail-expanded-container-width-maximum` | `360px` |  |
 | `NavigationRailExpandedTokens.ContainerWidthMinimum` | `220.0.dp` | NavigationRailExpandedTokens.kt:33 | `--m3e-comp-navigation-rail-expanded-container-width-minimum` | `220px` |  |
 | `NavigationRailExpandedTokens.ModalContainerElevation` | `ElevationTokens.Level2` | NavigationRailExpandedTokens.kt:36 | `--m3e-comp-navigation-rail-expanded-modal-container-elevation` | `var(--m3e-sys-elevation-level2)` |  |
+| `NavigationRailExpandedTokens.ModalContainerElevation` | `ElevationTokens.Level2` | NavigationRailExpandedTokens.kt:36 | `--m3e-comp-navigation-rail-expanded-modal-container-shadow` | `var(--m3e-sys-elevation-level2-shadow)` | derived: box-shadow of the referenced elevation level |
 | `NavigationRailExpandedTokens.ModalContainerShape` | `ShapeKeyTokens.CornerLarge` | NavigationRailExpandedTokens.kt:39 | `--m3e-comp-navigation-rail-expanded-modal-container-shape` | `var(--m3e-sys-shape-corner-large)` |  |
 | `NavigationRailExpandedTokens.TopSpace` | `44.0.dp` | NavigationRailExpandedTokens.kt:42 | `--m3e-comp-navigation-rail-expanded-top-space` | `44px` |  |
 | `NavigationRailExpandedTokens.ModalContainerColor` | `ColorSchemeKeyTokens.SurfaceContainer` | NavigationRailExpandedTokens.kt:46 | `--m3e-comp-navigation-rail-expanded-modal-container-color` | `var(--m3e-sys-color-surface-container)` | upstream: TODO: Update this file to include the following missing tokens: |
@@ -2184,6 +2293,7 @@ Emitted: 370 system and 2443 component variables from 104 component token object
 |---|---|---|---|---|---|
 | `OutlinedAutocompleteTokens.MenuContainerColor` | `ColorSchemeKeyTokens.SurfaceContainer` | OutlinedAutocompleteTokens.kt:24 | `--m3e-comp-outlined-autocomplete-menu-container-color` | `var(--m3e-sys-color-surface-container)` |  |
 | `OutlinedAutocompleteTokens.MenuContainerElevation` | `ElevationTokens.Level2` | OutlinedAutocompleteTokens.kt:27 | `--m3e-comp-outlined-autocomplete-menu-container-elevation` | `var(--m3e-sys-elevation-level2)` |  |
+| `OutlinedAutocompleteTokens.MenuContainerElevation` | `ElevationTokens.Level2` | OutlinedAutocompleteTokens.kt:27 | `--m3e-comp-outlined-autocomplete-menu-container-shadow` | `var(--m3e-sys-elevation-level2-shadow)` | derived: box-shadow of the referenced elevation level |
 | `OutlinedAutocompleteTokens.MenuContainerShape` | `ShapeKeyTokens.CornerExtraSmall` | OutlinedAutocompleteTokens.kt:30 | `--m3e-comp-outlined-autocomplete-menu-container-shape` | `var(--m3e-sys-shape-corner-extra-small)` |  |
 | `OutlinedAutocompleteTokens.TextFieldCaretColor` | `ColorSchemeKeyTokens.Primary` | OutlinedAutocompleteTokens.kt:33 | `--m3e-comp-outlined-autocomplete-text-field-caret-color` | `var(--m3e-sys-color-primary)` |  |
 | `OutlinedAutocompleteTokens.TextFieldContainerColor` | `ColorSchemeKeyTokens.SurfaceContainerHighest` | OutlinedAutocompleteTokens.kt:36 | `--m3e-comp-outlined-autocomplete-text-field-container-color` | `var(--m3e-sys-color-surface-container-highest)` |  |
@@ -2310,21 +2420,27 @@ Emitted: 370 system and 2443 component variables from 104 component token object
 |---|---|---|---|---|---|
 | `OutlinedCardTokens.ContainerColor` | `ColorSchemeKeyTokens.Surface` | OutlinedCardTokens.kt:24 | `--m3e-comp-outlined-card-container-color` | `var(--m3e-sys-color-surface)` |  |
 | `OutlinedCardTokens.ContainerElevation` | `ElevationTokens.Level0` | OutlinedCardTokens.kt:27 | `--m3e-comp-outlined-card-container-elevation` | `var(--m3e-sys-elevation-level0)` |  |
+| `OutlinedCardTokens.ContainerElevation` | `ElevationTokens.Level0` | OutlinedCardTokens.kt:27 | `--m3e-comp-outlined-card-container-shadow` | `var(--m3e-sys-elevation-level0-shadow)` | derived: box-shadow of the referenced elevation level |
 | `OutlinedCardTokens.ContainerShape` | `ShapeKeyTokens.CornerMedium` | OutlinedCardTokens.kt:30 | `--m3e-comp-outlined-card-container-shape` | `var(--m3e-sys-shape-corner-medium)` |  |
 | `OutlinedCardTokens.DisabledContainerElevation` | `ElevationTokens.Level0` | OutlinedCardTokens.kt:33 | `--m3e-comp-outlined-card-container-elevation-disabled` | `var(--m3e-sys-elevation-level0)` |  |
+| `OutlinedCardTokens.DisabledContainerElevation` | `ElevationTokens.Level0` | OutlinedCardTokens.kt:33 | `--m3e-comp-outlined-card-container-shadow-disabled` | `var(--m3e-sys-elevation-level0-shadow)` | derived: box-shadow of the referenced elevation level |
 | `OutlinedCardTokens.DisabledOutlineColor` | `ColorSchemeKeyTokens.Outline` | OutlinedCardTokens.kt:36 | `--m3e-comp-outlined-card-outline-color-disabled` | `var(--m3e-sys-color-outline)` |  |
 | `OutlinedCardTokens.DisabledOutlineOpacity` | `0.12f` | OutlinedCardTokens.kt:39 | `--m3e-comp-outlined-card-outline-opacity-disabled` | `0.12` |  |
 | `OutlinedCardTokens.DraggedContainerElevation` | `ElevationTokens.Level3` | OutlinedCardTokens.kt:40 | `--m3e-comp-outlined-card-container-elevation-dragged` | `var(--m3e-sys-elevation-level3)` |  |
+| `OutlinedCardTokens.DraggedContainerElevation` | `ElevationTokens.Level3` | OutlinedCardTokens.kt:40 | `--m3e-comp-outlined-card-container-shadow-dragged` | `var(--m3e-sys-elevation-level3-shadow)` | derived: box-shadow of the referenced elevation level |
 | `OutlinedCardTokens.DraggedOutlineColor` | `ColorSchemeKeyTokens.OutlineVariant` | OutlinedCardTokens.kt:43 | `--m3e-comp-outlined-card-outline-color-dragged` | `var(--m3e-sys-color-outline-variant)` |  |
 | `OutlinedCardTokens.FocusContainerElevation` | `ElevationTokens.Level0` | OutlinedCardTokens.kt:46 | `--m3e-comp-outlined-card-container-elevation-focus` | `var(--m3e-sys-elevation-level0)` |  |
+| `OutlinedCardTokens.FocusContainerElevation` | `ElevationTokens.Level0` | OutlinedCardTokens.kt:46 | `--m3e-comp-outlined-card-container-shadow-focus` | `var(--m3e-sys-elevation-level0-shadow)` | derived: box-shadow of the referenced elevation level |
 | `OutlinedCardTokens.FocusOutlineColor` | `ColorSchemeKeyTokens.OnSurface` | OutlinedCardTokens.kt:49 | `--m3e-comp-outlined-card-outline-color-focus` | `var(--m3e-sys-color-on-surface)` |  |
 | `OutlinedCardTokens.HoverContainerElevation` | `ElevationTokens.Level1` | OutlinedCardTokens.kt:52 | `--m3e-comp-outlined-card-container-elevation-hover` | `var(--m3e-sys-elevation-level1)` |  |
+| `OutlinedCardTokens.HoverContainerElevation` | `ElevationTokens.Level1` | OutlinedCardTokens.kt:52 | `--m3e-comp-outlined-card-container-shadow-hover` | `var(--m3e-sys-elevation-level1-shadow)` | derived: box-shadow of the referenced elevation level |
 | `OutlinedCardTokens.HoverOutlineColor` | `ColorSchemeKeyTokens.OutlineVariant` | OutlinedCardTokens.kt:55 | `--m3e-comp-outlined-card-outline-color-hover` | `var(--m3e-sys-color-outline-variant)` |  |
 | `OutlinedCardTokens.IconColor` | `ColorSchemeKeyTokens.Primary` | OutlinedCardTokens.kt:58 | `--m3e-comp-outlined-card-icon-color` | `var(--m3e-sys-color-primary)` |  |
 | `OutlinedCardTokens.IconSize` | `24.0.dp` | OutlinedCardTokens.kt:61 | `--m3e-comp-outlined-card-icon-size` | `24px` |  |
 | `OutlinedCardTokens.OutlineColor` | `ColorSchemeKeyTokens.OutlineVariant` | OutlinedCardTokens.kt:64 | `--m3e-comp-outlined-card-outline-color` | `var(--m3e-sys-color-outline-variant)` |  |
 | `OutlinedCardTokens.OutlineWidth` | `1.0.dp` | OutlinedCardTokens.kt:67 | `--m3e-comp-outlined-card-outline-width` | `1px` |  |
 | `OutlinedCardTokens.PressedContainerElevation` | `ElevationTokens.Level0` | OutlinedCardTokens.kt:70 | `--m3e-comp-outlined-card-container-elevation-pressed` | `var(--m3e-sys-elevation-level0)` |  |
+| `OutlinedCardTokens.PressedContainerElevation` | `ElevationTokens.Level0` | OutlinedCardTokens.kt:70 | `--m3e-comp-outlined-card-container-shadow-pressed` | `var(--m3e-sys-elevation-level0-shadow)` | derived: box-shadow of the referenced elevation level |
 | `OutlinedCardTokens.PressedOutlineColor` | `ColorSchemeKeyTokens.OutlineVariant` | OutlinedCardTokens.kt:73 | `--m3e-comp-outlined-card-outline-color-pressed` | `var(--m3e-sys-color-outline-variant)` |  |
 
 ## outlined-icon-button
@@ -2494,6 +2610,7 @@ Emitted: 370 system and 2443 component variables from 104 component token object
 | `PrimaryNavigationTabTokens.ActiveIndicatorShape` | `RoundedCornerShape(3.0.dp)` | PrimaryNavigationTabTokens.kt:32 | `--m3e-comp-primary-navigation-tab-active-indicator-shape` | `3px` |  |
 | `PrimaryNavigationTabTokens.ContainerColor` | `ColorSchemeKeyTokens.Surface` | PrimaryNavigationTabTokens.kt:33 | `--m3e-comp-primary-navigation-tab-container-color` | `var(--m3e-sys-color-surface)` |  |
 | `PrimaryNavigationTabTokens.ContainerElevation` | `ElevationTokens.Level0` | PrimaryNavigationTabTokens.kt:36 | `--m3e-comp-primary-navigation-tab-container-elevation` | `var(--m3e-sys-elevation-level0)` |  |
+| `PrimaryNavigationTabTokens.ContainerElevation` | `ElevationTokens.Level0` | PrimaryNavigationTabTokens.kt:36 | `--m3e-comp-primary-navigation-tab-container-shadow` | `var(--m3e-sys-elevation-level0-shadow)` | derived: box-shadow of the referenced elevation level |
 | `PrimaryNavigationTabTokens.ContainerHeight` | `48.0.dp` | PrimaryNavigationTabTokens.kt:39 | `--m3e-comp-primary-navigation-tab-container-height` | `48px` |  |
 | `PrimaryNavigationTabTokens.ContainerShape` | `ShapeKeyTokens.CornerNone` | PrimaryNavigationTabTokens.kt:42 | `--m3e-comp-primary-navigation-tab-container-shape` | `var(--m3e-sys-shape-corner-none)` |  |
 | `PrimaryNavigationTabTokens.ActiveFocusIconColor` | `ColorSchemeKeyTokens.Primary` | PrimaryNavigationTabTokens.kt:45 | `--m3e-comp-primary-navigation-tab-active-icon-color-focus` | `var(--m3e-sys-color-primary)` |  |
@@ -2593,6 +2710,7 @@ Emitted: 370 system and 2443 component variables from 104 component token object
 | `RichTooltipTokens.ActionPressedLabelTextColor` | `ColorSchemeKeyTokens.Primary` | RichTooltipTokens.kt:34 | `--m3e-comp-rich-tooltip-action-label-text-color-pressed` | `var(--m3e-sys-color-primary)` |  |
 | `RichTooltipTokens.ContainerColor` | `ColorSchemeKeyTokens.SurfaceContainer` | RichTooltipTokens.kt:37 | `--m3e-comp-rich-tooltip-container-color` | `var(--m3e-sys-color-surface-container)` |  |
 | `RichTooltipTokens.ContainerElevation` | `ElevationTokens.Level2` | RichTooltipTokens.kt:40 | `--m3e-comp-rich-tooltip-container-elevation` | `var(--m3e-sys-elevation-level2)` |  |
+| `RichTooltipTokens.ContainerElevation` | `ElevationTokens.Level2` | RichTooltipTokens.kt:40 | `--m3e-comp-rich-tooltip-container-shadow` | `var(--m3e-sys-elevation-level2-shadow)` | derived: box-shadow of the referenced elevation level |
 | `RichTooltipTokens.ContainerShape` | `ShapeKeyTokens.CornerMedium` | RichTooltipTokens.kt:43 | `--m3e-comp-rich-tooltip-container-shape` | `var(--m3e-sys-shape-corner-medium)` |  |
 | `RichTooltipTokens.SubheadColor` | `ColorSchemeKeyTokens.OnSurfaceVariant` | RichTooltipTokens.kt:46 | `--m3e-comp-rich-tooltip-subhead-color` | `var(--m3e-sys-color-on-surface-variant)` |  |
 | `RichTooltipTokens.SubheadFont` | `TypographyKeyTokens.TitleSmall` | RichTooltipTokens.kt:49 | `--m3e-comp-rich-tooltip-subhead-font` | `var(--m3e-sys-typescale-title-small-font)` |  |
@@ -2622,6 +2740,7 @@ Emitted: 370 system and 2443 component variables from 104 component token object
 | `SearchBarTokens.AvatarSize` | `30.0.dp` | SearchBarTokens.kt:27 | `--m3e-comp-search-bar-avatar-size` | `30px` |  |
 | `SearchBarTokens.ContainerColor` | `ColorSchemeKeyTokens.SurfaceContainerHigh` | SearchBarTokens.kt:30 | `--m3e-comp-search-bar-container-color` | `var(--m3e-sys-color-surface-container-high)` |  |
 | `SearchBarTokens.ContainerElevation` | `ElevationTokens.Level3` | SearchBarTokens.kt:33 | `--m3e-comp-search-bar-container-elevation` | `var(--m3e-sys-elevation-level3)` |  |
+| `SearchBarTokens.ContainerElevation` | `ElevationTokens.Level3` | SearchBarTokens.kt:33 | `--m3e-comp-search-bar-container-shadow` | `var(--m3e-sys-elevation-level3-shadow)` | derived: box-shadow of the referenced elevation level |
 | `SearchBarTokens.ContainerHeight` | `56.0.dp` | SearchBarTokens.kt:36 | `--m3e-comp-search-bar-container-height` | `56px` |  |
 | `SearchBarTokens.ContainerShape` | `ShapeKeyTokens.CornerFull` | SearchBarTokens.kt:39 | `--m3e-comp-search-bar-container-shape` | `var(--m3e-sys-shape-corner-full)` |  |
 | `SearchBarTokens.FocusIndicatorColor` | `ColorSchemeKeyTokens.Secondary` | SearchBarTokens.kt:42 | `--m3e-comp-search-bar-focus-indicator-color` | `var(--m3e-sys-color-secondary)` |  |
@@ -2648,6 +2767,7 @@ Emitted: 370 system and 2443 component variables from 104 component token object
 |---|---|---|---|---|---|
 | `SearchViewTokens.ContainerColor` | `ColorSchemeKeyTokens.SurfaceContainerHigh` | SearchViewTokens.kt:24 | `--m3e-comp-search-view-container-color` | `var(--m3e-sys-color-surface-container-high)` |  |
 | `SearchViewTokens.ContainerElevation` | `ElevationTokens.Level3` | SearchViewTokens.kt:27 | `--m3e-comp-search-view-container-elevation` | `var(--m3e-sys-elevation-level3)` |  |
+| `SearchViewTokens.ContainerElevation` | `ElevationTokens.Level3` | SearchViewTokens.kt:27 | `--m3e-comp-search-view-container-shadow` | `var(--m3e-sys-elevation-level3-shadow)` | derived: box-shadow of the referenced elevation level |
 | `SearchViewTokens.DividerColor` | `ColorSchemeKeyTokens.Outline` | SearchViewTokens.kt:30 | `--m3e-comp-search-view-divider-color` | `var(--m3e-sys-color-outline)` |  |
 | `SearchViewTokens.DockedContainerShape` | `ShapeKeyTokens.CornerExtraLarge` | SearchViewTokens.kt:33 | `--m3e-comp-search-view-docked-container-shape` | `var(--m3e-sys-shape-corner-extra-large)` |  |
 | `SearchViewTokens.DockedHeaderContainerHeight` | `56.0.dp` | SearchViewTokens.kt:36 | `--m3e-comp-search-view-docked-header-container-height` | `56px` |  |
@@ -2675,6 +2795,7 @@ Emitted: 370 system and 2443 component variables from 104 component token object
 | `SecondaryNavigationTabTokens.ActiveLabelTextColor` | `ColorSchemeKeyTokens.OnSurface` | SecondaryNavigationTabTokens.kt:25 | `--m3e-comp-secondary-navigation-tab-active-label-text-color` | `var(--m3e-sys-color-on-surface)` |  |
 | `SecondaryNavigationTabTokens.ContainerColor` | `ColorSchemeKeyTokens.Surface` | SecondaryNavigationTabTokens.kt:28 | `--m3e-comp-secondary-navigation-tab-container-color` | `var(--m3e-sys-color-surface)` |  |
 | `SecondaryNavigationTabTokens.ContainerElevation` | `ElevationTokens.Level0` | SecondaryNavigationTabTokens.kt:31 | `--m3e-comp-secondary-navigation-tab-container-elevation` | `var(--m3e-sys-elevation-level0)` |  |
+| `SecondaryNavigationTabTokens.ContainerElevation` | `ElevationTokens.Level0` | SecondaryNavigationTabTokens.kt:31 | `--m3e-comp-secondary-navigation-tab-container-shadow` | `var(--m3e-sys-elevation-level0-shadow)` | derived: box-shadow of the referenced elevation level |
 | `SecondaryNavigationTabTokens.ContainerHeight` | `48.0.dp` | SecondaryNavigationTabTokens.kt:34 | `--m3e-comp-secondary-navigation-tab-container-height` | `48px` |  |
 | `SecondaryNavigationTabTokens.ContainerShape` | `ShapeKeyTokens.CornerNone` | SecondaryNavigationTabTokens.kt:37 | `--m3e-comp-secondary-navigation-tab-container-shape` | `var(--m3e-sys-shape-corner-none)` |  |
 | `SecondaryNavigationTabTokens.DividerColor` | `ColorSchemeKeyTokens.SurfaceVariant` | SecondaryNavigationTabTokens.kt:40 | `--m3e-comp-secondary-navigation-tab-divider-color` | `var(--m3e-sys-color-surface-variant)` |  |
@@ -2701,6 +2822,7 @@ Emitted: 370 system and 2443 component variables from 104 component token object
 |---|---|---|---|---|---|
 | `SegmentedMenuTokens.ActiveContainerShape` | `24.0.dp` | SegmentedMenuTokens.kt:24 | `--m3e-comp-segmented-menu-active-container-shape` | `24px` |  |
 | `SegmentedMenuTokens.ContainerElevation` | `ElevationTokens.Level2` | SegmentedMenuTokens.kt:27 | `--m3e-comp-segmented-menu-container-elevation` | `var(--m3e-sys-elevation-level2)` |  |
+| `SegmentedMenuTokens.ContainerElevation` | `ElevationTokens.Level2` | SegmentedMenuTokens.kt:27 | `--m3e-comp-segmented-menu-container-shadow` | `var(--m3e-sys-elevation-level2-shadow)` | derived: box-shadow of the referenced elevation level |
 | `SegmentedMenuTokens.ContainerShape` | `ShapeKeyTokens.CornerLarge` | SegmentedMenuTokens.kt:30 | `--m3e-comp-segmented-menu-container-shape` | `var(--m3e-sys-shape-corner-large)` |  |
 | `SegmentedMenuTokens.GroupContainerColor` | `ColorSchemeKeyTokens.SurfaceContainerLow` | SegmentedMenuTokens.kt:33 | `--m3e-comp-segmented-menu-group-container-color` | `var(--m3e-sys-color-surface-container-low)` |  |
 | `SegmentedMenuTokens.GroupPadding` | `4.0.dp` | SegmentedMenuTokens.kt:36 | `--m3e-comp-segmented-menu-group-padding` | `4px` |  |
@@ -2772,7 +2894,9 @@ Emitted: 370 system and 2443 component variables from 104 component token object
 | `SheetBottomTokens.DockedDragHandleWidth` | `32.0.dp` | SheetBottomTokens.kt:36 | `--m3e-comp-sheet-bottom-docked-drag-handle-width` | `32px` |  |
 | `SheetBottomTokens.DockedMinimizedContainerShape` | `ShapeKeyTokens.CornerNone` | SheetBottomTokens.kt:39 | `--m3e-comp-sheet-bottom-docked-minimized-container-shape` | `var(--m3e-sys-shape-corner-none)` |  |
 | `SheetBottomTokens.DockedModalContainerElevation` | `ElevationTokens.Level1` | SheetBottomTokens.kt:42 | `--m3e-comp-sheet-bottom-docked-modal-container-elevation` | `var(--m3e-sys-elevation-level1)` |  |
+| `SheetBottomTokens.DockedModalContainerElevation` | `ElevationTokens.Level1` | SheetBottomTokens.kt:42 | `--m3e-comp-sheet-bottom-docked-modal-container-shadow` | `var(--m3e-sys-elevation-level1-shadow)` | derived: box-shadow of the referenced elevation level |
 | `SheetBottomTokens.DockedStandardContainerElevation` | `ElevationTokens.Level1` | SheetBottomTokens.kt:45 | `--m3e-comp-sheet-bottom-docked-standard-container-elevation` | `var(--m3e-sys-elevation-level1)` |  |
+| `SheetBottomTokens.DockedStandardContainerElevation` | `ElevationTokens.Level1` | SheetBottomTokens.kt:45 | `--m3e-comp-sheet-bottom-docked-standard-container-shadow` | `var(--m3e-sys-elevation-level1-shadow)` | derived: box-shadow of the referenced elevation level |
 | `SheetBottomTokens.FocusIndicatorColor` | `ColorSchemeKeyTokens.Secondary` | SheetBottomTokens.kt:48 | `--m3e-comp-sheet-bottom-focus-indicator-color` | `var(--m3e-sys-color-secondary)` |  |
 
 ## slider
@@ -2869,6 +2993,7 @@ Emitted: 370 system and 2443 component variables from 104 component token object
 | `SnackbarTokens.ActionPressedLabelTextColor` | `ColorSchemeKeyTokens.InversePrimary` | SnackbarTokens.kt:36 | `--m3e-comp-snackbar-action-label-text-color-pressed` | `var(--m3e-sys-color-inverse-primary)` |  |
 | `SnackbarTokens.ContainerColor` | `ColorSchemeKeyTokens.InverseSurface` | SnackbarTokens.kt:39 | `--m3e-comp-snackbar-container-color` | `var(--m3e-sys-color-inverse-surface)` |  |
 | `SnackbarTokens.ContainerElevation` | `ElevationTokens.Level3` | SnackbarTokens.kt:42 | `--m3e-comp-snackbar-container-elevation` | `var(--m3e-sys-elevation-level3)` |  |
+| `SnackbarTokens.ContainerElevation` | `ElevationTokens.Level3` | SnackbarTokens.kt:42 | `--m3e-comp-snackbar-container-shadow` | `var(--m3e-sys-elevation-level3-shadow)` | derived: box-shadow of the referenced elevation level |
 | `SnackbarTokens.ContainerShape` | `ShapeKeyTokens.CornerExtraSmall` | SnackbarTokens.kt:45 | `--m3e-comp-snackbar-container-shape` | `var(--m3e-sys-shape-corner-extra-small)` |  |
 | `SnackbarTokens.IconColor` | `ColorSchemeKeyTokens.InverseOnSurface` | SnackbarTokens.kt:48 | `--m3e-comp-snackbar-icon-color` | `var(--m3e-sys-color-inverse-on-surface)` |  |
 | `SnackbarTokens.FocusIconColor` | `ColorSchemeKeyTokens.InverseOnSurface` | SnackbarTokens.kt:51 | `--m3e-comp-snackbar-icon-color-focus` | `var(--m3e-sys-color-inverse-on-surface)` |  |
@@ -3065,16 +3190,23 @@ Emitted: 370 system and 2443 component variables from 104 component token object
 | `SuggestionChipTokens.DisabledLabelTextColor` | `ColorSchemeKeyTokens.OnSurface` | SuggestionChipTokens.kt:30 | `--m3e-comp-suggestion-chip-label-text-color-disabled` | `var(--m3e-sys-color-on-surface)` |  |
 | `SuggestionChipTokens.DisabledLabelTextOpacity` | `0.38f` | SuggestionChipTokens.kt:33 | `--m3e-comp-suggestion-chip-label-text-opacity-disabled` | `0.38` |  |
 | `SuggestionChipTokens.DraggedContainerElevation` | `ElevationTokens.Level4` | SuggestionChipTokens.kt:34 | `--m3e-comp-suggestion-chip-container-elevation-dragged` | `var(--m3e-sys-elevation-level4)` |  |
+| `SuggestionChipTokens.DraggedContainerElevation` | `ElevationTokens.Level4` | SuggestionChipTokens.kt:34 | `--m3e-comp-suggestion-chip-container-shadow-dragged` | `var(--m3e-sys-elevation-level4-shadow)` | derived: box-shadow of the referenced elevation level |
 | `SuggestionChipTokens.DraggedLabelTextColor` | `ColorSchemeKeyTokens.OnSurfaceVariant` | SuggestionChipTokens.kt:37 | `--m3e-comp-suggestion-chip-label-text-color-dragged` | `var(--m3e-sys-color-on-surface-variant)` |  |
 | `SuggestionChipTokens.ElevatedContainerColor` | `ColorSchemeKeyTokens.SurfaceContainerLow` | SuggestionChipTokens.kt:40 | `--m3e-comp-suggestion-chip-elevated-container-color` | `var(--m3e-sys-color-surface-container-low)` |  |
 | `SuggestionChipTokens.ElevatedContainerElevation` | `ElevationTokens.Level1` | SuggestionChipTokens.kt:43 | `--m3e-comp-suggestion-chip-elevated-container-elevation` | `var(--m3e-sys-elevation-level1)` |  |
+| `SuggestionChipTokens.ElevatedContainerElevation` | `ElevationTokens.Level1` | SuggestionChipTokens.kt:43 | `--m3e-comp-suggestion-chip-elevated-container-shadow` | `var(--m3e-sys-elevation-level1-shadow)` | derived: box-shadow of the referenced elevation level |
 | `SuggestionChipTokens.ElevatedDisabledContainerColor` | `ColorSchemeKeyTokens.OnSurface` | SuggestionChipTokens.kt:46 | `--m3e-comp-suggestion-chip-elevated-container-color-disabled` | `var(--m3e-sys-color-on-surface)` |  |
 | `SuggestionChipTokens.ElevatedDisabledContainerElevation` | `ElevationTokens.Level0` | SuggestionChipTokens.kt:49 | `--m3e-comp-suggestion-chip-elevated-container-elevation-disabled` | `var(--m3e-sys-elevation-level0)` |  |
+| `SuggestionChipTokens.ElevatedDisabledContainerElevation` | `ElevationTokens.Level0` | SuggestionChipTokens.kt:49 | `--m3e-comp-suggestion-chip-elevated-container-shadow-disabled` | `var(--m3e-sys-elevation-level0-shadow)` | derived: box-shadow of the referenced elevation level |
 | `SuggestionChipTokens.ElevatedDisabledContainerOpacity` | `0.12f` | SuggestionChipTokens.kt:52 | `--m3e-comp-suggestion-chip-elevated-container-opacity-disabled` | `0.12` |  |
 | `SuggestionChipTokens.ElevatedFocusContainerElevation` | `ElevationTokens.Level1` | SuggestionChipTokens.kt:53 | `--m3e-comp-suggestion-chip-elevated-container-elevation-focus` | `var(--m3e-sys-elevation-level1)` |  |
+| `SuggestionChipTokens.ElevatedFocusContainerElevation` | `ElevationTokens.Level1` | SuggestionChipTokens.kt:53 | `--m3e-comp-suggestion-chip-elevated-container-shadow-focus` | `var(--m3e-sys-elevation-level1-shadow)` | derived: box-shadow of the referenced elevation level |
 | `SuggestionChipTokens.ElevatedHoverContainerElevation` | `ElevationTokens.Level2` | SuggestionChipTokens.kt:56 | `--m3e-comp-suggestion-chip-elevated-container-elevation-hover` | `var(--m3e-sys-elevation-level2)` |  |
+| `SuggestionChipTokens.ElevatedHoverContainerElevation` | `ElevationTokens.Level2` | SuggestionChipTokens.kt:56 | `--m3e-comp-suggestion-chip-elevated-container-shadow-hover` | `var(--m3e-sys-elevation-level2-shadow)` | derived: box-shadow of the referenced elevation level |
 | `SuggestionChipTokens.ElevatedPressedContainerElevation` | `ElevationTokens.Level1` | SuggestionChipTokens.kt:59 | `--m3e-comp-suggestion-chip-elevated-container-elevation-pressed` | `var(--m3e-sys-elevation-level1)` |  |
+| `SuggestionChipTokens.ElevatedPressedContainerElevation` | `ElevationTokens.Level1` | SuggestionChipTokens.kt:59 | `--m3e-comp-suggestion-chip-elevated-container-shadow-pressed` | `var(--m3e-sys-elevation-level1-shadow)` | derived: box-shadow of the referenced elevation level |
 | `SuggestionChipTokens.FlatContainerElevation` | `ElevationTokens.Level0` | SuggestionChipTokens.kt:62 | `--m3e-comp-suggestion-chip-flat-container-elevation` | `var(--m3e-sys-elevation-level0)` |  |
+| `SuggestionChipTokens.FlatContainerElevation` | `ElevationTokens.Level0` | SuggestionChipTokens.kt:62 | `--m3e-comp-suggestion-chip-flat-container-shadow` | `var(--m3e-sys-elevation-level0-shadow)` | derived: box-shadow of the referenced elevation level |
 | `SuggestionChipTokens.FlatDisabledOutlineColor` | `ColorSchemeKeyTokens.OnSurface` | SuggestionChipTokens.kt:65 | `--m3e-comp-suggestion-chip-flat-outline-color-disabled` | `var(--m3e-sys-color-on-surface)` |  |
 | `SuggestionChipTokens.FlatDisabledOutlineOpacity` | `0.12f` | SuggestionChipTokens.kt:68 | `--m3e-comp-suggestion-chip-flat-outline-opacity-disabled` | `0.12` |  |
 | `SuggestionChipTokens.FlatFocusOutlineColor` | `ColorSchemeKeyTokens.OnSurfaceVariant` | SuggestionChipTokens.kt:69 | `--m3e-comp-suggestion-chip-flat-outline-color-focus` | `var(--m3e-sys-color-on-surface-variant)` |  |
@@ -3187,6 +3319,7 @@ Emitted: 370 system and 2443 component variables from 104 component token object
 |---|---|---|---|---|---|
 | `TimeInputTokens.ContainerColor` | `ColorSchemeKeyTokens.SurfaceContainerHigh` | TimeInputTokens.kt:24 | `--m3e-comp-time-input-container-color` | `var(--m3e-sys-color-surface-container-high)` |  |
 | `TimeInputTokens.ContainerElevation` | `ElevationTokens.Level3` | TimeInputTokens.kt:27 | `--m3e-comp-time-input-container-elevation` | `var(--m3e-sys-elevation-level3)` |  |
+| `TimeInputTokens.ContainerElevation` | `ElevationTokens.Level3` | TimeInputTokens.kt:27 | `--m3e-comp-time-input-container-shadow` | `var(--m3e-sys-elevation-level3-shadow)` | derived: box-shadow of the referenced elevation level |
 | `TimeInputTokens.ContainerShape` | `ShapeKeyTokens.CornerExtraLarge` | TimeInputTokens.kt:30 | `--m3e-comp-time-input-container-shape` | `var(--m3e-sys-shape-corner-extra-large)` |  |
 | `TimeInputTokens.FocusIndicatorColor` | `ColorSchemeKeyTokens.Secondary` | TimeInputTokens.kt:33 | `--m3e-comp-time-input-focus-indicator-color` | `var(--m3e-sys-color-secondary)` |  |
 | `TimeInputTokens.HeadlineColor` | `ColorSchemeKeyTokens.OnSurfaceVariant` | TimeInputTokens.kt:36 | `--m3e-comp-time-input-headline-color` | `var(--m3e-sys-color-on-surface-variant)` |  |
@@ -3266,6 +3399,7 @@ Emitted: 370 system and 2443 component variables from 104 component token object
 | `TimePickerTokens.ClockDialUnselectedLabelTextColor` | `ColorSchemeKeyTokens.OnSurface` | TimePickerTokens.kt:63 | `--m3e-comp-time-picker-clock-dial-label-text-color-unselected` | `var(--m3e-sys-color-on-surface)` |  |
 | `TimePickerTokens.ContainerColor` | `ColorSchemeKeyTokens.SurfaceContainerHigh` | TimePickerTokens.kt:66 | `--m3e-comp-time-picker-container-color` | `var(--m3e-sys-color-surface-container-high)` |  |
 | `TimePickerTokens.ContainerElevation` | `ElevationTokens.Level3` | TimePickerTokens.kt:69 | `--m3e-comp-time-picker-container-elevation` | `var(--m3e-sys-elevation-level3)` |  |
+| `TimePickerTokens.ContainerElevation` | `ElevationTokens.Level3` | TimePickerTokens.kt:69 | `--m3e-comp-time-picker-container-shadow` | `var(--m3e-sys-elevation-level3-shadow)` | derived: box-shadow of the referenced elevation level |
 | `TimePickerTokens.ContainerShape` | `ShapeKeyTokens.CornerExtraLarge` | TimePickerTokens.kt:72 | `--m3e-comp-time-picker-container-shape` | `var(--m3e-sys-shape-corner-extra-large)` |  |
 | `TimePickerTokens.HeadlineColor` | `ColorSchemeKeyTokens.OnSurfaceVariant` | TimePickerTokens.kt:75 | `--m3e-comp-time-picker-headline-color` | `var(--m3e-sys-color-on-surface-variant)` |  |
 | `TimePickerTokens.HeadlineFont` | `TypographyKeyTokens.LabelMedium` | TimePickerTokens.kt:78 | `--m3e-comp-time-picker-headline-font` | `var(--m3e-sys-typescale-label-medium-font)` |  |
@@ -3326,22 +3460,27 @@ Emitted: 370 system and 2443 component variables from 104 component token object
 |---|---|---|---|---|---|
 | `TonalButtonTokens.ContainerColor` | `ColorSchemeKeyTokens.SecondaryContainer` | TonalButtonTokens.kt:22 | `--m3e-comp-tonal-button-container-color` | `var(--m3e-sys-color-secondary-container)` |  |
 | `TonalButtonTokens.ContainerElevation` | `ElevationTokens.Level0` | TonalButtonTokens.kt:25 | `--m3e-comp-tonal-button-container-elevation` | `var(--m3e-sys-elevation-level0)` |  |
+| `TonalButtonTokens.ContainerElevation` | `ElevationTokens.Level0` | TonalButtonTokens.kt:25 | `--m3e-comp-tonal-button-container-shadow` | `var(--m3e-sys-elevation-level0-shadow)` | derived: box-shadow of the referenced elevation level |
 | `TonalButtonTokens.DisabledContainerColor` | `ColorSchemeKeyTokens.OnSurface` | TonalButtonTokens.kt:28 | `--m3e-comp-tonal-button-container-color-disabled` | `var(--m3e-sys-color-on-surface)` |  |
 | `TonalButtonTokens.DisabledContainerElevation` | `ElevationTokens.Level0` | TonalButtonTokens.kt:31 | `--m3e-comp-tonal-button-container-elevation-disabled` | `var(--m3e-sys-elevation-level0)` |  |
+| `TonalButtonTokens.DisabledContainerElevation` | `ElevationTokens.Level0` | TonalButtonTokens.kt:31 | `--m3e-comp-tonal-button-container-shadow-disabled` | `var(--m3e-sys-elevation-level0-shadow)` | derived: box-shadow of the referenced elevation level |
 | `TonalButtonTokens.DisabledContainerOpacity` | `0.1f` | TonalButtonTokens.kt:34 | `--m3e-comp-tonal-button-container-opacity-disabled` | `0.1` |  |
 | `TonalButtonTokens.DisabledIconColor` | `ColorSchemeKeyTokens.OnSurfaceVariant` | TonalButtonTokens.kt:35 | `--m3e-comp-tonal-button-icon-color-disabled` | `var(--m3e-sys-color-on-surface-variant)` |  |
 | `TonalButtonTokens.DisabledIconOpacity` | `0.38f` | TonalButtonTokens.kt:38 | `--m3e-comp-tonal-button-icon-opacity-disabled` | `0.38` |  |
 | `TonalButtonTokens.DisabledLabelTextColor` | `ColorSchemeKeyTokens.OnSurfaceVariant` | TonalButtonTokens.kt:39 | `--m3e-comp-tonal-button-label-text-color-disabled` | `var(--m3e-sys-color-on-surface-variant)` |  |
 | `TonalButtonTokens.DisabledLabelTextOpacity` | `0.38f` | TonalButtonTokens.kt:42 | `--m3e-comp-tonal-button-label-text-opacity-disabled` | `0.38` |  |
 | `TonalButtonTokens.FocusedContainerElevation` | `ElevationTokens.Level0` | TonalButtonTokens.kt:43 | `--m3e-comp-tonal-button-container-elevation-focused` | `var(--m3e-sys-elevation-level0)` |  |
+| `TonalButtonTokens.FocusedContainerElevation` | `ElevationTokens.Level0` | TonalButtonTokens.kt:43 | `--m3e-comp-tonal-button-container-shadow-focused` | `var(--m3e-sys-elevation-level0-shadow)` | derived: box-shadow of the referenced elevation level |
 | `TonalButtonTokens.FocusedIconColor` | `ColorSchemeKeyTokens.OnSecondaryContainer` | TonalButtonTokens.kt:46 | `--m3e-comp-tonal-button-icon-color-focused` | `var(--m3e-sys-color-on-secondary-container)` |  |
 | `TonalButtonTokens.FocusedLabelTextColor` | `ColorSchemeKeyTokens.OnSecondaryContainer` | TonalButtonTokens.kt:49 | `--m3e-comp-tonal-button-label-text-color-focused` | `var(--m3e-sys-color-on-secondary-container)` |  |
 | `TonalButtonTokens.HoveredContainerElevation` | `ElevationTokens.Level1` | TonalButtonTokens.kt:52 | `--m3e-comp-tonal-button-container-elevation-hovered` | `var(--m3e-sys-elevation-level1)` |  |
+| `TonalButtonTokens.HoveredContainerElevation` | `ElevationTokens.Level1` | TonalButtonTokens.kt:52 | `--m3e-comp-tonal-button-container-shadow-hovered` | `var(--m3e-sys-elevation-level1-shadow)` | derived: box-shadow of the referenced elevation level |
 | `TonalButtonTokens.HoveredIconColor` | `ColorSchemeKeyTokens.OnSecondaryContainer` | TonalButtonTokens.kt:55 | `--m3e-comp-tonal-button-icon-color-hovered` | `var(--m3e-sys-color-on-secondary-container)` |  |
 | `TonalButtonTokens.HoveredLabelTextColor` | `ColorSchemeKeyTokens.OnSecondaryContainer` | TonalButtonTokens.kt:58 | `--m3e-comp-tonal-button-label-text-color-hovered` | `var(--m3e-sys-color-on-secondary-container)` |  |
 | `TonalButtonTokens.IconColor` | `ColorSchemeKeyTokens.OnSecondaryContainer` | TonalButtonTokens.kt:61 | `--m3e-comp-tonal-button-icon-color` | `var(--m3e-sys-color-on-secondary-container)` |  |
 | `TonalButtonTokens.LabelTextColor` | `ColorSchemeKeyTokens.OnSecondaryContainer` | TonalButtonTokens.kt:64 | `--m3e-comp-tonal-button-label-text-color` | `var(--m3e-sys-color-on-secondary-container)` |  |
 | `TonalButtonTokens.PressedContainerElevation` | `ElevationTokens.Level0` | TonalButtonTokens.kt:67 | `--m3e-comp-tonal-button-container-elevation-pressed` | `var(--m3e-sys-elevation-level0)` |  |
+| `TonalButtonTokens.PressedContainerElevation` | `ElevationTokens.Level0` | TonalButtonTokens.kt:67 | `--m3e-comp-tonal-button-container-shadow-pressed` | `var(--m3e-sys-elevation-level0-shadow)` | derived: box-shadow of the referenced elevation level |
 | `TonalButtonTokens.PressedIconColor` | `ColorSchemeKeyTokens.OnSecondaryContainer` | TonalButtonTokens.kt:70 | `--m3e-comp-tonal-button-icon-color-pressed` | `var(--m3e-sys-color-on-secondary-container)` |  |
 | `TonalButtonTokens.PressedLabelTextColor` | `ColorSchemeKeyTokens.OnSecondaryContainer` | TonalButtonTokens.kt:73 | `--m3e-comp-tonal-button-label-text-color-pressed` | `var(--m3e-sys-color-on-secondary-container)` |  |
 | `TonalButtonTokens.SelectedContainerColor` | `ColorSchemeKeyTokens.Secondary` | TonalButtonTokens.kt:76 | `--m3e-comp-tonal-button-container-color-selected` | `var(--m3e-sys-color-secondary)` |  |

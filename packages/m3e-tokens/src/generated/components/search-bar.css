@@ -9,6 +9,7 @@
     --m3e-comp-search-bar-avatar-size: 30px;
     --m3e-comp-search-bar-container-color: var(--m3e-sys-color-surface-container-high);
     --m3e-comp-search-bar-container-elevation: var(--m3e-sys-elevation-level3);
+    --m3e-comp-search-bar-container-shadow: var(--m3e-sys-elevation-level3-shadow);
     --m3e-comp-search-bar-container-height: 56px;
     --m3e-comp-search-bar-container-shape: var(--m3e-sys-shape-corner-full);
     --m3e-comp-search-bar-focus-indicator-color: var(--m3e-sys-color-secondary);

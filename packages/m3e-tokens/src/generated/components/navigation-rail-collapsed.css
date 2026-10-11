@@ -6,6 +6,7 @@
 @layer m3e.tokens {
   :root {
     --m3e-comp-navigation-rail-collapsed-container-elevation: var(--m3e-sys-elevation-level0);
+    --m3e-comp-navigation-rail-collapsed-container-shadow: var(--m3e-sys-elevation-level0-shadow);
     --m3e-comp-navigation-rail-collapsed-container-shape: var(--m3e-sys-shape-corner-none);
     --m3e-comp-navigation-rail-collapsed-container-width: 96px;
     --m3e-comp-navigation-rail-collapsed-item-vertical-space: 4px;

@@ -25,6 +25,7 @@
     --m3e-comp-time-picker-clock-dial-label-text-color-unselected: var(--m3e-sys-color-on-surface);
     --m3e-comp-time-picker-container-color: var(--m3e-sys-color-surface-container-high);
     --m3e-comp-time-picker-container-elevation: var(--m3e-sys-elevation-level3);
+    --m3e-comp-time-picker-container-shadow: var(--m3e-sys-elevation-level3-shadow);
     --m3e-comp-time-picker-container-shape: var(--m3e-sys-shape-corner-extra-large);
     --m3e-comp-time-picker-headline-color: var(--m3e-sys-color-on-surface-variant);
     --m3e-comp-time-picker-headline-font: var(--m3e-sys-typescale-label-medium-font);

@@ -7,22 +7,27 @@
   :root {
     --m3e-comp-tonal-button-container-color: var(--m3e-sys-color-secondary-container);
     --m3e-comp-tonal-button-container-elevation: var(--m3e-sys-elevation-level0);
+    --m3e-comp-tonal-button-container-shadow: var(--m3e-sys-elevation-level0-shadow);
     --m3e-comp-tonal-button-container-color-disabled: var(--m3e-sys-color-on-surface);
     --m3e-comp-tonal-button-container-elevation-disabled: var(--m3e-sys-elevation-level0);
+    --m3e-comp-tonal-button-container-shadow-disabled: var(--m3e-sys-elevation-level0-shadow);
     --m3e-comp-tonal-button-container-opacity-disabled: 0.1;
     --m3e-comp-tonal-button-icon-color-disabled: var(--m3e-sys-color-on-surface-variant);
     --m3e-comp-tonal-button-icon-opacity-disabled: 0.38;
     --m3e-comp-tonal-button-label-text-color-disabled: var(--m3e-sys-color-on-surface-variant);
     --m3e-comp-tonal-button-label-text-opacity-disabled: 0.38;
     --m3e-comp-tonal-button-container-elevation-focused: var(--m3e-sys-elevation-level0);
+    --m3e-comp-tonal-button-container-shadow-focused: var(--m3e-sys-elevation-level0-shadow);
     --m3e-comp-tonal-button-icon-color-focused: var(--m3e-sys-color-on-secondary-container);
     --m3e-comp-tonal-button-label-text-color-focused: var(--m3e-sys-color-on-secondary-container);
     --m3e-comp-tonal-button-container-elevation-hovered: var(--m3e-sys-elevation-level1);
+    --m3e-comp-tonal-button-container-shadow-hovered: var(--m3e-sys-elevation-level1-shadow);
     --m3e-comp-tonal-button-icon-color-hovered: var(--m3e-sys-color-on-secondary-container);
     --m3e-comp-tonal-button-label-text-color-hovered: var(--m3e-sys-color-on-secondary-container);
     --m3e-comp-tonal-button-icon-color: var(--m3e-sys-color-on-secondary-container);
     --m3e-comp-tonal-button-label-text-color: var(--m3e-sys-color-on-secondary-container);
     --m3e-comp-tonal-button-container-elevation-pressed: var(--m3e-sys-elevation-level0);
+    --m3e-comp-tonal-button-container-shadow-pressed: var(--m3e-sys-elevation-level0-shadow);
     --m3e-comp-tonal-button-icon-color-pressed: var(--m3e-sys-color-on-secondary-container);
     --m3e-comp-tonal-button-label-text-color-pressed: var(--m3e-sys-color-on-secondary-container);
     --m3e-comp-tonal-button-container-color-selected: var(--m3e-sys-color-secondary);
