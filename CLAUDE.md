@@ -26,7 +26,7 @@ Standing rules for every Claude Code session in `kyralabs/m3exp-web`. Read `DECI
 - **Licensing (D9):** ported Google code keeps its original Apache-2.0 header plus `// Ported to TypeScript by Kyra Labs from <path>@<commit>`, and the project is listed in `NOTICE`. Never strip headers. Bundled fonts keep their license files beside them.
 
 ## Naming
-- CSS vars: `--m3e-ref-…` (palettes, typefaces), `--m3e-sys-{color|typescale|shape|elevation|motion|state}-…`, `--m3e-comp-<component>-<part>-<property>[-<state>]`.
+- CSS vars: `--m3e-ref-…` (palettes, typefaces), `--m3e-sys-{color|typescale|shape|elevation|motion|state|space}-…`, `--m3e-comp-<component>-<part>-<property>[-<state>]`.
 - Classes: `.m3e-<component>`, `__<part>`, `--<modifier>`.
 - Elements: `<m3e-<component>>`; events are kebab-case `CustomEvent`s with `detail`.
 - React: PascalCase components, `on<Event>` props, `is<State>` booleans (React Aria convention).
