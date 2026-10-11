@@ -10,5 +10,6 @@ compose_material3=1.5.0-beta01
 graphics_shapes=1.1.0
 material_color_utilities=0.4.0
 material_web=2.5.0
-google_sans_flex=TODO(verify)
+google_sans_flex=5.000
+google_fonts_commit=bd8f81ddb5c74d5c8897b36ad88b440266245103
 material_symbols=TODO(verify)

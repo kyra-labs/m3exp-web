@@ -7,6 +7,7 @@ const PAGES = [
   { path: '/', name: 'home' },
   { path: '/components/', name: 'components-index' },
   { path: '/theme/', name: 'theme' },
+  { path: '/typography/', name: 'typography' },
 ];
 
 for (const { path, name } of PAGES) {
@@ -31,4 +32,23 @@ for (const { path, name } of PAGES) {
 test('the umbrella package loads the elements layer in the browser', async ({ page }) => {
   await page.goto('/');
   await expect(page.locator('#elements-status')).toHaveText('ready');
+});
+
+test('fonts load offline from the package (M2 DoD)', async ({ page }) => {
+  const external: string[] = [];
+  const fonts: string[] = [];
+  await page.route('**/*', (route) => {
+    const url = new URL(route.request().url());
+    if (url.hostname !== 'localhost') {
+      external.push(url.href);
+      return route.abort();
+    }
+    if (url.pathname.endsWith('.woff2')) fonts.push(url.pathname);
+    return route.continue();
+  });
+  await page.goto('/typography/');
+  await page.evaluate(() => document.fonts.ready);
+  expect(external).toEqual([]);
+  expect(fonts.some((path) => path.includes('google-sans-flex-latin'))).toBe(true);
+  expect(await page.evaluate(() => document.fonts.check('400 16px "Google Sans Flex"'))).toBe(true);
 });

@@ -27,6 +27,11 @@
     "typecheck": "tsc --noEmit -p tsconfig.json"
   },
   "devDependencies": {
-    "@kyralabs/m3e-tokens": "workspace:^"
+    "@kyralabs/m3e-tokens": "workspace:^",
+    "@types/fontkit": "2.0.9"
+  },
+  "dependencies": {
+    "subset-font": "2.9.0",
+    "fontkit": "2.0.4"
   }
 }

@@ -9,7 +9,7 @@
 | material-color-utilities (npm) | 0.4.0 | npmjs.com/package/@material/material-color-utilities | Apache-2.0. Bundled into `@kyralabs/m3e-tokens` (its ESM has extensionless imports Node cannot load) |
 | Material Web | 2.5.0 (2026-07-14) | github.com/material-components/material-web/releases | Secondary only; labs expressive components |
 | m3.material.io | live, accessed 2026-10; token DB "Google Material 3" v38.2.9 (`_dsm/data/dsdb-m3/2026-09-23_06-10-05`) | m3.material.io | Motion specs table; component specs; side sheets (sole reference, D8) |
-| Google Sans Flex (D1) | `TODO(verify)`: version + license from github.com/google/fonts (METADATA.pb) | fonts.google.com | Self-hosted; axes `TODO(verify)` |
+| Google Sans Flex (D1) | 5.000 (google/fonts@bd8f81dd `ofl/googlesansflex`, "Adding latest GSF v5.000", 2026-10-09) | github.com/google/fonts/tree/bd8f81ddb5c74d5c8897b36ad88b440266245103/ofl/googlesansflex | SIL OFL 1.1, no Reserved Font Names; trademarks per TRADEMARKS.md. Axes ROND 0–100, opsz 1–144 (default 18), slnt −10–0, wdth 25–151, wght 1–1000 (no GRAD). Chunk unicode ranges from the Google Fonts CSS2 API (vendored). Recorded in `/SOURCE_PIN` |
 | Material Symbols (D5) | `TODO(verify)`: version from github.com/google/material-design-icons | Apache-2.0 | Variable font bundled; subset CLI |
 | React Aria | `TODO(verify)`: latest react-aria on npm | | |
 | Motion (motion.dev) | `TODO(verify)`: latest "motion" on npm | | |
@@ -32,7 +32,7 @@
 - Repo: Apache 2.0 (`LICENSE`).
 - `NOTICE`: lists AndroidX Compose Material3 (tokens, component logic), AndroidX graphics-shapes, material-color-utilities — each "Copyright (C) The Android Open Source Project, licensed under the Apache License, Version 2.0" — and states that portions were modified/ported to TypeScript by Kyra Labs.
 - Ported files: original Google header retained, plus `// Ported to TypeScript by Kyra Labs from <path>@<commit>`.
-- Fonts: `packages/m3e-tokens/fonts/LICENSE-material-symbols.txt` (Apache 2.0), `LICENSE-google-sans-flex.txt` (`TODO(verify)` license type).
+- Fonts: `packages/m3e-tokens/fonts/LICENSE-material-symbols.txt` (Apache 2.0), `LICENSE-google-sans-flex.txt` (SIL OFL 1.1, verbatim from google/fonts) and `TRADEMARKS-google-sans-flex.md`.
 - Not legal advice; owner may seek review before 1.0.
 
 ## TODO(verify) register
@@ -42,8 +42,8 @@
 4. ~~Line heights and tracking~~ — resolved: `tokens/TypeScaleTokens.kt@19991f2c` (generated). Differs from FOUNDATIONS §2 (now corrected): display-large −0.2, body-medium 0.2, title-medium 0.2.
 5. ~~Emphasized weights~~ — resolved: `tokens/TypeScaleTokens.kt@19991f2c` L249 onward; still under upstream `// TODO update with the generated tokens once available` (provisional upstream; re-check at each pin bump). Emphasized tracking differs from the base styles.
 6. ~~Compose TypefaceTokens default~~ — resolved: `tokens/TypefaceTokens.kt@19991f2c` L25–L29 = `FontFamily.SansSerif` (not Roboto); D1 overrides it.
-7. Google Sans Flex: axes, ranges, version, license (google/fonts METADATA.pb).
-8. Google Sans Flex fallback metrics for `size-adjust`.
+7. ~~Google Sans Flex axes, ranges, version, license~~ — resolved: google/fonts@bd8f81dd `ofl/googlesansflex` METADATA.pb: `license: "OFL"`, axes ROND 0–100, opsz 1–144, slnt −10–0, wdth 25–151, wght 1–1000 (no GRAD); version 5.000 from the TTF name table. TRADEMARKS.md: no RFNs; the marks may not imply Google affiliation or be part of a product name.
+8. ~~Fallback metrics for `size-adjust`~~ — resolved: computed by m3e-codegen from the pinned TTF (hhea ascent/descent/lineGap, mean advance over U+0020–007E) against Arial 7.07 measured the same way; see `packages/m3e-tokens/fonts/manifest.json`.
 9. Material Symbols: version, axis ranges, default style used by M3E (Rounded vs Outlined).
 10. ~~SPEC_2025 extra roles and negative contrast~~ — resolved in npm 0.4.0: spec 2025 adds `primary/secondary/tertiary/error-dim` (spec 2021 returns undefined, `dynamiccolor/color_spec_2021.js`); spec 2025 treats negative contrast as 0. Guarded by tests.
 11. ~~Enumerate SpecVersion~~ — resolved: `SpecVersion = '2021' | '2025'` (`dynamiccolor/color_spec.d.ts` L21); no 2026. D3 default = 2025.

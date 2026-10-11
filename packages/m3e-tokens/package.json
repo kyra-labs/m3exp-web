@@ -46,6 +46,9 @@
     "./theme.css": "./dist/generated/theme.css",
     "./tokens.css": "./dist/generated/tokens.css",
     "./components/*.css": "./dist/generated/components/*.css",
+    "./fonts.css": "./fonts/fonts.css",
+    "./fonts-full.css": "./fonts/fonts-full.css",
+    "./fonts/*": "./fonts/*",
     "./package.json": "./package.json"
   },
   "files": [

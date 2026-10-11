@@ -62,3 +62,15 @@ a {
 .docs-swatch code {
   font-size: var(--m3e-sys-typescale-body-small-size);
 }
+
+.docs-specimen {
+  display: grid;
+  gap: var(--m3e-sys-space-200);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.docs-specimen__sample {
+  margin: 0;
+}

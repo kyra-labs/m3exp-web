@@ -4,3 +4,4 @@ dist/
 *.md
 packages/m3e-tokens/src/generated/
 packages/m3e-codegen/vendor/
+packages/m3e-tokens/fonts/

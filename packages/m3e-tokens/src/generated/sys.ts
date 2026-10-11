@@ -3,8 +3,8 @@
 // Values: Copyright (C) The Android Open Source Project, Apache License 2.0 (see NOTICE).
 
 export const typeface = {
-  brand: "\"Google Sans Flex\", system-ui, sans-serif",
-  plain: "\"Google Sans Flex\", system-ui, sans-serif",
+  brand: "\"Google Sans Flex\", \"Google Sans Flex Fallback\", system-ui, sans-serif",
+  plain: "\"Google Sans Flex\", \"Google Sans Flex Fallback\", system-ui, sans-serif",
   weights: {
     bold: 700,
     medium: 500,

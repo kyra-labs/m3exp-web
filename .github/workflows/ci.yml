@@ -65,6 +65,8 @@ jobs:
           done
           test -f packages/m3e-css/dist/index.css
           test -f packages/m3exp-web/dist/css/index.css
+      - name: Fonts rebuild byte-identically from the pinned TTF
+        run: pnpm fonts:check
       - name: m3e-theme CLI runs under plain Node
         run: node packages/m3e-tokens/dist/cli/theme.js --seed "#6750A4" --variant expressive | grep -q -- "--m3e-sys-color-primary:"
       - name: Packages pack cleanly
@@ -89,6 +91,8 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm build:packages
       - run: pnpm size
+      - name: Font sizes (reported, not failed; REQUIREMENTS §8)
+        run: node tools/report-fonts.js
 
   visual:
     # Pinned Linux image so committed baselines are reproducible (fonts, rasterization).

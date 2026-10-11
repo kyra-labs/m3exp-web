@@ -191,7 +191,9 @@ describe('reference values (register items 2–6, 12–14)', () => {
     expect(source('TypefaceTokens.kt')).toMatch(
       /Brand: FontFamily\s+get\(\) = FontFamily\.SansSerif/,
     );
-    expect(sys.get('--m3e-ref-typeface-brand')).toBe('"Google Sans Flex", system-ui, sans-serif');
+    expect(sys.get('--m3e-ref-typeface-brand')).toBe(
+      '"Google Sans Flex", "Google Sans Flex Fallback", system-ui, sans-serif',
+    );
   });
 
   it('scrim opacity', () => {

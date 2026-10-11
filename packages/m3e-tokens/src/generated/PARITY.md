@@ -21,8 +21,8 @@ Emitted: 287 system and 2443 component variables from 104 component token object
 
 | Source token | Source value | Line | CSS variable | Emitted | Note |
 |---|---|---|---|---|---|
-| `TypefaceTokens.Brand` | `FontFamily.SansSerif` | TypefaceTokens.kt:25 | `--m3e-ref-typeface-brand` | `"Google Sans Flex", system-ui, sans-serif` | D1 override: Google Sans Flex replaces FontFamily.SansSerif |
-| `TypefaceTokens.Plain` | `FontFamily.SansSerif` | TypefaceTokens.kt:28 | `--m3e-ref-typeface-plain` | `"Google Sans Flex", system-ui, sans-serif` | D1 override: Google Sans Flex replaces FontFamily.SansSerif |
+| `TypefaceTokens.Brand` | `FontFamily.SansSerif` | TypefaceTokens.kt:25 | `--m3e-ref-typeface-brand` | `"Google Sans Flex", "Google Sans Flex Fallback", system-ui, sans-serif` | D1 override: Google Sans Flex replaces FontFamily.SansSerif |
+| `TypefaceTokens.Plain` | `FontFamily.SansSerif` | TypefaceTokens.kt:28 | `--m3e-ref-typeface-plain` | `"Google Sans Flex", "Google Sans Flex Fallback", system-ui, sans-serif` | D1 override: Google Sans Flex replaces FontFamily.SansSerif |
 | `TypefaceTokens.WeightBold` | `FontWeight.Bold` | TypefaceTokens.kt:31 | `--m3e-ref-typeface-weight-bold` | `700` |  |
 | `TypefaceTokens.WeightMedium` | `FontWeight.Medium` | TypefaceTokens.kt:34 | `--m3e-ref-typeface-weight-medium` | `500` |  |
 | `TypefaceTokens.WeightRegular` | `FontWeight.Normal` | TypefaceTokens.kt:37 | `--m3e-ref-typeface-weight-regular` | `400` |  |
