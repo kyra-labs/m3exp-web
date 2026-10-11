@@ -267,6 +267,9 @@ importers:
         specifier: 2.9.0
         version: 2.9.0
     devDependencies:
+      '@kyralabs/m3e-motion':
+        specifier: workspace:^
+        version: link:../m3e-motion
       '@kyralabs/m3e-tokens':
         specifier: workspace:^
         version: link:../m3e-tokens

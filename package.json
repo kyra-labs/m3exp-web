@@ -30,7 +30,8 @@
     "fonts:fetch": "pnpm --filter \"@kyralabs/m3e-codegen...\" build && node packages/m3e-codegen/dist/cli.js fonts:fetch",
     "icons": "pnpm --filter \"@kyralabs/m3e-codegen...\" build && node packages/m3e-codegen/dist/cli.js icons",
     "icons:check": "pnpm --filter \"@kyralabs/m3e-codegen...\" build && node packages/m3e-codegen/dist/cli.js icons --check",
-    "icons:fetch": "pnpm --filter \"@kyralabs/m3e-codegen...\" build && node packages/m3e-codegen/dist/cli.js icons:fetch"
+    "icons:fetch": "pnpm --filter \"@kyralabs/m3e-codegen...\" build && node packages/m3e-codegen/dist/cli.js icons:fetch",
+    "reference:motion": "node tools/jvm/kotlin.mjs --main androidx.compose.animation.core.SpringReferenceKt --out packages/m3e-motion/src/__fixtures__/spring-reference.json packages/m3e-codegen/vendor/androidx-animation-core packages/m3e-motion/reference"
   },
   "devDependencies": {
     "@changesets/cli": "3.0.3",

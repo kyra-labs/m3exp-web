@@ -122,3 +122,24 @@ jobs:
             apps/visual/playwright-report
             apps/visual/test-results
           retention-days: 14
+
+  reference:
+    # JVM reference fixtures (ROADMAP M3 DoD) regenerate byte-identically from the vendored,
+    # unmodified androidx sources.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: '21'
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+      - uses: actions/cache@v6
+        with:
+          path: node_modules/.cache/kotlin-2.4.21
+          key: kotlin-2.4.21
+      - name: Spring reference (Compose SpringSimulation / SpringEstimation)
+        run: node tools/jvm/kotlin.mjs --main androidx.compose.animation.core.SpringReferenceKt --out packages/m3e-motion/src/__fixtures__/spring-reference.json packages/m3e-codegen/vendor/androidx-animation-core packages/m3e-motion/reference
+      - run: git diff --exit-code -- packages/m3e-motion/src/__fixtures__

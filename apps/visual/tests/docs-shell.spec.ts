@@ -9,6 +9,7 @@ const PAGES = [
   { path: '/theme/', name: 'theme' },
   { path: '/typography/', name: 'typography' },
   { path: '/icons/', name: 'icons' },
+  { path: '/motion/', name: 'motion' },
 ];
 
 for (const { path, name } of PAGES) {

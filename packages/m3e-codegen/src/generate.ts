@@ -9,10 +9,17 @@
 //
 // Seed-based color (material-color-utilities) is a runtime concern: @kyralabs/m3e-tokens/theme.
 
+import { springToLinear } from '@kyralabs/m3e-motion';
 import { themeCss } from '@kyralabs/m3e-tokens/theme-css';
 import { type BaselineColor, baselineColors } from './color.js';
 import { type Expr, type Member, type TokenFile, parseTokenFile } from './kotlin.js';
-import { FOCUS_INDICATOR, SPACE, type SupplementaryToken } from './supplementary.js';
+import {
+  FOCUS_INDICATOR,
+  SPACE,
+  SPRING_CURVES,
+  SPRING_CURVES_CITE,
+  type SupplementaryToken,
+} from './supplementary.js';
 import { compVar, componentName, kebab, kebabName, reorderStates, words } from './names.js';
 
 export interface SourceFile {
@@ -310,6 +317,78 @@ export function generate({
   }
   sys.push(...aliases);
 
+  // --- Spring curves for CSS --------------------------------------------------------------------
+  // `-easing`/`-duration`: linear() sampled from the springs above (m3e-motion, a bit-exact port
+  // of Compose's SpringSimulation; FOUNDATIONS §4). `-bezier`/`-bezier-duration`: the official
+  // m3.material.io stand-in curves. Reduced motion (FOUNDATIONS §4, project policy): spatial
+  // springs snap; default/slow effects use fast effects.
+  interface SpringCss {
+    easing: string;
+    durationMillis: number;
+    bezier: readonly number[];
+    bezierDurationMillis: number;
+  }
+  const motionCss: Record<string, Record<string, SpringCss>> = {};
+  const curveAliases: Emitted[] = [];
+  const reducedMotion: string[] = [];
+  for (const scheme of ['standard', 'expressive'] as const) {
+    for (const [token, spec] of Object.entries(springs[scheme] ?? {})) {
+      const curve = SPRING_CURVES.find((c) => c.scheme === scheme && c.token === token);
+      if (!curve) throw new Error(`No m3.material.io curve for ${scheme}.${token}`);
+      const linear = springToLinear(spec);
+      const tk = kebab(words(token[0]!.toUpperCase() + token.slice(1)));
+      const base = `--m3e-sys-motion-spring-${scheme}-${tk}`;
+      const derived = (field: string, value: string, cite: string): Emitted => ({
+        name: `${base}-${field}`,
+        value,
+        object: 'm3e-motion',
+        member: `${scheme}.${token}`,
+        raw: `ζ=${num(spec.dampingRatio)}, k=${num(spec.stiffness)}`,
+        line: 0,
+        cite,
+      });
+      const linearCite = `springToLinear() (m3e-motion; Compose SpringSimulation port), ${String(linear.stops.length)} stops, max error ${linear.maxError.toFixed(4)}`;
+      sys.push(
+        derived('easing', linear.easing, linearCite),
+        derived(
+          'duration',
+          `${String(linear.durationMillis)}ms`,
+          `${linearCite}; Compose duration estimate at 0.1% of travel`,
+        ),
+        derived('bezier', `cubic-bezier(${curve.bezier.map(num).join(', ')})`, SPRING_CURVES_CITE),
+        derived('bezier-duration', `${String(curve.durationMillis)}ms`, SPRING_CURVES_CITE),
+      );
+      if (scheme === DEFAULT_MOTION_SCHEME) {
+        for (const field of ['easing', 'duration', 'bezier', 'bezier-duration']) {
+          curveAliases.push({
+            ...derived(
+              field,
+              `var(${base}-${field})`,
+              'active motion scheme alias (REQUIREMENTS §9)',
+            ),
+            name: `--m3e-sys-motion-spring-${tk}-${field}`,
+          });
+        }
+      }
+      if (tk.endsWith('spatial')) {
+        reducedMotion.push(`${base}-duration: 0ms;`, `${base}-bezier-duration: 0ms;`);
+      } else if (!tk.startsWith('fast')) {
+        for (const field of ['easing', 'duration', 'bezier', 'bezier-duration']) {
+          reducedMotion.push(
+            `${base}-${field}: var(--m3e-sys-motion-spring-${scheme}-fast-effects-${field});`,
+          );
+        }
+      }
+      (motionCss[scheme] ??= {})[token] = {
+        easing: linear.easing,
+        durationMillis: linear.durationMillis,
+        bezier: curve.bezier,
+        bezierDurationMillis: curve.durationMillis,
+      };
+    }
+  }
+  sys.push(...curveAliases);
+
   // --- Supplementary sys tokens (m3.material.io; no androidx source at the pin) ---------------
   const supplementary = (t: SupplementaryToken): Emitted => ({
     name: t.name,
@@ -428,7 +507,7 @@ export function generate({
     `Source: ${upstreamPath} @ ${commit}`,
     'Values: Copyright (C) The Android Open Source Project, Apache License 2.0 (see NOTICE).',
   ];
-  const cssFile = (what: string, tokens: readonly Emitted[]) =>
+  const cssFile = (what: string, tokens: readonly Emitted[], extra: readonly string[] = []) =>
     [
       '/*',
       ...banner(what).map((l) => ` * ${l}`),
@@ -437,6 +516,7 @@ export function generate({
       '  :root {',
       ...tokens.map((t) => `    ${t.name}: ${t.value};`),
       '  }',
+      ...extra.map((l) => `  ${l}`),
       '}',
       '',
     ].join('\n');
@@ -451,7 +531,16 @@ export function generate({
       .replace(/"([A-Za-z_$][\w$]*)":/g, '$1:');
 
   const out = new Map<string, string>();
-  out.set('tokens.css', cssFile('Reference + system tokens (color: theme.css).', sys));
+  out.set(
+    'tokens.css',
+    cssFile('Reference + system tokens (color: theme.css).', sys, [
+      '@media (prefers-reduced-motion: reduce) {',
+      '  :root {',
+      ...reducedMotion.map((l) => `    ${l}`),
+      '  }',
+      '}',
+    ]),
+  );
 
   // Baseline color: Compose expressiveLightColorScheme() / darkColorScheme().
   const baseline = baselineColors(parsed, colorSchemeKt);
@@ -507,7 +596,7 @@ export function generate({
       '',
       `export const space = ${literal(space)} as const;`,
       '',
-      `export const motion = ${literal({ defaultScheme: DEFAULT_MOTION_SCHEME, springs, durations, easings })} as const;`,
+      `export const motion = ${literal({ defaultScheme: DEFAULT_MOTION_SCHEME, springs, css: motionCss, durations, easings })} as const;`,
       '',
     ].join('\n'),
   );

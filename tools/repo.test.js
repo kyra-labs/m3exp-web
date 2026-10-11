@@ -108,7 +108,12 @@ describe('licensing (D9)', () => {
     expect(read('LICENSE')).toMatch(/Apache License\s+Version 2\.0, January 2004/);
   });
 
-  it.each(['AndroidX Compose Material3', 'AndroidX graphics-shapes', 'material-color-utilities'])(
+  it.each([
+    'AndroidX Compose Material3',
+    'AndroidX Compose Animation',
+    'AndroidX graphics-shapes',
+    'material-color-utilities',
+  ])(
     'NOTICE lists %s',
     (project) => {
       expect(notice).toContain(project);

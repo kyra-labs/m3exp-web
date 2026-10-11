@@ -142,6 +142,22 @@ describe('createTheme options', () => {
     );
   });
 
+  it('switches every spring alias, including CSS curves, with motionScheme', () => {
+    const { cssText } = createTheme({ seed: '#6750a4', motionScheme: 'standard' });
+    for (const field of [
+      'damping-ratio',
+      'stiffness',
+      'easing',
+      'duration',
+      'bezier',
+      'bezier-duration',
+    ]) {
+      expect(cssText).toContain(
+        `--m3e-sys-motion-spring-fast-spatial-${field}: var(--m3e-sys-motion-spring-standard-fast-spatial-${field});`,
+      );
+    }
+  });
+
   it('accepts contrast presets', () => {
     expect(createTheme({ seed: '#6750a4', contrast: 'high' }).tokens.contrast).toBe(1);
     expect(createTheme({ seed: '#6750a4', contrast: 'medium' }).tokens.contrast).toBe(0.5);

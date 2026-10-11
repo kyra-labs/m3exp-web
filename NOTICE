@@ -16,6 +16,12 @@ Copyright (C) The Android Open Source Project
 Licensed under the Apache License, Version 2.0
 
 --------------------------------------------------------------------------------
+AndroidX Compose Animation (animation-core: spring simulation and duration estimate)
+https://android.googlesource.com/platform/frameworks/support/+/19991f2c0858aadfcb442ce02b2c8e4743c96898/compose/animation/animation-core/
+Copyright (C) The Android Open Source Project
+Licensed under the Apache License, Version 2.0
+
+--------------------------------------------------------------------------------
 AndroidX graphics-shapes (androidx.graphics:graphics-shapes 1.1.0)
 https://android.googlesource.com/platform/frameworks/support/+/refs/heads/androidx-main/graphics/graphics-shapes/
 Copyright (C) The Android Open Source Project

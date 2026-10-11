@@ -1,0 +1,9 @@
+{
+  "repo": "https://android.googlesource.com/platform/frameworks/support",
+  "commit": "19991f2c0858aadfcb442ce02b2c8e4743c96898",
+  "path": "compose/animation/animation-core/src/commonMain/kotlin/androidx/compose/animation/core",
+  "files": {
+    "SpringEstimation.kt": "7527111793fa8946d37fa684421f245a8d38b9c2445619a9bc784ca5c7367b12",
+    "SpringSimulation.kt": "78ccee541bba54e71666376819ec8b5e961421f0ea21ec34965da493827bf721"
+  }
+}

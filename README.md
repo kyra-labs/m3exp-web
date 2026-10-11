@@ -36,6 +36,7 @@ pnpm test:visual    # Playwright: Chromium/Firefox/WebKit × light/dark + axe (n
 pnpm changeset      # add a changeset to every PR that changes a package
 pnpm codegen        # regenerate m3e-tokens from the vendored androidx token files
 pnpm codegen:fetch  # pin bumps only: re-download token files for the commit in SOURCE_PIN
+pnpm reference:motion  # JVM reference fixture for m3e-motion (needs a JDK; CI re-runs it)
 ```
 
 Tokens are generated, never hand-edited. `packages/m3e-tokens/src/generated/PARITY.md` maps every

@@ -30,7 +30,7 @@ const kebab = (camel: string) => camel.replace(/[A-Z]/g, (c) => `-${c.toLowerCas
 
 function motionAliases(scheme: MotionScheme): string[] {
   return Object.keys(motion.springs[scheme]).flatMap((token) =>
-    ['damping-ratio', 'stiffness'].map(
+    ['damping-ratio', 'stiffness', 'easing', 'duration', 'bezier', 'bezier-duration'].map(
       (field) =>
         `--m3e-sys-motion-spring-${kebab(token)}-${field}: var(--m3e-sys-motion-spring-${scheme}-${kebab(token)}-${field});`,
     ),

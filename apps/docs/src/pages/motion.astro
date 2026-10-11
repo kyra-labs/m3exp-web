@@ -1,0 +1,77 @@
+---
+import { motion } from '@kyralabs/m3exp-web/tokens';
+import Base from '../layouts/Base.astro';
+
+// Static plots (no animation): the spring as CSS linear() (sampled from the Compose spring) and
+// the official m3.material.io cubic-bezier stand-in, on a shared time axis.
+const W = 320;
+const H = 160;
+const PAD = 16;
+interface SpringCss {
+  easing: string;
+  durationMillis: number;
+  bezier: readonly number[];
+  bezierDurationMillis: number;
+}
+const schemes = Object.entries(motion.css as Record<string, Record<string, SpringCss>>);
+const maxMs = Math.max(
+  ...schemes.flatMap(([, tokens]) => Object.values(tokens).flatMap((t) => [t.durationMillis, t.bezierDurationMillis])),
+);
+const yMin = -0.1;
+const yMax = 1.2;
+const px = (ms: number) => PAD + (ms / maxMs) * (W - 2 * PAD);
+const py = (v: number) => H - PAD - ((v - yMin) / (yMax - yMin)) * (H - 2 * PAD);
+
+function linearPoints(easing: string, durationMs: number): string {
+  const parts = easing.slice('linear('.length, -1).split(', ');
+  return parts
+    .map((part, i) => {
+      const [value, at] = part.split(' ');
+      const progress = at ? Number(at.replace('%', '')) / 100 : i === 0 ? 0 : 1;
+      return `${px(progress * durationMs).toFixed(1)},${py(Number(value)).toFixed(1)}`;
+    })
+    .join(' ');
+}
+
+function bezierPoints([x1, y1, x2, y2]: readonly number[], durationMs: number): string {
+  const curve = (a: number, b: number, t: number) => 3 * a * t * (1 - t) ** 2 + 3 * b * t ** 2 * (1 - t) + t ** 3;
+  const points: string[] = [];
+  for (let i = 0; i <= 60; i++) {
+    const t = i / 60;
+    points.push(`${px(curve(x1!, x2!, t) * durationMs).toFixed(1)},${py(curve(y1!, y2!, t)).toFixed(1)}`);
+  }
+  return points.join(' ');
+}
+const label = (token: string) => token.replace(/([A-Z])/g, ' $1').toLowerCase();
+---
+
+<Base title="Motion">
+  <h1>Motion</h1>
+  <p>
+    Motion-scheme springs as CSS. Solid: <code>linear()</code> sampled from the Compose spring
+    (bit-exact port of <code>SpringSimulation</code>), ending when it is within 0.1% of the target.
+    Dashed: the m3.material.io cubic-bezier stand-in. Time axis: 0–{maxMs} ms; the horizontal rule
+    marks the target value.
+  </p>
+  {
+    schemes.map(([scheme, tokens]) => (
+      <section aria-labelledby={`${scheme}-heading`}>
+        <h2 id={`${scheme}-heading`}>{scheme[0]!.toUpperCase() + scheme.slice(1)}</h2>
+        <ul class="docs-motion">
+          {Object.entries(tokens).map(([token, t]) => (
+            <li>
+              <svg viewBox={`0 0 ${W} ${H}`} role="img" aria-label={`${scheme} ${label(token)} spring`}>
+                <line class="docs-motion__target" x1={PAD} x2={W - PAD} y1={py(1)} y2={py(1)} />
+                <polyline class="docs-motion__spring" points={linearPoints(t.easing, t.durationMillis)} />
+                <polyline class="docs-motion__bezier" points={bezierPoints(t.bezier, t.bezierDurationMillis)} />
+              </svg>
+              <code>
+                {label(token)}: {t.durationMillis} ms spring · {t.bezierDurationMillis} ms bezier
+              </code>
+            </li>
+          ))}
+        </ul>
+      </section>
+    ))
+  }
+</Base>
