@@ -15,8 +15,14 @@ import { findRepoRoot, readPin, requirePin } from './pin.js';
 import {
   ANIMATION_CORE_PATH,
   ANIMATION_CORE_SOURCES,
+  GRAPHICS_SHAPES_ARTIFACT,
+  GRAPHICS_SHAPES_SOURCE_SETS,
+  MATERIAL3_SHAPE_SOURCES,
+  UI_GRAPHICS_PATH,
+  UI_GRAPHICS_SOURCES,
   MATERIAL3_PATH,
   MATERIAL3_SOURCES,
+  fetchMavenSources,
   fetchTokens,
   fetchVendor,
   readVendor,
@@ -26,6 +32,7 @@ const root = findRepoRoot(process.cwd());
 const vendorDir = join(root, 'packages/m3e-codegen/vendor/androidx-material3-tokens');
 const sourcesDir = join(root, 'packages/m3e-codegen/vendor/androidx-material3-sources');
 const animationDir = join(root, 'packages/m3e-codegen/vendor/androidx-animation-core');
+const shapesVendor = (name: string) => join(root, 'packages/m3e-codegen/vendor', name);
 const outDir = join(root, 'packages/m3e-tokens/src/generated');
 const fontVendorDir = join(root, 'packages/m3e-codegen/vendor/google-fonts-googlesansflex');
 const fontOutDir = join(root, 'packages/m3e-tokens/fonts');
@@ -137,6 +144,27 @@ async function main(command: string | undefined, flags: readonly string[]): Prom
     const manifest = await fetchTokens(repo, commit, vendorDir);
     await fetchVendor(repo, commit, MATERIAL3_PATH, sourcesDir, MATERIAL3_SOURCES);
     await fetchVendor(repo, commit, ANIMATION_CORE_PATH, animationDir, ANIMATION_CORE_SOURCES);
+    await fetchVendor(
+      repo,
+      commit,
+      MATERIAL3_PATH,
+      shapesVendor('androidx-material3-shapes'),
+      MATERIAL3_SHAPE_SOURCES,
+    );
+    await fetchVendor(
+      repo,
+      commit,
+      UI_GRAPHICS_PATH,
+      shapesVendor('androidx-ui-graphics'),
+      UI_GRAPHICS_SOURCES,
+    );
+    await fetchMavenSources(
+      GRAPHICS_SHAPES_ARTIFACT,
+      requirePin(pin, 'graphics_shapes'),
+      requirePin(pin, 'graphics_shapes_sources_sha256'),
+      GRAPHICS_SHAPES_SOURCE_SETS,
+      shapesVendor('androidx-graphics-shapes'),
+    );
     console.log(
       `fetched ${String(Object.keys(manifest.files).length)} token files + ${MATERIAL3_SOURCES.join(', ')} @ ${commit}`,
     );

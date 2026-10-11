@@ -1,0 +1,8 @@
+{
+  "repo": "https://android.googlesource.com/platform/frameworks/support",
+  "commit": "19991f2c0858aadfcb442ce02b2c8e4743c96898",
+  "path": "compose/ui/ui-graphics/src/commonMain/kotlin/androidx/compose/ui/graphics",
+  "files": {
+    "Matrix.kt": "ac927a2f3f032a403af24c2bd28065ce9cd9e737a51c9ddf3de58d061e201c97"
+  }
+}

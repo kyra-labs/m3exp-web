@@ -7,7 +7,15 @@
 // node_modules/.cache/kotlin-<version>, verified against JetBrains' published sha256.
 import { execFileSync, spawnSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
-import { existsSync, mkdirSync, readdirSync, rmSync, statSync, writeFileSync } from 'node:fs';
+import {
+  existsSync,
+  mkdirSync,
+  readFileSync,
+  readdirSync,
+  rmSync,
+  statSync,
+  writeFileSync,
+} from 'node:fs';
 import { delimiter, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { parseArgs } from 'node:util';
@@ -74,6 +82,23 @@ const build = join(cache, 'build', values.main);
 rmSync(build, { recursive: true, force: true });
 mkdirSync(build, { recursive: true });
 const jarOut = join(build, 'reference.jar');
+// Vendored KMP sources may pair a commonMain `expect` with its jvmMain `actual` (graphics-shapes'
+// Format.kt / Format.jvm.kt). K2 rejects both in one module, so declaring files go to a `common`
+// fragment that the `jvm` fragment (everything else) refines.
+const expectFiles = sources.filter((f) =>
+  /^\s*(internal |public |private )?expect /m.test(readFileSync(f, 'utf8')),
+);
+const fragmentArgs =
+  expectFiles.length === 0
+    ? []
+    : [
+        '-Xmulti-platform',
+        '-Xfragments=common,jvm',
+        '-Xfragment-refines=jvm:common',
+        ...sources.map(
+          (f) => `-Xfragment-sources=${expectFiles.includes(f) ? 'common' : 'jvm'}:${f}`,
+        ),
+      ];
 const compilerCp = readdirSync(lib)
   .filter((f) => f.endsWith('.jar'))
   .map((f) => join(lib, f))
@@ -89,6 +114,7 @@ execFileSync(
     join(cache, 'kotlinc'),
     '-include-runtime',
     '-nowarn',
+    ...fragmentArgs,
     '-d',
     jarOut,
     ...sources,

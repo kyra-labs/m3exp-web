@@ -1,0 +1,12 @@
+{
+  "repo": "https://android.googlesource.com/platform/frameworks/support",
+  "commit": "19991f2c0858aadfcb442ce02b2c8e4743c96898",
+  "path": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3",
+  "files": {
+    "MaterialShapes.kt": "08c29828003344914ee0d6783f213b37caae650175cd004ba321eaf3a7d6e434",
+    "ShapeUtil.kt": "894f8cc0121eb13b92e7f28aaa06c04a06b89bfbb7d423f09c8787d68b02c0d5"
+  },
+  "upstream": {
+    "ShapeUtil.kt": "internal/ShapeUtil.kt"
+  }
+}
