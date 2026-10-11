@@ -87,8 +87,8 @@ Partial variants generated: extra-small-top, large-top/start/end, extra-large-to
 - Each preset is normalized to a unit square. The TS port must reproduce the `RoundedPolygon` construction parameters verbatim from `MaterialShapes.kt`.
 
 **Morph rules:**
-- Port of `androidx.graphics.shapes` 1.1.0: `RoundedPolygon`, `CornerRounding` (radius, smoothing), `Cubic`, `Feature`/`FeatureDetector`, `Morph`, `FeatureMapping`, `PolygonMeasure`, `SvgPathParser`.
-- Morph maps curves between shapes by proximity, distance to vertices and concavity, splitting curves when counts differ (AndroidX API docs). `Morph.calculateBounds()` added in 1.1.0.
+- Port of `androidx.graphics.shapes` 1.0.1, the version Material3 1.5.0-beta01 depends on (SOURCES.md): `RoundedPolygon`, `CornerRounding` (radius, smoothing), `Cubic`, `Feature`, `Morph`, `FeatureMapping`, `PolygonMeasure`. `FeatureDetector` and `SvgPathParser` are 1.1.0 additions and out of scope.
+- Morph maps curves between shapes by proximity, distance to vertices and concavity, splitting curves when counts differ (AndroidX API docs). In 1.0.1 outline progress is measured by angle around each polygon's center (1.1.0 switched to length). `Morph.calculateBounds()`/`calculateMaxBounds()` exist in 1.0.1.
 - Morph setup is cached per shape pair. Each frame only evaluates `asCubics(progress)` → SVG `d`.
 - Corner-radius morphs on rectangles (button press/select) use plain `border-radius` animation, not Morph.
 

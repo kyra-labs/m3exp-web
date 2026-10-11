@@ -3,7 +3,7 @@
 Standing rules for every Claude Code session in `kyralabs/m3exp-web`. Read `DECISIONS.md` first; it overrides anything here.
 
 ## Source of truth
-- Compose Material3 **1.5.0-beta01** at the commit in `SOURCES.md` (pin file: `/SOURCE_PIN`). graphics-shapes **1.1.0**. `@material/material-color-utilities` **0.4.0**. Material Web **2.5.0** (secondary only). Side sheets: m3.material.io only (D8).
+- Compose Material3 **1.5.0-beta01** at the commit in `SOURCES.md` (pin file: `/SOURCE_PIN`). graphics-shapes **1.0.1** (the version Material3 1.5.0-beta01 depends on). `@material/material-color-utilities` **0.4.0**. Material Web **2.5.0** (secondary only). Side sheets: m3.material.io only (D8).
 - Priority: androidx code > m3.material.io > official Google blogs. Never use third-party blogs for values.
 - If a value cannot be verified, write `TODO(verify): <what, which file>` and add it to the register in `SOURCES.md`. Never guess.
 
