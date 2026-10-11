@@ -10,6 +10,7 @@
     --m3e-comp-primary-navigation-tab-active-indicator-shape: 3px;
     --m3e-comp-primary-navigation-tab-container-color: var(--m3e-sys-color-surface);
     --m3e-comp-primary-navigation-tab-container-elevation: var(--m3e-sys-elevation-level0);
+    --m3e-comp-primary-navigation-tab-container-shadow: var(--m3e-sys-elevation-level0-shadow);
     --m3e-comp-primary-navigation-tab-container-height: 48px;
     --m3e-comp-primary-navigation-tab-container-shape: var(--m3e-sys-shape-corner-none);
     --m3e-comp-primary-navigation-tab-active-icon-color-focus: var(--m3e-sys-color-primary);

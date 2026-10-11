@@ -35,6 +35,12 @@ export function readGeneratorInputs(root: string, pin: SourcePin): GenerateOptio
     upstreamPath: tokens.manifest.path,
     colorSchemeKt: vendorFile(vendor('androidx-material3-sources'), 'ColorScheme.kt', commit)
       .content,
+    material3Sources: Object.fromEntries(
+      vendorFile(vendor('androidx-material3-sources'), 'ColorScheme.kt', commit).files.map((f) => [
+        f.name,
+        f.content,
+      ]),
+    ),
     graphicsLayerScopeKt: vendorFile(vendor('androidx-ui-sources'), 'GraphicsLayerScope.kt', commit)
       .content,
     elevationScss: vendorFile(vendor('material-web'), '_elevation.scss', materialWebVersion)

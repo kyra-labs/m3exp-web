@@ -15,7 +15,9 @@
     --m3e-comp-sheet-bottom-docked-drag-handle-width: 32px;
     --m3e-comp-sheet-bottom-docked-minimized-container-shape: var(--m3e-sys-shape-corner-none);
     --m3e-comp-sheet-bottom-docked-modal-container-elevation: var(--m3e-sys-elevation-level1);
+    --m3e-comp-sheet-bottom-docked-modal-container-shadow: var(--m3e-sys-elevation-level1-shadow);
     --m3e-comp-sheet-bottom-docked-standard-container-elevation: var(--m3e-sys-elevation-level1);
+    --m3e-comp-sheet-bottom-docked-standard-container-shadow: var(--m3e-sys-elevation-level1-shadow);
     --m3e-comp-sheet-bottom-focus-indicator-color: var(--m3e-sys-color-secondary);
   }
 }

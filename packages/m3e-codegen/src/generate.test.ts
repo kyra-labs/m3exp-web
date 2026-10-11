@@ -291,3 +291,43 @@ describe('primitive tokens (M4)', () => {
     expect(sys.get('--m3e-ref-typeface-icon-weight')).toBe(String(inputs.iconAxes['wght']));
   });
 });
+
+describe('ButtonDefaults tokens (M4 Button)', () => {
+  const css = output.get('components/button-defaults.css')!;
+  const decl = declarations(css);
+  const src = (file: string) => inputs.material3Sources[file]!.replace(/\r\n/g, '\n');
+
+  it.each([
+    ['--m3e-comp-button-min-width', 'Button.kt', /MinWidth: Dp = (\d+)\.dp/],
+    [
+      '--m3e-comp-button-x-small-icon-spacing',
+      'Button.kt',
+      /ExtraSmallIconSpacing: Dp = (\d+)\.dp/,
+    ],
+    ['--m3e-comp-button-medium-vertical-padding', 'Button.kt', /MediumVerticalPadding = (\d+)\.dp/],
+    ['--m3e-comp-button-large-vertical-padding', 'Button.kt', /LargeVerticalPadding = (\d+)\.dp/],
+    [
+      '--m3e-comp-toggle-button-small-pressed-shape',
+      'ToggleButton.kt',
+      /pressedShape: Shape\n\s*@Composable get\(\) = RoundedCornerShape\((\d+)\.dp\)/,
+    ],
+    [
+      '--m3e-comp-minimum-interactive-component-size',
+      'InteractiveComponentSize.kt',
+      /staticCompositionLocalOf \{\n\s*(\d+)\.dp/,
+    ],
+  ] as const)('%s', (name, file, pattern) => {
+    const value = pattern.exec(src(file))?.[1];
+    expect(value).toBeDefined();
+    expect(decl.get(name)).toBe(`${value!}px`);
+  });
+
+  it('documents why the XS literals differ from ButtonXSmallTokens', () => {
+    expect(src('Button.kt')).toContain(
+      "// TODO use the value from ButtonXSmallTokens.kt once it's been corrected",
+    );
+    expect(output.get('PARITY.md')).toContain(
+      'upstream TODO: ButtonXSmallTokens.IconLabelSpace (8dp) awaits correction',
+    );
+  });
+});

@@ -225,3 +225,11 @@ button.docs-tile {
 .docs-tiles--demo {
   padding: var(--m3e-sys-space-100);
 }
+
+.docs-button-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--m3e-sys-space-200);
+  align-items: center;
+  margin-block: var(--m3e-sys-space-200);
+}

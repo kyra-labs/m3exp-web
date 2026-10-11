@@ -7,6 +7,7 @@
   :root {
     --m3e-comp-segmented-menu-active-container-shape: 24px;
     --m3e-comp-segmented-menu-container-elevation: var(--m3e-sys-elevation-level2);
+    --m3e-comp-segmented-menu-container-shadow: var(--m3e-sys-elevation-level2-shadow);
     --m3e-comp-segmented-menu-container-shape: var(--m3e-sys-shape-corner-large);
     --m3e-comp-segmented-menu-group-container-color: var(--m3e-sys-color-surface-container-low);
     --m3e-comp-segmented-menu-group-padding: 4px;

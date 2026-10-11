@@ -7,6 +7,7 @@
   :root {
     --m3e-comp-search-view-container-color: var(--m3e-sys-color-surface-container-high);
     --m3e-comp-search-view-container-elevation: var(--m3e-sys-elevation-level3);
+    --m3e-comp-search-view-container-shadow: var(--m3e-sys-elevation-level3-shadow);
     --m3e-comp-search-view-divider-color: var(--m3e-sys-color-outline);
     --m3e-comp-search-view-docked-container-shape: var(--m3e-sys-shape-corner-extra-large);
     --m3e-comp-search-view-docked-header-container-height: 56px;

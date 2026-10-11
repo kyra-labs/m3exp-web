@@ -16,6 +16,7 @@
     --m3e-comp-rich-tooltip-action-label-text-color-pressed: var(--m3e-sys-color-primary);
     --m3e-comp-rich-tooltip-container-color: var(--m3e-sys-color-surface-container);
     --m3e-comp-rich-tooltip-container-elevation: var(--m3e-sys-elevation-level2);
+    --m3e-comp-rich-tooltip-container-shadow: var(--m3e-sys-elevation-level2-shadow);
     --m3e-comp-rich-tooltip-container-shape: var(--m3e-sys-shape-corner-medium);
     --m3e-comp-rich-tooltip-subhead-color: var(--m3e-sys-color-on-surface-variant);
     --m3e-comp-rich-tooltip-subhead-font: var(--m3e-sys-typescale-title-small-font);

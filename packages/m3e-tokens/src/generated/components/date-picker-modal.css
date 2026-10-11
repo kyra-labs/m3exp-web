@@ -7,6 +7,7 @@
   :root {
     --m3e-comp-date-picker-modal-container-color: var(--m3e-sys-color-surface-container-high);
     --m3e-comp-date-picker-modal-container-elevation: var(--m3e-sys-elevation-level3);
+    --m3e-comp-date-picker-modal-container-shadow: var(--m3e-sys-elevation-level3-shadow);
     --m3e-comp-date-picker-modal-container-height: 568px;
     --m3e-comp-date-picker-modal-container-shape: var(--m3e-sys-shape-corner-extra-large);
     --m3e-comp-date-picker-modal-container-width: 360px;
@@ -45,6 +46,7 @@
     --m3e-comp-date-picker-modal-range-selection-active-indicator-container-height: 40px;
     --m3e-comp-date-picker-modal-range-selection-active-indicator-container-shape: var(--m3e-sys-shape-corner-full);
     --m3e-comp-date-picker-modal-range-selection-container-elevation: var(--m3e-sys-elevation-level0);
+    --m3e-comp-date-picker-modal-range-selection-container-shadow: var(--m3e-sys-elevation-level0-shadow);
     --m3e-comp-date-picker-modal-range-selection-container-shape: var(--m3e-sys-shape-corner-none);
     --m3e-comp-date-picker-modal-selection-date-in-range-label-text-color: var(--m3e-sys-color-on-secondary-container);
     --m3e-comp-date-picker-modal-range-selection-header-container-height: 128px;

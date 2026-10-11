@@ -6,6 +6,7 @@
 @layer m3e.tokens {
   :root {
     --m3e-comp-input-chip-container-elevation: var(--m3e-sys-elevation-level0);
+    --m3e-comp-input-chip-container-shadow: var(--m3e-sys-elevation-level0-shadow);
     --m3e-comp-input-chip-container-height: 32px;
     --m3e-comp-input-chip-container-shape: var(--m3e-sys-shape-corner-small);
     --m3e-comp-input-chip-label-text-color-disabled: var(--m3e-sys-color-on-surface);
@@ -15,6 +16,7 @@
     --m3e-comp-input-chip-outline-color-disabled-unselected: var(--m3e-sys-color-on-surface);
     --m3e-comp-input-chip-outline-opacity-disabled-unselected: 0.12;
     --m3e-comp-input-chip-container-elevation-dragged: var(--m3e-sys-elevation-level4);
+    --m3e-comp-input-chip-container-shadow-dragged: var(--m3e-sys-elevation-level4-shadow);
     --m3e-comp-input-chip-focus-indicator-color: var(--m3e-sys-color-secondary);
     --m3e-comp-input-chip-label-text-font: var(--m3e-sys-typescale-label-large-font);
     --m3e-comp-input-chip-label-text-weight: var(--m3e-sys-typescale-label-large-weight);

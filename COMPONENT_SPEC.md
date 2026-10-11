@@ -23,20 +23,23 @@
 - **Purpose:** prominent actions. Use text/outlined for low emphasis. Not for navigation (links styled as buttons only for in-page CTAs).
 - **Variants/sizes:** default and toggle; color configurations elevated, filled, tonal, outlined, text; sizes XS, S (default), M, L, XL; shapes round, square. Small padding 16dp recommended (m3.material.io Buttons overview, "M3 Expressive update May 2025").
 - **Anatomy:** container, label, leading/trailing icon, state layer, focus ring.
-- **Tokens:**
+- **Tokens (verified, generated):** `Button{XSmall,Small,Medium,Large,XLarge}Tokens.kt@19991f2c` plus the `ButtonDefaults` values Compose renders (`components/button-defaults.css`; SOURCES register #18–19).
 
   | | XS | S | M | L | XL |
   |---|---|---|---|---|---|
   | height | 32 | 40 | 56 | 96 | 136 |
   | square resting radius | 12 | 12 | 16 | 28 | 28 |
   | pressed radius | 8 | 8 | 12 | 16 | 16 |
+  | icon | 20 | 20 | 24 | 32 | 40 |
+  | horizontal padding | 12 (ButtonDefaults) | 16 | 24 | 48 | 64 |
+  | icon–label space | 4 (ButtonDefaults) | 8 | 8 | 12 | 16 |
+  | label | labelLarge | labelLarge | titleMedium | headlineSmall | headlineLarge |
+  | outline | 1 | 1 | 1 | 2 | 3 |
 
-  - All three rows secondhand: `TODO(verify)` in ButtonXSmallTokens.kt … ButtonXLargeTokens.kt. Round = full.
-  - `TODO(verify)`: icon size, padding, icon-label space, label type style and outline width per size (hypothesis: icon 20/20/24/32/40, padding 12/16/24/48/64, label LabelLarge/LabelLarge/TitleMedium/HeadlineSmall/HeadlineLarge, outline 1/1/1/2/3).
-  - XS icon spacing override 4dp (`ButtonDefaults.ExtraSmallIconSpacing`; `TODO(verify)`).
-  - Colors: filled = primary/on-primary; tonal = secondary-container/on-secondary-container; elevated = surface-container-low/primary, Level1; outlined = outline-variant border, on-surface-variant label; text = primary label (`TODO(verify)`).
-  - Selected toggle: filled unselected = surface-container / on-surface-variant, selected = primary (`TODO(verify)` ButtonTokens).
-- **Motion:** corner radius resting → pressed on fastSpatial. Round ↔ square swap on selection on fastSpatial. Color on fastEffects.
+  - Round = CircleShape (half the container height). Small toggle buttons press to 6dp (`ToggleButtonDefaults.pressedShape`).
+  - Colors: filled = primary/on-primary; tonal = secondary-container/on-secondary-container (FilledTonalButtonTokens; toggles use TonalButtonTokens); elevated = surface-container-low/primary, Level1; outlined = outline-variant border, on-surface-variant label; text = primary label (ButtonDefaults override).
+  - Toggle: unselected filled = surface-container / on-surface-variant, selected = primary / on-primary; tonal selected = secondary / on-secondary; elevated selected = primary / on-primary; outlined selected = inverse-surface / inverse-on-surface without border. No text toggle (Compose has none).
+- **Motion:** press morph on the **default effects** spring (`Button.kt` L212–215: chosen upstream to prevent bounce; supersedes the earlier fastSpatial note). Toggle shape changes (press and selection) on fastSpatial (`ToggleButton.kt` L176). Color on fastEffects.
 - **Behavior:** press morph on pointerdown, release on pointerup/cancel. Toggle flips `aria-pressed`. Disabled buttons not focusable unless `focusableWhenDisabled`.
 - **Keyboard/ARIA:** `<button>`; Enter/Space activate. Toggle uses `aria-pressed`. Icon-only requires `aria-label`.
 - **Layers:** css (visuals; press radius via `:active` with linear() spring) + react (interruptible spring, React Aria `useButton`/`useToggleButton`). No element.

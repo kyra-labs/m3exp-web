@@ -1,0 +1,94 @@
+---
+import ButtonPlayground from '../../islands/ButtonPlayground.tsx';
+import Base from '../../layouts/Base.astro';
+
+const variants = ['filled', 'tonal', 'elevated', 'outlined', 'text'] as const;
+const toggleVariants = ['filled', 'tonal', 'elevated', 'outlined'] as const;
+const sizes = ['xs', 's', 'm', 'l', 'xl'] as const;
+---
+
+<Base title="Button">
+  <link rel="stylesheet" href="/icons/docs-icons.css" slot="head" />
+  <h1>Button</h1>
+  <p>
+    Buttons and toggle buttons (COMPONENT_SPEC §1). The grids below are plain HTML with m3e-css
+    classes, no JavaScript. The React section adds React Aria behavior and interruptible springs for
+    the press morph and the selection shape.
+  </p>
+
+  <section aria-labelledby="sizes-heading">
+    <h2 id="sizes-heading">Variants and sizes</h2>
+    {
+      variants.map((variant) => (
+        <div class="docs-button-row" data-variant={variant}>
+          {sizes.map((size) => (
+            <button type="button" class={`m3e-button m3e-button--${variant} m3e-button--size-${size}`} data-size={size}>
+              <span class="m3e-icon" aria-hidden="true">
+                add
+              </span>
+              {variant} {size}
+            </button>
+          ))}
+        </div>
+      ))
+    }
+  </section>
+
+  <section aria-labelledby="square-heading">
+    <h2 id="square-heading">Square, disabled and links</h2>
+    <div class="docs-button-row" data-testid="square">
+      {
+        sizes.map((size) => (
+          <button type="button" class={`m3e-button m3e-button--filled m3e-button--size-${size} m3e-button--square`} data-size={size}>
+            square {size}
+          </button>
+        ))
+      }
+    </div>
+    <div class="docs-button-row" data-testid="disabled">
+      {
+        variants.map((variant) => (
+          <button type="button" class={`m3e-button m3e-button--${variant}`} disabled>
+            {variant}
+          </button>
+        ))
+      }
+    </div>
+    <div class="docs-button-row">
+      <a class="m3e-button m3e-button--tonal m3e-button--size-m" href="#sizes-heading">
+        Link styled as a button
+      </a>
+    </div>
+  </section>
+
+  <section aria-labelledby="toggle-heading">
+    <h2 id="toggle-heading">Toggle buttons</h2>
+    <p>
+      <code>aria-pressed</code> makes a toggle. Selected round buttons turn square; selected square
+      buttons turn round.
+    </p>
+    {
+      (['false', 'true'] as const).map((pressed) => (
+        <div class="docs-button-row" data-testid={`toggles-${pressed}`}>
+          {toggleVariants.map((variant) => (
+            <button type="button" class={`m3e-button m3e-button--${variant}`} aria-pressed={pressed}>
+              {variant}
+            </button>
+          ))}
+          <button type="button" class="m3e-button m3e-button--filled m3e-button--square" aria-pressed={pressed}>
+            square
+          </button>
+        </div>
+      ))
+    }
+  </section>
+
+  <section aria-labelledby="react-heading">
+    <h2 id="react-heading">React</h2>
+    <p>
+      <code>&lt;Button&gt;</code> and <code>&lt;ToggleButton&gt;</code>. Press and hold, then release
+      early: the corner spring reverses from its current speed.
+    </p>
+    <ButtonPlayground client:only="react" />
+  </section>
+</Base>

@@ -225,6 +225,20 @@ export const bottomAppBarTokens = {
   containerShape: "var(--m3e-sys-shape-corner-none)"
 } as const;
 
+/** ButtonDefaults */
+export const buttonDefaults = {
+  buttonMinWidth: 58,
+  buttonXSmallContentPaddingHorizontal: 12,
+  buttonXSmallContentPaddingVertical: 6,
+  buttonXSmallIconSpacing: 4,
+  buttonSmallVerticalPadding: 10,
+  buttonMediumVerticalPadding: 16,
+  buttonLargeVerticalPadding: 32,
+  buttonXLargeVerticalPadding: 48,
+  toggleButtonSmallPressedShape: 6,
+  minimumInteractiveComponentSize: 48
+} as const;
+
 /** ButtonGroupSmallTokens */
 export const buttonGroupSmallTokens = {
   betweenSpace: 12,

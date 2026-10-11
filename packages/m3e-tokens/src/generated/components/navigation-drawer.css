@@ -56,7 +56,9 @@
     --m3e-comp-navigation-drawer-large-badge-label-tracking: var(--m3e-sys-typescale-label-large-tracking);
     --m3e-comp-navigation-drawer-modal-container-color: var(--m3e-sys-color-surface-container-low);
     --m3e-comp-navigation-drawer-modal-container-elevation: var(--m3e-sys-elevation-level1);
+    --m3e-comp-navigation-drawer-modal-container-shadow: var(--m3e-sys-elevation-level1-shadow);
     --m3e-comp-navigation-drawer-standard-container-color: var(--m3e-sys-color-surface);
     --m3e-comp-navigation-drawer-standard-container-elevation: var(--m3e-sys-elevation-level0);
+    --m3e-comp-navigation-drawer-standard-container-shadow: var(--m3e-sys-elevation-level0-shadow);
   }
 }

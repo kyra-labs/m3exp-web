@@ -11,13 +11,18 @@
     "icons": "m3e-icons subset --names-file src/icons.txt --out public/icons/docs-icons.woff2 --css public/icons/docs-icons.css --family \"M3E Docs Icons\""
   },
   "dependencies": {
+    "@astrojs/react": "7.0.1",
     "@kyralabs/m3e-shapes": "workspace:^",
     "@kyralabs/m3exp-web": "workspace:^",
-    "astro": "7.3.8"
+    "astro": "7.3.8",
+    "react": "19.3.0",
+    "react-dom": "19.3.0"
   },
   "devDependencies": {
     "@astrojs/check": "0.9.10",
     "@kyralabs/m3e-icons": "workspace:^",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
     "typescript": "6.0.3"
   }
 }

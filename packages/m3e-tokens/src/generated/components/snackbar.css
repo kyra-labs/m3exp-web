@@ -16,6 +16,7 @@
     --m3e-comp-snackbar-action-label-text-color-pressed: var(--m3e-sys-color-inverse-primary);
     --m3e-comp-snackbar-container-color: var(--m3e-sys-color-inverse-surface);
     --m3e-comp-snackbar-container-elevation: var(--m3e-sys-elevation-level3);
+    --m3e-comp-snackbar-container-shadow: var(--m3e-sys-elevation-level3-shadow);
     --m3e-comp-snackbar-container-shape: var(--m3e-sys-shape-corner-extra-small);
     --m3e-comp-snackbar-icon-color: var(--m3e-sys-color-inverse-on-surface);
     --m3e-comp-snackbar-icon-color-focus: var(--m3e-sys-color-inverse-on-surface);

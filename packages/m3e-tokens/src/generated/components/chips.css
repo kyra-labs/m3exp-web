@@ -8,10 +8,12 @@
     --m3e-comp-chips-avatar-shape: var(--m3e-sys-shape-corner-full);
     --m3e-comp-chips-avatar-size: 24px;
     --m3e-comp-chips-container-elevation: var(--m3e-sys-elevation-level0);
+    --m3e-comp-chips-container-shadow: var(--m3e-sys-elevation-level0-shadow);
     --m3e-comp-chips-label-text-color-disabled: var(--m3e-sys-color-on-surface);
     --m3e-comp-chips-leading-icon-color-disabled: var(--m3e-sys-color-on-surface);
     --m3e-comp-chips-trailing-icon-color-disabled: var(--m3e-sys-color-on-surface);
     --m3e-comp-chips-container-elevation-dragged: var(--m3e-sys-elevation-level4);
+    --m3e-comp-chips-container-shadow-dragged: var(--m3e-sys-elevation-level4-shadow);
     --m3e-comp-chips-focused-indicator-color: var(--m3e-sys-color-secondary);
     --m3e-comp-chips-height: 32px;
     --m3e-comp-chips-label-text-font: var(--m3e-sys-typescale-label-large-font);

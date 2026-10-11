@@ -12,3 +12,6 @@
 @import './icon.css';
 @import './state-layer.css';
 @import './focus-ring.css';
+
+/* Components. */
+@import './button.css';

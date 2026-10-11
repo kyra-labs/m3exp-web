@@ -100,7 +100,8 @@ describe('Morph between every pair of MaterialShapes vs Compose (JVM)', () => {
           ];
     });
     expect(mismatches).toEqual([]);
-  });
+    // 1190 full morph matches: ~2s alone, slower when the whole suite runs in parallel.
+  }, 30_000);
 });
 
 describe('ShapeUtil toPath vs Compose (JVM)', () => {

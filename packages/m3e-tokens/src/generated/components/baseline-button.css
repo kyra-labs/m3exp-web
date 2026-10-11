@@ -7,20 +7,24 @@
   :root {
     --m3e-comp-baseline-button-container-color: var(--m3e-sys-color-primary);
     --m3e-comp-baseline-button-container-elevation: var(--m3e-sys-elevation-level0);
+    --m3e-comp-baseline-button-container-shadow: var(--m3e-sys-elevation-level0-shadow);
     --m3e-comp-baseline-button-container-height: 40px;
     --m3e-comp-baseline-button-container-shape-round: var(--m3e-sys-shape-corner-full);
     --m3e-comp-baseline-button-container-shape-square: var(--m3e-sys-shape-corner-medium);
     --m3e-comp-baseline-button-container-color-disabled: var(--m3e-sys-color-on-surface);
     --m3e-comp-baseline-button-container-elevation-disabled: var(--m3e-sys-elevation-level0);
+    --m3e-comp-baseline-button-container-shadow-disabled: var(--m3e-sys-elevation-level0-shadow);
     --m3e-comp-baseline-button-container-opacity-disabled: 0.1;
     --m3e-comp-baseline-button-icon-color-disabled: var(--m3e-sys-color-on-surface-variant);
     --m3e-comp-baseline-button-icon-opacity-disabled: 0.38;
     --m3e-comp-baseline-button-label-text-color-disabled: var(--m3e-sys-color-on-surface-variant);
     --m3e-comp-baseline-button-label-text-opacity-disabled: 0.38;
     --m3e-comp-baseline-button-container-elevation-focused: var(--m3e-sys-elevation-level0);
+    --m3e-comp-baseline-button-container-shadow-focused: var(--m3e-sys-elevation-level0-shadow);
     --m3e-comp-baseline-button-icon-color-focused: var(--m3e-sys-color-on-primary);
     --m3e-comp-baseline-button-label-text-color-focused: var(--m3e-sys-color-on-primary);
     --m3e-comp-baseline-button-container-elevation-hovered: var(--m3e-sys-elevation-level1);
+    --m3e-comp-baseline-button-container-shadow-hovered: var(--m3e-sys-elevation-level1-shadow);
     --m3e-comp-baseline-button-icon-color-hovered: var(--m3e-sys-color-on-primary);
     --m3e-comp-baseline-button-label-text-color-hovered: var(--m3e-sys-color-on-primary);
     --m3e-comp-baseline-button-icon-color: var(--m3e-sys-color-on-primary);
@@ -31,6 +35,7 @@
     --m3e-comp-baseline-button-label-text-color-unselected: var(--m3e-sys-color-on-surface-variant);
     --m3e-comp-baseline-button-leading-space: 24px;
     --m3e-comp-baseline-button-container-elevation-pressed: var(--m3e-sys-elevation-level0);
+    --m3e-comp-baseline-button-container-shadow-pressed: var(--m3e-sys-elevation-level0-shadow);
     --m3e-comp-baseline-button-container-shape-pressed: var(--m3e-sys-shape-corner-small);
     --m3e-comp-baseline-button-icon-color-pressed: var(--m3e-sys-color-on-primary);
     --m3e-comp-baseline-button-label-text-color-pressed: var(--m3e-sys-color-on-primary);
