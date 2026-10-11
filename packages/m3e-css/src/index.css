@@ -6,3 +6,9 @@
  * One file per component is imported below as components land: src/<component>.css.
  */
 @layer m3e.tokens, m3e.base, m3e.components;
+
+/* Primitives (COMPONENT_SPEC §39). */
+@import './surface.css';
+@import './icon.css';
+@import './state-layer.css';
+@import './focus-ring.css';

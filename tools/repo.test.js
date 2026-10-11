@@ -112,6 +112,7 @@ describe('licensing (D9)', () => {
     'AndroidX Compose Material3',
     'AndroidX Compose Animation',
     'AndroidX Compose UI Graphics',
+    'Material Web',
     'AndroidX graphics-shapes',
     'material-color-utilities',
   ])('NOTICE lists %s', (project) => {

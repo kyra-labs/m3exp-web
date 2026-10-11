@@ -122,7 +122,7 @@ The damping column is derived (mass = 1) and tested in Vitest.
 ## 5. Elevation
 Levels 0–5 = 0, 1, 3, 6, 8, 12 dp (`ElevationTokens.kt@19991f2c` L24–40; generated as `--m3e-sys-elevation-level0…5`).
 
-Rendered as two-layer `box-shadow` using the `shadow` role. Surface tint is not applied (tonal surface containers are used instead).
+Rendered as two-layer `box-shadow` using the `shadow` role: `--m3e-sys-elevation-level0…5-shadow`, geometry from Material Web 2.5.0 `elevation/internal/_elevation.scss` (key shadow at 30%, ambient at 15% of `shadow`; Compose draws platform shadows, so there is no androidx value). The baseline `shadow` role is Compose `DefaultShadowColor` = black (`compose/ui/ui/…/graphics/GraphicsLayerScope.kt@19991f2c` L36–38); seed themes use MCU's `shadow`. Surface tint is not applied (tonal surface containers are used instead).
 
 ## 6. State layers
 
@@ -136,7 +136,7 @@ Rendered as two-layer `box-shadow` using the `shadow` role. Surface tint is not 
 - Source: `StateTokens.kt@19991f2c` L22–25 (generated). Disabled opacities are per component (`Disabled*Opacity` in each `*Tokens.kt`, generated).
 - Older Material Web tokens use 0.12 for focus/pressed. Do not copy them.
 - Disabled: per component, e.g. filled button container 0.1 and content 0.38 with `OnSurface`/`OnSurfaceVariant` (generated).
-- Implementation: `::before` overlay with `background: currentColor-role; opacity: var(--state)`.
+- Implementation (m3e-css `state-layer.css`, the only implementation): `::before` overlay under the content (host `isolation: isolate`, overlay `z-index: -1`), color `--m3e-comp-state-layer-color` (default `currentColor`), opacity from the table above, animated with the default effects spring. Pressed = `:active` or `[data-pressed]`; with `[data-ripple]` (set by m3e-elements `attachRipple` / m3e-react `useStateLayer`) the overlay grows as a circle from the press point (REQUIREMENTS §12). Components opt in by joining the `:where()` selector lists.
 - Focus indicator: `--m3e-sys-state-focus-indicator-thickness` 3dp, `-outer-offset` 2dp, `-inner-offset` −3dp (m3.material.io token DB v38.2.9 `md.sys.state.focus-indicator`; matches material-web 2.5.0). Color: `secondary` (every androidx `*Tokens.FocusIndicatorColor`). Compose has no web-style ring by default (`Ripple.kt` L360 uses a state layer); shape and motion are `TODO(verify)` (SOURCES register #61).
 
 ## 7. Spacing

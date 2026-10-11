@@ -182,3 +182,46 @@ a {
   border-radius: var(--m3e-sys-shape-corner-large);
   background: var(--m3e-sys-color-surface-container);
 }
+
+.docs-tiles {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--m3e-sys-space-300);
+  margin-block: var(--m3e-sys-space-300);
+  padding: 0;
+  list-style: none;
+}
+
+.docs-tile {
+  display: inline-flex;
+  flex-direction: column;
+  gap: var(--m3e-sys-space-100);
+  align-items: center;
+  justify-content: center;
+  min-inline-size: var(--m3e-sys-space-900);
+  min-block-size: var(--m3e-sys-space-900);
+  padding: var(--m3e-sys-space-200);
+  font: inherit;
+}
+
+button.docs-tile {
+  border: none;
+  cursor: pointer;
+}
+
+.docs-tile--primary {
+  background-color: var(--m3e-sys-color-primary);
+  color: var(--m3e-sys-color-on-primary);
+}
+
+.docs-icon-rows p {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--m3e-sys-space-200);
+  margin-block: var(--m3e-sys-space-150);
+}
+
+/* Room for outward focus rings inside the state screenshots. */
+.docs-tiles--demo {
+  padding: var(--m3e-sys-space-100);
+}
