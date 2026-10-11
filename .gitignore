@@ -17,3 +17,4 @@ apps/visual/tests/**/*-win32.png
 apps/visual/tests/**/*-darwin.png
 packages/*/LICENSE
 packages/*/NOTICE
+apps/docs/public/icons/

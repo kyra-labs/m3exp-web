@@ -307,7 +307,7 @@ export async function buildFonts(vendorDir: string, cacheDir: string): Promise<F
     readFileSync(join(vendorDir, 'TRADEMARKS.md'), 'utf8').replace(/\r\n/g, '\n'),
   );
   files.set(
-    'manifest.json',
+    'google-sans-flex.manifest.json',
     `${JSON.stringify(
       {
         family: FAMILY,

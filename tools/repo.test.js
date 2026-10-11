@@ -33,7 +33,7 @@ const ALLOWED_WORKSPACE_DEPS = {
     '@kyralabs/m3e-shapes',
   ],
   'm3e-codegen': [],
-  'm3e-icons': [],
+  'm3e-icons': ['@kyralabs/m3e-tokens'], // reads the bundled Material Symbols fonts
   'm3exp-web': [
     '@kyralabs/m3e-tokens',
     '@kyralabs/m3e-css',

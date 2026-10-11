@@ -48,6 +48,8 @@
     "./components/*.css": "./dist/generated/components/*.css",
     "./fonts.css": "./fonts/fonts.css",
     "./fonts-full.css": "./fonts/fonts-full.css",
+    "./material-symbols.css": "./fonts/material-symbols.css",
+    "./material-symbols-*.css": "./fonts/material-symbols-*.css",
     "./fonts/*": "./fonts/*",
     "./package.json": "./package.json"
   },

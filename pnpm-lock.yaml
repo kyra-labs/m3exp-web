@@ -236,6 +236,9 @@ importers:
       '@astrojs/check':
         specifier: 0.9.10
         version: 0.9.10(@emnapi/runtime@1.11.3)(prettier@3.9.10)(typescript@6.0.3)
+      '@kyralabs/m3e-icons':
+        specifier: workspace:^
+        version: link:../../packages/m3e-icons
       typescript:
         specifier: 6.0.3
         version: 6.0.3
@@ -275,7 +278,18 @@ importers:
 
   packages/m3e-elements: {}
 
-  packages/m3e-icons: {}
+  packages/m3e-icons:
+    dependencies:
+      '@kyralabs/m3e-tokens':
+        specifier: workspace:^
+        version: link:../m3e-tokens
+      subset-font:
+        specifier: 2.9.0
+        version: 2.9.0
+    devDependencies:
+      harfbuzzjs:
+        specifier: 1.6.3
+        version: 1.6.3
 
   packages/m3e-motion: {}
 

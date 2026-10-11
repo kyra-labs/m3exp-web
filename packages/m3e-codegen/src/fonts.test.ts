@@ -19,7 +19,9 @@ interface Chunk {
   bytes: number;
   sha256: string;
 }
-const output = JSON.parse(readFileSync(join(fontsDir, 'manifest.json'), 'utf8')) as {
+const output = JSON.parse(
+  readFileSync(join(fontsDir, 'google-sans-flex.manifest.json'), 'utf8'),
+) as {
   version: string;
   chunks: Record<string, Record<string, Chunk>>;
 };
@@ -77,7 +79,9 @@ describe('built fonts', () => {
     for (const chunk of listed) {
       expect(sha256(readFileSync(join(fontsDir, chunk.file))), chunk.file).toBe(chunk.sha256);
     }
-    const woff2 = readdirSync(fontsDir).filter((f) => f.endsWith('.woff2'));
+    const woff2 = readdirSync(fontsDir).filter(
+      (f) => f.startsWith('google-sans-flex') && f.endsWith('.woff2'),
+    );
     expect(woff2.sort()).toEqual(listed.map((c) => c.file).sort());
   });
 

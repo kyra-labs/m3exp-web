@@ -1,7 +1,7 @@
 {
   "name": "@kyralabs/m3e-icons",
   "version": "0.0.0",
-  "description": "Material Symbols subsetting CLI for m3exp-web.",
+  "description": "Material Symbols subsetting (m3e-icons subset) for m3exp-web.",
   "license": "Apache-2.0",
   "author": "Kyra Labs",
   "homepage": "https://github.com/kyra-labs/m3exp-web#readme",
@@ -13,6 +13,9 @@
   "bugs": "https://github.com/kyra-labs/m3exp-web/issues",
   "type": "module",
   "sideEffects": false,
+  "bin": {
+    "m3e-icons": "./dist/cli.js"
+  },
   "exports": {
     ".": {
       "@kyralabs/source": "./src/index.ts",
@@ -35,5 +38,12 @@
   "publishConfig": {
     "access": "public",
     "provenance": true
+  },
+  "dependencies": {
+    "@kyralabs/m3e-tokens": "workspace:^",
+    "subset-font": "2.9.0"
+  },
+  "devDependencies": {
+    "harfbuzzjs": "1.6.3"
   }
 }

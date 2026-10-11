@@ -4,10 +4,13 @@
 // m3e-codegen fonts:fetch [--measure-fallback <arial.ttf>]
 //                               pin bumps only: vendor Google Sans Flex sources (SOURCE_PIN)
 // m3e-codegen fonts [--check]   rebuild packages/m3e-tokens/fonts from the pinned TTF
+// m3e-codegen icons:fetch        pin bumps only: Material Symbols fonts + descriptors (SOURCE_PIN)
+// m3e-codegen icons [--check]   regenerate material-symbols*.css (verifies shipped font hashes)
 import { mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
 import { dirname, join, relative } from 'node:path';
 import { buildFonts, fetchFontSources, measureFallback, type FontSourceManifest } from './fonts.js';
 import { generate } from './generate.js';
+import { buildIconCss, fetchIconSources } from './icons.js';
 import { findRepoRoot, readPin, requirePin } from './pin.js';
 import {
   MATERIAL3_PATH,
@@ -24,12 +27,23 @@ const outDir = join(root, 'packages/m3e-tokens/src/generated');
 const fontVendorDir = join(root, 'packages/m3e-codegen/vendor/google-fonts-googlesansflex');
 const fontOutDir = join(root, 'packages/m3e-tokens/fonts');
 const cacheDir = join(root, 'node_modules/.cache/m3e-codegen');
+const iconVendorDir = join(root, 'packages/m3e-codegen/vendor/material-symbols');
 
-/** Writes `output` into `dir`, or with `check` reports stale/unexpected files instead. */
+/** Files in packages/m3e-tokens/fonts produced by `fonts` (Material Symbols files belong to `icons`). */
+const ownsGoogleSansFlex = (path: string) =>
+  /^(google-sans-flex[\w.-]*|fonts(-full)?\.css|(LICENSE|TRADEMARKS)-google-sans-flex\.\w+)$/.test(
+    path,
+  );
+
+/**
+ * Writes `output` into `dir`, or with `check` reports stale/unexpected files instead. Only files
+ * matching `owns` are this generator's: others in `dir` (another pipeline's) are left alone.
+ */
 function syncDir(
   dir: string,
   output: ReadonlyMap<string, string | Uint8Array>,
   check: boolean,
+  owns: (path: string) => boolean = () => true,
 ): number {
   const same = (path: string, data: string | Uint8Array) => {
     try {
@@ -43,7 +57,7 @@ function syncDir(
   };
   if (check) {
     const stale = [...output].filter(([path, data]) => !same(path, data)).map(([p]) => p);
-    const extra = listFiles(dir).filter((p) => !output.has(p));
+    const extra = listFiles(dir).filter((p) => owns(p) && !output.has(p));
     for (const path of stale) console.error(`stale: ${path}`);
     for (const path of extra) console.error(`unexpected: ${path}`);
     if (stale.length > 0 || extra.length > 0) {
@@ -53,7 +67,7 @@ function syncDir(
     console.log(`${relative(root, dir)} is up to date (${String(output.size)} files)`);
     return 0;
   }
-  rmSync(dir, { recursive: true, force: true });
+  for (const path of listFiles(dir).filter(owns)) rmSync(join(dir, path));
   for (const [path, data] of output) {
     mkdirSync(dirname(join(dir, path)), { recursive: true });
     writeFileSync(join(dir, path), data);
@@ -95,9 +109,24 @@ async function main(command: string | undefined, flags: readonly string[]): Prom
     console.log(`fetched Google Sans Flex ${manifest.version} @ google/fonts ${manifest.commit}`);
     return 0;
   }
+  if (command === 'icons:fetch') {
+    const manifest = await fetchIconSources(
+      requirePin(pin, 'material_symbols_commit'),
+      iconVendorDir,
+      fontOutDir,
+    );
+    console.log(`fetched Material Symbols ${manifest.version} @ ${manifest.commit}`);
+    return 0;
+  }
+  if (command === 'icons') {
+    const css = buildIconCss(iconVendorDir, fontOutDir);
+    return syncDir(fontOutDir, css, flags.includes('--check'), (p) =>
+      /^material-symbols[\w-]*\.css$/.test(p),
+    );
+  }
   if (command === 'fonts') {
     const { files } = await buildFonts(fontVendorDir, cacheDir);
-    return syncDir(fontOutDir, files, flags.includes('--check'));
+    return syncDir(fontOutDir, files, flags.includes('--check'), ownsGoogleSansFlex);
   }
   const commit = requirePin(pin, 'androidx_commit');
   if (command === 'fetch') {
@@ -111,7 +140,7 @@ async function main(command: string | undefined, flags: readonly string[]): Prom
   }
   if (command !== 'generate') {
     console.error(
-      'usage: m3e-codegen <fetch | generate [--check] | fonts:fetch | fonts [--check]>',
+      'usage: m3e-codegen <fetch | generate [--check] | fonts:fetch | fonts [--check] | icons:fetch | icons [--check]>',
     );
     return 2;
   }

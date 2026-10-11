@@ -12,4 +12,5 @@ material_color_utilities=0.4.0
 material_web=2.5.0
 google_sans_flex=5.000
 google_fonts_commit=bd8f81ddb5c74d5c8897b36ad88b440266245103
-material_symbols=TODO(verify)
+material_symbols=2.975
+material_symbols_commit=49d4db35df873165d6bd6ba09b063c7dafbac2f4

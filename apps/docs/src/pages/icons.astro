@@ -1,0 +1,37 @@
+---
+import Base from '../layouts/Base.astro';
+
+const names = ['home', 'search', 'menu', 'arrow_back', 'favorite', 'settings', 'star', 'check_circle', 'delete', 'add'];
+---
+
+<Base title="Icons">
+  <link rel="stylesheet" href="/icons/docs-icons.css" slot="head" />
+  <h1>Icons</h1>
+  <p>
+    Material Symbols Rounded (D5, D12), rendered from a subset font that the docs build creates
+    with <code>m3e-icons subset --names-file src/icons.txt</code>: {names.length} icons, every axis
+    kept.
+  </p>
+  <h2>Unfilled</h2>
+  <ul class="docs-icons">
+    {
+      names.map((name) => (
+        <li>
+          <span class="docs-icon" data-icon={name} aria-hidden="true">{name}</span>
+          <code>{name}</code>
+        </li>
+      ))
+    }
+  </ul>
+  <h2>Filled</h2>
+  <ul class="docs-icons">
+    {
+      names.map((name) => (
+        <li>
+          <span class="docs-icon docs-icon--filled" aria-hidden="true">{name}</span>
+          <code>{name}</code>
+        </li>
+      ))
+    }
+  </ul>
+</Base>

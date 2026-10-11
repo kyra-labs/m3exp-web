@@ -27,7 +27,10 @@
     "release": "pnpm build:packages && changeset publish",
     "fonts": "pnpm --filter \"@kyralabs/m3e-codegen...\" build && node packages/m3e-codegen/dist/cli.js fonts",
     "fonts:check": "pnpm --filter \"@kyralabs/m3e-codegen...\" build && node packages/m3e-codegen/dist/cli.js fonts --check",
-    "fonts:fetch": "pnpm --filter \"@kyralabs/m3e-codegen...\" build && node packages/m3e-codegen/dist/cli.js fonts:fetch"
+    "fonts:fetch": "pnpm --filter \"@kyralabs/m3e-codegen...\" build && node packages/m3e-codegen/dist/cli.js fonts:fetch",
+    "icons": "pnpm --filter \"@kyralabs/m3e-codegen...\" build && node packages/m3e-codegen/dist/cli.js icons",
+    "icons:check": "pnpm --filter \"@kyralabs/m3e-codegen...\" build && node packages/m3e-codegen/dist/cli.js icons --check",
+    "icons:fetch": "pnpm --filter \"@kyralabs/m3e-codegen...\" build && node packages/m3e-codegen/dist/cli.js icons:fetch"
   },
   "devDependencies": {
     "@changesets/cli": "3.0.3",
