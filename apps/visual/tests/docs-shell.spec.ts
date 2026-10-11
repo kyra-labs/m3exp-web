@@ -10,6 +10,7 @@ const PAGES = [
   { path: '/typography/', name: 'typography' },
   { path: '/icons/', name: 'icons' },
   { path: '/motion/', name: 'motion' },
+  { path: '/shapes/', name: 'shapes' },
 ];
 
 for (const { path, name } of PAGES) {
@@ -70,4 +71,18 @@ test('m3e-icons subset output renders the requested icons (M2 DoD)', async ({ pa
   for (const box of boxes) {
     expect(box.width, box.name).toBeLessThanOrEqual(box.height * 1.1);
   }
+});
+
+test('the shapes playground scrubs the morph (M3 review item)', async ({ page }) => {
+  await page.goto('/shapes/');
+  await expect(page.locator('.docs-shapes li')).toHaveCount(35);
+  const path = page.locator('#morph-path');
+  const atHalf = await path.getAttribute('d');
+  await page.locator('#morph-progress').fill('0');
+  await expect(page.locator('output[name="value"]')).toHaveText('0.00');
+  const atStart = await path.getAttribute('d');
+  expect(atStart).not.toBe(atHalf);
+  await page.locator('select[name="end"]').selectOption('Heart');
+  await page.locator('#morph-progress').fill('1');
+  await expect(path).not.toHaveAttribute('d', atStart ?? '');
 });

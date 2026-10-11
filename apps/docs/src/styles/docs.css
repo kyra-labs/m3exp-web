@@ -31,6 +31,10 @@ a {
   font: inherit;
 }
 
+.docs-controls input[type='range'] {
+  accent-color: var(--m3e-sys-color-primary);
+}
+
 .docs-schemes {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr));
@@ -143,4 +147,38 @@ a {
 
 .docs-motion__target {
   stroke: var(--m3e-sys-color-outline-variant);
+}
+
+.docs-shapes {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(calc(var(--m3e-sys-space-900) * 1.5), 1fr));
+  gap: var(--m3e-sys-space-300);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.docs-shapes li {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--m3e-sys-space-100);
+}
+
+.docs-shapes code {
+  font-size: var(--m3e-sys-typescale-body-small-size);
+}
+
+.docs-shape {
+  display: block;
+  inline-size: 100%;
+  block-size: auto;
+  fill: var(--m3e-sys-color-primary);
+}
+
+.docs-shape--morph {
+  max-inline-size: calc(var(--m3e-sys-space-900) * 4);
+  padding: var(--m3e-sys-space-200);
+  border-radius: var(--m3e-sys-shape-corner-large);
+  background: var(--m3e-sys-color-surface-container);
 }

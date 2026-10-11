@@ -51,10 +51,17 @@ export default defineConfig(
     files: ['packages/m3e-codegen/src/**/*.ts', 'packages/m3e-icons/src/**/*.ts', ...TEST_FILES],
     rules: { '@typescript-eslint/no-non-null-assertion': 'off' },
   },
-  // CLAUDE.md "Tokens only". Codegen emits literal values from pinned sources, so it is exempt.
+  // m3e-shapes ports Kotlin line for line (D9); its array indexing keeps upstream's shape and is
+  // bounds-checked by construction, as Kotlin's IndexOutOfBounds would be.
+  {
+    files: ['packages/m3e-shapes/src/**/*.ts'],
+    rules: { '@typescript-eslint/no-non-null-assertion': 'off' },
+  },
+  // CLAUDE.md "Tokens only". Codegen emits literal values from pinned sources, so it is exempt;
+  // m3e-shapes carries pinned unit-space geometry (MaterialShapes.kt), not design values.
   {
     files: ['packages/*/src/**/*.{ts,tsx}'],
-    ignores: [...TEST_FILES, 'packages/m3e-codegen/**'],
+    ignores: [...TEST_FILES, 'packages/m3e-codegen/**', 'packages/m3e-shapes/**'],
     plugins: { m3e },
     rules: { 'm3e/no-literal-values': 'error' },
   },

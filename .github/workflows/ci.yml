@@ -133,6 +133,8 @@ jobs:
         with:
           distribution: temurin
           java-version: '21'
+      # Only for `pnpm reference:*`; the harness itself needs no dependencies.
+      - uses: pnpm/action-setup@v6
       - uses: actions/setup-node@v7
         with:
           node-version-file: .nvmrc
@@ -141,5 +143,7 @@ jobs:
           path: node_modules/.cache/kotlin-2.4.21
           key: kotlin-2.4.21
       - name: Spring reference (Compose SpringSimulation / SpringEstimation)
-        run: node tools/jvm/kotlin.mjs --main androidx.compose.animation.core.SpringReferenceKt --out packages/m3e-motion/src/__fixtures__/spring-reference.json packages/m3e-codegen/vendor/androidx-animation-core packages/m3e-motion/reference
-      - run: git diff --exit-code -- packages/m3e-motion/src/__fixtures__
+        run: pnpm reference:motion
+      - name: Shapes reference (graphics-shapes 1.0.1, MaterialShapes, ShapeUtil)
+        run: pnpm reference:shapes
+      - run: git diff --exit-code -- packages/m3e-motion/src/__fixtures__ packages/m3e-shapes/src/__fixtures__

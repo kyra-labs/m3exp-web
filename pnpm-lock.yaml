@@ -226,6 +226,9 @@ importers:
 
   apps/docs:
     dependencies:
+      '@kyralabs/m3e-shapes':
+        specifier: workspace:^
+        version: link:../../packages/m3e-shapes
       '@kyralabs/m3exp-web':
         specifier: workspace:^
         version: link:../../packages/m3exp-web

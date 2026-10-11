@@ -111,6 +111,7 @@ describe('licensing (D9)', () => {
   it.each([
     'AndroidX Compose Material3',
     'AndroidX Compose Animation',
+    'AndroidX Compose UI Graphics',
     'AndroidX graphics-shapes',
     'material-color-utilities',
   ])('NOTICE lists %s', (project) => {

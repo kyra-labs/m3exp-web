@@ -1,0 +1,36 @@
+{
+  "repo": "https://dl.google.com/android/maven2/androidx/graphics/graphics-shapes/1.0.1/graphics-shapes-1.0.1-sources.jar",
+  "commit": "1.0.1",
+  "path": "commonMain/androidx/graphics/shapes/, jvmMain/androidx/graphics/shapes/",
+  "files": {
+    "CornerRounding.kt": "58c42ec0cc20ada8bef18f675d5fd2ed57e8668a93178b1f33c8d7197ed55a28",
+    "Cubic.kt": "396750a1e9023fc9f6a840a79318aac2ea25743ed1a3dcccbc505b963bf24791",
+    "FeatureMapping.kt": "ff7fe4d0482ce6b7482b644a915abd5e55246cce2e1b5cbf24171af83592babb",
+    "Features.kt": "6219a48be2097fbac70818682706ad5637c72848e93175ec92d75de96ff3fffd",
+    "FloatMapping.kt": "dcc0b57be306fe8c45f2b51a204b28d83055ca97c2db709035905f9e3cfbea24",
+    "Format.kt": "84af7e6d833b8dee690520cd076b732c6ada0c331ea157686cab94826f8c1504",
+    "Morph.kt": "8046358386abd3edd31cf91b7f9b060a2e5160550563f96f1d4e00d2f4d80621",
+    "Point.kt": "8001571066738237348f244b3a79c35c4124ccaea02cc5f4350c76ff67ef878f",
+    "PolygonMeasure.kt": "3f13998c003b0394103d4f22c4a7438b7dc4c85ab9d363639e752c39ea885781",
+    "RoundedPolygon.kt": "6a6018e3612fc0dd6dc7668a48471511144cd23c06406e2cbf577b05be6f8f61",
+    "Shapes.kt": "65ab0333c6a9900b5a616aa119d768700e026247661236b41f6449e4f9885b83",
+    "Utils.kt": "25b801c9d7199fdee2d836280ffd6e0900ffe0970c4ee6fe25b7e1a37762723f",
+    "Format.jvm.kt": "162536d6546d70309d9cecb2a7656271004cfa20c85bba8689a856a541390dd9"
+  },
+  "upstream": {
+    "CornerRounding.kt": "commonMain/androidx/graphics/shapes/CornerRounding.kt",
+    "Cubic.kt": "commonMain/androidx/graphics/shapes/Cubic.kt",
+    "FeatureMapping.kt": "commonMain/androidx/graphics/shapes/FeatureMapping.kt",
+    "Features.kt": "commonMain/androidx/graphics/shapes/Features.kt",
+    "FloatMapping.kt": "commonMain/androidx/graphics/shapes/FloatMapping.kt",
+    "Format.kt": "commonMain/androidx/graphics/shapes/Format.kt",
+    "Morph.kt": "commonMain/androidx/graphics/shapes/Morph.kt",
+    "Point.kt": "commonMain/androidx/graphics/shapes/Point.kt",
+    "PolygonMeasure.kt": "commonMain/androidx/graphics/shapes/PolygonMeasure.kt",
+    "RoundedPolygon.kt": "commonMain/androidx/graphics/shapes/RoundedPolygon.kt",
+    "Shapes.kt": "commonMain/androidx/graphics/shapes/Shapes.kt",
+    "Utils.kt": "commonMain/androidx/graphics/shapes/Utils.kt",
+    "Format.jvm.kt": "jvmMain/androidx/graphics/shapes/Format.jvm.kt"
+  },
+  "sha256": "80389b7bbb3447bb8a35e92eb9a04c027ee07d9c2f490a153733a908845ee241"
+}
