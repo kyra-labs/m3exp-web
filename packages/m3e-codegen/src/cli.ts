@@ -5,10 +5,17 @@ import { mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'nod
 import { dirname, join, relative } from 'node:path';
 import { generate } from './generate.js';
 import { findRepoRoot, readPin, requirePin } from './pin.js';
-import { fetchTokens, readVendor } from './vendor.js';
+import {
+  MATERIAL3_PATH,
+  MATERIAL3_SOURCES,
+  fetchTokens,
+  fetchVendor,
+  readVendor,
+} from './vendor.js';
 
 const root = findRepoRoot(process.cwd());
 const vendorDir = join(root, 'packages/m3e-codegen/vendor/androidx-material3-tokens');
+const sourcesDir = join(root, 'packages/m3e-codegen/vendor/androidx-material3-sources');
 const outDir = join(root, 'packages/m3e-tokens/src/generated');
 
 const listFiles = (dir: string): string[] => {
@@ -26,8 +33,12 @@ async function main(command: string | undefined, flags: readonly string[]): Prom
   const pin = readPin(root);
   const commit = requirePin(pin, 'androidx_commit');
   if (command === 'fetch') {
-    const manifest = await fetchTokens(requirePin(pin, 'androidx_repo'), commit, vendorDir);
-    console.log(`fetched ${String(Object.keys(manifest.files).length)} token files @ ${commit}`);
+    const repo = requirePin(pin, 'androidx_repo');
+    const manifest = await fetchTokens(repo, commit, vendorDir);
+    await fetchVendor(repo, commit, MATERIAL3_PATH, sourcesDir, MATERIAL3_SOURCES);
+    console.log(
+      `fetched ${String(Object.keys(manifest.files).length)} token files + ${MATERIAL3_SOURCES.join(', ')} @ ${commit}`,
+    );
     return 0;
   }
   if (command !== 'generate') {
@@ -38,7 +49,12 @@ async function main(command: string | undefined, flags: readonly string[]): Prom
   if (manifest.commit !== commit) {
     throw new Error(`vendor is at ${manifest.commit} but SOURCE_PIN says ${commit}; run fetch`);
   }
-  const output = generate({ files, commit, upstreamPath: manifest.path });
+  const sources = readVendor(sourcesDir);
+  if (sources.manifest.commit !== commit)
+    throw new Error(`${sourcesDir} is not at ${commit}; run fetch`);
+  const colorSchemeKt = sources.files.find((f) => f.name === 'ColorScheme.kt')?.content;
+  if (colorSchemeKt === undefined) throw new Error('ColorScheme.kt is not vendored; run fetch');
+  const output = generate({ files, commit, upstreamPath: manifest.path, colorSchemeKt });
   if (flags.includes('--check')) {
     const stale = [...output.keys()].filter((path) => {
       try {

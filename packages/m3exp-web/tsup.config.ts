@@ -3,5 +3,5 @@ import { baseOptions } from '../../tsup.base.js';
 
 export default defineConfig({
   ...baseOptions,
-  entry: ['src/index.ts', 'src/tokens.ts', 'src/elements.ts', 'src/react.ts'],
+  entry: ['src/index.ts', 'src/tokens.ts', 'src/elements.ts', 'src/react.ts', 'src/theme.ts'],
 });

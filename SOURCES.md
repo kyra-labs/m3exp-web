@@ -6,7 +6,7 @@
 | Compose Material3 | 1.5.0-beta01 (Oct 7, 2026) | developer.android.com/jetpack/androidx/releases/compose-material3 | Stable 1.4.0 lacks the M3E set |
 | androidx source commit | `19991f2c0858aadfcb442ce02b2c8e4743c96898` (end of the 1.5.0-beta01 commit range `b2b5ae7b…19991f2c` on android.googlesource.com, linked from the release notes) | developer.android.com/jetpack/androidx/releases/compose-material3#1.5.0-beta01 | Recorded in `/SOURCE_PIN`. The earlier third-party candidate `23327507…` is discarded |
 | androidx graphics-shapes | 1.1.0 | developer.android.com/jetpack/androidx/releases/graphics | Morph.calculateBounds added |
-| material-color-utilities (npm) | 0.4.0 | npmjs.com/package/@material/material-color-utilities | Apache-2.0 |
+| material-color-utilities (npm) | 0.4.0 | npmjs.com/package/@material/material-color-utilities | Apache-2.0. Bundled into `@kyralabs/m3e-tokens` (its ESM has extensionless imports Node cannot load) |
 | Material Web | 2.5.0 (2026-07-14) | github.com/material-components/material-web/releases | Secondary only; labs expressive components |
 | m3.material.io | live, accessed 2026-10; token DB "Google Material 3" v38.2.9 (`_dsm/data/dsdb-m3/2026-09-23_06-10-05`) | m3.material.io | Motion specs table; component specs; side sheets (sole reference, D8) |
 | Google Sans Flex (D1) | `TODO(verify)`: version + license from github.com/google/fonts (METADATA.pb) | fonts.google.com | Self-hosted; axes `TODO(verify)` |
@@ -45,8 +45,8 @@
 7. Google Sans Flex: axes, ranges, version, license (google/fonts METADATA.pb).
 8. Google Sans Flex fallback metrics for `size-adjust`.
 9. Material Symbols: version, axis ranges, default style used by M3E (Rounded vs Outlined).
-10. SPEC_2025 extra roles (dim roles) and negative-contrast behavior.
-11. Enumerate SpecVersion in npm 0.4.0 (is SPEC_2026 present?) — decides D3 default.
+10. ~~SPEC_2025 extra roles and negative contrast~~ — resolved in npm 0.4.0: spec 2025 adds `primary/secondary/tertiary/error-dim` (spec 2021 returns undefined, `dynamiccolor/color_spec_2021.js`); spec 2025 treats negative contrast as 0. Guarded by tests.
+11. ~~Enumerate SpecVersion~~ — resolved: `SpecVersion = '2021' | '2025'` (`dynamiccolor/color_spec.d.ts` L21); no 2026. D3 default = 2025.
 12. ~~ScrimTokens opacity~~ — resolved: `tokens/ScrimTokens.kt@19991f2c` L25 = 0.32.
 13. ~~ElevationTokens~~ — resolved: `tokens/ElevationTokens.kt@19991f2c` L24–L40 = 0/1/3/6/8/12 dp.
 14. ~~StateTokens and disabled opacities~~ — resolved: `tokens/StateTokens.kt@19991f2c` L22–L25 (hover 0.08, focus 0.1, pressed 0.1, dragged 0.16); per-component `Disabled*Opacity` generated from each `*Tokens.kt`.
@@ -94,6 +94,6 @@
 56. Final component inventory diff against the package-summary.
 57. `linear()` browser support — resolved (Chrome/Edge 113, Firefox 112, Safari 17.2); recheck at each release.
 58. React Aria and Motion versions (pin in M4). Astro and tooling resolved 2026-10-11 — see the pinned versions table.
-59. expressiveLightColorScheme() definition in ColorScheme.kt.
+59. ~~expressiveLightColorScheme()~~ — resolved: `ColorScheme.kt@19991f2c` L1172–1179 (four `on*Container = PaletteTokens.*30` overrides); vendored and parsed by m3e-codegen.
 60. Which components support density and their per-step values (m3.material.io shows only button and text field; spacing page image shows 0 to −4 vs 0 to −3 on the density page).
 61. Focus ring shape (no token; material-web legacy ring uses corner-full) and focus ring motion (material-web labs: 150ms + 450ms `cubic-bezier(0.2, 0, 0, 1)`; Compose inset ring uses springs, `Ripple.kt@19991f2c` L852–853).

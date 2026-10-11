@@ -1,14 +1,64 @@
-/* Docs shell only. Theme tokens arrive with @kyralabs/m3e-tokens in M2. */
+/* Docs shell. Colors and type come from @kyralabs/m3e-tokens (tokens.css + theme.css). */
 :root {
-  color-scheme: light dark;
-
-  /* Explicit system colors so the canvas is a real computed background (axe, Firefox). */
-  background-color: Canvas;
-  color: CanvasText;
+  background-color: var(--m3e-sys-color-background);
+  color: var(--m3e-sys-color-on-background);
+  font-family: var(--m3e-sys-typescale-body-large-font);
+  font-size: var(--m3e-sys-typescale-body-large-size);
+  line-height: var(--m3e-sys-typescale-body-large-line-height);
 }
 
-/* UA link colors fail contrast on the dark canvas; links stay underlined. Replaced by
-   --m3e-sys-color-* once tokens land (M2). */
 a {
-  color: inherit;
+  color: var(--m3e-sys-color-primary);
+}
+
+.docs-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--m3e-sys-space-200);
+  margin-block: var(--m3e-sys-space-300);
+}
+
+.docs-controls label {
+  display: flex;
+  flex-direction: column;
+  gap: var(--m3e-sys-space-50);
+}
+
+.docs-controls input,
+.docs-controls select {
+  min-block-size: var(--m3e-sys-space-600);
+  min-inline-size: var(--m3e-sys-space-900);
+  font: inherit;
+}
+
+.docs-schemes {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr));
+  gap: var(--m3e-sys-space-300);
+}
+
+.docs-swatches {
+  display: grid;
+  gap: var(--m3e-sys-space-100);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.docs-swatch {
+  display: flex;
+  gap: var(--m3e-sys-space-150);
+  align-items: center;
+}
+
+.docs-swatch__chip {
+  flex: none;
+  inline-size: var(--m3e-sys-space-600);
+  block-size: var(--m3e-sys-space-400);
+  border: var(--m3e-sys-state-focus-indicator-thickness) solid var(--m3e-sys-color-outline-variant);
+  border-radius: var(--m3e-sys-shape-corner-small);
+}
+
+.docs-swatch code {
+  font-size: var(--m3e-sys-typescale-body-small-size);
 }

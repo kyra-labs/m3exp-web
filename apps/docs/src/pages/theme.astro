@@ -1,0 +1,83 @@
+---
+import Base from '../layouts/Base.astro';
+---
+
+<Base title="Theme">
+  <h1>Theme</h1>
+  <p>
+    Every color role from <code>createTheme()</code> (material-color-utilities 0.4.0). Compare with
+    Material Theme Builder or the Compose catalog for the same seed, variant and contrast.
+  </p>
+  <form class="docs-controls" id="theme-form">
+    <label>Seed <input name="seed" type="color" value="#6750a4" /></label>
+    <label>
+      Variant
+      <select name="variant" id="variant"></select>
+    </label>
+    <label>
+      Contrast
+      <select name="contrast">
+        <option value="standard">Standard</option>
+        <option value="medium">Medium</option>
+        <option value="high">High</option>
+      </select>
+    </label>
+    <label>
+      Spec
+      <select name="spec">
+        <option value="2025">2025</option>
+        <option value="2021">2021</option>
+      </select>
+    </label>
+  </form>
+  <div class="docs-schemes">
+    <section aria-labelledby="light-heading">
+      <h2 id="light-heading">Light</h2>
+      <ul class="docs-swatches" id="light"></ul>
+    </section>
+    <section aria-labelledby="dark-heading">
+      <h2 id="dark-heading">Dark</h2>
+      <ul class="docs-swatches" id="dark"></ul>
+    </section>
+  </div>
+</Base>
+
+<script>
+  import { VARIANTS, createTheme, type SpecVersion, type Variant } from '@kyralabs/m3exp-web/theme';
+
+  const form = document.getElementById('theme-form') as HTMLFormElement;
+  const variantSelect = document.getElementById('variant') as HTMLSelectElement;
+  for (const variant of VARIANTS) {
+    variantSelect.append(new Option(variant, variant, variant === 'tonalSpot', variant === 'tonalSpot'));
+  }
+
+  function render() {
+    const data = new FormData(form);
+    const { tokens } = createTheme({
+      seed: String(data.get('seed')),
+      variant: String(data.get('variant')) as Variant,
+      contrast: String(data.get('contrast')) as 'standard' | 'medium' | 'high',
+      specVersion: String(data.get('spec')) as SpecVersion,
+    });
+    for (const mode of ['light', 'dark'] as const) {
+      const list = document.getElementById(mode)!;
+      list.replaceChildren(
+        ...Object.entries(tokens[mode] ?? {}).map(([role, hex]) => {
+          const item = document.createElement('li');
+          item.className = 'docs-swatch';
+          const chip = document.createElement('span');
+          chip.className = 'docs-swatch__chip';
+          chip.setAttribute('aria-hidden', 'true');
+          chip.style.backgroundColor = hex;
+          const label = document.createElement('code');
+          label.textContent = `${role} ${hex}`;
+          item.append(chip, label);
+          return item;
+        }),
+      );
+    }
+  }
+
+  form.addEventListener('input', render);
+  render();
+</script>

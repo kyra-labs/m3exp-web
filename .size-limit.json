@@ -1,7 +1,10 @@
 [
   {
-    "name": "m3e-tokens (CSS: ref + sys tokens; color theme added in M2 color PR)",
-    "path": "packages/m3e-tokens/dist/generated/tokens.css",
+    "name": "m3e-tokens (CSS: tokens.css + theme.css, one theme light+dark; fonts excluded)",
+    "path": [
+      "packages/m3e-tokens/dist/generated/tokens.css",
+      "packages/m3e-tokens/dist/generated/theme.css"
+    ],
     "rolldown": false,
     "limit": "12 KB"
   },

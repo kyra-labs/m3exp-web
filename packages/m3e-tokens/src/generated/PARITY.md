@@ -10,10 +10,8 @@ Emitted: 287 system and 2443 component variables from 104 component token object
 
 | Object | Reason |
 |---|---|
-| `ColorSchemeKeyTokens` | Color role keys; emitted as --m3e-sys-color-* by the color generator. |
-| `ColorLightTokens` | Baseline light scheme; color comes from material-color-utilities. |
-| `ColorDarkTokens` | Baseline dark scheme; color comes from material-color-utilities. |
-| `PaletteTokens` | Baseline palette; color comes from material-color-utilities. |
+| `ColorSchemeKeyTokens` | Color role keys; roles are emitted as --m3e-sys-color-* (see Baseline color). |
+| `PaletteTokens` | Tonal palette; referenced by the baseline color schemes (see Baseline color). |
 | `ShapeKeyTokens` | Key enum; resolved to ShapeTokens of the same name. |
 | `TypographyKeyTokens` | Key enum; resolved to TypeScaleTokens of the same name. |
 | `MotionSchemeKeyTokens` | Key enum; no component token references it at this pin. |
@@ -310,6 +308,107 @@ Emitted: 287 system and 2443 component variables from 104 component token object
 | `m3.material.io.md.sys.measurement.space700` | `56dp` | m3.material.io token DB "Google Material 3" v38.2.9 (_dsm/data/dsdb-m3/2026-09-23_06-10-05/MEASUREMENT.20543ce18892f7d9.json) set md.sys.measurement; matches material-web v2.5.0 labs/gb/styles/space/md-space-tokens.scss L6-27 | `--m3e-sys-space-700` | `56px` |  |
 | `m3.material.io.md.sys.measurement.space800` | `64dp` | m3.material.io token DB "Google Material 3" v38.2.9 (_dsm/data/dsdb-m3/2026-09-23_06-10-05/MEASUREMENT.20543ce18892f7d9.json) set md.sys.measurement; matches material-web v2.5.0 labs/gb/styles/space/md-space-tokens.scss L6-27 | `--m3e-sys-space-800` | `64px` |  |
 | `m3.material.io.md.sys.measurement.space900` | `72dp` | m3.material.io token DB "Google Material 3" v38.2.9 (_dsm/data/dsdb-m3/2026-09-23_06-10-05/MEASUREMENT.20543ce18892f7d9.json) set md.sys.measurement; matches material-web v2.5.0 labs/gb/styles/space/md-space-tokens.scss L6-27 | `--m3e-sys-space-900` | `72px` |  |
+
+## Baseline color
+
+| Mode | Role | Resolved from | Line | CSS variable | Emitted | Note |
+|---|---|---|---|---|---|---|
+| light | `background` | `ColorLightTokens.Background → PaletteTokens.Neutral98` | ColorLightTokens.kt:22 | `--m3e-sys-color-background` | `#fef7ff` |  |
+| light | `error` | `ColorLightTokens.Error → PaletteTokens.Error40` | ColorLightTokens.kt:25 | `--m3e-sys-color-error` | `#b3261e` |  |
+| light | `errorContainer` | `ColorLightTokens.ErrorContainer → PaletteTokens.Error90` | ColorLightTokens.kt:28 | `--m3e-sys-color-error-container` | `#f9dedc` |  |
+| light | `inverseOnSurface` | `ColorLightTokens.InverseOnSurface → PaletteTokens.Neutral95` | ColorLightTokens.kt:31 | `--m3e-sys-color-inverse-on-surface` | `#f5eff7` |  |
+| light | `inversePrimary` | `ColorLightTokens.InversePrimary → PaletteTokens.Primary80` | ColorLightTokens.kt:34 | `--m3e-sys-color-inverse-primary` | `#d0bcff` |  |
+| light | `inverseSurface` | `ColorLightTokens.InverseSurface → PaletteTokens.Neutral20` | ColorLightTokens.kt:37 | `--m3e-sys-color-inverse-surface` | `#322f35` |  |
+| light | `onBackground` | `ColorLightTokens.OnBackground → PaletteTokens.Neutral10` | ColorLightTokens.kt:40 | `--m3e-sys-color-on-background` | `#1d1b20` |  |
+| light | `onError` | `ColorLightTokens.OnError → PaletteTokens.Error100` | ColorLightTokens.kt:43 | `--m3e-sys-color-on-error` | `#ffffff` |  |
+| light | `onErrorContainer` | `expressiveLightColorScheme(): onErrorContainer = PaletteTokens.Error30` | ColorScheme.kt:1172 | `--m3e-sys-color-on-error-container` | `#8c1d18` | expressive override (MaterialExpressiveTheme default) |
+| light | `onPrimary` | `ColorLightTokens.OnPrimary → PaletteTokens.Primary100` | ColorLightTokens.kt:49 | `--m3e-sys-color-on-primary` | `#ffffff` |  |
+| light | `onPrimaryContainer` | `expressiveLightColorScheme(): onPrimaryContainer = PaletteTokens.Primary30` | ColorScheme.kt:1172 | `--m3e-sys-color-on-primary-container` | `#4f378b` | expressive override (MaterialExpressiveTheme default) |
+| light | `onPrimaryFixed` | `ColorLightTokens.OnPrimaryFixed → PaletteTokens.Primary10` | ColorLightTokens.kt:55 | `--m3e-sys-color-on-primary-fixed` | `#21005d` |  |
+| light | `onPrimaryFixedVariant` | `ColorLightTokens.OnPrimaryFixedVariant → PaletteTokens.Primary30` | ColorLightTokens.kt:58 | `--m3e-sys-color-on-primary-fixed-variant` | `#4f378b` |  |
+| light | `onSecondary` | `ColorLightTokens.OnSecondary → PaletteTokens.Secondary100` | ColorLightTokens.kt:61 | `--m3e-sys-color-on-secondary` | `#ffffff` |  |
+| light | `onSecondaryContainer` | `expressiveLightColorScheme(): onSecondaryContainer = PaletteTokens.Secondary30` | ColorScheme.kt:1172 | `--m3e-sys-color-on-secondary-container` | `#4a4458` | expressive override (MaterialExpressiveTheme default) |
+| light | `onSecondaryFixed` | `ColorLightTokens.OnSecondaryFixed → PaletteTokens.Secondary10` | ColorLightTokens.kt:67 | `--m3e-sys-color-on-secondary-fixed` | `#1d192b` |  |
+| light | `onSecondaryFixedVariant` | `ColorLightTokens.OnSecondaryFixedVariant → PaletteTokens.Secondary30` | ColorLightTokens.kt:70 | `--m3e-sys-color-on-secondary-fixed-variant` | `#4a4458` |  |
+| light | `onSurface` | `ColorLightTokens.OnSurface → PaletteTokens.Neutral10` | ColorLightTokens.kt:73 | `--m3e-sys-color-on-surface` | `#1d1b20` |  |
+| light | `onSurfaceVariant` | `ColorLightTokens.OnSurfaceVariant → PaletteTokens.NeutralVariant30` | ColorLightTokens.kt:76 | `--m3e-sys-color-on-surface-variant` | `#49454f` |  |
+| light | `onTertiary` | `ColorLightTokens.OnTertiary → PaletteTokens.Tertiary100` | ColorLightTokens.kt:79 | `--m3e-sys-color-on-tertiary` | `#ffffff` |  |
+| light | `onTertiaryContainer` | `expressiveLightColorScheme(): onTertiaryContainer = PaletteTokens.Tertiary30` | ColorScheme.kt:1172 | `--m3e-sys-color-on-tertiary-container` | `#633b48` | expressive override (MaterialExpressiveTheme default) |
+| light | `onTertiaryFixed` | `ColorLightTokens.OnTertiaryFixed → PaletteTokens.Tertiary10` | ColorLightTokens.kt:85 | `--m3e-sys-color-on-tertiary-fixed` | `#31111d` |  |
+| light | `onTertiaryFixedVariant` | `ColorLightTokens.OnTertiaryFixedVariant → PaletteTokens.Tertiary30` | ColorLightTokens.kt:88 | `--m3e-sys-color-on-tertiary-fixed-variant` | `#633b48` |  |
+| light | `outline` | `ColorLightTokens.Outline → PaletteTokens.NeutralVariant50` | ColorLightTokens.kt:91 | `--m3e-sys-color-outline` | `#79747e` |  |
+| light | `outlineVariant` | `ColorLightTokens.OutlineVariant → PaletteTokens.NeutralVariant80` | ColorLightTokens.kt:94 | `--m3e-sys-color-outline-variant` | `#cac4d0` |  |
+| light | `primary` | `ColorLightTokens.Primary → PaletteTokens.Primary40` | ColorLightTokens.kt:97 | `--m3e-sys-color-primary` | `#6750a4` |  |
+| light | `primaryContainer` | `ColorLightTokens.PrimaryContainer → PaletteTokens.Primary90` | ColorLightTokens.kt:100 | `--m3e-sys-color-primary-container` | `#eaddff` |  |
+| light | `primaryFixed` | `ColorLightTokens.PrimaryFixed → PaletteTokens.Primary90` | ColorLightTokens.kt:103 | `--m3e-sys-color-primary-fixed` | `#eaddff` |  |
+| light | `primaryFixedDim` | `ColorLightTokens.PrimaryFixedDim → PaletteTokens.Primary80` | ColorLightTokens.kt:106 | `--m3e-sys-color-primary-fixed-dim` | `#d0bcff` |  |
+| light | `scrim` | `ColorLightTokens.Scrim → PaletteTokens.Neutral0` | ColorLightTokens.kt:109 | `--m3e-sys-color-scrim` | `#000000` |  |
+| light | `secondary` | `ColorLightTokens.Secondary → PaletteTokens.Secondary40` | ColorLightTokens.kt:112 | `--m3e-sys-color-secondary` | `#625b71` |  |
+| light | `secondaryContainer` | `ColorLightTokens.SecondaryContainer → PaletteTokens.Secondary90` | ColorLightTokens.kt:115 | `--m3e-sys-color-secondary-container` | `#e8def8` |  |
+| light | `secondaryFixed` | `ColorLightTokens.SecondaryFixed → PaletteTokens.Secondary90` | ColorLightTokens.kt:118 | `--m3e-sys-color-secondary-fixed` | `#e8def8` |  |
+| light | `secondaryFixedDim` | `ColorLightTokens.SecondaryFixedDim → PaletteTokens.Secondary80` | ColorLightTokens.kt:121 | `--m3e-sys-color-secondary-fixed-dim` | `#ccc2dc` |  |
+| light | `surface` | `ColorLightTokens.Surface → PaletteTokens.Neutral98` | ColorLightTokens.kt:124 | `--m3e-sys-color-surface` | `#fef7ff` |  |
+| light | `surfaceBright` | `ColorLightTokens.SurfaceBright → PaletteTokens.Neutral98` | ColorLightTokens.kt:127 | `--m3e-sys-color-surface-bright` | `#fef7ff` |  |
+| light | `surfaceContainer` | `ColorLightTokens.SurfaceContainer → PaletteTokens.Neutral94` | ColorLightTokens.kt:130 | `--m3e-sys-color-surface-container` | `#f3edf7` |  |
+| light | `surfaceContainerHigh` | `ColorLightTokens.SurfaceContainerHigh → PaletteTokens.Neutral92` | ColorLightTokens.kt:133 | `--m3e-sys-color-surface-container-high` | `#ece6f0` |  |
+| light | `surfaceContainerHighest` | `ColorLightTokens.SurfaceContainerHighest → PaletteTokens.Neutral90` | ColorLightTokens.kt:136 | `--m3e-sys-color-surface-container-highest` | `#e6e0e9` |  |
+| light | `surfaceContainerLow` | `ColorLightTokens.SurfaceContainerLow → PaletteTokens.Neutral96` | ColorLightTokens.kt:139 | `--m3e-sys-color-surface-container-low` | `#f7f2fa` |  |
+| light | `surfaceContainerLowest` | `ColorLightTokens.SurfaceContainerLowest → PaletteTokens.Neutral100` | ColorLightTokens.kt:142 | `--m3e-sys-color-surface-container-lowest` | `#ffffff` |  |
+| light | `surfaceDim` | `ColorLightTokens.SurfaceDim → PaletteTokens.Neutral87` | ColorLightTokens.kt:145 | `--m3e-sys-color-surface-dim` | `#ded8e1` |  |
+| light | `surfaceTint` | `ColorLightTokens.SurfaceTint → ColorLightTokens.Primary → PaletteTokens.Primary40` | ColorLightTokens.kt:148 | `--m3e-sys-color-surface-tint` | `#6750a4` |  |
+| light | `surfaceVariant` | `ColorLightTokens.SurfaceVariant → PaletteTokens.NeutralVariant90` | ColorLightTokens.kt:151 | `--m3e-sys-color-surface-variant` | `#e7e0ec` |  |
+| light | `tertiary` | `ColorLightTokens.Tertiary → PaletteTokens.Tertiary40` | ColorLightTokens.kt:154 | `--m3e-sys-color-tertiary` | `#7d5260` |  |
+| light | `tertiaryContainer` | `ColorLightTokens.TertiaryContainer → PaletteTokens.Tertiary90` | ColorLightTokens.kt:157 | `--m3e-sys-color-tertiary-container` | `#ffd8e4` |  |
+| light | `tertiaryFixed` | `ColorLightTokens.TertiaryFixed → PaletteTokens.Tertiary90` | ColorLightTokens.kt:160 | `--m3e-sys-color-tertiary-fixed` | `#ffd8e4` |  |
+| light | `tertiaryFixedDim` | `ColorLightTokens.TertiaryFixedDim → PaletteTokens.Tertiary80` | ColorLightTokens.kt:163 | `--m3e-sys-color-tertiary-fixed-dim` | `#efb8c8` |  |
+| dark | `background` | `ColorDarkTokens.Background → PaletteTokens.Neutral6` | ColorDarkTokens.kt:22 | `--m3e-sys-color-background` | `#141218` |  |
+| dark | `error` | `ColorDarkTokens.Error → PaletteTokens.Error80` | ColorDarkTokens.kt:25 | `--m3e-sys-color-error` | `#f2b8b5` |  |
+| dark | `errorContainer` | `ColorDarkTokens.ErrorContainer → PaletteTokens.Error30` | ColorDarkTokens.kt:28 | `--m3e-sys-color-error-container` | `#8c1d18` |  |
+| dark | `inverseOnSurface` | `ColorDarkTokens.InverseOnSurface → PaletteTokens.Neutral20` | ColorDarkTokens.kt:31 | `--m3e-sys-color-inverse-on-surface` | `#322f35` |  |
+| dark | `inversePrimary` | `ColorDarkTokens.InversePrimary → PaletteTokens.Primary40` | ColorDarkTokens.kt:34 | `--m3e-sys-color-inverse-primary` | `#6750a4` |  |
+| dark | `inverseSurface` | `ColorDarkTokens.InverseSurface → PaletteTokens.Neutral90` | ColorDarkTokens.kt:37 | `--m3e-sys-color-inverse-surface` | `#e6e0e9` |  |
+| dark | `onBackground` | `ColorDarkTokens.OnBackground → PaletteTokens.Neutral90` | ColorDarkTokens.kt:40 | `--m3e-sys-color-on-background` | `#e6e0e9` |  |
+| dark | `onError` | `ColorDarkTokens.OnError → PaletteTokens.Error20` | ColorDarkTokens.kt:43 | `--m3e-sys-color-on-error` | `#601410` |  |
+| dark | `onErrorContainer` | `ColorDarkTokens.OnErrorContainer → PaletteTokens.Error90` | ColorDarkTokens.kt:46 | `--m3e-sys-color-on-error-container` | `#f9dedc` |  |
+| dark | `onPrimary` | `ColorDarkTokens.OnPrimary → PaletteTokens.Primary20` | ColorDarkTokens.kt:49 | `--m3e-sys-color-on-primary` | `#381e72` |  |
+| dark | `onPrimaryContainer` | `ColorDarkTokens.OnPrimaryContainer → PaletteTokens.Primary90` | ColorDarkTokens.kt:52 | `--m3e-sys-color-on-primary-container` | `#eaddff` |  |
+| dark | `onPrimaryFixed` | `ColorDarkTokens.OnPrimaryFixed → PaletteTokens.Primary10` | ColorDarkTokens.kt:55 | `--m3e-sys-color-on-primary-fixed` | `#21005d` |  |
+| dark | `onPrimaryFixedVariant` | `ColorDarkTokens.OnPrimaryFixedVariant → PaletteTokens.Primary30` | ColorDarkTokens.kt:58 | `--m3e-sys-color-on-primary-fixed-variant` | `#4f378b` |  |
+| dark | `onSecondary` | `ColorDarkTokens.OnSecondary → PaletteTokens.Secondary20` | ColorDarkTokens.kt:61 | `--m3e-sys-color-on-secondary` | `#332d41` |  |
+| dark | `onSecondaryContainer` | `ColorDarkTokens.OnSecondaryContainer → PaletteTokens.Secondary90` | ColorDarkTokens.kt:64 | `--m3e-sys-color-on-secondary-container` | `#e8def8` |  |
+| dark | `onSecondaryFixed` | `ColorDarkTokens.OnSecondaryFixed → PaletteTokens.Secondary10` | ColorDarkTokens.kt:67 | `--m3e-sys-color-on-secondary-fixed` | `#1d192b` |  |
+| dark | `onSecondaryFixedVariant` | `ColorDarkTokens.OnSecondaryFixedVariant → PaletteTokens.Secondary30` | ColorDarkTokens.kt:70 | `--m3e-sys-color-on-secondary-fixed-variant` | `#4a4458` |  |
+| dark | `onSurface` | `ColorDarkTokens.OnSurface → PaletteTokens.Neutral90` | ColorDarkTokens.kt:73 | `--m3e-sys-color-on-surface` | `#e6e0e9` |  |
+| dark | `onSurfaceVariant` | `ColorDarkTokens.OnSurfaceVariant → PaletteTokens.NeutralVariant80` | ColorDarkTokens.kt:76 | `--m3e-sys-color-on-surface-variant` | `#cac4d0` |  |
+| dark | `onTertiary` | `ColorDarkTokens.OnTertiary → PaletteTokens.Tertiary20` | ColorDarkTokens.kt:79 | `--m3e-sys-color-on-tertiary` | `#492532` |  |
+| dark | `onTertiaryContainer` | `ColorDarkTokens.OnTertiaryContainer → PaletteTokens.Tertiary90` | ColorDarkTokens.kt:82 | `--m3e-sys-color-on-tertiary-container` | `#ffd8e4` |  |
+| dark | `onTertiaryFixed` | `ColorDarkTokens.OnTertiaryFixed → PaletteTokens.Tertiary10` | ColorDarkTokens.kt:85 | `--m3e-sys-color-on-tertiary-fixed` | `#31111d` |  |
+| dark | `onTertiaryFixedVariant` | `ColorDarkTokens.OnTertiaryFixedVariant → PaletteTokens.Tertiary30` | ColorDarkTokens.kt:88 | `--m3e-sys-color-on-tertiary-fixed-variant` | `#633b48` |  |
+| dark | `outline` | `ColorDarkTokens.Outline → PaletteTokens.NeutralVariant60` | ColorDarkTokens.kt:91 | `--m3e-sys-color-outline` | `#938f99` |  |
+| dark | `outlineVariant` | `ColorDarkTokens.OutlineVariant → PaletteTokens.NeutralVariant30` | ColorDarkTokens.kt:94 | `--m3e-sys-color-outline-variant` | `#49454f` |  |
+| dark | `primary` | `ColorDarkTokens.Primary → PaletteTokens.Primary80` | ColorDarkTokens.kt:97 | `--m3e-sys-color-primary` | `#d0bcff` |  |
+| dark | `primaryContainer` | `ColorDarkTokens.PrimaryContainer → PaletteTokens.Primary30` | ColorDarkTokens.kt:100 | `--m3e-sys-color-primary-container` | `#4f378b` |  |
+| dark | `primaryFixed` | `ColorDarkTokens.PrimaryFixed → PaletteTokens.Primary90` | ColorDarkTokens.kt:103 | `--m3e-sys-color-primary-fixed` | `#eaddff` |  |
+| dark | `primaryFixedDim` | `ColorDarkTokens.PrimaryFixedDim → PaletteTokens.Primary80` | ColorDarkTokens.kt:106 | `--m3e-sys-color-primary-fixed-dim` | `#d0bcff` |  |
+| dark | `scrim` | `ColorDarkTokens.Scrim → PaletteTokens.Neutral0` | ColorDarkTokens.kt:109 | `--m3e-sys-color-scrim` | `#000000` |  |
+| dark | `secondary` | `ColorDarkTokens.Secondary → PaletteTokens.Secondary80` | ColorDarkTokens.kt:112 | `--m3e-sys-color-secondary` | `#ccc2dc` |  |
+| dark | `secondaryContainer` | `ColorDarkTokens.SecondaryContainer → PaletteTokens.Secondary30` | ColorDarkTokens.kt:115 | `--m3e-sys-color-secondary-container` | `#4a4458` |  |
+| dark | `secondaryFixed` | `ColorDarkTokens.SecondaryFixed → PaletteTokens.Secondary90` | ColorDarkTokens.kt:118 | `--m3e-sys-color-secondary-fixed` | `#e8def8` |  |
+| dark | `secondaryFixedDim` | `ColorDarkTokens.SecondaryFixedDim → PaletteTokens.Secondary80` | ColorDarkTokens.kt:121 | `--m3e-sys-color-secondary-fixed-dim` | `#ccc2dc` |  |
+| dark | `surface` | `ColorDarkTokens.Surface → PaletteTokens.Neutral6` | ColorDarkTokens.kt:124 | `--m3e-sys-color-surface` | `#141218` |  |
+| dark | `surfaceBright` | `ColorDarkTokens.SurfaceBright → PaletteTokens.Neutral24` | ColorDarkTokens.kt:127 | `--m3e-sys-color-surface-bright` | `#3b383e` |  |
+| dark | `surfaceContainer` | `ColorDarkTokens.SurfaceContainer → PaletteTokens.Neutral12` | ColorDarkTokens.kt:130 | `--m3e-sys-color-surface-container` | `#211f26` |  |
+| dark | `surfaceContainerHigh` | `ColorDarkTokens.SurfaceContainerHigh → PaletteTokens.Neutral17` | ColorDarkTokens.kt:133 | `--m3e-sys-color-surface-container-high` | `#2b2930` |  |
+| dark | `surfaceContainerHighest` | `ColorDarkTokens.SurfaceContainerHighest → PaletteTokens.Neutral22` | ColorDarkTokens.kt:136 | `--m3e-sys-color-surface-container-highest` | `#36343b` |  |
+| dark | `surfaceContainerLow` | `ColorDarkTokens.SurfaceContainerLow → PaletteTokens.Neutral10` | ColorDarkTokens.kt:139 | `--m3e-sys-color-surface-container-low` | `#1d1b20` |  |
+| dark | `surfaceContainerLowest` | `ColorDarkTokens.SurfaceContainerLowest → PaletteTokens.Neutral4` | ColorDarkTokens.kt:142 | `--m3e-sys-color-surface-container-lowest` | `#0f0d13` |  |
+| dark | `surfaceDim` | `ColorDarkTokens.SurfaceDim → PaletteTokens.Neutral6` | ColorDarkTokens.kt:145 | `--m3e-sys-color-surface-dim` | `#141218` |  |
+| dark | `surfaceTint` | `ColorDarkTokens.SurfaceTint → ColorDarkTokens.Primary → PaletteTokens.Primary80` | ColorDarkTokens.kt:148 | `--m3e-sys-color-surface-tint` | `#d0bcff` |  |
+| dark | `surfaceVariant` | `ColorDarkTokens.SurfaceVariant → PaletteTokens.NeutralVariant30` | ColorDarkTokens.kt:151 | `--m3e-sys-color-surface-variant` | `#49454f` |  |
+| dark | `tertiary` | `ColorDarkTokens.Tertiary → PaletteTokens.Tertiary80` | ColorDarkTokens.kt:154 | `--m3e-sys-color-tertiary` | `#efb8c8` |  |
+| dark | `tertiaryContainer` | `ColorDarkTokens.TertiaryContainer → PaletteTokens.Tertiary30` | ColorDarkTokens.kt:157 | `--m3e-sys-color-tertiary-container` | `#633b48` |  |
+| dark | `tertiaryFixed` | `ColorDarkTokens.TertiaryFixed → PaletteTokens.Tertiary90` | ColorDarkTokens.kt:160 | `--m3e-sys-color-tertiary-fixed` | `#ffd8e4` |  |
+| dark | `tertiaryFixedDim` | `ColorDarkTokens.TertiaryFixedDim → PaletteTokens.Tertiary80` | ColorDarkTokens.kt:163 | `--m3e-sys-color-tertiary-fixed-dim` | `#efb8c8` |  |
 
 ## app-bar
 

@@ -3,11 +3,14 @@
 //   generated/components/<c>.css    one file per component token object
 //   generated/sys.ts                sys tokens as typed JS objects
 //   generated/components.ts         component tokens as JS objects (one named export each)
+//   generated/theme.css             baseline color scheme (Compose expressive light + dark)
+//   generated/baseline-colors.ts    the same colors as JS
 //   generated/PARITY.md             every source token → emitted variable, with file:line
 //
-// Color (ColorScheme*/ColorLight/ColorDark/Palette) is generated from material-color-utilities
-// in a separate step; component tokens reference `--m3e-sys-color-*` by name only.
+// Seed-based color (material-color-utilities) is a runtime concern: @kyralabs/m3e-tokens/theme.
 
+import { themeCss } from '@kyralabs/m3e-tokens/theme-css';
+import { type BaselineColor, baselineColors } from './color.js';
 import { type Expr, type Member, type TokenFile, parseTokenFile } from './kotlin.js';
 import { FOCUS_INDICATOR, SPACE, type SupplementaryToken } from './supplementary.js';
 import { compVar, componentName, kebab, kebabName, reorderStates, words } from './names.js';
@@ -24,6 +27,8 @@ export interface GenerateOptions {
   commit: string;
   /** Upstream directory of the token files, for citations. */
   upstreamPath: string;
+  /** Vendored `ColorScheme.kt` (expressiveLightColorScheme overrides). */
+  colorSchemeKt: string;
 }
 
 interface Emitted {
@@ -40,15 +45,16 @@ interface Emitted {
 
 /** Token objects whose values are produced elsewhere (color) or are not design values. */
 const NOT_EMITTED: Readonly<Record<string, string>> = {
-  ColorSchemeKeyTokens: 'Color role keys; emitted as --m3e-sys-color-* by the color generator.',
-  ColorLightTokens: 'Baseline light scheme; color comes from material-color-utilities.',
-  ColorDarkTokens: 'Baseline dark scheme; color comes from material-color-utilities.',
-  PaletteTokens: 'Baseline palette; color comes from material-color-utilities.',
+  ColorSchemeKeyTokens:
+    'Color role keys; roles are emitted as --m3e-sys-color-* (see Baseline color).',
+  PaletteTokens: 'Tonal palette; referenced by the baseline color schemes (see Baseline color).',
   ShapeKeyTokens: 'Key enum; resolved to ShapeTokens of the same name.',
   TypographyKeyTokens: 'Key enum; resolved to TypeScaleTokens of the same name.',
   MotionSchemeKeyTokens: 'Key enum; no component token references it at this pin.',
   TypographyTokens: 'TextStyle assembly; verified to map 1:1 onto TypeScaleTokens (test).',
 };
+
+const COLOR_OBJECTS = new Set(['ColorLightTokens', 'ColorDarkTokens']);
 
 const SYS_OBJECTS = new Set([
   'TypefaceTokens',
@@ -97,7 +103,12 @@ const camelName = (name: string): string => camel(words(name));
 const isUniform = (e: Extract<Expr, { kind: 'corners' }>): boolean =>
   e.topStart === e.topEnd && e.topEnd === e.bottomEnd && e.bottomEnd === e.bottomStart;
 
-export function generate({ files, commit, upstreamPath }: GenerateOptions): Map<string, string> {
+export function generate({
+  files,
+  commit,
+  upstreamPath,
+  colorSchemeKt,
+}: GenerateOptions): Map<string, string> {
   const parsed = new Map<string, TokenFile & { file: string }>();
   for (const { name, content } of [...files].sort((a, b) => a.name.localeCompare(b.name))) {
     const tokens = parseTokenFile(content);
@@ -322,7 +333,7 @@ export function generate({ files, commit, upstreamPath }: GenerateOptions): Map<
     { object: string; tokens: Emitted[]; js: Record<string, unknown> }
   >();
   for (const [object, tokens] of parsed) {
-    if (SYS_OBJECTS.has(object) || object in NOT_EMITTED) continue;
+    if (SYS_OBJECTS.has(object) || COLOR_OBJECTS.has(object) || object in NOT_EMITTED) continue;
     const emitMember = (
       m: Member,
       reorder: boolean,
@@ -440,7 +451,40 @@ export function generate({ files, commit, upstreamPath }: GenerateOptions): Map<
       .replace(/"([A-Za-z_$][\w$]*)":/g, '$1:');
 
   const out = new Map<string, string>();
-  out.set('tokens.css', cssFile('Reference + system tokens (color excluded).', sys));
+  out.set('tokens.css', cssFile('Reference + system tokens (color: theme.css).', sys));
+
+  // Baseline color: Compose expressiveLightColorScheme() / darkColorScheme().
+  const baseline = baselineColors(parsed, colorSchemeKt);
+  const roles = (colors: readonly BaselineColor[]) =>
+    Object.fromEntries(colors.map((c) => [c.role, c.hex]));
+  out.set(
+    'theme.css',
+    themeCss({
+      light: roles(baseline.light),
+      dark: roles(baseline.dark),
+      mode: 'system',
+      layer: 'm3e.tokens',
+      comment: [
+        ...banner('Baseline color: Compose expressiveLightColorScheme() and darkColorScheme().'),
+        'Seed-based themes: createTheme() from @kyralabs/m3e-tokens/theme, or the m3e-theme CLI.',
+      ],
+    }),
+  );
+  const baselineJs = { light: roles(baseline.light), dark: roles(baseline.dark) };
+  out.set(
+    'baseline-colors.ts',
+    [
+      ...tsHeader('Baseline color: Compose expressiveLightColorScheme() and darkColorScheme().'),
+      `export const baselineColors = ${literal(baselineJs)} as const;`,
+      '',
+    ].join('\n'),
+  );
+  const colorRows = (['light', 'dark'] as const).flatMap((mode) =>
+    baseline[mode].map((c) => {
+      const cssVar = `--m3e-sys-color-${kebab(words(c.role[0]!.toUpperCase() + c.role.slice(1)))}`;
+      return `| ${mode} | \`${c.role}\` | \`${c.via}\` | ${c.file}:${String(c.line)} | \`${cssVar}\` | \`${c.hex}\` | ${c.note ?? ''} |`;
+    }),
+  );
   for (const [name, c] of [...components].sort(([a], [b]) => a.localeCompare(b))) {
     out.set(`components/${name}.css`, cssFile(`Component tokens: ${c.object}.`, c.tokens));
   }
@@ -508,6 +552,12 @@ export function generate({ files, commit, upstreamPath }: GenerateOptions): Map<
     '',
     ...header,
     ...rows(sys),
+    '',
+    '## Baseline color',
+    '',
+    '| Mode | Role | Resolved from | Line | CSS variable | Emitted | Note |',
+    '|---|---|---|---|---|---|---|',
+    ...colorRows,
     '',
     ...[...components]
       .sort(([a], [b]) => a.localeCompare(b))

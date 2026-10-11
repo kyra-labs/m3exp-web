@@ -6,6 +6,7 @@ import { expect, test } from '@playwright/test';
 const PAGES = [
   { path: '/', name: 'home' },
   { path: '/components/', name: 'components-index' },
+  { path: '/theme/', name: 'theme' },
 ];
 
 for (const { path, name } of PAGES) {

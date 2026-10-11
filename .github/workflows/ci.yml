@@ -65,6 +65,8 @@ jobs:
           done
           test -f packages/m3e-css/dist/index.css
           test -f packages/m3exp-web/dist/css/index.css
+      - name: m3e-theme CLI runs under plain Node
+        run: node packages/m3e-tokens/dist/cli/theme.js --seed "#6750A4" --variant expressive | grep -q -- "--m3e-sys-color-primary:"
       - name: Packages pack cleanly
         run: pnpm -r --filter "./packages/*" exec pnpm pack --pack-destination "$RUNNER_TEMP/packs"
       - uses: actions/upload-artifact@v7

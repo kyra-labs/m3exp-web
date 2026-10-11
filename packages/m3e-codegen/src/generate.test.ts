@@ -10,7 +10,15 @@ import { readVendor } from './vendor.js';
 const root = fileURLToPath(new URL('../../../', import.meta.url));
 const vendorDir = fileURLToPath(new URL('../vendor/androidx-material3-tokens/', import.meta.url));
 const { manifest, files } = readVendor(vendorDir);
-const output = generate({ files, commit: manifest.commit, upstreamPath: manifest.path });
+const colorSchemeKt = readVendor(
+  fileURLToPath(new URL('../vendor/androidx-material3-sources/', import.meta.url)),
+).files.find((f) => f.name === 'ColorScheme.kt')!.content;
+const output = generate({
+  files,
+  commit: manifest.commit,
+  upstreamPath: manifest.path,
+  colorSchemeKt,
+});
 const tokensCss = output.get('tokens.css')!;
 const source = (name: string) => files.find((f) => f.name === name)!.content;
 
@@ -42,15 +50,19 @@ describe('generator', () => {
       files: [...files].reverse(),
       commit: manifest.commit,
       upstreamPath: manifest.path,
+      colorSchemeKt,
     });
     expect([...again]).toEqual([...output]);
   });
 
-  it('never emits a variable twice within a file', () => {
+  it('never emits a variable twice within a rule block', () => {
     for (const [path, css] of output) {
       if (!path.endsWith('.css')) continue;
-      const names = [...css.matchAll(/^\s*(--[\w-]+):/gm)].map((m) => m[1]);
-      expect(new Set(names).size, path).toBe(names.length);
+      // theme.css repeats each role across its light / dark-media / data-theme blocks by design.
+      for (const block of css.split(/[{}]/)) {
+        const names = [...block.matchAll(/^\s*(--[\w-]+):/gm)].map((m) => m[1]);
+        expect(new Set(names).size, path).toBe(names.length);
+      }
     }
   });
 

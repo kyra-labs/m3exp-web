@@ -42,6 +42,12 @@
       "import": "./dist/react.js",
       "default": "./dist/react.js"
     },
+    "./theme": {
+      "@kyralabs/source": "./src/theme.ts",
+      "types": "./dist/theme.d.ts",
+      "import": "./dist/theme.js",
+      "default": "./dist/theme.js"
+    },
     "./css/index.css": "./dist/css/index.css",
     "./package.json": "./package.json"
   },
@@ -60,10 +66,10 @@
     "provenance": true
   },
   "dependencies": {
+    "@kyralabs/m3e-tokens": "workspace:^",
     "@kyralabs/m3e-css": "workspace:^",
     "@kyralabs/m3e-elements": "workspace:^",
-    "@kyralabs/m3e-react": "workspace:^",
-    "@kyralabs/m3e-tokens": "workspace:^"
+    "@kyralabs/m3e-react": "workspace:^"
   },
   "peerDependencies": {
     "react": "^18.3.0 || ^19.0.0",

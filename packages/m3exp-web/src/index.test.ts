@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import * as elements from '@kyralabs/m3e-elements';
 import * as react from '@kyralabs/m3e-react';
 import * as tokens from '@kyralabs/m3e-tokens';
+import * as theme from '@kyralabs/m3e-tokens/theme';
 
 describe('@kyralabs/m3exp-web umbrella', () => {
   it('re-exports every JS layer from the root entry', async () => {
@@ -15,5 +16,6 @@ describe('@kyralabs/m3exp-web umbrella', () => {
     expect(Object.keys(await import('./tokens.js'))).toEqual(Object.keys(tokens));
     expect(Object.keys(await import('./elements.js'))).toEqual(Object.keys(elements));
     expect(Object.keys(await import('./react.js'))).toEqual(Object.keys(react));
+    expect(Object.keys(await import('./theme.js'))).toEqual(Object.keys(theme));
   });
 });
