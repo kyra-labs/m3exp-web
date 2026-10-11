@@ -12,7 +12,7 @@
 | Google Sans Flex (D1) | 5.000 (google/fonts@bd8f81dd `ofl/googlesansflex`, "Adding latest GSF v5.000", 2026-10-09) | github.com/google/fonts/tree/bd8f81ddb5c74d5c8897b36ad88b440266245103/ofl/googlesansflex | SIL OFL 1.1, no Reserved Font Names; trademarks per TRADEMARKS.md. Axes ROND 0–100, opsz 1–144 (default 18), slnt −10–0, wdth 25–151, wght 1–1000 (no GRAD). Chunk unicode ranges from the Google Fonts CSS2 API (vendored). Recorded in `/SOURCE_PIN` |
 | Material Symbols (D5) | 2.975 (google/material-design-icons@49d4db35 `variablefont/`, "Update Symbols", 2026-10-09; version from the font name table) | github.com/google/material-design-icons/tree/49d4db35df873165d6bd6ba09b063c7dafbac2f4/variablefont | Apache-2.0. Rounded/Outlined/Sharp woff2 shipped byte-exact; axes FILL 0–1, GRAD −50–200, opsz 20–48, wght 100–700. Recorded in `/SOURCE_PIN` |
 | React Aria | `react-aria` 3.53.1 (npm latest, published 2026-10-09) | npmjs.com/package/react-aria | Apache-2.0. Runtime dependency of `@kyralabs/m3e-react` (behavior/a11y hooks) |
-| Motion (motion.dev) | `TODO(verify)`: latest "motion" on npm | | |
+| Motion (motion.dev) | `motion` 14.1.0 (npm latest, published 2026-10-09) | npmjs.com/package/motion | MIT. `@kyralabs/m3e-react` uses its `spring` generator and frame loop (≈2 kB) for interruptible springs; `react-stately` 3.51.0 (react-aria's own version) for toggle state |
 | Astro | 7.3.8 (npm latest, 2026-10-11) | npmjs.com/package/astro | Docs/playground app (M1) |
 | Kotlin (JVM reference harnesses) | 2.4.21 (JetBrains release, sha256-verified by `tools/jvm/kotlin.mjs`) | github.com/JetBrains/kotlin/releases/tag/v2.4.21 | Compiles vendored androidx sources unmodified to export reference fixtures (ROADMAP M3) |
 | Tooling | pnpm 12.11.2, Vitest 5.0.3 (+ happy-dom 20.14.6), Playwright 1.64.0 (image `mcr.microsoft.com/playwright:v1.64.0-noble`), @axe-core/playwright 4.13.0, size-limit 14.2.0, Changesets 3.0.3, tsup 8.5.1, ESLint 10.12.0, typescript-eslint 8.71.1, stylelint 17.16.0, Prettier 3.9.10 (npm latest, 2026-10-11) | npmjs.com | Exact versions in `pnpm-lock.yaml` |
@@ -54,8 +54,8 @@
 15. ~~Focus ring thickness/offset~~ — resolved from m3.material.io (no androidx token at the pin): `md.sys.state.focus-indicator` thickness 3dp, outer-offset 2dp, inner-offset −3dp (m3 token DB v38.2.9); matches material-web v2.5.0 `tokens/versions/latest/sass/_md-sys-state-focus-indicator.scss` L18–23. Color: every androidx `*Tokens.FocusIndicatorColor` = `Secondary`. Shape and motion → item 61.
 16. ~~Spacing tokens~~ — resolved from m3.material.io: `md.sys.measurement.space0…space900` on an 8dp base (m3 token DB v38.2.9, m3.material.io/styles/spacing); matches material-web v2.5.0 `labs/gb/styles/space/md-space-tokens.scss` L6–27. Not present in Compose Material3 at the pin.
 17. ~~Density rules~~ — resolved (rules): m3.material.io/foundations/layout/grids-spacing/density — scale 0, −1, −2, −3; "decreasing the top and bottom padding or overall height by 4dp"; opt-in only; targets stay ≥48×48; no automatic change across breakpoints. Per-component values → item 60.
-18. Button size tokens, all fields × 5 sizes.
-19. Button color roles per variant and toggle state.
+18. ~~Button size tokens, all fields × 5 sizes~~ — resolved: `Button{XSmall,Small,Medium,Large,XLarge}Tokens.kt@19991f2c` (generated). Compose `ButtonDefaults` overrides some (`Button.kt@19991f2c`: XS padding 12dp and icon spacing 4dp, upstream TODO pending a token correction; vertical paddings 6/10/16/32/48dp; MinWidth 58dp; label styles labelLarge/labelLarge/titleMedium/headlineSmall/headlineLarge via `textStyleFor` L1640); small toggle pressed shape 6dp (`ToggleButton.kt` `pressedShape`). Generated as `components/button-defaults.css`.
+19. ~~Button color roles per variant and toggle state~~ — resolved from the objects Compose reads: `Button.kt` (FilledButtonTokens, ElevatedButtonTokens, FilledTonalButtonTokens, OutlinedButtonTokens; text button content = ColorScheme Primary, L1414, upstream TODO over TextButtonTokens.LabelColor) and `ToggleButton.kt` (Filled/Elevated Unselected*/Selected*, TonalButtonTokens, OutlinedButtonTokens; selected outlined toggles have no border).
 20. Icon button size/width table.
 21. Button group tokens for M/L/XL; ExpandedRatio 0.15.
 22. Split button tokens.
@@ -94,7 +94,7 @@
 55. Pull-to-refresh indicator.
 56. Final component inventory diff against the package-summary.
 57. `linear()` browser support — resolved (Chrome/Edge 113, Firefox 112, Safari 17.2); recheck at each release.
-58. Motion version (pins with the first spring-animated React component, M4 Button). React Aria resolved 2026-10-12: 3.53.1. Astro and tooling resolved 2026-10-11 — see the pinned versions table.
+58. ~~React Aria and Motion versions~~ — resolved 2026-10-12: react-aria 3.53.1, motion 14.1.0. Astro and tooling resolved 2026-10-11 — see the pinned versions table.
 59. ~~expressiveLightColorScheme()~~ — resolved: `ColorScheme.kt@19991f2c` L1172–1179 (four `on*Container = PaletteTokens.*30` overrides); vendored and parsed by m3e-codegen.
 60. Which components support density and their per-step values (m3.material.io shows only button and text field; spacing page image shows 0 to −4 vs 0 to −3 on the density page).
 61. Focus ring shape (no token; material-web legacy ring uses corner-full) and focus ring motion (material-web labs: 150ms + 450ms `cubic-bezier(0.2, 0, 0, 1)`; Compose inset ring uses springs, `Ripple.kt@19991f2c` L852–853).
