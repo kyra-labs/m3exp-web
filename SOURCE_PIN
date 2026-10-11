@@ -1,0 +1,14 @@
+# m3exp-web source pin — do not edit by hand outside a "pin bump" PR
+# Compose Material3 1.5.0-beta01 (released 2026-10-07)
+# Release notes: https://developer.android.com/jetpack/androidx/releases/compose-material3#1.5.0-beta01
+# "Version 1.5.0-beta01 contains these commits":
+#   https://android.googlesource.com/platform/frameworks/support/+log/b2b5ae7b0fe1bb4eece7018878fe5f18c5967a2f..19991f2c0858aadfcb442ce02b2c8e4743c96898/compose/material3
+androidx_repo=https://android.googlesource.com/platform/frameworks/support
+androidx_commit=19991f2c0858aadfcb442ce02b2c8e4743c96898
+androidx_range_start=b2b5ae7b0fe1bb4eece7018878fe5f18c5967a2f
+compose_material3=1.5.0-beta01
+graphics_shapes=1.1.0
+material_color_utilities=0.4.0
+material_web=2.5.0
+google_sans_flex=TODO(verify)
+material_symbols=TODO(verify)

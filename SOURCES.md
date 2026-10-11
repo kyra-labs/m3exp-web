@@ -4,7 +4,7 @@
 | Source | Version | Link | Notes |
 |---|---|---|---|
 | Compose Material3 | 1.5.0-beta01 (Oct 7, 2026) | developer.android.com/jetpack/androidx/releases/compose-material3 | Stable 1.4.0 lacks the M3E set |
-| androidx source commit | `TODO(verify)`: commit for the 1.5.0-beta01 release | android.googlesource.com / github.com/androidx/androidx | Candidate `23327507f7fc7d5b19d65fec4b090f60c970079b` (token header `VERSION: 14_1_0`) seen in a third-party project with a conflicting alpha label. Do not use until resolved |
+| androidx source commit | `19991f2c0858aadfcb442ce02b2c8e4743c96898` (end of the 1.5.0-beta01 commit range `b2b5ae7b…19991f2c` on android.googlesource.com, linked from the release notes) | developer.android.com/jetpack/androidx/releases/compose-material3#1.5.0-beta01 | Recorded in `/SOURCE_PIN`. The earlier third-party candidate `23327507…` is discarded |
 | androidx graphics-shapes | 1.1.0 | developer.android.com/jetpack/androidx/releases/graphics | Morph.calculateBounds added |
 | material-color-utilities (npm) | 0.4.0 | npmjs.com/package/@material/material-color-utilities | Apache-2.0 |
 | Material Web | 2.5.0 (2026-07-14) | github.com/material-components/material-web/releases | Secondary only; labs expressive components |
@@ -35,7 +35,7 @@
 - Not legal advice; owner may seek review before 1.0.
 
 ## TODO(verify) register
-1. androidx commit hash for 1.5.0-beta01.
+1. ~~androidx commit hash for 1.5.0-beta01~~ — resolved: `19991f2c0858aadfcb442ce02b2c8e4743c96898` (see `/SOURCE_PIN`).
 2. All 12 spring constants (ζ, k) in Standard/ExpressiveMotionTokens.kt.
 3. Corner scale values in ShapeTokens.kt.
 4. Line heights (title-medium and below) and all tracking in TypeScaleTokens.kt.
