@@ -22,7 +22,7 @@ Copyright (C) The Android Open Source Project
 Licensed under the Apache License, Version 2.0
 
 --------------------------------------------------------------------------------
-material-color-utilities (@material/material-color-utilities 0.4.0)
+material-color-utilities (@material/material-color-utilities 0.4.0, bundled in @kyralabs/m3e-tokens)
 https://github.com/material-foundation/material-color-utilities
 Copyright 2021 Google LLC
 Licensed under the Apache License, Version 2.0

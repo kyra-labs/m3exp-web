@@ -15,6 +15,9 @@
   "sideEffects": [
     "*.css"
   ],
+  "bin": {
+    "m3e-theme": "./dist/cli/theme.js"
+  },
   "exports": {
     ".": {
       "@kyralabs/source": "./src/index.ts",
@@ -28,6 +31,19 @@
       "import": "./dist/components.js",
       "default": "./dist/components.js"
     },
+    "./theme": {
+      "@kyralabs/source": "./src/theme.ts",
+      "types": "./dist/theme.d.ts",
+      "import": "./dist/theme.js",
+      "default": "./dist/theme.js"
+    },
+    "./theme-css": {
+      "@kyralabs/source": "./src/theme-css.ts",
+      "types": "./dist/theme-css.d.ts",
+      "import": "./dist/theme-css.js",
+      "default": "./dist/theme-css.js"
+    },
+    "./theme.css": "./dist/generated/theme.css",
     "./tokens.css": "./dist/generated/tokens.css",
     "./components/*.css": "./dist/generated/components/*.css",
     "./package.json": "./package.json"
@@ -46,5 +62,8 @@
   "publishConfig": {
     "access": "public",
     "provenance": true
+  },
+  "devDependencies": {
+    "@material/material-color-utilities": "0.4.0"
   }
 }

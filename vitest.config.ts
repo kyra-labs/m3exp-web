@@ -9,6 +9,8 @@ export default defineConfig({
   resolve: { conditions: [SOURCE, ...defaultClientConditions] },
   ssr: { resolve: { conditions: [SOURCE, ...defaultServerConditions] } },
   test: {
+    // material-color-utilities 0.4.0 ESM has extensionless imports; let Vite resolve it.
+    server: { deps: { inline: ['@material/material-color-utilities'] } },
     projects: [
       {
         extends: true,

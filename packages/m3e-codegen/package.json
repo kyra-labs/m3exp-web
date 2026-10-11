@@ -25,5 +25,8 @@
   "scripts": {
     "build": "tsup",
     "typecheck": "tsc --noEmit -p tsconfig.json"
+  },
+  "devDependencies": {
+    "@kyralabs/m3e-tokens": "workspace:^"
   }
 }

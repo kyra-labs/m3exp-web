@@ -40,7 +40,7 @@ export default {
   ],
   rules: {
     'import-notation': 'string',
-    // BEM: .m3e-<component>__<part>--<modifier>
+    // BEM: .m3e-<component>__<part>--<modifier> for the library; docs shell uses .docs-…
     'selector-class-pattern': [
       '^m3e-[a-z0-9]+(-[a-z0-9]+)*(__[a-z0-9]+(-[a-z0-9]+)*)?(--[a-z0-9]+(-[a-z0-9]+)*)?$',
       { message: 'Use .m3e-<component>[__<part>][--<modifier>] (CLAUDE.md Naming).' },
@@ -54,6 +54,16 @@ export default {
     ],
   },
   overrides: [
+    {
+      // Docs-only classes must not look like library API (.m3e-*).
+      files: ['apps/docs/**/*.css'],
+      rules: {
+        'selector-class-pattern': [
+          '^docs-[a-z0-9]+(-[a-z0-9]+)*(__[a-z0-9]+(-[a-z0-9]+)*)?(--[a-z0-9]+(-[a-z0-9]+)*)?$',
+          { message: 'Docs shell classes are .docs-<block>[__<part>][--<modifier>].' },
+        ],
+      },
+    },
     {
       files: ['packages/*/src/**/*.css'],
       rules: {

@@ -14,15 +14,17 @@ Convention: every concrete value cites its source. **Generated values win:** `pa
 - Error: error, on-error, error-container, on-error-container.
 - Surfaces: surface, on-surface, surface-variant, on-surface-variant, surface-dim, surface-bright, surface-container-lowest, surface-container-low, surface-container, surface-container-high, surface-container-highest, surface-tint, inverse-surface, inverse-on-surface, background, on-background.
 - Other: outline, outline-variant, shadow, scrim.
-- `TODO(verify): whether SPEC_2025 adds primary-dim / secondary-dim / tertiary-dim / error-dim roles — check typescript/dynamiccolor/color_spec_2025.ts`. The generator must enumerate roles from `MaterialDynamicColors` and not use a hand-written list.
+- Verified in the published 0.4.0 build: spec 2025 adds `primary-dim`, `secondary-dim`, `tertiary-dim`, `error-dim`; spec 2021 leaves them undefined (`dynamiccolor/color_spec_2021.js`, e.g. `primaryDim() { return undefined; }`). Roles are enumerated from `MaterialDynamicColors` (53 in spec 2025, 49 in spec 2021); Compose's `ColorSchemeKeyTokens` roles are a subset (test).
 
 **Variants:** monochrome, neutral, tonalSpot (default), vibrant, expressive, fidelity, content, rainbow, fruitSalad (MCU `Variant` enum).
 
-**Contrast:** `contrastLevel` runs from −1 to 1, where 0 is standard (MCU `DynamicScheme`). Web presets are 0 / 0.5 / 1. `TODO(verify): whether SPEC_2025 rejects negative contrast`.
+**Contrast:** `contrastLevel` runs from −1 to 1, where 0 is standard (MCU `DynamicScheme`). Web presets are 0 / 0.5 / 1. Verified: spec 2025 treats negative contrast as standard (0) — e.g. tonalSpot `#6750A4` primary is identical at −1, −0.5 and 0 — while spec 2021 lowers contrast (test).
 
-**Spec versions (D3):** default is the latest version present in the 0.4.0 npm build. `TODO(verify): enumerate SpecVersion in the published 0.4.0 build (SPEC_2021, SPEC_2025, possibly SPEC_2026)`. All shipped versions remain selectable via `specVersion`.
+**Spec versions (D3):** 0.4.0 ships `SpecVersion = '2021' | '2025'` (`dynamiccolor/color_spec.d.ts` L21; no 2026), so the default is **2025**. MCU's own `DynamicScheme.DEFAULT_SPEC_VERSION` is still "2021", so it is always passed explicitly. Both remain selectable via `specVersion`.
 
-**Expressive fallback scheme:** Compose `expressiveLightColorScheme()` = `lightColorScheme(onPrimaryContainer = Primary30, onSecondaryContainer = Secondary30, onTertiaryContainer = Tertiary30, onErrorContainer = Error30)` (Compose source as mirrored by composables.com; `TODO(verify)` in ColorScheme.kt). Ship this as the "baseline expressive" static theme.
+**Packaging:** 0.4.0's published ESM uses extensionless relative imports (e.g. `scheme/scheme_tonal_spot.js` → `'../dynamiccolor/dynamic_scheme'`) that plain Node cannot load, so `@kyralabs/m3e-tokens` bundles it (license headers kept) instead of depending on it at runtime.
+
+**Expressive fallback scheme:** Compose `expressiveLightColorScheme()` = `lightColorScheme(onPrimaryContainer = Primary30, onSecondaryContainer = Secondary30, onTertiaryContainer = Tertiary30, onErrorContainer = Error30)` (verified: `ColorScheme.kt@19991f2c` L1172–1179; dark mode uses `darkColorScheme()`, L1166). Shipped as `@kyralabs/m3e-tokens/theme.css`, generated from `ColorLightTokens`/`ColorDarkTokens`/`PaletteTokens` plus the overrides parsed from the vendored `ColorScheme.kt`.
 
 **Scrim:** container opacity 0.32 (`ScrimTokens.kt@19991f2c` L25; generated as `--m3e-comp-scrim-container-opacity`).
 
