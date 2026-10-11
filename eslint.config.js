@@ -46,6 +46,11 @@ export default defineConfig(
     ],
     languageOptions: { globals: globals.node },
   },
+  // Build-time parsers and tests index regex capture groups the match guarantees.
+  {
+    files: ['packages/m3e-codegen/src/**/*.ts', 'packages/m3e-icons/src/**/*.ts', ...TEST_FILES],
+    rules: { '@typescript-eslint/no-non-null-assertion': 'off' },
+  },
   // CLAUDE.md "Tokens only". Codegen emits literal values from pinned sources, so it is exempt.
   {
     files: ['packages/*/src/**/*.{ts,tsx}'],

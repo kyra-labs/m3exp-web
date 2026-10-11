@@ -8,7 +8,7 @@
 | androidx graphics-shapes | 1.1.0 | developer.android.com/jetpack/androidx/releases/graphics | Morph.calculateBounds added |
 | material-color-utilities (npm) | 0.4.0 | npmjs.com/package/@material/material-color-utilities | Apache-2.0 |
 | Material Web | 2.5.0 (2026-07-14) | github.com/material-components/material-web/releases | Secondary only; labs expressive components |
-| m3.material.io | live, accessed 2026-10 | m3.material.io | Motion specs table; component specs; side sheets (sole reference, D8) |
+| m3.material.io | live, accessed 2026-10; token DB "Google Material 3" v38.2.9 (`_dsm/data/dsdb-m3/2026-09-23_06-10-05`) | m3.material.io | Motion specs table; component specs; side sheets (sole reference, D8) |
 | Google Sans Flex (D1) | `TODO(verify)`: version + license from github.com/google/fonts (METADATA.pb) | fonts.google.com | Self-hosted; axes `TODO(verify)` |
 | Material Symbols (D5) | `TODO(verify)`: version from github.com/google/material-design-icons | Apache-2.0 | Variable font bundled; subset CLI |
 | React Aria | `TODO(verify)`: latest react-aria on npm | | |
@@ -37,22 +37,22 @@
 
 ## TODO(verify) register
 1. ~~androidx commit hash for 1.5.0-beta01~~ — resolved: `19991f2c0858aadfcb442ce02b2c8e4743c96898` (see `/SOURCE_PIN`).
-2. All 12 spring constants (ζ, k) in Standard/ExpressiveMotionTokens.kt.
-3. Corner scale values in ShapeTokens.kt.
-4. Line heights (title-medium and below) and all tracking in TypeScaleTokens.kt.
-5. Emphasized weights and their provisional status.
-6. Compose TypefaceTokens default (Roboto) — informational only since D1 overrides it.
+2. ~~All 12 spring constants~~ — resolved: `tokens/StandardMotionTokens.kt@19991f2c` L20–L31, `tokens/ExpressiveMotionTokens.kt@19991f2c` L22–L33 (generated; Vitest reference test).
+3. ~~Corner scale values~~ — resolved: `tokens/ShapeTokens.kt@19991f2c` L28–L81 (generated).
+4. ~~Line heights and tracking~~ — resolved: `tokens/TypeScaleTokens.kt@19991f2c` (generated). Differs from FOUNDATIONS §2 (now corrected): display-large −0.2, body-medium 0.2, title-medium 0.2.
+5. ~~Emphasized weights~~ — resolved: `tokens/TypeScaleTokens.kt@19991f2c` L249 onward; still under upstream `// TODO update with the generated tokens once available` (provisional upstream; re-check at each pin bump). Emphasized tracking differs from the base styles.
+6. ~~Compose TypefaceTokens default~~ — resolved: `tokens/TypefaceTokens.kt@19991f2c` L25–L29 = `FontFamily.SansSerif` (not Roboto); D1 overrides it.
 7. Google Sans Flex: axes, ranges, version, license (google/fonts METADATA.pb).
 8. Google Sans Flex fallback metrics for `size-adjust`.
 9. Material Symbols: version, axis ranges, default style used by M3E (Rounded vs Outlined).
 10. SPEC_2025 extra roles (dim roles) and negative-contrast behavior.
 11. Enumerate SpecVersion in npm 0.4.0 (is SPEC_2026 present?) — decides D3 default.
-12. ScrimTokens opacity 0.32.
-13. ElevationTokens 0/1/3/6/8/12 dp.
-14. StateTokens.kt 8/10/10/16% and 0.38 disabled; per-component disabled opacities.
-15. Focus ring thickness/offset.
-16. Spacing tokens (Material Web 2.5.0 labs spacing stylesheet).
-17. Density rules.
+12. ~~ScrimTokens opacity~~ — resolved: `tokens/ScrimTokens.kt@19991f2c` L25 = 0.32.
+13. ~~ElevationTokens~~ — resolved: `tokens/ElevationTokens.kt@19991f2c` L24–L40 = 0/1/3/6/8/12 dp.
+14. ~~StateTokens and disabled opacities~~ — resolved: `tokens/StateTokens.kt@19991f2c` L22–L25 (hover 0.08, focus 0.1, pressed 0.1, dragged 0.16); per-component `Disabled*Opacity` generated from each `*Tokens.kt`.
+15. ~~Focus ring thickness/offset~~ — resolved from m3.material.io (no androidx token at the pin): `md.sys.state.focus-indicator` thickness 3dp, outer-offset 2dp, inner-offset −3dp (m3 token DB v38.2.9); matches material-web v2.5.0 `tokens/versions/latest/sass/_md-sys-state-focus-indicator.scss` L18–23. Color: every androidx `*Tokens.FocusIndicatorColor` = `Secondary`. Shape and motion → item 61.
+16. ~~Spacing tokens~~ — resolved from m3.material.io: `md.sys.measurement.space0…space900` on an 8dp base (m3 token DB v38.2.9, m3.material.io/styles/spacing); matches material-web v2.5.0 `labs/gb/styles/space/md-space-tokens.scss` L6–27. Not present in Compose Material3 at the pin.
+17. ~~Density rules~~ — resolved (rules): m3.material.io/foundations/layout/grids-spacing/density — scale 0, −1, −2, −3; "decreasing the top and bottom padding or overall height by 4dp"; opt-in only; targets stay ≥48×48; no automatic change across breakpoints. Per-component values → item 60.
 18. Button size tokens, all fields × 5 sizes.
 19. Button color roles per variant and toggle state.
 20. Icon button size/width table.
@@ -95,3 +95,5 @@
 57. `linear()` browser support — resolved (Chrome/Edge 113, Firefox 112, Safari 17.2); recheck at each release.
 58. React Aria and Motion versions (pin in M4). Astro and tooling resolved 2026-10-11 — see the pinned versions table.
 59. expressiveLightColorScheme() definition in ColorScheme.kt.
+60. Which components support density and their per-step values (m3.material.io shows only button and text field; spacing page image shows 0 to −4 vs 0 to −3 on the density page).
+61. Focus ring shape (no token; material-web legacy ring uses corner-full) and focus ring motion (material-web labs: 150ms + 450ms `cubic-bezier(0.2, 0, 0, 1)`; Compose inset ring uses springs, `Ripple.kt@19991f2c` L852–853).
