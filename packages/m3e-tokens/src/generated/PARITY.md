@@ -4,7 +4,7 @@
 > Source: compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/tokens @ 19991f2c0858aadfcb442ce02b2c8e4743c96898  
 > Values: Copyright (C) The Android Open Source Project, Apache License 2.0 (see NOTICE).  
 
-Emitted: 359 system and 2443 component variables from 104 component token objects.
+Emitted: 370 system and 2443 component variables from 104 component token objects.
 
 ## Not emitted here
 
@@ -221,6 +221,12 @@ Emitted: 359 system and 2443 component variables from 104 component token object
 | `ElevationTokens.Level3` | `6.0.dp` | ElevationTokens.kt:33 | `--m3e-sys-elevation-level3` | `6px` |  |
 | `ElevationTokens.Level4` | `8.0.dp` | ElevationTokens.kt:36 | `--m3e-sys-elevation-level4` | `8px` |  |
 | `ElevationTokens.Level5` | `12.0.dp` | ElevationTokens.kt:39 | `--m3e-sys-elevation-level5` | `12px` |  |
+| `Material Web.elevation level0` | `key 0 0 0 0 @0.3; ambient 0 0 0 0 @0.15` | @material/web@2.5.0 elevation/internal/_elevation.scss (key L105, ambient L174 and the per-level comment tables above them) | `--m3e-sys-elevation-level0-shadow` | `none` |  |
+| `Material Web.elevation level1` | `key 0 1 2 0 @0.3; ambient 0 1 3 1 @0.15` | @material/web@2.5.0 elevation/internal/_elevation.scss (key L105, ambient L174 and the per-level comment tables above them) | `--m3e-sys-elevation-level1-shadow` | `0 1px 2px 0 color-mix(in srgb, var(--m3e-sys-color-shadow) 30%, transparent), 0 1px 3px 1px color-mix(in srgb, var(--m3e-sys-color-shadow) 15%, transparent)` |  |
+| `Material Web.elevation level2` | `key 0 1 2 0 @0.3; ambient 0 2 6 2 @0.15` | @material/web@2.5.0 elevation/internal/_elevation.scss (key L105, ambient L174 and the per-level comment tables above them) | `--m3e-sys-elevation-level2-shadow` | `0 1px 2px 0 color-mix(in srgb, var(--m3e-sys-color-shadow) 30%, transparent), 0 2px 6px 2px color-mix(in srgb, var(--m3e-sys-color-shadow) 15%, transparent)` |  |
+| `Material Web.elevation level3` | `key 0 1 3 0 @0.3; ambient 0 4 8 3 @0.15` | @material/web@2.5.0 elevation/internal/_elevation.scss (key L105, ambient L174 and the per-level comment tables above them) | `--m3e-sys-elevation-level3-shadow` | `0 1px 3px 0 color-mix(in srgb, var(--m3e-sys-color-shadow) 30%, transparent), 0 4px 8px 3px color-mix(in srgb, var(--m3e-sys-color-shadow) 15%, transparent)` |  |
+| `Material Web.elevation level4` | `key 0 2 3 0 @0.3; ambient 0 6 10 4 @0.15` | @material/web@2.5.0 elevation/internal/_elevation.scss (key L105, ambient L174 and the per-level comment tables above them) | `--m3e-sys-elevation-level4-shadow` | `0 2px 3px 0 color-mix(in srgb, var(--m3e-sys-color-shadow) 30%, transparent), 0 6px 10px 4px color-mix(in srgb, var(--m3e-sys-color-shadow) 15%, transparent)` |  |
+| `Material Web.elevation level5` | `key 0 4 4 0 @0.3; ambient 0 8 12 6 @0.15` | @material/web@2.5.0 elevation/internal/_elevation.scss (key L105, ambient L174 and the per-level comment tables above them) | `--m3e-sys-elevation-level5-shadow` | `0 4px 4px 0 color-mix(in srgb, var(--m3e-sys-color-shadow) 30%, transparent), 0 8px 12px 6px color-mix(in srgb, var(--m3e-sys-color-shadow) 15%, transparent)` |  |
 | `StateTokens.DraggedStateLayerOpacity` | `0.16f` | StateTokens.kt:22 | `--m3e-sys-state-dragged-state-layer-opacity` | `0.16` |  |
 | `StateTokens.FocusStateLayerOpacity` | `0.1f` | StateTokens.kt:23 | `--m3e-sys-state-focus-state-layer-opacity` | `0.1` |  |
 | `StateTokens.HoverStateLayerOpacity` | `0.08f` | StateTokens.kt:24 | `--m3e-sys-state-hover-state-layer-opacity` | `0.08` |  |
@@ -380,6 +386,11 @@ Emitted: 359 system and 2443 component variables from 104 component token object
 | `m3.material.io.md.sys.measurement.space700` | `56dp` | m3.material.io token DB "Google Material 3" v38.2.9 (_dsm/data/dsdb-m3/2026-09-23_06-10-05/MEASUREMENT.20543ce18892f7d9.json) set md.sys.measurement; matches material-web v2.5.0 labs/gb/styles/space/md-space-tokens.scss L6-27 | `--m3e-sys-space-700` | `56px` |  |
 | `m3.material.io.md.sys.measurement.space800` | `64dp` | m3.material.io token DB "Google Material 3" v38.2.9 (_dsm/data/dsdb-m3/2026-09-23_06-10-05/MEASUREMENT.20543ce18892f7d9.json) set md.sys.measurement; matches material-web v2.5.0 labs/gb/styles/space/md-space-tokens.scss L6-27 | `--m3e-sys-space-800` | `64px` |  |
 | `m3.material.io.md.sys.measurement.space900` | `72dp` | m3.material.io token DB "Google Material 3" v38.2.9 (_dsm/data/dsdb-m3/2026-09-23_06-10-05/MEASUREMENT.20543ce18892f7d9.json) set md.sys.measurement; matches material-web v2.5.0 labs/gb/styles/space/md-space-tokens.scss L6-27 | `--m3e-sys-space-900` | `72px` |  |
+| `Material Symbols.fvar FILL default` | `0` | Material Symbols 2.975 fvar default (packages/m3e-codegen/vendor/material-symbols/manifest.json) | `--m3e-ref-typeface-icon-fill` | `0` |  |
+| `Material Symbols.fvar GRAD default` | `0` | Material Symbols 2.975 fvar default (packages/m3e-codegen/vendor/material-symbols/manifest.json) | `--m3e-ref-typeface-icon-grade` | `0` |  |
+| `Material Symbols.fvar opsz default` | `24` | Material Symbols 2.975 fvar default (packages/m3e-codegen/vendor/material-symbols/manifest.json) | `--m3e-ref-typeface-icon-optical-size` | `24` |  |
+| `Material Symbols.fvar wght default` | `400` | Material Symbols 2.975 fvar default (packages/m3e-codegen/vendor/material-symbols/manifest.json) | `--m3e-ref-typeface-icon-weight` | `400` |  |
+| `Material Symbols.fvar FILL max` | `1` | Material Symbols 2.975 fvar FILL max (packages/m3e-codegen/vendor/material-symbols/manifest.json) | `--m3e-ref-typeface-icon-filled` | `1` |  |
 
 ## Baseline color
 
@@ -433,6 +444,7 @@ Emitted: 359 system and 2443 component variables from 104 component token object
 | light | `tertiaryContainer` | `ColorLightTokens.TertiaryContainer → PaletteTokens.Tertiary90` | ColorLightTokens.kt:157 | `--m3e-sys-color-tertiary-container` | `#ffd8e4` |  |
 | light | `tertiaryFixed` | `ColorLightTokens.TertiaryFixed → PaletteTokens.Tertiary90` | ColorLightTokens.kt:160 | `--m3e-sys-color-tertiary-fixed` | `#ffd8e4` |  |
 | light | `tertiaryFixedDim` | `ColorLightTokens.TertiaryFixedDim → PaletteTokens.Tertiary80` | ColorLightTokens.kt:163 | `--m3e-sys-color-tertiary-fixed-dim` | `#efb8c8` |  |
+| light | `shadow` | `DefaultShadowColor → Color.Black` | GraphicsLayerScope.kt:37 | `--m3e-sys-color-shadow` | `#000000` | Compose UI default; ColorScheme has no shadow role |
 | dark | `background` | `ColorDarkTokens.Background → PaletteTokens.Neutral6` | ColorDarkTokens.kt:22 | `--m3e-sys-color-background` | `#141218` |  |
 | dark | `error` | `ColorDarkTokens.Error → PaletteTokens.Error80` | ColorDarkTokens.kt:25 | `--m3e-sys-color-error` | `#f2b8b5` |  |
 | dark | `errorContainer` | `ColorDarkTokens.ErrorContainer → PaletteTokens.Error30` | ColorDarkTokens.kt:28 | `--m3e-sys-color-error-container` | `#8c1d18` |  |
@@ -481,6 +493,7 @@ Emitted: 359 system and 2443 component variables from 104 component token object
 | dark | `tertiaryContainer` | `ColorDarkTokens.TertiaryContainer → PaletteTokens.Tertiary30` | ColorDarkTokens.kt:157 | `--m3e-sys-color-tertiary-container` | `#633b48` |  |
 | dark | `tertiaryFixed` | `ColorDarkTokens.TertiaryFixed → PaletteTokens.Tertiary90` | ColorDarkTokens.kt:160 | `--m3e-sys-color-tertiary-fixed` | `#ffd8e4` |  |
 | dark | `tertiaryFixedDim` | `ColorDarkTokens.TertiaryFixedDim → PaletteTokens.Tertiary80` | ColorDarkTokens.kt:163 | `--m3e-sys-color-tertiary-fixed-dim` | `#efb8c8` |  |
+| dark | `shadow` | `DefaultShadowColor → Color.Black` | GraphicsLayerScope.kt:37 | `--m3e-sys-color-shadow` | `#000000` | Compose UI default; ColorScheme has no shadow role |
 
 ## app-bar
 

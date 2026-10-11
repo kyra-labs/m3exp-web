@@ -5,20 +5,13 @@ import { describe, expect, it } from 'vitest';
 import { generate } from './generate.js';
 import { parseTokenFile } from './kotlin.js';
 import { readPin } from './pin.js';
-import { readVendor } from './vendor.js';
+import { readGeneratorInputs } from './inputs.js';
 
 const root = fileURLToPath(new URL('../../../', import.meta.url));
-const vendorDir = fileURLToPath(new URL('../vendor/androidx-material3-tokens/', import.meta.url));
-const { manifest, files } = readVendor(vendorDir);
-const colorSchemeKt = readVendor(
-  fileURLToPath(new URL('../vendor/androidx-material3-sources/', import.meta.url)),
-).files.find((f) => f.name === 'ColorScheme.kt')!.content;
-const output = generate({
-  files,
-  commit: manifest.commit,
-  upstreamPath: manifest.path,
-  colorSchemeKt,
-});
+const inputs = readGeneratorInputs(root, readPin(root));
+const { files } = inputs;
+const manifest = { commit: inputs.commit };
+const output = generate(inputs);
 const tokensCss = output.get('tokens.css')!;
 const source = (name: string) => files.find((f) => f.name === name)!.content;
 
@@ -47,12 +40,7 @@ describe('vendored sources', () => {
 
 describe('generator', () => {
   it('is deterministic', () => {
-    const again = generate({
-      files: [...files].reverse(),
-      commit: manifest.commit,
-      upstreamPath: manifest.path,
-      colorSchemeKt,
-    });
+    const again = generate({ ...inputs, files: [...files].reverse() });
     expect([...again]).toEqual([...output]);
   });
 
@@ -73,6 +61,8 @@ describe('generator', () => {
         m[1]!.replace(/[A-Z]/g, (c, i: number) => (i ? '-' : '') + c.toLowerCase()),
       ),
     );
+    // Elevation shadows use the shadow role (Compose DefaultShadowColor; not a ColorScheme key).
+    roles.add('shadow');
     const defined = new Set(sys.keys());
     for (const css of [tokensCss, ...allComponentCss]) {
       for (const [, ref] of css.matchAll(/var\((--[\w-]+)\)/g)) {
@@ -265,5 +255,39 @@ describe('spring curves (M3: linear() + m3.material.io bezier stand-ins)', () =>
       );
       expect(media).not.toContain(`--m3e-sys-motion-spring-${scheme}-fast-effects-duration:`);
     }
+  });
+});
+
+describe('primitive tokens (M4)', () => {
+  it('baseline shadow role is Compose DefaultShadowColor (GraphicsLayerScope.kt)', () => {
+    const kt = inputs.graphicsLayerScopeKt.replace(/\r\n/g, '\n');
+    expect(kt).toMatch(/public val DefaultShadowColor: Color\n\s*get\(\) = Color\.Black/);
+    expect(output.get('theme.css')).toContain('--m3e-sys-color-shadow: #000000;');
+  });
+
+  it('elevation shadows follow the Material Web 2.5.0 per-level tables', () => {
+    // Independent read of the comment tables: key rows first, then ambient rows.
+    const rows = [
+      ...inputs.elevationScss.matchAll(/\/\/ level(\d): box-shadow: 0px (\d+)px (\d+)px (\d+)px;/g),
+    ];
+    expect(rows).toHaveLength(12);
+    for (let level = 1; level <= 5; level++) {
+      const [, , ky, kb, ks] = rows[level]!;
+      const [, , ay, ab, aspread] = rows[level + 6]!;
+      const fmt = (v: string) => (v === '0' ? '0' : `${v}px`);
+      expect(sys.get(`--m3e-sys-elevation-level${String(level)}-shadow`)).toBe(
+        `0 ${fmt(ky!)} ${fmt(kb!)} ${fmt(ks!)} color-mix(in srgb, var(--m3e-sys-color-shadow) 30%, transparent), ` +
+          `0 ${fmt(ay!)} ${fmt(ab!)} ${fmt(aspread!)} color-mix(in srgb, var(--m3e-sys-color-shadow) 15%, transparent)`,
+      );
+    }
+    expect(sys.get('--m3e-sys-elevation-level0-shadow')).toBe('none');
+    expect(inputs.elevationScss).toMatch(/opacity: 0\.3;[\s\S]*opacity: 0\.15;/);
+  });
+
+  it('icon axis defaults are the Material Symbols fvar defaults', () => {
+    expect(sys.get('--m3e-ref-typeface-icon-fill')).toBe(String(inputs.iconAxes['FILL']));
+    expect(sys.get('--m3e-ref-typeface-icon-grade')).toBe(String(inputs.iconAxes['GRAD']));
+    expect(sys.get('--m3e-ref-typeface-icon-optical-size')).toBe(String(inputs.iconAxes['opsz']));
+    expect(sys.get('--m3e-ref-typeface-icon-weight')).toBe(String(inputs.iconAxes['wght']));
   });
 });

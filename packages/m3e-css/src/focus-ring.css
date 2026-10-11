@@ -1,0 +1,30 @@
+/*
+ * Focus ring primitive (FOUNDATIONS §6, COMPONENT_SPEC §0 "Focus"). Keyboard focus only
+ * (:focus-visible), never on pointer clicks. A component opts in by adding its root class to the
+ * :where() lists; anything else can use .m3e-focus-ring (.m3e-focus-ring--inward draws inside).
+ *
+ * Thickness and offsets: md.sys.state.focus-indicator (m3.material.io, matches Material Web).
+ * Color: secondary (every androidx *Tokens.FocusIndicatorColor). The ring is an outline, so it
+ * follows the host's border-radius. Shape and motion have no source yet (SOURCES register #61):
+ * the ring appears without animation.
+ */
+@layer m3e.base {
+  :where(.m3e-focus-ring):focus-visible {
+    outline: var(--m3e-sys-state-focus-indicator-thickness) solid var(--m3e-sys-color-secondary);
+    outline-offset: var(--m3e-sys-state-focus-indicator-outer-offset);
+  }
+
+  :where(.m3e-focus-ring--inward):focus-visible {
+    outline-offset: var(--m3e-sys-state-focus-indicator-inner-offset);
+  }
+
+  :where(.m3e-focus-ring):focus:not(:focus-visible) {
+    outline: none;
+  }
+
+  @media (forced-colors: active) {
+    :where(.m3e-focus-ring):focus-visible {
+      outline-color: Highlight;
+    }
+  }
+}

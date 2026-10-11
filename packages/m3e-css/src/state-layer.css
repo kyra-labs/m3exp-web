@@ -1,0 +1,81 @@
+/*
+ * State layer primitive (FOUNDATIONS §6, COMPONENT_SPEC §39). The one place hover, focus,
+ * pressed and dragged overlays are drawn: components never re-implement it. A component opts in
+ * by adding its root class to the :where() lists below; anything else can use .m3e-state-layer.
+ *
+ * - Overlay: ::before in the host's own stacking context (isolation), under the content.
+ * - Color: --m3e-comp-state-layer-color (components set their content role), else currentColor.
+ * - Opacity: --m3e-sys-state-* (StateTokens.kt), animated with the default effects spring.
+ * - Pressed: :active, or [data-pressed] set by m3e-elements / m3e-react. With [data-ripple] the
+ *   overlay grows as a circle from --_m3e-ripple-x/-y (REQUIREMENTS §12 ripple approximation).
+ * - Disabled hosts (:disabled, [aria-disabled='true']) draw no state layer.
+ */
+@property --_m3e-ripple-size {
+  syntax: '<length-percentage>';
+  inherits: false;
+  initial-value: 0%;
+}
+
+@layer m3e.base {
+  :where(.m3e-state-layer) {
+    position: relative;
+    isolation: isolate;
+  }
+
+  :where(.m3e-state-layer)::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    border-radius: inherit;
+    background-color: var(--m3e-comp-state-layer-color, currentcolor);
+    opacity: 0;
+    pointer-events: none;
+    transition:
+      opacity var(--m3e-sys-motion-spring-default-effects-duration)
+        var(--m3e-sys-motion-spring-default-effects-easing),
+      --_m3e-ripple-size var(--m3e-sys-motion-spring-default-effects-duration)
+        var(--m3e-sys-motion-spring-default-effects-easing);
+  }
+
+  @media (hover: hover) {
+    :where(.m3e-state-layer):hover::before {
+      opacity: var(--m3e-sys-state-hover-state-layer-opacity);
+    }
+  }
+
+  :where(.m3e-state-layer):focus-visible::before {
+    opacity: var(--m3e-sys-state-focus-state-layer-opacity);
+  }
+
+  :where(.m3e-state-layer):active::before,
+  :where(.m3e-state-layer)[data-pressed]::before {
+    opacity: var(--m3e-sys-state-pressed-state-layer-opacity);
+  }
+
+  :where(.m3e-state-layer)[data-dragged]::before {
+    opacity: var(--m3e-sys-state-dragged-state-layer-opacity);
+  }
+
+  :where(.m3e-state-layer)[data-ripple]::before {
+    background: radial-gradient(
+      circle at var(--_m3e-ripple-x, 50%) var(--_m3e-ripple-y, 50%),
+      var(--m3e-comp-state-layer-color, currentcolor) var(--_m3e-ripple-size),
+      transparent var(--_m3e-ripple-size)
+    );
+  }
+
+  :where(.m3e-state-layer)[data-ripple][data-pressed]::before {
+    --_m3e-ripple-size: var(--_m3e-ripple-radius, 100%);
+  }
+
+  :where(.m3e-state-layer):is(:disabled, [aria-disabled='true'])::before {
+    display: none;
+  }
+
+  @media (forced-colors: active) {
+    :where(.m3e-state-layer)::before {
+      display: none;
+    }
+  }
+}

@@ -12,6 +12,7 @@
 import { springToLinear } from '@kyralabs/m3e-motion';
 import { themeCss } from '@kyralabs/m3e-tokens/theme-css';
 import { type BaselineColor, baselineColors } from './color.js';
+import { boxShadow, parseElevationShadows } from './elevation.js';
 import { type Expr, type Member, type TokenFile, parseTokenFile } from './kotlin.js';
 import {
   FOCUS_INDICATOR,
@@ -36,6 +37,16 @@ export interface GenerateOptions {
   upstreamPath: string;
   /** Vendored `ColorScheme.kt` (expressiveLightColorScheme overrides). */
   colorSchemeKt: string;
+  /** Vendored compose/ui `GraphicsLayerScope.kt` (`DefaultShadowColor`). */
+  graphicsLayerScopeKt: string;
+  /** Vendored Material Web `elevation/internal/_elevation.scss` (shadow geometry per level). */
+  elevationScss: string;
+  materialWebVersion: string;
+  /** Material Symbols fvar axis defaults (`FILL`, `GRAD`, `opsz`, `wght`). */
+  iconAxes: Readonly<Record<string, number>>;
+  /** Material Symbols fvar `FILL` maximum (the filled style). */
+  iconFillMax: number;
+  iconVersion: string;
 }
 
 interface Emitted {
@@ -115,6 +126,12 @@ export function generate({
   commit,
   upstreamPath,
   colorSchemeKt,
+  graphicsLayerScopeKt,
+  elevationScss,
+  materialWebVersion,
+  iconAxes,
+  iconFillMax,
+  iconVersion,
 }: GenerateOptions): Map<string, string> {
   const parsed = new Map<string, TokenFile & { file: string }>();
   for (const { name, content } of [...files].sort((a, b) => a.name.localeCompare(b.name))) {
@@ -241,6 +258,25 @@ export function generate({
       throw new Error(`ElevationTokens.${m.name}: unexpected ${m.expr.kind}`);
     emit(sys, 'ElevationTokens', m, `--m3e-sys-elevation-${kebabName(m.name)}`, px(m.expr.value));
     elevation[camelName(m.name)] = m.expr.value;
+  }
+  // Shadow geometry per level from Material Web (Compose draws platform shadows); colored with the
+  // shadow role. See elevation.ts.
+  const shadows = parseElevationShadows(elevationScss);
+  const elevationShadow: Record<string, string> = {};
+  for (const m of parsed.get('ElevationTokens')?.members ?? []) {
+    const level = /^Level(\d)$/.exec(m.name)?.[1];
+    if (level === undefined) throw new Error(`ElevationTokens.${m.name}: unexpected name`);
+    const value = boxShadow(shadows, Number(level), '--m3e-sys-color-shadow');
+    sys.push({
+      name: `--m3e-sys-elevation-${kebabName(m.name)}-shadow`,
+      value,
+      object: 'Material Web',
+      member: `elevation level${level}`,
+      raw: `key ${shadows.key.levels[Number(level)]!.join(' ')} @${String(shadows.key.opacity)}; ambient ${shadows.ambient.levels[Number(level)]!.join(' ')} @${String(shadows.ambient.opacity)}`,
+      line: 0,
+      cite: `@material/web@${materialWebVersion} elevation/internal/_elevation.scss (key L${String(shadows.key.line)}, ambient L${String(shadows.ambient.line)} and the per-level comment tables above them)`,
+    });
+    elevationShadow[camelName(m.name)] = value;
   }
   const state: Record<string, number> = {};
   for (const m of parsed.get('StateTokens')?.members ?? []) {
@@ -400,6 +436,40 @@ export function generate({
     cite: t.cite,
   });
   sys.push(...FOCUS_INDICATOR.map(supplementary), ...SPACE.map(supplementary));
+
+  // --- Icon axis defaults (Material Symbols fvar; consumed by .m3e-icon) ----------------------
+  const ICON_AXES = [
+    ['FILL', 'fill'],
+    ['GRAD', 'grade'],
+    ['opsz', 'optical-size'],
+    ['wght', 'weight'],
+  ] as const;
+  const icon: Record<string, number> = {};
+  for (const [tag, field] of ICON_AXES) {
+    const value = iconAxes[tag];
+    if (value === undefined) throw new Error(`Material Symbols has no ${tag} axis`);
+    sys.push({
+      name: `--m3e-ref-typeface-icon-${field}`,
+      value: num(value),
+      object: 'Material Symbols',
+      member: `fvar ${tag} default`,
+      raw: num(value),
+      line: 0,
+      cite: `Material Symbols ${iconVersion} fvar default (packages/m3e-codegen/vendor/material-symbols/manifest.json)`,
+    });
+    icon[camel(field.split('-'))] = value;
+  }
+  // FILL is 0 (outlined) to 1 (filled); m3.material.io uses 1 for selected icons.
+  sys.push({
+    name: '--m3e-ref-typeface-icon-filled',
+    value: num(iconFillMax),
+    object: 'Material Symbols',
+    member: 'fvar FILL max',
+    raw: num(iconFillMax),
+    line: 0,
+    cite: `Material Symbols ${iconVersion} fvar FILL max (packages/m3e-codegen/vendor/material-symbols/manifest.json)`,
+  });
+  icon['filled'] = iconFillMax;
   const lastSegment = (token: string) => token.slice(token.lastIndexOf('.') + 1);
   const focusIndicator = Object.fromEntries(
     FOCUS_INDICATOR.map((t) => [camel(lastSegment(t.token).split('-')), t.dp]),
@@ -543,7 +613,7 @@ export function generate({
   );
 
   // Baseline color: Compose expressiveLightColorScheme() / darkColorScheme().
-  const baseline = baselineColors(parsed, colorSchemeKt);
+  const baseline = baselineColors(parsed, colorSchemeKt, graphicsLayerScopeKt);
   const roles = (colors: readonly BaselineColor[]) =>
     Object.fromEntries(colors.map((c) => [c.role, c.hex]));
   out.set(
@@ -591,6 +661,8 @@ export function generate({
       `export const shape = ${literal(shape)} as const;`,
       '',
       `export const elevation = ${literal(elevation)} as const;`,
+      `export const elevationShadow = ${literal(elevationShadow)} as const;`,
+      `export const iconAxisDefaults = ${literal(icon)} as const;`,
       '',
       `export const state = ${literal({ ...state, focusIndicator })} as const;`,
       '',

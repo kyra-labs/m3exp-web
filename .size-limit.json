@@ -15,15 +15,31 @@
     "rolldown": false
   },
   {
+    "name": "m3e-css: primitives (surface + icon + state layer + focus ring)",
+    "path": [
+      "packages/m3e-css/dist/surface.css",
+      "packages/m3e-css/dist/icon.css",
+      "packages/m3e-css/dist/state-layer.css",
+      "packages/m3e-css/dist/focus-ring.css"
+    ],
+    "rolldown": false,
+    "limit": "4 KB"
+  },
+  {
     "name": "m3e-elements (all)",
     "path": "packages/m3e-elements/dist/index.js",
     "limit": "30 KB"
   },
   {
     "name": "M3eElement base class (D7)",
-    "path": "packages/m3e-elements/dist/index.js",
+    "path": "packages/m3e-elements/dist/base/index.js",
     "import": "{ M3eElement }",
     "limit": "1 KB"
+  },
+  {
+    "name": "m3e-elements: <m3e-icon> entry",
+    "path": "packages/m3e-elements/dist/icon/index.js",
+    "limit": "8 KB"
   },
   {
     "name": "m3e-shapes (all presets + Morph)",

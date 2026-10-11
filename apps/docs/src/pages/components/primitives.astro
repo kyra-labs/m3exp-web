@@ -1,0 +1,114 @@
+---
+import Base from '../../layouts/Base.astro';
+
+const containers = [
+  ['surface', ''],
+  ['container-lowest', 'm3e-surface--container-lowest'],
+  ['container-low', 'm3e-surface--container-low'],
+  ['container', 'm3e-surface--container'],
+  ['container-high', 'm3e-surface--container-high'],
+  ['container-highest', 'm3e-surface--container-highest'],
+] as const;
+const levels = [0, 1, 2, 3, 4, 5] as const;
+const icons = ['home', 'search', 'favorite', 'settings', 'star', 'delete'] as const;
+---
+
+<Base title="Primitives">
+  <link rel="stylesheet" href="/icons/docs-icons.css" slot="head" />
+  <h1>Primitives</h1>
+  <p>
+    Surface, Icon, state layer and focus ring (COMPONENT_SPEC §39). Every component builds on these;
+    none re-implements its own state layer.
+  </p>
+
+  <section aria-labelledby="surface-heading">
+    <h2 id="surface-heading">Surface</h2>
+    <p>Tonal containers (no surface tint) and the six elevation levels.</p>
+    <ul class="docs-tiles">
+      {
+        containers.map(([label, modifier]) => (
+          <li class:list={['docs-tile m3e-surface m3e-surface--shape-medium', modifier]}>
+            <code>{label}</code>
+          </li>
+        ))
+      }
+    </ul>
+    <ul class="docs-tiles">
+      {
+        levels.map((level) => (
+          <li
+            class={`docs-tile m3e-surface m3e-surface--container-low m3e-surface--shape-medium m3e-surface--elevation-${String(level)}`}
+          >
+            <code>level{level}</code>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+
+  <section aria-labelledby="icon-heading">
+    <h2 id="icon-heading">Icon</h2>
+    <p>
+      <code>&lt;m3e-icon&gt;</code>, React <code>&lt;Icon&gt;</code> and
+      <code>.m3e-icon</code> render the same DOM. Rows: default, <code>fill</code>, weight 700, grade
+      −25 with optical size 20.
+    </p>
+    <div class="docs-icon-rows">
+      <p>{icons.map((name) => <m3e-icon name={name} />)}</p>
+      <p>{icons.map((name) => <m3e-icon name={name} fill />)}</p>
+      <p>{icons.map((name) => <m3e-icon name={name} weight="700" />)}</p>
+      <p>{icons.map((name) => <m3e-icon name={name} grade="-25" optical-size="20" />)}</p>
+      <p>
+        <m3e-icon name="check_circle" label="Done" />
+        <span class="m3e-icon" data-fill aria-hidden="true">check_circle</span>
+      </p>
+    </div>
+  </section>
+
+  <section aria-labelledby="state-heading">
+    <h2 id="state-heading">State layer and focus ring</h2>
+    <p>
+      Hover, keyboard focus (<kbd>Tab</kbd>) and press the tiles. The ripple grows from the press
+      point; the focus ring only appears for keyboard focus.
+    </p>
+    <div class="docs-tiles docs-tiles--demo" id="state-demo">
+      <button
+        type="button"
+        class="docs-tile m3e-surface m3e-surface--container-high m3e-surface--shape-medium m3e-state-layer m3e-focus-ring"
+      >
+        <m3e-icon name="add" />
+        Surface
+      </button>
+      <button
+        type="button"
+        class="docs-tile docs-tile--primary m3e-surface--shape-full m3e-state-layer m3e-focus-ring"
+      >
+        <m3e-icon name="star" fill />
+        Primary
+      </button>
+      <button
+        type="button"
+        class="docs-tile m3e-surface m3e-surface--container-high m3e-surface--shape-medium m3e-state-layer m3e-focus-ring m3e-focus-ring--inward"
+      >
+        <m3e-icon name="settings" />
+        Inward ring
+      </button>
+      <button
+        type="button"
+        class="docs-tile m3e-surface m3e-surface--container-high m3e-surface--shape-medium m3e-state-layer m3e-focus-ring"
+        aria-disabled="true"
+      >
+        <m3e-icon name="delete" />
+        Disabled
+      </button>
+    </div>
+  </section>
+</Base>
+
+<script>
+  import { attachRipple } from '@kyralabs/m3exp-web/elements';
+
+  for (const tile of document.querySelectorAll<HTMLElement>('#state-demo .m3e-state-layer')) {
+    attachRipple(tile, new AbortController().signal);
+  }
+</script>

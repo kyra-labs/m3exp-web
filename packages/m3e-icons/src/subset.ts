@@ -74,7 +74,8 @@ export interface IconFontFaceOptions {
 }
 
 /** `@font-face` for a subset font. Declares Material Symbols' full weight range so browsers never
- * synthesize bold, even when wght is pinned. */
+ * synthesize bold, even when wght is pinned. Also points `.m3e-icon` at the subset through
+ * `--m3e-ref-typeface-icon`, as `material-symbols*.css` does for the full fonts. */
 export function iconFontFace({ family, url }: IconFontFaceOptions): string {
   return [
     '@font-face {',
@@ -82,6 +83,12 @@ export function iconFontFace({ family, url }: IconFontFaceOptions): string {
     '  font-style: normal;',
     '  font-weight: 100 700;',
     `  src: url("${url}") format("woff2");`,
+    '}',
+    '',
+    '@layer m3e.tokens {',
+    '  :root {',
+    `    --m3e-ref-typeface-icon: "${family}";`,
+    '  }',
     '}',
     '',
   ].join('\n');

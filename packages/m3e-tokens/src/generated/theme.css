@@ -55,6 +55,7 @@
     --m3e-sys-color-tertiary-container: #ffd8e4;
     --m3e-sys-color-tertiary-fixed: #ffd8e4;
     --m3e-sys-color-tertiary-fixed-dim: #efb8c8;
+    --m3e-sys-color-shadow: #000000;
   }
   @media (prefers-color-scheme: dark) {
     :root:not([data-theme="light"]) {
@@ -107,6 +108,7 @@
       --m3e-sys-color-tertiary-container: #633b48;
       --m3e-sys-color-tertiary-fixed: #ffd8e4;
       --m3e-sys-color-tertiary-fixed-dim: #efb8c8;
+      --m3e-sys-color-shadow: #000000;
     }
   }
   :root[data-theme="dark"] {
@@ -159,5 +161,6 @@
     --m3e-sys-color-tertiary-container: #633b48;
     --m3e-sys-color-tertiary-fixed: #ffd8e4;
     --m3e-sys-color-tertiary-fixed-dim: #efb8c8;
+    --m3e-sys-color-shadow: #000000;
   }
 }

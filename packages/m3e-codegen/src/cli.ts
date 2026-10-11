@@ -11,6 +11,7 @@ import { dirname, join, relative } from 'node:path';
 import { buildFonts, fetchFontSources, measureFallback, type FontSourceManifest } from './fonts.js';
 import { generate } from './generate.js';
 import { buildIconCss, fetchIconSources } from './icons.js';
+import { readGeneratorInputs } from './inputs.js';
 import { findRepoRoot, readPin, requirePin } from './pin.js';
 import {
   ANIMATION_CORE_PATH,
@@ -20,18 +21,24 @@ import {
   MATERIAL3_SHAPE_SOURCES,
   UI_GRAPHICS_PATH,
   UI_GRAPHICS_SOURCES,
+  UI_PATH,
+  UI_SOURCES,
+  MATERIAL_WEB_FILES,
+  MATERIAL_WEB_PACKAGE,
   MATERIAL3_PATH,
   MATERIAL3_SOURCES,
   fetchMavenSources,
+  fetchNpmFiles,
   fetchTokens,
   fetchVendor,
-  readVendor,
 } from './vendor.js';
 
 const root = findRepoRoot(process.cwd());
 const vendorDir = join(root, 'packages/m3e-codegen/vendor/androidx-material3-tokens');
 const sourcesDir = join(root, 'packages/m3e-codegen/vendor/androidx-material3-sources');
 const animationDir = join(root, 'packages/m3e-codegen/vendor/androidx-animation-core');
+const uiSourcesDir = join(root, 'packages/m3e-codegen/vendor/androidx-ui-sources');
+const materialWebDir = join(root, 'packages/m3e-codegen/vendor/material-web');
 const shapesVendor = (name: string) => join(root, 'packages/m3e-codegen/vendor', name);
 const outDir = join(root, 'packages/m3e-tokens/src/generated');
 const fontVendorDir = join(root, 'packages/m3e-codegen/vendor/google-fonts-googlesansflex');
@@ -144,6 +151,13 @@ async function main(command: string | undefined, flags: readonly string[]): Prom
     const manifest = await fetchTokens(repo, commit, vendorDir);
     await fetchVendor(repo, commit, MATERIAL3_PATH, sourcesDir, MATERIAL3_SOURCES);
     await fetchVendor(repo, commit, ANIMATION_CORE_PATH, animationDir, ANIMATION_CORE_SOURCES);
+    await fetchVendor(repo, commit, UI_PATH, uiSourcesDir, UI_SOURCES);
+    await fetchNpmFiles(
+      MATERIAL_WEB_PACKAGE,
+      requirePin(pin, 'material_web'),
+      MATERIAL_WEB_FILES,
+      materialWebDir,
+    );
     await fetchVendor(
       repo,
       commit,
@@ -176,16 +190,7 @@ async function main(command: string | undefined, flags: readonly string[]): Prom
     );
     return 2;
   }
-  const { manifest, files } = readVendor(vendorDir);
-  if (manifest.commit !== commit) {
-    throw new Error(`vendor is at ${manifest.commit} but SOURCE_PIN says ${commit}; run fetch`);
-  }
-  const sources = readVendor(sourcesDir);
-  if (sources.manifest.commit !== commit)
-    throw new Error(`${sourcesDir} is not at ${commit}; run fetch`);
-  const colorSchemeKt = sources.files.find((f) => f.name === 'ColorScheme.kt')?.content;
-  if (colorSchemeKt === undefined) throw new Error('ColorScheme.kt is not vendored; run fetch');
-  const output = generate({ files, commit, upstreamPath: manifest.path, colorSchemeKt });
+  const output = generate(readGeneratorInputs(root, pin));
   if (flags.includes('--check')) {
     const stale = [...output.keys()].filter((path) => {
       try {

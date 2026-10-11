@@ -3,7 +3,7 @@
 import { createHash } from 'node:crypto';
 import { mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { inflateRawSync } from 'node:zlib';
+import { gunzipSync, inflateRawSync } from 'node:zlib';
 import type { SourceFile } from './generate.js';
 
 export const MATERIAL3_PATH =
@@ -26,6 +26,18 @@ export const UI_GRAPHICS_PATH =
   'compose/ui/ui-graphics/src/commonMain/kotlin/androidx/compose/ui/graphics';
 export const UI_GRAPHICS_SOURCES = ['Matrix.kt'] as const;
 
+/** Compose UI graphics-layer defaults (`DefaultShadowColor` → `--m3e-sys-color-shadow`). */
+export const UI_PATH = 'compose/ui/ui/src/commonMain/kotlin/androidx/compose/ui/graphics';
+export const UI_SOURCES = ['GraphicsLayerScope.kt'] as const;
+
+/**
+ * Material Web (secondary source, CLAUDE.md) files read by the generator: the elevation shadow
+ * table (Compose draws platform shadows, so no androidx value exists). From the npm tarball of the
+ * SOURCE_PIN `material_web` version, verified against the registry's sha512 integrity.
+ */
+export const MATERIAL_WEB_PACKAGE = '@material/web';
+export const MATERIAL_WEB_FILES = ['elevation/internal/_elevation.scss', 'LICENSE'] as const;
+
 /**
  * graphics-shapes as Material3 1.5.0-beta01 consumes it: `api("androidx.graphics:graphics-shapes:1.0.1")`
  * (material3/build.gradle L58 at the androidx pin). Vendored from the published sources jar on
@@ -47,7 +59,7 @@ export interface Manifest {
   files: Record<string, string>;
   /** Local file name → upstream path, for files fetched from a subdirectory. */
   upstream?: Record<string, string>;
-  /** For files extracted from a Maven sources jar: its sha256. */
+  /** Archive digest: a Maven sources jar sha256, or an npm tarball sha512 integrity. */
   sha256?: string;
 }
 
@@ -185,13 +197,84 @@ export async function fetchMavenSources(
   return manifest;
 }
 
+/** Reads the regular files of a (ustar) tar archive whose names are in `names`. */
+export function readTarEntries(tar: Buffer, names: readonly string[]): Map<string, Buffer> {
+  const out = new Map<string, Buffer>();
+  for (let at = 0; at + 512 <= tar.length;) {
+    const header = tar.subarray(at, at + 512);
+    if (header.every((b) => b === 0)) break;
+    const field = (start: number, length: number) =>
+      header.toString('utf8', start, start + length).replace(/\0[\s\S]*$/, '');
+    const prefix = field(345, 155);
+    const name = prefix ? `${prefix}/${field(0, 100)}` : field(0, 100);
+    const size = parseInt(field(124, 12).trim() || '0', 8);
+    const type = field(156, 1);
+    if ((type === '0' || type === '') && names.includes(name)) {
+      out.set(name, Buffer.from(tar.subarray(at + 512, at + 512 + size)));
+    }
+    at += 512 + Math.ceil(size / 512) * 512;
+  }
+  return out;
+}
+
+/**
+ * Downloads `pkg@version` from the npm registry, verifies the tarball against the registry's
+ * sha512 `integrity`, and vendors `files` (paths inside the package) flat into `outDir`.
+ */
+export async function fetchNpmFiles(
+  pkg: string,
+  version: string,
+  files: readonly string[],
+  outDir: string,
+): Promise<Manifest> {
+  const meta = JSON.parse(await get(`https://registry.npmjs.org/${pkg}/${version}`)) as {
+    dist: { tarball: string; integrity: string };
+  };
+  const res = await fetch(meta.dist.tarball);
+  if (!res.ok) throw new Error(`GET ${meta.dist.tarball}: ${String(res.status)}`);
+  const tgz = Buffer.from(await res.arrayBuffer());
+  const integrity = `sha512-${createHash('sha512').update(tgz).digest('base64')}`;
+  if (integrity !== meta.dist.integrity) {
+    throw new Error(
+      `${meta.dist.tarball}: integrity ${integrity}, registry says ${meta.dist.integrity}`,
+    );
+  }
+  const entries = readTarEntries(
+    gunzipSync(tgz),
+    files.map((f) => `package/${f}`),
+  );
+  rmSync(outDir, { recursive: true, force: true });
+  mkdirSync(outDir, { recursive: true });
+  const hashes: Record<string, string> = {};
+  const upstream: Record<string, string> = {};
+  for (const file of files) {
+    const data = entries.get(`package/${file}`);
+    if (!data) throw new Error(`${pkg}@${version}: ${file} not in tarball`);
+    const text = data.toString('utf8').replace(/\r\n/g, '\n');
+    const local = file.slice(file.lastIndexOf('/') + 1);
+    writeFileSync(join(outDir, local), text);
+    hashes[local] = sha256(text);
+    if (local !== file) upstream[local] = file;
+  }
+  const manifest: Manifest = {
+    repo: meta.dist.tarball,
+    commit: version,
+    path: pkg,
+    files: hashes,
+    upstream,
+    sha256: integrity,
+  };
+  writeFileSync(join(outDir, 'manifest.json'), `${JSON.stringify(manifest, null, 2)}\n`);
+  return manifest;
+}
+
 export const fetchTokens = (repo: string, commit: string, outDir: string): Promise<Manifest> =>
   fetchVendor(repo, commit, TOKENS_PATH, outDir);
 
 export function readVendor(dir: string): { manifest: Manifest; files: SourceFile[] } {
   const manifest = JSON.parse(readFileSync(join(dir, 'manifest.json'), 'utf8')) as Manifest;
   const onDisk = readdirSync(dir)
-    .filter((n) => n.endsWith('.kt'))
+    .filter((n) => n !== 'manifest.json')
     .sort();
   const expected = Object.keys(manifest.files).sort();
   if (onDisk.join() !== expected.join()) {

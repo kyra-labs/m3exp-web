@@ -147,6 +147,12 @@ export function buildIconCss(vendorDir: string, fontsDir: string): Map<string, s
       ...Object.entries(descriptors).map(([k, v]) => `  ${k}: ${v};`),
       `  src: url("./${shippedName(style, 'woff2')}") format("woff2");`,
       '}',
+      // The family .m3e-icon renders with; importing another style's stylesheet switches it.
+      '@layer m3e.tokens {',
+      '  :root {',
+      `    --m3e-ref-typeface-icon: "${iconFamily(style)}";`,
+      '  }',
+      '}',
     ];
   };
   const banner = (what: string) => [
