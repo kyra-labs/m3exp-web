@@ -16,12 +16,13 @@ const { title } = Astro.props;
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="color-scheme" content="light dark" />
     <title>{title} · m3exp-web</title>
+    <slot name="head" />
   </head>
   <body>
     <header>
       <nav aria-label="Primary">
         <p>
-          <a href="/">m3exp-web</a> · <a href="/components/">Components</a> · <a href="/theme/">Theme</a> · <a href="/typography/">Typography</a>
+          <a href="/">m3exp-web</a> · <a href="/components/">Components</a> · <a href="/theme/">Theme</a> · <a href="/typography/">Typography</a> · <a href="/icons/">Icons</a>
         </p>
       </nav>
     </header>

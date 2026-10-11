@@ -62,7 +62,7 @@ Convention: every concrete value cites its source. **Generated values win:** `pa
 - Typescale → axis mapping: `font-weight` for weight; `opsz` left to `font-optical-sizing: auto`; `wdth` 100 by default. Emphasized styles set `font-weight` only: GSF has no GRAD axis, and no source at the pin uses ROND/wdth for emphasized type, so no `-variation` token is emitted.
 - Tokens: `--m3e-ref-typeface-brand`, `--m3e-ref-typeface-plain` (both `"Google Sans Flex", "Google Sans Flex Fallback", system-ui, sans-serif`), `--m3e-sys-typescale-<role>-{font|weight|size|line-height|tracking}`.
 - Fallback: `"Google Sans Flex Fallback"` = `local("Arial")` with `size-adjust` and ascent/descent/line-gap overrides computed from the pinned TTF against Arial 7.07 (codegen; values in `fonts/manifest.json`), so the swap does not shift layout.
-- **Icons:** Material Symbols variable font bundled (D5), axes FILL 0–1, wght 100–700, GRAD −25–200, opsz 20–48 (`TODO(verify)` ranges against the google/fonts METADATA.pb for Material Symbols). Default `opsz` 24, `wght` 400, `GRAD` 0, `FILL` 0; selected states set `FILL` 1.
+- **Icons:** Material Symbols 2.975 variable fonts bundled (D5; google/material-design-icons@49d4db35 `variablefont/`), axes FILL 0–1, wght 100–700, **GRAD −50–200**, opsz 20–48 (verified from fvar; identical across styles). Defaults `opsz` 24, `wght` 400, `GRAD` 0, `FILL` 0. Per m3.material.io (/styles/icons and component pages): selected toggles and active destinations set `FILL` 1 (or semibold weight when no filled glyph exists); light icons on dark backgrounds use `GRAD` −25; dense/desktop layouts use `opsz` 20, emphasized actions 40–48. Default style Rounded is a project choice (D12), not an M3 rule.
 
 ## 3. Shape
 **Corner scale (`ShapeTokens.kt`):**

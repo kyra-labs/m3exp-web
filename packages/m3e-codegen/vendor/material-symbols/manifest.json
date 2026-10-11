@@ -1,0 +1,79 @@
+{
+  "repo": "https://github.com/google/material-design-icons",
+  "commit": "49d4db35df873165d6bd6ba09b063c7dafbac2f4",
+  "version": "2.975",
+  "axes": {
+    "FILL": {
+      "min": 0,
+      "default": 0,
+      "max": 1
+    },
+    "GRAD": {
+      "min": -50,
+      "default": 0,
+      "max": 200
+    },
+    "opsz": {
+      "min": 20,
+      "default": 24,
+      "max": 48
+    },
+    "wght": {
+      "min": 100,
+      "default": 400,
+      "max": 700
+    }
+  },
+  "files": {
+    "material-symbols-rounded.woff2": {
+      "sha256": "1f8b34a4a7c54eb110b4e51f5233b3d459cbbec2f7ef4e3e1047751918ec5a66",
+      "upstream": "variablefont/MaterialSymbolsRounded[FILL,GRAD,opsz,wght].woff2",
+      "bytes": 5397756
+    },
+    "material-symbols-rounded.codepoints": {
+      "sha256": "0c9dae3ed678a81549c3be046bc8045335e5f57f2cbe2287360fbf0c2cc1355f",
+      "upstream": "variablefont/MaterialSymbolsRounded[FILL,GRAD,opsz,wght].codepoints",
+      "bytes": 79354
+    },
+    "material-symbols-outlined.woff2": {
+      "sha256": "66187cd42fe1d24d3ea6be77da7466c4fc6c1cd1d0870b685e041d8402680063",
+      "upstream": "variablefont/MaterialSymbolsOutlined[FILL,GRAD,opsz,wght].woff2",
+      "bytes": 4001276
+    },
+    "material-symbols-outlined.codepoints": {
+      "sha256": "0c9dae3ed678a81549c3be046bc8045335e5f57f2cbe2287360fbf0c2cc1355f",
+      "upstream": "variablefont/MaterialSymbolsOutlined[FILL,GRAD,opsz,wght].codepoints",
+      "bytes": 79354
+    },
+    "material-symbols-sharp.woff2": {
+      "sha256": "6b1c195421d584b149d3bd4db8d55af35227e1614d4e63a9d91ee4af7536bfb8",
+      "upstream": "variablefont/MaterialSymbolsSharp[FILL,GRAD,opsz,wght].woff2",
+      "bytes": 3532304
+    },
+    "material-symbols-sharp.codepoints": {
+      "sha256": "0c9dae3ed678a81549c3be046bc8045335e5f57f2cbe2287360fbf0c2cc1355f",
+      "upstream": "variablefont/MaterialSymbolsSharp[FILL,GRAD,opsz,wght].codepoints",
+      "bytes": 79354
+    },
+    "LICENSE-material-symbols.txt": {
+      "sha256": "58d1e17ffe5109a7ae296caafcadfdbe6a7d176f0bc4ab01e12a689b0499d8bd",
+      "upstream": "LICENSE",
+      "bytes": 11357
+    }
+  },
+  "css2": {
+    "rounded": {
+      "url": "https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200",
+      "sha256": "3a46562bfb1b3e817159dae58fb14e07e7e6a769292e19b4090dab7e2d260952"
+    },
+    "outlined": {
+      "url": "https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200",
+      "sha256": "aa0176ec324886b1425563677bfd805615427b85f9af1f6bf2f1c5b768c4c62f"
+    },
+    "sharp": {
+      "url": "https://fonts.googleapis.com/css2?family=Material+Symbols+Sharp:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200",
+      "sha256": "0fe7e5f17ec210779e7af84cbcd532fed0701b3ad65baaab339dc9f5bbf786a5"
+    }
+  },
+  "fetched": "2026-10-11"
+}

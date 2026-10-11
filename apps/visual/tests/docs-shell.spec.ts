@@ -8,6 +8,7 @@ const PAGES = [
   { path: '/components/', name: 'components-index' },
   { path: '/theme/', name: 'theme' },
   { path: '/typography/', name: 'typography' },
+  { path: '/icons/', name: 'icons' },
 ];
 
 for (const { path, name } of PAGES) {
@@ -51,4 +52,21 @@ test('fonts load offline from the package (M2 DoD)', async ({ page }) => {
   expect(external).toEqual([]);
   expect(fonts.some((path) => path.includes('google-sans-flex-latin'))).toBe(true);
   expect(await page.evaluate(() => document.fonts.check('400 16px "Google Sans Flex"'))).toBe(true);
+});
+
+test('m3e-icons subset output renders the requested icons (M2 DoD)', async ({ page }) => {
+  await page.goto('/icons/');
+  await page.evaluate(() => document.fonts.ready);
+  expect(await page.evaluate(() => document.fonts.check('24px "M3E Docs Icons"'))).toBe(true);
+  // A ligature renders as one square glyph; unshaped text ("arrow_back") would be several em wide.
+  const boxes = await page.locator('.docs-icon').evaluateAll((els) =>
+    els.map((el) => {
+      const { width, height } = el.getBoundingClientRect();
+      return { name: el.textContent, width, height };
+    }),
+  );
+  expect(boxes.length).toBe(20);
+  for (const box of boxes) {
+    expect(box.width, box.name).toBeLessThanOrEqual(box.height * 1.1);
+  }
 });
