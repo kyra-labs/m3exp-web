@@ -26,6 +26,8 @@ jobs:
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       - run: pnpm lint
+      - name: Generated tokens match vendored androidx sources
+        run: pnpm codegen:check
       # Workspace packages resolve to source via the @kyralabs/source condition, so no build needed.
       - run: pnpm typecheck
       - name: Changed packages have a changeset

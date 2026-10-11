@@ -1,7 +1,8 @@
 [
   {
-    "name": "m3e-tokens (JS entry; CSS theme budget applies from M2)",
-    "path": "packages/m3e-tokens/dist/index.js",
+    "name": "m3e-tokens (CSS: ref + sys tokens; color theme added in M2 color PR)",
+    "path": "packages/m3e-tokens/dist/generated/tokens.css",
+    "rolldown": false,
     "limit": "12 KB"
   },
   {

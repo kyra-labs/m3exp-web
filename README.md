@@ -34,7 +34,12 @@ pnpm test           # Vitest
 pnpm size           # size-limit budgets (REQUIREMENTS §8)
 pnpm test:visual    # Playwright: Chromium/Firefox/WebKit × light/dark + axe (needs `pnpm build`)
 pnpm changeset      # add a changeset to every PR that changes a package
+pnpm codegen        # regenerate m3e-tokens from the vendored androidx token files
+pnpm codegen:fetch  # pin bumps only: re-download token files for the commit in SOURCE_PIN
 ```
+
+Tokens are generated, never hand-edited. `packages/m3e-tokens/src/generated/PARITY.md` maps every
+androidx token (file:line) to the CSS variable it becomes; CI fails if the generated files are stale.
 
 Visual baselines are Linux-only and come from the pinned Playwright image used in CI. To
 regenerate them after an intentional visual change (from a fresh clone, since it installs Linux

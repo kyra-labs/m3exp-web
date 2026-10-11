@@ -5,5 +5,5 @@ export default defineConfig({
   ...baseOptions,
   platform: 'node',
   target: 'node22',
-  entry: ['src/index.ts'],
+  entry: ['src/index.ts', 'src/cli.ts'],
 });

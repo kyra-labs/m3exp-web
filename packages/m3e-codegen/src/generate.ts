@@ -1,0 +1,528 @@
+// Turns the vendored androidx token files into m3e-tokens outputs:
+//   generated/tokens.css            ref + sys tokens (typeface, typescale, shape, elevation, state, motion)
+//   generated/components/<c>.css    one file per component token object
+//   generated/sys.ts                sys tokens as typed JS objects
+//   generated/components.ts         component tokens as JS objects (one named export each)
+//   generated/PARITY.md             every source token → emitted variable, with file:line
+//
+// Color (ColorScheme*/ColorLight/ColorDark/Palette) is generated from material-color-utilities
+// in a separate step; component tokens reference `--m3e-sys-color-*` by name only.
+
+import { type Expr, type Member, type TokenFile, parseTokenFile } from './kotlin.js';
+import { FOCUS_INDICATOR, SPACE, type SupplementaryToken } from './supplementary.js';
+import { compVar, componentName, kebab, kebabName, reorderStates, words } from './names.js';
+
+export interface SourceFile {
+  /** File name inside the vendored tokens directory, e.g. `ShapeTokens.kt`. */
+  name: string;
+  content: string;
+}
+
+export interface GenerateOptions {
+  files: readonly SourceFile[];
+  /** androidx commit the files were fetched at (from /SOURCE_PIN). */
+  commit: string;
+  /** Upstream directory of the token files, for citations. */
+  upstreamPath: string;
+}
+
+interface Emitted {
+  name: string;
+  value: string;
+  object: string;
+  member: string;
+  raw: string;
+  line: number;
+  note?: string;
+  /** Citation for tokens that do not come from an androidx file. */
+  cite?: string;
+}
+
+/** Token objects whose values are produced elsewhere (color) or are not design values. */
+const NOT_EMITTED: Readonly<Record<string, string>> = {
+  ColorSchemeKeyTokens: 'Color role keys; emitted as --m3e-sys-color-* by the color generator.',
+  ColorLightTokens: 'Baseline light scheme; color comes from material-color-utilities.',
+  ColorDarkTokens: 'Baseline dark scheme; color comes from material-color-utilities.',
+  PaletteTokens: 'Baseline palette; color comes from material-color-utilities.',
+  ShapeKeyTokens: 'Key enum; resolved to ShapeTokens of the same name.',
+  TypographyKeyTokens: 'Key enum; resolved to TypeScaleTokens of the same name.',
+  MotionSchemeKeyTokens: 'Key enum; no component token references it at this pin.',
+  TypographyTokens: 'TextStyle assembly; verified to map 1:1 onto TypeScaleTokens (test).',
+};
+
+const SYS_OBJECTS = new Set([
+  'TypefaceTokens',
+  'TypeScaleTokens',
+  'ShapeTokens',
+  'ElevationTokens',
+  'StateTokens',
+  'MotionTokens',
+  'StandardMotionTokens',
+  'ExpressiveMotionTokens',
+]);
+
+/** D1: Google Sans Flex replaces Compose's platform default (FontFamily.SansSerif). */
+const TYPEFACE_STACK = '"Google Sans Flex", system-ui, sans-serif';
+
+/** Compose FontWeight constants (compose/ui/ui-text/.../font/FontWeight.kt L60–L66 at the pin). */
+const FONT_WEIGHTS: Readonly<Record<string, number>> = { Normal: 400, Medium: 500, Bold: 700 };
+
+/** The motion scheme `MaterialExpressiveTheme` uses; REQUIREMENTS §9 default. */
+const DEFAULT_MOTION_SCHEME = 'expressive';
+
+const TYPESCALE_FIELDS = [
+  ['Font', 'font'],
+  ['Weight', 'weight'],
+  ['Size', 'size'],
+  ['LineHeight', 'line-height'],
+  ['Tracking', 'tracking'],
+] as const;
+
+/** Logical corners: Compose start/end are layout-direction aware, like CSS logical radii. */
+const CORNERS = [
+  ['topStart', ['Start', 'Start'], 'startStart'],
+  ['topEnd', ['Start', 'End'], 'startEnd'],
+  ['bottomEnd', ['End', 'End'], 'endEnd'],
+  ['bottomStart', ['End', 'Start'], 'endStart'],
+] as const;
+
+const num = (n: number): string => String(Number(n.toFixed(6)));
+const px = (dp: number): string => (dp === 0 ? '0' : `${num(dp)}px`);
+const rem = (sp: number): string => (sp === 0 ? '0' : `${num(sp / 16)}rem`);
+const camel = (parts: readonly string[]): string =>
+  parts
+    .map((w, i) => (i === 0 ? w.toLowerCase() : w[0]!.toUpperCase() + w.slice(1).toLowerCase()))
+    .join('');
+const camelName = (name: string): string => camel(words(name));
+const isUniform = (e: Extract<Expr, { kind: 'corners' }>): boolean =>
+  e.topStart === e.topEnd && e.topEnd === e.bottomEnd && e.bottomEnd === e.bottomStart;
+
+export function generate({ files, commit, upstreamPath }: GenerateOptions): Map<string, string> {
+  const parsed = new Map<string, TokenFile & { file: string }>();
+  for (const { name, content } of [...files].sort((a, b) => a.name.localeCompare(b.name))) {
+    const tokens = parseTokenFile(content);
+    parsed.set(tokens.object, { ...tokens, file: name });
+  }
+  const lookup = (object: string, member: string): Member => {
+    const found = parsed.get(object)?.members.find((m) => m.name === member);
+    if (!found) throw new Error(`Unresolved reference ${object}.${member}`);
+    return found;
+  };
+
+  const sys: Emitted[] = [];
+  const emit = (
+    list: Emitted[],
+    object: string,
+    m: Member,
+    name: string,
+    value: string,
+    note?: string,
+  ) => {
+    const e: Emitted = { name, value, object, member: m.name, raw: m.raw, line: m.line };
+    if (note !== undefined) e.note = note;
+    else if (m.comment !== undefined) e.note = `upstream: ${m.comment}`;
+    list.push(e);
+  };
+
+  // --- Typeface (ref) -------------------------------------------------------------------------
+  const typeface = {
+    brand: TYPEFACE_STACK,
+    plain: TYPEFACE_STACK,
+    weights: {} as Record<string, number>,
+  };
+  for (const m of parsed.get('TypefaceTokens')?.members ?? []) {
+    if (m.expr.kind === 'fontFamily') {
+      emit(
+        sys,
+        'TypefaceTokens',
+        m,
+        `--m3e-ref-typeface-${kebabName(m.name)}`,
+        TYPEFACE_STACK,
+        `D1 override: Google Sans Flex replaces FontFamily.${m.expr.name}`,
+      );
+    } else if (m.expr.kind === 'fontWeight') {
+      const weight = FONT_WEIGHTS[m.expr.name];
+      if (weight === undefined) throw new Error(`Unknown FontWeight.${m.expr.name}`);
+      typeface.weights[camelName(m.name.replace(/^Weight/, ''))] = weight;
+      emit(sys, 'TypefaceTokens', m, `--m3e-ref-typeface-${kebabName(m.name)}`, String(weight));
+    } else {
+      throw new Error(`TypefaceTokens.${m.name}: unexpected ${m.expr.kind}`);
+    }
+  }
+
+  // --- Typescale (sys) ------------------------------------------------------------------------
+  const typescale: Record<string, Record<string, string | number>> = {};
+  for (const m of parsed.get('TypeScaleTokens')?.members ?? []) {
+    const match = /^(\w+?)(Font|Weight|Size|LineHeight|Tracking)$/.exec(m.name);
+    if (!match) throw new Error(`TypeScaleTokens.${m.name}: unexpected name`);
+    const [, role, field] = match as unknown as [string, string, string];
+    const cssField = TYPESCALE_FIELDS.find(([f]) => f === field)![1];
+    const name = `--m3e-sys-typescale-${kebabName(role)}-${cssField}`;
+    const style = (typescale[camelName(role)] ??= {});
+    const e = m.expr;
+    if (e.kind === 'ref' && e.object === 'TypefaceTokens') {
+      const target = lookup('TypefaceTokens', e.member);
+      emit(sys, 'TypeScaleTokens', m, name, `var(--m3e-ref-typeface-${kebabName(e.member)})`);
+      style[camelName(field)] =
+        target.expr.kind === 'fontWeight' ? FONT_WEIGHTS[target.expr.name]! : kebabName(e.member);
+    } else if (e.kind === 'sp') {
+      emit(sys, 'TypeScaleTokens', m, name, rem(e.value));
+      style[camelName(field)] = e.value;
+    } else {
+      throw new Error(`TypeScaleTokens.${m.name}: unexpected ${e.kind}`);
+    }
+  }
+
+  // --- Shape (sys) ----------------------------------------------------------------------------
+  const shape: Record<string, number | Record<string, number>> = {};
+  const shapeIsUniform = new Map<string, boolean>();
+  for (const m of parsed.get('ShapeTokens')?.members ?? []) {
+    const base = `--m3e-sys-shape-${kebabName(m.name)}`;
+    const key = camelName(m.name);
+    const e = m.expr;
+    if (e.kind === 'rectangle') {
+      emit(sys, 'ShapeTokens', m, base, '0');
+      shape[key] = 0;
+      shapeIsUniform.set(m.name, true);
+    } else if (e.kind === 'circle') {
+      emit(
+        sys,
+        'ShapeTokens',
+        m,
+        base,
+        'calc(infinity * 1px)',
+        'CircleShape is 50% in Compose; rendered as a true pill (FOUNDATIONS §3)',
+      );
+      shape[key] = Number.POSITIVE_INFINITY;
+      shapeIsUniform.set(m.name, true);
+    } else if (e.kind === 'cornerSize') {
+      emit(sys, 'ShapeTokens', m, base, px(e.value));
+      shape[key] = e.value;
+      shapeIsUniform.set(m.name, true);
+    } else if (e.kind === 'corners' && isUniform(e)) {
+      emit(sys, 'ShapeTokens', m, base, px(e.topStart));
+      shape[key] = e.topStart;
+      shapeIsUniform.set(m.name, true);
+    } else if (e.kind === 'corners') {
+      const corners: Record<string, number> = {};
+      for (const [field, suffix, jsKey] of CORNERS) {
+        emit(sys, 'ShapeTokens', m, `${base}-${kebab(suffix)}`, px(e[field]));
+        corners[jsKey] = e[field];
+      }
+      shape[key] = corners;
+      shapeIsUniform.set(m.name, false);
+    } else {
+      throw new Error(`ShapeTokens.${m.name}: unexpected ${e.kind}`);
+    }
+  }
+
+  // --- Elevation, state (sys) -----------------------------------------------------------------
+  const elevation: Record<string, number> = {};
+  for (const m of parsed.get('ElevationTokens')?.members ?? []) {
+    if (m.expr.kind !== 'dp')
+      throw new Error(`ElevationTokens.${m.name}: unexpected ${m.expr.kind}`);
+    emit(sys, 'ElevationTokens', m, `--m3e-sys-elevation-${kebabName(m.name)}`, px(m.expr.value));
+    elevation[camelName(m.name)] = m.expr.value;
+  }
+  const state: Record<string, number> = {};
+  for (const m of parsed.get('StateTokens')?.members ?? []) {
+    if (m.expr.kind !== 'number')
+      throw new Error(`StateTokens.${m.name}: unexpected ${m.expr.kind}`);
+    emit(sys, 'StateTokens', m, `--m3e-sys-state-${kebabName(m.name)}`, num(m.expr.value));
+    state[camelName(m.name)] = m.expr.value;
+  }
+
+  // --- Motion (sys) ---------------------------------------------------------------------------
+  const durations: Record<string, number> = {};
+  const easings: Record<string, readonly number[]> = {};
+  for (const m of parsed.get('MotionTokens')?.members ?? []) {
+    const e = m.expr;
+    if (e.kind === 'number' && m.name.startsWith('Duration')) {
+      const rest = m.name.replace(/^Duration/, '');
+      emit(
+        sys,
+        'MotionTokens',
+        m,
+        `--m3e-sys-motion-duration-${kebabName(rest)}`,
+        `${num(e.value)}ms`,
+      );
+      durations[camelName(rest)] = e.value;
+    } else if (e.kind === 'cubicBezier' && m.name.startsWith('Easing')) {
+      const rest = m.name.replace(/^Easing/, '').replace(/CubicBezier$/, '');
+      emit(
+        sys,
+        'MotionTokens',
+        m,
+        `--m3e-sys-motion-easing-${kebabName(rest)}`,
+        `cubic-bezier(${e.points.map(num).join(', ')})`,
+      );
+      easings[camelName(rest)] = e.points;
+    } else {
+      throw new Error(`MotionTokens.${m.name}: unexpected ${e.kind}`);
+    }
+  }
+  interface Spring {
+    dampingRatio: number;
+    stiffness: number;
+  }
+  const springs: Record<string, Record<string, Spring>> = {};
+  const aliases: Emitted[] = [];
+  for (const [object, scheme] of [
+    ['StandardMotionTokens', 'standard'],
+    ['ExpressiveMotionTokens', 'expressive'],
+  ] as const) {
+    for (const m of parsed.get(object)?.members ?? []) {
+      const match = /^Spring(Fast|Default|Slow)(Spatial|Effects)(Damping|Stiffness)$/.exec(m.name);
+      if (!match || m.expr.kind !== 'number')
+        throw new Error(`${object}.${m.name}: unexpected token`);
+      const [, speed, type, field] = match as unknown as [string, string, string, string];
+      // Compose `Damping` is the damping *ratio* ζ (Spring.DampingRatio*), not a coefficient.
+      const cssField = field === 'Damping' ? 'damping-ratio' : 'stiffness';
+      const token = `${kebab([speed, type])}-${cssField}`;
+      emit(sys, object, m, `--m3e-sys-motion-spring-${scheme}-${token}`, num(m.expr.value));
+      const spring = ((springs[scheme] ??= {})[camel([speed, type])] ??= {
+        dampingRatio: 0,
+        stiffness: 0,
+      });
+      spring[field === 'Damping' ? 'dampingRatio' : 'stiffness'] = m.expr.value;
+      if (scheme === DEFAULT_MOTION_SCHEME) {
+        emit(
+          aliases,
+          object,
+          m,
+          `--m3e-sys-motion-spring-${token}`,
+          `var(--m3e-sys-motion-spring-${scheme}-${token})`,
+          `active motion scheme alias (default ${DEFAULT_MOTION_SCHEME}, REQUIREMENTS §9)`,
+        );
+      }
+    }
+  }
+  sys.push(...aliases);
+
+  // --- Supplementary sys tokens (m3.material.io; no androidx source at the pin) ---------------
+  const supplementary = (t: SupplementaryToken): Emitted => ({
+    name: t.name,
+    value: px(t.dp),
+    object: 'm3.material.io',
+    member: t.token,
+    raw: `${num(t.dp)}dp`,
+    line: 0,
+    cite: t.cite,
+  });
+  sys.push(...FOCUS_INDICATOR.map(supplementary), ...SPACE.map(supplementary));
+  const lastSegment = (token: string) => token.slice(token.lastIndexOf('.') + 1);
+  const focusIndicator = Object.fromEntries(
+    FOCUS_INDICATOR.map((t) => [camel(lastSegment(t.token).split('-')), t.dp]),
+  );
+  const space = Object.fromEntries(SPACE.map((t) => [lastSegment(t.token), t.dp]));
+
+  // --- Components ---------------------------------------------------------------------------
+  const components = new Map<
+    string,
+    { object: string; tokens: Emitted[]; js: Record<string, unknown> }
+  >();
+  for (const [object, tokens] of parsed) {
+    if (SYS_OBJECTS.has(object) || object in NOT_EMITTED) continue;
+    const emitMember = (
+      m: Member,
+      reorder: boolean,
+      out: Emitted[],
+      js: Record<string, unknown>,
+    ) => {
+      const e = m.expr;
+      const name = (member: string, extra: readonly string[] = []) =>
+        compVar(object, member, extra, reorder);
+      const jsKey = camel(reorder ? reorderStates(words(m.name)) : words(m.name));
+      const note = reorder
+        ? undefined
+        : 'upstream word order kept: state reordering would collide with another token';
+      const single = (value: string, jsValue: unknown) => {
+        emit(out, object, m, name(m.name), value, note);
+        js[jsKey] = jsValue;
+      };
+      if (e.kind === 'dp') single(px(e.value), e.value);
+      else if (e.kind === 'sp') single(rem(e.value), e.value);
+      else if (e.kind === 'number') single(num(e.value), e.value);
+      else if (e.kind === 'corners' && isUniform(e)) single(px(e.topStart), e.topStart);
+      else if (e.kind === 'ref' && e.object === 'ColorSchemeKeyTokens') {
+        lookup('ColorSchemeKeyTokens', e.member);
+        const v = `var(--m3e-sys-color-${kebabName(e.member)})`;
+        single(v, v);
+      } else if (e.kind === 'ref' && e.object === 'ElevationTokens') {
+        lookup('ElevationTokens', e.member);
+        const v = `var(--m3e-sys-elevation-${kebabName(e.member)})`;
+        single(v, v);
+      } else if (e.kind === 'ref' && e.object === 'ShapeTokens') {
+        lookup('ShapeTokens', e.member);
+        const v = `var(--m3e-sys-shape-${kebabName(e.member)})`;
+        single(v, v);
+      } else if (e.kind === 'ref' && e.object === 'ShapeKeyTokens') {
+        lookup('ShapeKeyTokens', e.member);
+        const uniform = shapeIsUniform.get(e.member);
+        if (uniform === undefined)
+          throw new Error(`${object}.${m.name}: ShapeTokens.${e.member} missing`);
+        const base = `--m3e-sys-shape-${kebabName(e.member)}`;
+        if (uniform) single(`var(${base})`, `var(${base})`);
+        else {
+          const corners: Record<string, string> = {};
+          for (const [, suffix, cornerKey] of CORNERS) {
+            const v = `var(${base}-${kebab(suffix)})`;
+            emit(out, object, m, name(m.name, suffix), v, note);
+            corners[cornerKey] = v;
+          }
+          js[jsKey] = corners;
+        }
+      } else if (e.kind === 'ref' && e.object === 'TypographyKeyTokens') {
+        lookup('TypographyKeyTokens', e.member);
+        const base = m.name.replace(/Font$/, '');
+        const style: Record<string, string> = {};
+        for (const [field, cssField] of TYPESCALE_FIELDS) {
+          const v = `var(--m3e-sys-typescale-${kebabName(e.member)}-${cssField})`;
+          emit(out, object, m, name(base, words(field)), v, note);
+          style[camelName(field)] = v;
+        }
+        js[jsKey] = style;
+      } else {
+        throw new Error(`${object}.${m.name}: unsupported component value ${e.kind} "${m.raw}"`);
+      }
+    };
+    // Pre-pass: members whose reordered names would collide keep upstream word order.
+    const owners = new Map<string, Set<string>>();
+    for (const m of tokens.members) {
+      const probe: Emitted[] = [];
+      emitMember(m, true, probe, {});
+      for (const t of probe)
+        (owners.get(t.name) ?? owners.set(t.name, new Set()).get(t.name)!).add(m.name);
+    }
+    const colliding = new Set(
+      [...owners.values()].filter((o) => o.size > 1).flatMap((o) => [...o]),
+    );
+    const out: Emitted[] = [];
+    const js: Record<string, unknown> = {};
+    for (const m of tokens.members) emitMember(m, !colliding.has(m.name), out, js);
+    const seen = new Map<string, string>();
+    for (const t of out) {
+      const prev = seen.get(t.name);
+      if (prev !== undefined && prev !== t.member) {
+        throw new Error(`Name collision ${t.name}: ${object}.${prev} and ${object}.${t.member}`);
+      }
+      seen.set(t.name, t.member);
+    }
+    components.set(componentName(object), { object, tokens: out, js });
+  }
+
+  // --- Writers ------------------------------------------------------------------------------
+  const banner = (what: string) => [
+    `Generated by @kyralabs/m3e-codegen — do not edit. ${what}`,
+    `Source: ${upstreamPath} @ ${commit}`,
+    'Values: Copyright (C) The Android Open Source Project, Apache License 2.0 (see NOTICE).',
+  ];
+  const cssFile = (what: string, tokens: readonly Emitted[]) =>
+    [
+      '/*',
+      ...banner(what).map((l) => ` * ${l}`),
+      ' */',
+      '@layer m3e.tokens {',
+      '  :root {',
+      ...tokens.map((t) => `    ${t.name}: ${t.value};`),
+      '  }',
+      '}',
+      '',
+    ].join('\n');
+  const tsHeader = (what: string) => [...banner(what).map((l) => `// ${l}`), ''];
+  const literal = (value: unknown): string =>
+    JSON.stringify(
+      value,
+      (_k, v: unknown) => (v === Number.POSITIVE_INFINITY ? '__INFINITY__' : v),
+      2,
+    )
+      .replace(/"__INFINITY__"/g, 'Number.POSITIVE_INFINITY')
+      .replace(/"([A-Za-z_$][\w$]*)":/g, '$1:');
+
+  const out = new Map<string, string>();
+  out.set('tokens.css', cssFile('Reference + system tokens (color excluded).', sys));
+  for (const [name, c] of [...components].sort(([a], [b]) => a.localeCompare(b))) {
+    out.set(`components/${name}.css`, cssFile(`Component tokens: ${c.object}.`, c.tokens));
+  }
+
+  out.set(
+    'sys.ts',
+    [
+      ...tsHeader(
+        'System tokens. Lengths are dp (= CSS px), type sizes sp (= CSS px at 100% zoom).',
+      ),
+      `export const typeface = ${literal(typeface)} as const;`,
+      '',
+      `export const typescale = ${literal(typescale)} as const;`,
+      '',
+      `export const shape = ${literal(shape)} as const;`,
+      '',
+      `export const elevation = ${literal(elevation)} as const;`,
+      '',
+      `export const state = ${literal({ ...state, focusIndicator })} as const;`,
+      '',
+      `export const space = ${literal(space)} as const;`,
+      '',
+      `export const motion = ${literal({ defaultScheme: DEFAULT_MOTION_SCHEME, springs, durations, easings })} as const;`,
+      '',
+    ].join('\n'),
+  );
+  out.set(
+    'components.ts',
+    [
+      ...tsHeader('Component tokens. Lengths are dp (= CSS px); references are CSS var() strings.'),
+      ...[...components]
+        .sort(([a], [b]) => a.localeCompare(b))
+        .flatMap(([, c]) => [
+          `/** ${c.object} */`,
+          `export const ${camelName(c.object)} = ${literal(c.js)} as const;`,
+          '',
+        ]),
+    ].join('\n'),
+  );
+
+  // Parity table.
+  const rows = (tokens: readonly Emitted[]) =>
+    tokens.map((t) => {
+      const where = t.cite ?? `${parsed.get(t.object)!.file}:${String(t.line)}`;
+      return `| \`${t.object}.${t.member}\` | \`${t.raw.replace(/\|/g, '\\|')}\` | ${where} | \`${t.name}\` | \`${t.value}\` | ${t.note ?? ''} |`;
+    });
+  const header = [
+    '| Source token | Source value | Line | CSS variable | Emitted | Note |',
+    '|---|---|---|---|---|---|',
+  ];
+  const parity = [
+    '# Token parity',
+    '',
+    ...banner('Every androidx token and the variable it becomes.').map((l) => `> ${l}  `),
+    '',
+    `Emitted: ${String(sys.length)} system and ${String([...components.values()].reduce((n, c) => n + c.tokens.length, 0))} component variables from ${String(components.size)} component token objects.`,
+    '',
+    '## Not emitted here',
+    '',
+    '| Object | Reason |',
+    '|---|---|',
+    ...Object.entries(NOT_EMITTED).map(([o, why]) => `| \`${o}\` | ${why} |`),
+    '',
+    '## System',
+    '',
+    ...header,
+    ...rows(sys),
+    '',
+    ...[...components]
+      .sort(([a], [b]) => a.localeCompare(b))
+      .flatMap(([name, c]) => {
+        const notes = parsed.get(c.object)?.notes;
+        return [
+          `## ${name}`,
+          '',
+          ...(notes ? [`> Upstream note: ${notes.join(' ')}`, ''] : []),
+          ...header,
+          ...rows(c.tokens),
+          '',
+        ];
+      }),
+  ].join('\n');
+  out.set('PARITY.md', parity);
+  return out;
+}

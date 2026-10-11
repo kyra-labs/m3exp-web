@@ -2,3 +2,5 @@ pnpm-lock.yaml
 dist/
 .astro/
 *.md
+packages/m3e-tokens/src/generated/
+packages/m3e-codegen/vendor/
