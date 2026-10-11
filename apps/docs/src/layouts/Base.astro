@@ -1,0 +1,30 @@
+---
+import '@kyralabs/m3exp-web/css/index.css';
+import '../styles/docs.css';
+
+interface Props {
+  title: string;
+}
+
+const { title } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="light dark" />
+    <title>{title} · m3exp-web</title>
+  </head>
+  <body>
+    <header>
+      <nav aria-label="Primary">
+        <p><a href="/">m3exp-web</a> · <a href="/components/">Components</a></p>
+      </nav>
+    </header>
+    <main>
+      <slot />
+    </main>
+  </body>
+</html>

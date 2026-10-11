@@ -1,0 +1,19 @@
+node_modules/
+dist/
+.astro/
+coverage/
+*.tsbuildinfo
+.turbo/
+.DS_Store
+.env*
+!.env.example
+
+# Playwright
+apps/visual/test-results/
+apps/visual/playwright-report/
+apps/visual/blob-report/
+# CI baselines are Linux-only; local Windows/macOS screenshots are never committed
+apps/visual/tests/**/*-win32.png
+apps/visual/tests/**/*-darwin.png
+packages/*/LICENSE
+packages/*/NOTICE

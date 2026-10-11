@@ -1,0 +1,35 @@
+[
+  {
+    "name": "m3e-tokens (JS entry; CSS theme budget applies from M2)",
+    "path": "packages/m3e-tokens/dist/index.js",
+    "limit": "12 KB"
+  },
+  {
+    "name": "m3e-css (all components)",
+    "path": "packages/m3e-css/dist/index.css",
+    "limit": "45 KB",
+    "rolldown": false
+  },
+  {
+    "name": "m3e-elements (all)",
+    "path": "packages/m3e-elements/dist/index.js",
+    "limit": "30 KB"
+  },
+  {
+    "name": "M3eElement base class (D7)",
+    "path": "packages/m3e-elements/dist/index.js",
+    "import": "{ M3eElement }",
+    "limit": "1 KB"
+  },
+  {
+    "name": "m3e-shapes (all presets + Morph)",
+    "path": "packages/m3e-shapes/dist/index.js",
+    "limit": "14 KB"
+  },
+  {
+    "name": "m3e-react (excluding peer deps)",
+    "path": "packages/m3e-react/dist/index.js",
+    "ignore": ["react", "react-dom"],
+    "limit": "60 KB"
+  }
+]

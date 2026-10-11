@@ -13,8 +13,9 @@
 | Material Symbols (D5) | `TODO(verify)`: version from github.com/google/material-design-icons | Apache-2.0 | Variable font bundled; subset CLI |
 | React Aria | `TODO(verify)`: latest react-aria on npm | | |
 | Motion (motion.dev) | `TODO(verify)`: latest "motion" on npm | | |
-| Astro | `TODO(verify)`: latest astro on npm | | |
-| Vitest / Playwright / Changesets / pnpm / size-limit | `TODO(verify)` latest each | | |
+| Astro | 7.3.8 (npm latest, 2026-10-11) | npmjs.com/package/astro | Docs/playground app (M1) |
+| Tooling | pnpm 12.11.2, Vitest 5.0.3 (+ happy-dom 20.14.6), Playwright 1.64.0 (image `mcr.microsoft.com/playwright:v1.64.0-noble`), @axe-core/playwright 4.13.0, size-limit 14.2.0, Changesets 3.0.3, tsup 8.5.1, ESLint 10.12.0, typescript-eslint 8.71.1, stylelint 17.16.0, Prettier 3.9.10 (npm latest, 2026-10-11) | npmjs.com | Exact versions in `pnpm-lock.yaml` |
+| TypeScript | 6.0.3 — not npm latest (7.0.2): typescript-eslint 8.71.1 supports `>=4.8.4 <6.1.0` | npmjs.com/package/typescript | Bump to 7.x when typescript-eslint and tsup support it |
 
 ## Key source files (androidx `compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/`)
 - MotionScheme.kt, tokens/StandardMotionTokens.kt, tokens/ExpressiveMotionTokens.kt, tokens/MotionTokens.kt.
@@ -92,5 +93,5 @@
 55. Pull-to-refresh indicator.
 56. Final component inventory diff against the package-summary.
 57. `linear()` browser support — resolved (Chrome/Edge 113, Firefox 112, Safari 17.2); recheck at each release.
-58. React Aria, Motion, Astro and tooling versions.
+58. React Aria and Motion versions (pin in M4). Astro and tooling resolved 2026-10-11 — see the pinned versions table.
 59. expressiveLightColorScheme() definition in ColorScheme.kt.

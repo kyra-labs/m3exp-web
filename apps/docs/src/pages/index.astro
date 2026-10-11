@@ -1,0 +1,27 @@
+---
+import Base from '../layouts/Base.astro';
+---
+
+<Base title="Home">
+  <h1>m3exp-web</h1>
+  <p>
+    Material 3 Expressive for the web, built to match the Jetpack Compose Material3
+    1.5.0-beta01 catalog.
+  </p>
+  <p>Layers: tokens, CSS, custom elements and React. Components arrive from milestone M4.</p>
+  <p data-testid="elements-status">Custom elements base: <output id="elements-status">pending</output></p>
+</Base>
+
+<script>
+  // Proves the umbrella package resolves and the elements layer loads in a real browser build.
+  import { M3eElement } from '@kyralabs/m3exp-web/elements';
+
+  class M3eDocsProbe extends M3eElement {
+    protected override update(): void {
+      const status = document.getElementById('elements-status');
+      if (status) status.textContent = 'ready';
+    }
+  }
+  M3eDocsProbe.define('m3e-docs-probe');
+  document.body.append(document.createElement('m3e-docs-probe'));
+</script>
