@@ -22,8 +22,8 @@ Copyright (C) The Android Open Source Project
 Licensed under the Apache License, Version 2.0
 
 --------------------------------------------------------------------------------
-AndroidX graphics-shapes (androidx.graphics:graphics-shapes 1.1.0)
-https://android.googlesource.com/platform/frameworks/support/+/refs/heads/androidx-main/graphics/graphics-shapes/
+AndroidX graphics-shapes (androidx.graphics:graphics-shapes 1.0.1, sources jar)
+https://dl.google.com/android/maven2/androidx/graphics/graphics-shapes/1.0.1/graphics-shapes-1.0.1-sources.jar
 Copyright (C) The Android Open Source Project
 Licensed under the Apache License, Version 2.0
 

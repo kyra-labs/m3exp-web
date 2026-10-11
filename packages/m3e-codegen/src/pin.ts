@@ -7,7 +7,7 @@ export type SourcePin = Readonly<Record<string, string>>;
 export function parsePin(text: string): SourcePin {
   const pin: Record<string, string> = {};
   for (const line of text.split(/\r?\n/)) {
-    const m = /^([a-z_]+)=(.*)$/.exec(line.trim());
+    const m = /^([a-z0-9_]+)=(.*)$/.exec(line.trim());
     if (m) pin[m[1]!] = m[2]!;
   }
   return pin;

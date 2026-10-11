@@ -5,7 +5,7 @@
 |---|---|---|---|
 | Compose Material3 | 1.5.0-beta01 (Oct 7, 2026) | developer.android.com/jetpack/androidx/releases/compose-material3 | Stable 1.4.0 lacks the M3E set |
 | androidx source commit | `19991f2c0858aadfcb442ce02b2c8e4743c96898` (end of the 1.5.0-beta01 commit range `b2b5ae7b…19991f2c` on android.googlesource.com, linked from the release notes) | developer.android.com/jetpack/androidx/releases/compose-material3#1.5.0-beta01 | Recorded in `/SOURCE_PIN`. The earlier third-party candidate `23327507…` is discarded |
-| androidx graphics-shapes | 1.1.0 | developer.android.com/jetpack/androidx/releases/graphics | Morph.calculateBounds added |
+| androidx graphics-shapes | 1.0.1 (Google Maven `androidx.graphics:graphics-shapes:1.0.1` sources jar, sha256 `80389b7b…ee241`) | developer.android.com/jetpack/androidx/releases/graphics#graphics-shapes-1.0.1 | The version Material3 1.5.0-beta01 depends on: `material3/build.gradle@19991f2c` L58 `api("androidx.graphics:graphics-shapes:1.0.1")`. Vendored from the published sources jar: the release notes link 1.0.0 and 1.0.1 to the same range (`217941670a79…594e7b6ae3c3`), and `libraryversions.toml@594e7b6a` still says 1.0.0; the jar differs from that commit only in KMP plumbing (`kotlin.jvm` imports, `kotlin.math.PI`, `Format.kt` debug formatting). 1.1.0 (androidx-graphics-shapes-release) is not used: it measures Morph outlines by length (`LengthMeasurer`) instead of angle, fixes the center estimate and adds FeatureDetector/SvgPathParser. Recorded in `/SOURCE_PIN` |
 | material-color-utilities (npm) | 0.4.0 | npmjs.com/package/@material/material-color-utilities | Apache-2.0. Bundled into `@kyralabs/m3e-tokens` (its ESM has extensionless imports Node cannot load) |
 | Material Web | 2.5.0 (2026-07-14) | github.com/material-components/material-web/releases | Secondary only; labs expressive components |
 | m3.material.io | live, accessed 2026-10; token DB "Google Material 3" v38.2.9 (`_dsm/data/dsdb-m3/2026-09-23_06-10-05`) | m3.material.io | Motion specs table; component specs; side sheets (sole reference, D8) |
@@ -22,7 +22,7 @@
 - MotionScheme.kt, tokens/StandardMotionTokens.kt, tokens/ExpressiveMotionTokens.kt, tokens/MotionTokens.kt.
 - tokens/ShapeTokens.kt, MaterialShapes.kt, tokens/TypographyTokens.kt, TypeScaleTokens.kt, TypefaceTokens.kt, StateTokens.kt, ElevationTokens.kt, ScrimTokens.kt, ColorScheme.kt.
 - Component files: Button.kt, IconButton.kt, ButtonGroup.kt, SplitButton.kt, FloatingActionButton.kt, FloatingActionButtonMenu.kt, LoadingIndicator.kt, ProgressIndicator.kt, WavyProgressIndicator.kt, FloatingToolbar.kt, AppBar.kt, SearchBar.kt, NavigationBar.kt, WideNavigationRail.kt, Menu.kt, ListItem.kt, Slider.kt, TimePicker.kt, plus their `tokens/*Tokens.kt`.
-- graphics-shapes: `graphics/graphics-shapes/src/commonMain/kotlin/androidx/graphics/shapes/` (RoundedPolygon.kt, CornerRounding.kt, Shapes.kt, Cubic.kt, Features.kt, FeatureDetector.kt, Morph.kt, FeatureMapping.kt, PolygonMeasure.kt, SvgPathParser.kt).
+- graphics-shapes 1.0.1 sources jar: `commonMain/androidx/graphics/shapes/` (RoundedPolygon.kt, CornerRounding.kt, Shapes.kt, Cubic.kt, Features.kt, Morph.kt, FeatureMapping.kt, FloatMapping.kt, PolygonMeasure.kt, Point.kt, Utils.kt, Format.kt) and `jvmMain/…/Format.jvm.kt`. FeatureDetector.kt and SvgPathParser.kt arrive in 1.1.0 and are out of scope.
 
 ## Secondary and caution sources
 - Third-party ports (jethac/slint, floor/mtrl, minop1205/m3-expressive-react, LanHuangJG/m3e, kanso-labs/kanso-ui) were used only to locate values, never as authority. Every value they supplied is in the register below.
@@ -32,7 +32,7 @@
 ## Licensing (D9)
 - Repo: Apache 2.0 (`LICENSE`).
 - `NOTICE`: lists AndroidX Compose Material3 (tokens, component logic), AndroidX graphics-shapes, material-color-utilities — each "Copyright (C) The Android Open Source Project, licensed under the Apache License, Version 2.0" — and states that portions were modified/ported to TypeScript by Kyra Labs.
-- Ported files: original Google header retained, plus `// Ported to TypeScript by Kyra Labs from <path>@<commit>`.
+- Ported files: original Google header retained, plus `// Ported to TypeScript by Kyra Labs from <path>@<commit>` (for graphics-shapes, which is vendored from its Maven sources jar, `<path in the jar>@androidx.graphics:graphics-shapes:1.0.1`).
 - Fonts: `packages/m3e-tokens/fonts/LICENSE-material-symbols.txt` (Apache 2.0), `LICENSE-google-sans-flex.txt` (SIL OFL 1.1, verbatim from google/fonts) and `TRADEMARKS-google-sans-flex.md`.
 - Not legal advice; owner may seek review before 1.0.
 
