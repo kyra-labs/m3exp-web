@@ -1,0 +1,96 @@
+---
+import {
+  Morph,
+  type MaterialShapeName,
+  materialShape,
+  materialShapeNames,
+  morphToPath,
+  toShapeOutline,
+  toSvgPathData,
+} from '@kyralabs/m3e-shapes';
+import Base from '../layouts/Base.astro';
+
+// Static outlines: what Compose's RoundedPolygon.toShape() draws in a 100 x 100 box.
+const BOX = 100;
+const outline = (name: MaterialShapeName) => toSvgPathData(toShapeOutline(materialShape(name), BOX, BOX), 2);
+const label = (name: string) => name.replace(/([a-z])([A-Z0-9])/g, '$1 $2');
+
+// Server-rendered initial morph, so the page is complete before the script runs.
+const start: MaterialShapeName = 'Circle';
+const end: MaterialShapeName = 'Cookie9Sided';
+const progress = 0.5;
+const morphPath = toSvgPathData(morphToPath(new Morph(materialShape(start), materialShape(end)), progress));
+---
+
+<Base title="Shapes">
+  <h1>Shapes</h1>
+  <p>
+    The 35 <code>MaterialShapes</code> from Compose Material3 1.5.0-beta01, drawn from a float32-exact
+    port of graphics-shapes 1.0.1 (cubics bit-identical to the JVM).
+  </p>
+  <p>Each preset is the outline <code>toShape()</code> produces in a {BOX} × {BOX} box.</p>
+
+  <section aria-labelledby="morph-heading">
+    <h2 id="morph-heading">Morph</h2>
+    <form class="docs-controls" id="morph-controls">
+      <label>
+        Start
+        <select name="start">
+          {materialShapeNames.map((name) => <option value={name} selected={name === start}>{label(name)}</option>)}
+        </select>
+      </label>
+      <label>
+        End
+        <select name="end">
+          {materialShapeNames.map((name) => <option value={name} selected={name === end}>{label(name)}</option>)}
+        </select>
+      </label>
+      <label>
+        Progress <output name="value" for="morph-progress">{progress.toFixed(2)}</output>
+        <input id="morph-progress" name="progress" type="range" min="0" max="1" step="0.01" value={progress} />
+      </label>
+    </form>
+    <svg class="docs-shape docs-shape--morph" viewBox="0 0 1 1" role="img" aria-labelledby="morph-heading">
+      <path id="morph-path" d={morphPath} />
+    </svg>
+  </section>
+
+  <section aria-labelledby="presets-heading">
+    <h2 id="presets-heading">Presets</h2>
+    <ul class="docs-shapes">
+      {
+        materialShapeNames.map((name) => (
+          <li>
+            <svg class="docs-shape" viewBox={`0 0 ${BOX} ${BOX}`} aria-hidden="true">
+              <path d={outline(name)} />
+            </svg>
+            <code>{name}</code>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+</Base>
+
+<script>
+  import { Morph, type MaterialShapeName, materialShape, morphToPath, toSvgPathData } from '@kyralabs/m3e-shapes';
+
+  const form = document.getElementById('morph-controls') as HTMLFormElement;
+  const path = document.getElementById('morph-path') as unknown as SVGPathElement;
+  const field = <T extends Element>(name: string) => form.elements.namedItem(name) as unknown as T;
+  let morph: Morph | null = null;
+  let key = '';
+
+  const render = () => {
+    const start = field<HTMLSelectElement>('start').value as MaterialShapeName;
+    const end = field<HTMLSelectElement>('end').value as MaterialShapeName;
+    const progress = Number(field<HTMLInputElement>('progress').value);
+    if (`${start}>${end}` !== key || morph === null) {
+      key = `${start}>${end}`;
+      morph = new Morph(materialShape(start), materialShape(end));
+    }
+    field<HTMLOutputElement>('value').value = progress.toFixed(2);
+    path.setAttribute('d', toSvgPathData(morphToPath(morph, progress)));
+  };
+  form.addEventListener('input', render);
+</script>

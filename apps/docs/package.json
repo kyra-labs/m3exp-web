@@ -11,6 +11,7 @@
     "icons": "m3e-icons subset --names-file src/icons.txt --out public/icons/docs-icons.woff2 --css public/icons/docs-icons.css --family \"M3E Docs Icons\""
   },
   "dependencies": {
+    "@kyralabs/m3e-shapes": "workspace:^",
     "@kyralabs/m3exp-web": "workspace:^",
     "astro": "7.3.8"
   },

@@ -10,7 +10,7 @@ file keeps its original copyright and license header and names its source path
 and commit.
 
 --------------------------------------------------------------------------------
-AndroidX Compose Material3 (design tokens, component logic)
+AndroidX Compose Material3 (design tokens, component logic, MaterialShapes)
 https://android.googlesource.com/platform/frameworks/support/+/19991f2c0858aadfcb442ce02b2c8e4743c96898/compose/material3/
 Copyright (C) The Android Open Source Project
 Licensed under the Apache License, Version 2.0
@@ -18,6 +18,12 @@ Licensed under the Apache License, Version 2.0
 --------------------------------------------------------------------------------
 AndroidX Compose Animation (animation-core: spring simulation and duration estimate)
 https://android.googlesource.com/platform/frameworks/support/+/19991f2c0858aadfcb442ce02b2c8e4743c96898/compose/animation/animation-core/
+Copyright (C) The Android Open Source Project
+Licensed under the Apache License, Version 2.0
+
+--------------------------------------------------------------------------------
+AndroidX Compose UI Graphics (Matrix: the subset MaterialShapes uses)
+https://android.googlesource.com/platform/frameworks/support/+/19991f2c0858aadfcb442ce02b2c8e4743c96898/compose/ui/ui-graphics/
 Copyright (C) The Android Open Source Project
 Licensed under the Apache License, Version 2.0
 
