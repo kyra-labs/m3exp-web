@@ -113,12 +113,9 @@ describe('licensing (D9)', () => {
     'AndroidX Compose Animation',
     'AndroidX graphics-shapes',
     'material-color-utilities',
-  ])(
-    'NOTICE lists %s',
-    (project) => {
-      expect(notice).toContain(project);
-    },
-  );
+  ])('NOTICE lists %s', (project) => {
+    expect(notice).toContain(project);
+  });
 
   it('NOTICE references the pinned androidx commit', () => {
     const commit = /^androidx_commit=(\w+)$/m.exec(read('SOURCE_PIN'))?.[1];
