@@ -57,10 +57,11 @@ Convention: every concrete value cites its source. **Generated values win:** `pa
 
 **Fonts (D1):**
 - Compose's `TypefaceTokens.Brand/Plain` is `FontFamily.SansSerif` at the pin (`TypefaceTokens.kt` L25–29), not Roboto. m3exp-web deliberately diverges: the default brand and plain typeface is **Google Sans Flex**, self-hosted from `@kyralabs/m3e-tokens/fonts/`.
-- `TODO(verify): Google Sans Flex variable axes, ranges and license from google/fonts METADATA.pb (expected at least wght, wdth, opsz, slnt, ROND, GRAD — do not assume)`.
-- Typescale → axis mapping: `font-weight` for weight; `opsz` left to `font-optical-sizing: auto`; `wdth` 100 by default. Emphasized styles set `font-weight` and may additionally raise `GRAD` and `ROND` via `--m3e-sys-typescale-<role>-emphasized-variation` (values decided in M2 after axis verification; until then emphasized = weight only).
-- Tokens: `--m3e-ref-typeface-brand`, `--m3e-ref-typeface-plain` (both Google Sans Flex, fallback `system-ui, sans-serif`), `--m3e-sys-typescale-<role>-{font|weight|size|line-height|tracking|variation}`.
-- Fallback: when the font fails to load, metrics-compatible fallbacks via `size-adjust` are generated so layout does not shift (`TODO(verify)` metrics once the font is pinned).
+- Verified (google/fonts@bd8f81dd `ofl/googlesansflex`, v5.000): SIL OFL 1.1, no Reserved Font Names. Axes: ROND 0–100, opsz 1–144 (registry default 18), slnt −10–0, wdth 25–151, wght 1–1000. **There is no GRAD axis.** `"Google Sans Flex"` is a Google trademark: use it only to name the font, never to imply affiliation.
+- Packaging: per-script woff2 chunks with Google Fonts' own `unicode-range` splits. `@kyralabs/m3e-tokens/fonts.css` (default) keeps wght + opsz and instances wdth/ROND/slnt at their defaults (latin ≈ 139 KB); `fonts-full.css` keeps every axis (latin ≈ 1 MB).
+- Typescale → axis mapping: `font-weight` for weight; `opsz` left to `font-optical-sizing: auto`; `wdth` 100 by default. Emphasized styles set `font-weight` only: GSF has no GRAD axis, and no source at the pin uses ROND/wdth for emphasized type, so no `-variation` token is emitted.
+- Tokens: `--m3e-ref-typeface-brand`, `--m3e-ref-typeface-plain` (both `"Google Sans Flex", "Google Sans Flex Fallback", system-ui, sans-serif`), `--m3e-sys-typescale-<role>-{font|weight|size|line-height|tracking}`.
+- Fallback: `"Google Sans Flex Fallback"` = `local("Arial")` with `size-adjust` and ascent/descent/line-gap overrides computed from the pinned TTF against Arial 7.07 (codegen; values in `fonts/manifest.json`), so the swap does not shift layout.
 - **Icons:** Material Symbols variable font bundled (D5), axes FILL 0–1, wght 100–700, GRAD −25–200, opsz 20–48 (`TODO(verify)` ranges against the google/fonts METADATA.pb for Material Symbols). Default `opsz` 24, `wght` 400, `GRAD` 0, `FILL` 0; selected states set `FILL` 1.
 
 ## 3. Shape

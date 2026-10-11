@@ -5,8 +5,8 @@
  */
 @layer m3e.tokens {
   :root {
-    --m3e-ref-typeface-brand: "Google Sans Flex", system-ui, sans-serif;
-    --m3e-ref-typeface-plain: "Google Sans Flex", system-ui, sans-serif;
+    --m3e-ref-typeface-brand: "Google Sans Flex", "Google Sans Flex Fallback", system-ui, sans-serif;
+    --m3e-ref-typeface-plain: "Google Sans Flex", "Google Sans Flex Fallback", system-ui, sans-serif;
     --m3e-ref-typeface-weight-bold: 700;
     --m3e-ref-typeface-weight-medium: 500;
     --m3e-ref-typeface-weight-regular: 400;

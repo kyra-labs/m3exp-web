@@ -1,8 +1,12 @@
 // m3e-codegen fetch             download the pinned androidx token files into vendor/
 // m3e-codegen generate          regenerate packages/m3e-tokens/src/generated from vendor/
 // m3e-codegen generate --check  fail if the generated files are out of date (CI)
+// m3e-codegen fonts:fetch [--measure-fallback <arial.ttf>]
+//                               pin bumps only: vendor Google Sans Flex sources (SOURCE_PIN)
+// m3e-codegen fonts [--check]   rebuild packages/m3e-tokens/fonts from the pinned TTF
 import { mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
 import { dirname, join, relative } from 'node:path';
+import { buildFonts, fetchFontSources, measureFallback, type FontSourceManifest } from './fonts.js';
 import { generate } from './generate.js';
 import { findRepoRoot, readPin, requirePin } from './pin.js';
 import {
@@ -17,6 +21,46 @@ const root = findRepoRoot(process.cwd());
 const vendorDir = join(root, 'packages/m3e-codegen/vendor/androidx-material3-tokens');
 const sourcesDir = join(root, 'packages/m3e-codegen/vendor/androidx-material3-sources');
 const outDir = join(root, 'packages/m3e-tokens/src/generated');
+const fontVendorDir = join(root, 'packages/m3e-codegen/vendor/google-fonts-googlesansflex');
+const fontOutDir = join(root, 'packages/m3e-tokens/fonts');
+const cacheDir = join(root, 'node_modules/.cache/m3e-codegen');
+
+/** Writes `output` into `dir`, or with `check` reports stale/unexpected files instead. */
+function syncDir(
+  dir: string,
+  output: ReadonlyMap<string, string | Uint8Array>,
+  check: boolean,
+): number {
+  const same = (path: string, data: string | Uint8Array) => {
+    try {
+      const disk = readFileSync(join(dir, path));
+      return typeof data === 'string'
+        ? disk.toString('utf8').replace(/\r\n/g, '\n') === data
+        : Buffer.compare(disk, Buffer.from(data)) === 0;
+    } catch {
+      return false;
+    }
+  };
+  if (check) {
+    const stale = [...output].filter(([path, data]) => !same(path, data)).map(([p]) => p);
+    const extra = listFiles(dir).filter((p) => !output.has(p));
+    for (const path of stale) console.error(`stale: ${path}`);
+    for (const path of extra) console.error(`unexpected: ${path}`);
+    if (stale.length > 0 || extra.length > 0) {
+      console.error(`${relative(root, dir)} is out of date.`);
+      return 1;
+    }
+    console.log(`${relative(root, dir)} is up to date (${String(output.size)} files)`);
+    return 0;
+  }
+  rmSync(dir, { recursive: true, force: true });
+  for (const [path, data] of output) {
+    mkdirSync(dirname(join(dir, path)), { recursive: true });
+    writeFileSync(join(dir, path), data);
+  }
+  console.log(`wrote ${String(output.size)} files to ${relative(root, dir)}`);
+  return 0;
+}
 
 const listFiles = (dir: string): string[] => {
   try {
@@ -31,6 +75,30 @@ const listFiles = (dir: string): string[] => {
 
 async function main(command: string | undefined, flags: readonly string[]): Promise<number> {
   const pin = readPin(root);
+  if (command === 'fonts:fetch') {
+    const at = flags.indexOf('--measure-fallback');
+    const arialPath = at === -1 ? undefined : flags[at + 1];
+    let fallback: FontSourceManifest['fallback'];
+    if (arialPath) fallback = measureFallback(arialPath, 'Arial', ['Arial', 'ArialMT']);
+    else {
+      const previous = JSON.parse(
+        readFileSync(join(fontVendorDir, 'manifest.json'), 'utf8'),
+      ) as FontSourceManifest;
+      fallback = previous.fallback;
+    }
+    const manifest = await fetchFontSources(
+      requirePin(pin, 'google_fonts_commit'),
+      fontVendorDir,
+      cacheDir,
+      fallback,
+    );
+    console.log(`fetched Google Sans Flex ${manifest.version} @ google/fonts ${manifest.commit}`);
+    return 0;
+  }
+  if (command === 'fonts') {
+    const { files } = await buildFonts(fontVendorDir, cacheDir);
+    return syncDir(fontOutDir, files, flags.includes('--check'));
+  }
   const commit = requirePin(pin, 'androidx_commit');
   if (command === 'fetch') {
     const repo = requirePin(pin, 'androidx_repo');
@@ -42,7 +110,9 @@ async function main(command: string | undefined, flags: readonly string[]): Prom
     return 0;
   }
   if (command !== 'generate') {
-    console.error('usage: m3e-codegen <fetch | generate [--check]>');
+    console.error(
+      'usage: m3e-codegen <fetch | generate [--check] | fonts:fetch | fonts [--check]>',
+    );
     return 2;
   }
   const { manifest, files } = readVendor(vendorDir);

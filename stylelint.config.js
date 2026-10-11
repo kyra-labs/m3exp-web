@@ -36,6 +36,8 @@ export default {
     '**/dist/**',
     '**/.astro/**',
     'packages/m3e-tokens/src/generated/**',
+    'packages/m3e-tokens/fonts/**',
+    'packages/m3e-codegen/vendor/**',
     'apps/visual/playwright-report/**',
   ],
   rules: {

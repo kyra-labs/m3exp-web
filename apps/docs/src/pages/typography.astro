@@ -1,0 +1,41 @@
+---
+import { typescale } from '@kyralabs/m3exp-web/tokens';
+import Base from '../layouts/Base.astro';
+
+const kebab = (s: string) => s.replace(/[A-Z]/g, (c) => `-${c.toLowerCase()}`);
+const roles = Object.entries(typescale).map(([name, style]) => ({ name, css: kebab(name), style }));
+const v = (role: string, field: string) => `var(--m3e-sys-typescale-${role}-${field})`;
+---
+
+<Base title="Typography">
+  <h1>Typography</h1>
+  <p>
+    The 30 type styles from <code>TypeScaleTokens</code> (Compose Material3 1.5.0-beta01) set in
+    Google Sans Flex (D1), self-hosted from <code>@kyralabs/m3e-tokens/fonts.css</code>. Compare
+    with the m3.material.io type scale.
+  </p>
+  <ul class="docs-specimen">
+    {
+      roles.map(({ name, css, style }) => (
+        <li>
+          <p
+            class="docs-specimen__sample"
+            style={{
+              fontFamily: v(css, 'font'),
+              fontWeight: v(css, 'weight'),
+              fontSize: v(css, 'size'),
+              lineHeight: v(css, 'line-height'),
+              letterSpacing: v(css, 'tracking'),
+            }}
+          >
+            {name}
+          </p>
+          <code>
+            {String(style.size)}/{String(style.lineHeight)} sp · weight {String(style.weight)} ·
+            tracking {String(style.tracking)} sp · {String(style.font)}
+          </code>
+        </li>
+      ))
+    }
+  </ul>
+</Base>

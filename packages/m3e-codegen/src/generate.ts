@@ -67,8 +67,8 @@ const SYS_OBJECTS = new Set([
   'ExpressiveMotionTokens',
 ]);
 
-/** D1: Google Sans Flex replaces Compose's platform default (FontFamily.SansSerif). */
-const TYPEFACE_STACK = '"Google Sans Flex", system-ui, sans-serif';
+/** D1: Google Sans Flex (+ its metric-matched fallback face, fonts.css) replaces FontFamily.SansSerif. */
+const TYPEFACE_STACK = '"Google Sans Flex", "Google Sans Flex Fallback", system-ui, sans-serif';
 
 /** Compose FontWeight constants (compose/ui/ui-text/.../font/FontWeight.kt L60–L66 at the pin). */
 const FONT_WEIGHTS: Readonly<Record<string, number>> = { Normal: 400, Medium: 500, Bold: 700 };
