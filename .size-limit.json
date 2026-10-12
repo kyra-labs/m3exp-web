@@ -50,6 +50,17 @@
     "limit": "1 KB"
   },
   {
+    "name": "m3e-css: top app bar",
+    "path": "packages/m3e-css/dist/top-app-bar.css",
+    "rolldown": false,
+    "limit": "2 KB"
+  },
+  {
+    "name": "m3e-elements: top app bar scroll (attachTopAppBarScroll)",
+    "path": "packages/m3e-elements/dist/top-app-bar/index.js",
+    "limit": "3 KB"
+  },
+  {
     "name": "m3e-elements (all)",
     "path": "packages/m3e-elements/dist/index.js",
     "limit": "30 KB"
