@@ -147,6 +147,12 @@ export const assistChipTokens = {
   iconColorPressed: "var(--m3e-sys-color-primary)"
 } as const;
 
+/** AssistChipDefaults */
+export const assistChipDefaults = {
+  assistChipContentPaddingHorizontal: 8,
+  assistChipHorizontalSpacing: 8
+} as const;
+
 /** BadgeTokens */
 export const badgeTokens = {
   color: "var(--m3e-sys-color-error)",

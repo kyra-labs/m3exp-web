@@ -71,7 +71,7 @@
 32. WideNavigationRail tokens.
 33. Navigation drawer tokens.
 34. Tabs tokens.
-35. Chip tokens and expressive morph properties.
+35. Chip tokens and expressive morph properties — partly resolved: assist chip from `AssistChipTokens.kt@19991f2c` (generated) and the `AssistChipDefaults` literals Compose renders (`Chip.kt` L1962, L2918 via `DefaultHorizontalArrangement` L4306; generated into `components/assist-chip-defaults.css`). Still open: filter/input/suggestion chip tokens and the selection morph (`ChipsTokens` shapes through `shapeByInteraction`, `Chip.kt` L3288–3346), to be verified when those chips land.
 36. ~~Card tokens~~ — resolved: `{Filled,Elevated,Outlined}CardTokens.kt@19991f2c` (generated) as read by `CardDefaults` (`Card.kt`): content = contentColorFor(container) = onSurface (`ColorScheme.kt` L1108–1116); outlined cards keep their default elevation on press/focus/hover (`outlinedCardElevation`); disabled colors composited per `CardDefaults` with `DisabledAlpha` 0.38 (`ColorScheme.kt` L1544). Elevation changes use the `ElevationDefaults` tweens (`internal/Elevation.kt` L107–113; FastOutSlowInEasing from animation-core `Easing.kt` L50), now also used by buttons.
 37. List/segmented list tokens.
 38. Menu tokens.
