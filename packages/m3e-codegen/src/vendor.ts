@@ -10,16 +10,19 @@ export const MATERIAL3_PATH =
   'compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3';
 export const TOKENS_PATH = `${MATERIAL3_PATH}/tokens`;
 
-/**
- * Non-token Material3 sources the generator reads (expressiveLightColorScheme overrides,
- * ButtonDefaults, ElevationDefaults, LoadingIndicator choreography literals).
- */
+/** Non-token Material3 sources the generator reads (expressiveLightColorScheme overrides, *Defaults). */
 export const MATERIAL3_SOURCES = [
   'ColorScheme.kt',
   'Button.kt',
+  'Chip.kt',
   'ToggleButton.kt',
   'InteractiveComponentSize.kt',
   'internal/Elevation.kt',
+  'NavigationBar.kt',
+  'NavigationRail.kt',
+  'ShortNavigationBar.kt',
+  'WideNavigationRail.kt',
+  'AppBar.kt',
   'LoadingIndicator.kt',
 ] as const;
 

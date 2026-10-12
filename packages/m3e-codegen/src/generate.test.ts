@@ -332,6 +332,31 @@ describe('ButtonDefaults tokens (M4 Button)', () => {
   });
 });
 
+describe('AssistChipDefaults tokens (M4 assist chip)', () => {
+  const decl = declarations(output.get('components/assist-chip-defaults.css')!);
+  const chip = inputs.material3Sources['Chip.kt']!.replace(/\r\n/g, '\n');
+  const member = (object: string, pattern: RegExp) =>
+    pattern.exec(chip.slice(chip.indexOf(`public object ${object} {`)))?.[1];
+
+  it('content padding comes from AssistChipDefaults.ContentPadding', () => {
+    const value = member(
+      'AssistChipDefaults',
+      /ContentPadding: PaddingValues = PaddingValues\(horizontal = (\d+)\.dp\)/,
+    );
+    expect(value).toBeDefined();
+    expect(decl.get('--m3e-comp-assist-chip-content-padding-horizontal')).toBe(`${value!}px`);
+  });
+
+  it('spacing follows the arrangement AssistChip actually uses', () => {
+    expect(chip).toContain(
+      'private val DefaultHorizontalArrangement = ChipArrangement(SuggestionChipDefaults.HorizontalSpacing)',
+    );
+    const value = member('SuggestionChipDefaults', /HorizontalSpacing: Dp = (\d+)\.dp/);
+    expect(value).toBeDefined();
+    expect(decl.get('--m3e-comp-assist-chip-horizontal-spacing')).toBe(`${value!}px`);
+  });
+});
+
 describe('elevation interaction tweens (M4 card)', () => {
   it('match internal/Elevation.kt and animation-core Easing.kt', () => {
     const decl = declarations(output.get('components/elevation-motion.css')!);
@@ -375,5 +400,89 @@ describe('loading indicator choreography (M4 loading indicator)', () => {
     expect(decl.get('--m3e-comp-loading-indicator-morph-spring-damping-ratio')).toBe('0.6');
     expect(decl.get('--m3e-comp-loading-indicator-morph-spring-stiffness')).toBe('200');
     expect(decl.get('--m3e-comp-loading-indicator-morph-spring-visibility-threshold')).toBe('0.1');
+  });
+});
+
+describe('navigation layout literals (M4 navigation bar + rail)', () => {
+  const decl = declarations(output.get('components/navigation-defaults.css')!);
+  const src = (file: string) => inputs.material3Sources[file]!.replace(/\r\n/g, '\n');
+  const getter = (file: string, member: string) =>
+    new RegExp(`val ${member}(?:: Dp)?\\n\\s*get\\(\\) = (\\d+)\\.dp`).exec(src(file))?.[1];
+
+  it.each([
+    [
+      '--m3e-comp-short-navigation-bar-item-indicator-to-label-padding',
+      'ShortNavigationBar.kt',
+      'TopIconIndicatorToLabelPadding',
+    ],
+    [
+      '--m3e-comp-wide-navigation-rail-item-horizontal-padding',
+      'WideNavigationRail.kt',
+      'WNRItemHorizontalPadding',
+    ],
+    [
+      '--m3e-comp-navigation-bar-item-horizontal-padding',
+      'NavigationBar.kt',
+      'NavigationBarItemHorizontalPadding',
+    ],
+    [
+      '--m3e-comp-navigation-bar-indicator-to-label-padding',
+      'NavigationBar.kt',
+      'NavigationBarIndicatorToLabelPadding',
+    ],
+    [
+      '--m3e-comp-navigation-rail-vertical-padding',
+      'NavigationRail.kt',
+      'NavigationRailVerticalPadding',
+    ],
+    [
+      '--m3e-comp-navigation-rail-header-padding',
+      'NavigationRail.kt',
+      'NavigationRailHeaderPadding',
+    ],
+    [
+      '--m3e-comp-navigation-rail-item-vertical-padding',
+      'NavigationRail.kt',
+      'NavigationRailItemVerticalPadding',
+    ],
+  ] as const)('%s', (name, file, member) => {
+    const value = getter(file, member);
+    expect(value).toBeDefined();
+    expect(decl.get(name)).toBe(`${value!}px`);
+  });
+
+  it('evaluates the Centered arrangement padding for 1..6 items', () => {
+    const kt = src('ShortNavigationBar.kt');
+    expect(kt).toContain('if (itemsCount > 6) return 0');
+    expect(kt).toContain('val paddingPercentage = ((100 - 10 * (itemsCount + 3)) / 2f) / 100');
+    expect(kt).toContain('val itemMinWidth = (width - (barHorizontalPadding * 2)) / itemsCount');
+    const pct = (v: number) => `${String(Math.round(v * 1e4) / 1e4)}%`;
+    for (let n = 1; n <= 6; n++) {
+      const padding = (100 - 10 * (n + 3)) / 2;
+      expect(decl.get(`--m3e-comp-short-navigation-bar-centered-padding-${String(n)}`)).toBe(
+        pct(padding),
+      );
+      expect(decl.get(`--m3e-comp-short-navigation-bar-centered-item-min-width-${String(n)}`)).toBe(
+        pct((100 - 2 * padding) / n),
+      );
+      expect(decl.get(`--m3e-comp-short-navigation-bar-centered-item-max-width-${String(n)}`)).toBe(
+        pct(100 / n),
+      );
+    }
+    expect(decl.has('--m3e-comp-short-navigation-bar-centered-padding-7')).toBe(false);
+  });
+});
+
+describe('TopAppBar layout literals (M4 Top app bar)', () => {
+  const decl = declarations(output.get('components/top-app-bar-defaults.css')!);
+  const appBar = inputs.material3Sources['AppBar.kt']!.replace(/\r\n/g, '\n');
+
+  it('horizontal padding and title inset come from AppBar.kt', () => {
+    const padding = /private val TopAppBarHorizontalPadding\n\s*get\(\) = (\d+)\.dp/.exec(appBar);
+    const inset = /TopAppBarTitleInset = (\d+)\.dp - TopAppBarHorizontalPadding/.exec(appBar);
+    expect(decl.get('--m3e-comp-top-app-bar-horizontal-padding')).toBe(`${padding![1]!}px`);
+    expect(decl.get('--m3e-comp-top-app-bar-title-inset')).toBe(
+      `${String(Number(inset![1]) - Number(padding![1]))}px`,
+    );
   });
 });

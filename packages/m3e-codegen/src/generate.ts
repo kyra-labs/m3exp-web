@@ -12,8 +12,11 @@
 import { springToLinear } from '@kyralabs/m3e-motion';
 import { themeCss } from '@kyralabs/m3e-tokens/theme-css';
 import { type BaselineColor, baselineColors } from './color.js';
+import { extractAppBarDefaults } from './app-bar-defaults.js';
 import { extractButtonDefaults } from './button-defaults.js';
+import { extractChipDefaults } from './chip-defaults.js';
 import { extractElevationMotion } from './elevation-motion.js';
+import { extractCenteredPadding, extractNavigationDefaults } from './navigation-defaults.js';
 import { extractLoadingIndicatorMotion } from './loading-indicator-motion.js';
 import {
   ANIMATION_CORE_PATH as ANIMATION_CORE_DIR,
@@ -711,6 +714,50 @@ export function generate({
     ),
   });
 
+  // Single-row TopAppBar layout literals (AppBar.kt; see app-bar-defaults.ts).
+  const appBarDefaults = extractAppBarDefaults(material3Sources);
+  components.set('top-app-bar-defaults', {
+    object: 'AppBar.kt',
+    tokens: appBarDefaults.map((d) => {
+      const e: Emitted = {
+        name: d.name,
+        value: px(d.dp),
+        object: d.owner,
+        member: d.member,
+        raw: d.note ?? `${num(d.dp)}.dp`,
+        line: d.line,
+        cite: `${MATERIAL3_DIR}/${d.file}@${commit} L${String(d.line)}`,
+      };
+      if (d.note !== undefined) e.note = d.note;
+      return e;
+    }),
+    js: Object.fromEntries(
+      appBarDefaults.map((d) => [camel(d.name.replace(/^--m3e-comp-/, '').split('-')), d.dp]),
+    ),
+  });
+
+  // AssistChipDefaults literals Compose renders (see chip-defaults.ts).
+  const chipDefaults = extractChipDefaults(material3Sources);
+  components.set('assist-chip-defaults', {
+    object: 'AssistChipDefaults',
+    tokens: chipDefaults.map((d) => {
+      const e: Emitted = {
+        name: d.name,
+        value: px(d.dp),
+        object: d.owner,
+        member: d.member,
+        raw: `${num(d.dp)}.dp`,
+        line: d.line,
+        cite: `${MATERIAL3_DIR}/${d.file}@${commit} L${String(d.line)}`,
+      };
+      if (d.note !== undefined) e.note = d.note;
+      return e;
+    }),
+    js: Object.fromEntries(
+      chipDefaults.map((d) => [camel(d.name.replace(/^--m3e-comp-/, '').split('-')), d.dp]),
+    ),
+  });
+
   // Elevation interaction tweens (material3 internal/Elevation.kt; see elevation-motion.ts).
   const elevationMotion = extractElevationMotion(material3Sources['Elevation.kt'] ?? '', easingKt);
   components.set('elevation-motion', {
@@ -752,6 +799,48 @@ export function generate({
     ),
   });
 
+  // Navigation bar / rail layout literals and the Centered arrangement (see navigation-defaults.ts).
+  const navigationDefaults = extractNavigationDefaults(material3Sources);
+  const centeredPadding = extractCenteredPadding(material3Sources);
+  components.set('navigation-defaults', {
+    object: 'NavigationDefaults',
+    tokens: [
+      ...navigationDefaults.map((d) => {
+        const e: Emitted = {
+          name: d.name,
+          value: px(d.dp),
+          object: d.owner,
+          member: d.member,
+          raw: `${num(d.dp)}.dp`,
+          line: d.line,
+          cite: `${MATERIAL3_DIR}/${d.file}@${commit} L${String(d.line)}`,
+        };
+        if (d.note !== undefined) e.note = d.note;
+        return e;
+      }),
+      ...centeredPadding.map((p) => ({
+        name: p.name,
+        value: `${num(p.percent)}%`,
+        object: p.file,
+        member: p.member,
+        raw: p.raw,
+        line: p.line,
+        cite: `${MATERIAL3_DIR}/${p.file}@${commit} L${String(p.line)}`,
+        note: 'of the bar width (Centered arrangement); EqualWeight above the largest item count',
+      })),
+    ],
+    js: Object.fromEntries([
+      ...navigationDefaults.map((d): [string, number | string] => [
+        camel(d.name.replace(/^--m3e-comp-/, '').split('-')),
+        d.dp,
+      ]),
+      ...centeredPadding.map((p): [string, number | string] => [
+        camel(p.name.replace(/^--m3e-comp-/, '').split('-')),
+        `${num(p.percent)}%`,
+      ]),
+    ]),
+  });
+
   for (const [name, c] of [...components].sort(([a], [b]) => a.localeCompare(b))) {
     out.set(
       `components/${name}.css`,
@@ -769,14 +858,35 @@ export function generate({
               [],
               `${MATERIAL3_DIR}/LoadingIndicator.kt`,
             )
-          : name === 'button-defaults'
+          : name === 'top-app-bar-defaults'
             ? cssFile(
-                'Compose ButtonDefaults / ToggleButtonDefaults values that are not in Button*Tokens (lines: PARITY.md).',
+                'Compose single-row TopAppBar layout values that are not in AppBar*Tokens (lines: PARITY.md).',
                 c.tokens,
                 [],
-                `${MATERIAL3_DIR}/{Button,ToggleButton,InteractiveComponentSize}.kt`,
+                `${MATERIAL3_DIR}/AppBar.kt`,
               )
-            : cssFile(`Component tokens: ${c.object}.`, c.tokens),
+            : name === 'assist-chip-defaults'
+              ? cssFile(
+                  'Compose AssistChipDefaults values that are not in AssistChipTokens (lines: PARITY.md).',
+                  c.tokens,
+                  [],
+                  `${MATERIAL3_DIR}/Chip.kt`,
+                )
+              : name === 'button-defaults'
+                ? cssFile(
+                    'Compose ButtonDefaults / ToggleButtonDefaults values that are not in Button*Tokens (lines: PARITY.md).',
+                    c.tokens,
+                    [],
+                    `${MATERIAL3_DIR}/{Button,ToggleButton,InteractiveComponentSize}.kt`,
+                  )
+                : name === 'navigation-defaults'
+                  ? cssFile(
+                      'Compose navigation bar / rail layout values that are not in Navigation*Tokens (lines: PARITY.md).',
+                      c.tokens,
+                      [],
+                      `${MATERIAL3_DIR}/{NavigationBar,NavigationRail,ShortNavigationBar,WideNavigationRail}.kt`,
+                    )
+                  : cssFile(`Component tokens: ${c.object}.`, c.tokens),
     );
   }
 

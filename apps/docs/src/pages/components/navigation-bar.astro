@@ -1,0 +1,84 @@
+---
+import NavItems, { type Item } from '../../components/NavItems.astro';
+import NavigationPlayground from '../../islands/NavigationPlayground.tsx';
+import Base from '../../layouts/Base.astro';
+
+const items: Item[] = [
+  { icon: 'home', label: 'Home', selected: true },
+  { icon: 'search', label: 'Search' },
+  { icon: 'favorite', label: 'Favorites' },
+  { icon: 'settings', label: 'Settings' },
+];
+const withDisabled: Item[] = [
+  { icon: 'home', label: 'Home' },
+  { icon: 'search', label: 'Search', selected: true },
+  { icon: 'star', label: 'Starred', disabled: true },
+];
+const iconOnly: Item[] = items.map((item) => ({ ...item, iconOnly: true }));
+---
+
+<Base title="Navigation bar">
+  <link rel="stylesheet" href="/icons/docs-icons.css" slot="head" />
+  <h1>Navigation bar</h1>
+  <p>
+    The short navigation bar (COMPONENT_SPEC §13; Compose <code>ShortNavigationBar</code>). Plain
+    HTML with m3e-css classes: a <code>&lt;nav&gt;</code> of links, the current one marked{' '}
+    <code>aria-current="page"</code>. The indicator grows on the default spatial spring when the
+    selection moves.
+  </p>
+
+  <section aria-labelledby="vertical-heading">
+    <h2 id="vertical-heading">Vertical items</h2>
+    <div class="docs-nav-frame">
+      <nav class="m3e-short-navigation-bar" aria-label="Vertical example" data-testid="short-vertical">
+        <NavItems items={items} prefix="v" />
+      </nav>
+    </div>
+    <div class="docs-nav-frame">
+      <nav class="m3e-short-navigation-bar" aria-label="Disabled example" data-testid="short-disabled">
+        <NavItems items={withDisabled} prefix="d" />
+      </nav>
+    </div>
+    <div class="docs-nav-frame">
+      <nav class="m3e-short-navigation-bar" aria-label="Icon-only example" data-testid="short-icons">
+        <NavItems items={iconOnly} prefix="i" />
+      </nav>
+    </div>
+  </section>
+
+  <section aria-labelledby="horizontal-heading">
+    <h2 id="horizontal-heading">Horizontal items</h2>
+    <p>
+      <code>m3e-short-navigation-bar--horizontal</code>: icons before labels, items centered (the
+      medium-width configuration).
+    </p>
+    <div class="docs-nav-frame docs-nav-frame--wide">
+      <nav
+        class="m3e-short-navigation-bar m3e-short-navigation-bar--horizontal"
+        aria-label="Horizontal example"
+        data-testid="short-horizontal"
+      >
+        <NavItems items={items} prefix="h" />
+      </nav>
+    </div>
+  </section>
+
+  <section aria-labelledby="react-heading">
+    <h2 id="react-heading">React</h2>
+    <p><code>&lt;ShortNavigationBar&gt;</code> with buttons: press an item to move the indicator.</p>
+    <NavigationPlayground client:only="react" kind="bar" />
+  </section>
+
+  <section aria-labelledby="legacy-heading" data-deprecated>
+    <h2 id="legacy-heading">Navigation bar (deprecated)</h2>
+    <p class="docs-deprecated" role="note">
+      Deprecated (DECISIONS D4): the legacy <code>NavigationBar</code> ships until 2.0 for
+      migration and gets no new features. Use the short navigation bar.
+    </p>
+    <div class="docs-nav-frame">
+      <nav class="m3e-navigation-bar" aria-label="Legacy example" data-testid="legacy-bar">
+        <NavItems items={items} prefix="l" />
+      </nav>
+    </div>
+  </section>
+</Base>

@@ -4,7 +4,7 @@
 > Source: compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/tokens @ 19991f2c0858aadfcb442ce02b2c8e4743c96898  
 > Values: Copyright (C) The Android Open Source Project, Apache License 2.0 (see NOTICE).  
 
-Emitted: 371 system and 2587 component variables from 107 component token objects.
+Emitted: 371 system and 2616 component variables from 110 component token objects.
 
 ## Not emitted here
 
@@ -638,6 +638,13 @@ Emitted: 371 system and 2587 component variables from 107 component token object
 | `AssistChipTokens.IconColor` | `ColorSchemeKeyTokens.Primary` | AssistChipTokens.kt:109 | `--m3e-comp-assist-chip-icon-color` | `var(--m3e-sys-color-primary)` |  |
 | `AssistChipTokens.IconSize` | `18.0.dp` | AssistChipTokens.kt:112 | `--m3e-comp-assist-chip-icon-size` | `18px` |  |
 | `AssistChipTokens.PressedIconColor` | `ColorSchemeKeyTokens.Primary` | AssistChipTokens.kt:115 | `--m3e-comp-assist-chip-icon-color-pressed` | `var(--m3e-sys-color-primary)` |  |
+
+## assist-chip-defaults
+
+| Source token | Source value | Line | CSS variable | Emitted | Note |
+|---|---|---|---|---|---|
+| `AssistChipDefaults.ContentPadding (horizontal)` | `8.dp` | compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/Chip.kt@19991f2c0858aadfcb442ce02b2c8e4743c96898 L1962 | `--m3e-comp-assist-chip-content-padding-horizontal` | `8px` |  |
+| `SuggestionChipDefaults.HorizontalSpacing` | `8.dp` | compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/Chip.kt@19991f2c0858aadfcb442ce02b2c8e4743c96898 L2918 | `--m3e-comp-assist-chip-horizontal-spacing` | `8px` | AssistChipDefaults.horizontalArrangement() = ChipArrangement(SuggestionChipDefaults.HorizontalSpacing) |
 
 ## badge
 
@@ -2160,6 +2167,36 @@ Emitted: 371 system and 2587 component variables from 107 component token object
 | `NavigationBarVerticalItemTokens.ContainerBetweenSpace` | `6.0.dp` | NavigationBarVerticalItemTokens.kt:30 | `--m3e-comp-navigation-bar-vertical-item-container-between-space` | `6px` |  |
 | `NavigationBarVerticalItemTokens.IconSize` | `24.0.dp` | NavigationBarVerticalItemTokens.kt:33 | `--m3e-comp-navigation-bar-vertical-item-icon-size` | `24px` |  |
 
+## navigation-defaults
+
+| Source token | Source value | Line | CSS variable | Emitted | Note |
+|---|---|---|---|---|---|
+| `ShortNavigationBar.kt.TopIconIndicatorToLabelPadding` | `4.dp` | compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/ShortNavigationBar.kt@19991f2c0858aadfcb442ce02b2c8e4743c96898 L633 | `--m3e-comp-short-navigation-bar-item-indicator-to-label-padding` | `4px` |  |
+| `WideNavigationRail.kt.WNRItemHorizontalPadding` | `20.dp` | compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/WideNavigationRail.kt@19991f2c0858aadfcb442ce02b2c8e4743c96898 L1678 | `--m3e-comp-wide-navigation-rail-item-horizontal-padding` | `20px` |  |
+| `NavigationBar.kt.NavigationBarItemHorizontalPadding` | `8.dp` | compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/NavigationBar.kt@19991f2c0858aadfcb442ce02b2c8e4743c96898 L735 | `--m3e-comp-navigation-bar-item-horizontal-padding` | `8px` | legacy NavigationBar (D4) |
+| `NavigationBar.kt.NavigationBarIndicatorToLabelPadding` | `4.dp` | compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/NavigationBar.kt@19991f2c0858aadfcb442ce02b2c8e4743c96898 L739 | `--m3e-comp-navigation-bar-indicator-to-label-padding` | `4px` | legacy NavigationBar (D4) |
+| `NavigationRail.kt.NavigationRailVerticalPadding` | `4.dp` | compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/NavigationRail.kt@19991f2c0858aadfcb442ce02b2c8e4743c96898 L748 | `--m3e-comp-navigation-rail-vertical-padding` | `4px` | legacy NavigationRail (D4) |
+| `NavigationRail.kt.NavigationRailHeaderPadding` | `8.dp` | compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/NavigationRail.kt@19991f2c0858aadfcb442ce02b2c8e4743c96898 L755 | `--m3e-comp-navigation-rail-header-padding` | `8px` | legacy NavigationRail (D4) |
+| `NavigationRail.kt.NavigationRailItemVerticalPadding` | `4.dp` | compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/NavigationRail.kt@19991f2c0858aadfcb442ce02b2c8e4743c96898 L770 | `--m3e-comp-navigation-rail-item-vertical-padding` | `4px` | legacy NavigationRail (D4) |
+| `ShortNavigationBar.kt.calculateCenteredContentHorizontalPadding(1)` | `((100 - 10 * (1 + 3)) / 2f) / 100` | compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/ShortNavigationBar.kt@19991f2c0858aadfcb442ce02b2c8e4743c96898 L610 | `--m3e-comp-short-navigation-bar-centered-padding-1` | `30%` | of the bar width (Centered arrangement); EqualWeight above the largest item count |
+| `ShortNavigationBar.kt.CenteredContentMeasurePolicy itemMinWidth (1)` | `(width - (barHorizontalPadding * 2)) / 1` | compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/ShortNavigationBar.kt@19991f2c0858aadfcb442ce02b2c8e4743c96898 L557 | `--m3e-comp-short-navigation-bar-centered-item-min-width-1` | `40%` | of the bar width (Centered arrangement); EqualWeight above the largest item count |
+| `ShortNavigationBar.kt.CenteredContentMeasurePolicy itemMaxWidth (1)` | `width / 1` | compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/ShortNavigationBar.kt@19991f2c0858aadfcb442ce02b2c8e4743c96898 L557 | `--m3e-comp-short-navigation-bar-centered-item-max-width-1` | `100%` | of the bar width (Centered arrangement); EqualWeight above the largest item count |
+| `ShortNavigationBar.kt.calculateCenteredContentHorizontalPadding(2)` | `((100 - 10 * (2 + 3)) / 2f) / 100` | compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/ShortNavigationBar.kt@19991f2c0858aadfcb442ce02b2c8e4743c96898 L610 | `--m3e-comp-short-navigation-bar-centered-padding-2` | `25%` | of the bar width (Centered arrangement); EqualWeight above the largest item count |
+| `ShortNavigationBar.kt.CenteredContentMeasurePolicy itemMinWidth (2)` | `(width - (barHorizontalPadding * 2)) / 2` | compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/ShortNavigationBar.kt@19991f2c0858aadfcb442ce02b2c8e4743c96898 L557 | `--m3e-comp-short-navigation-bar-centered-item-min-width-2` | `25%` | of the bar width (Centered arrangement); EqualWeight above the largest item count |
+| `ShortNavigationBar.kt.CenteredContentMeasurePolicy itemMaxWidth (2)` | `width / 2` | compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/ShortNavigationBar.kt@19991f2c0858aadfcb442ce02b2c8e4743c96898 L557 | `--m3e-comp-short-navigation-bar-centered-item-max-width-2` | `50%` | of the bar width (Centered arrangement); EqualWeight above the largest item count |
+| `ShortNavigationBar.kt.calculateCenteredContentHorizontalPadding(3)` | `((100 - 10 * (3 + 3)) / 2f) / 100` | compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/ShortNavigationBar.kt@19991f2c0858aadfcb442ce02b2c8e4743c96898 L610 | `--m3e-comp-short-navigation-bar-centered-padding-3` | `20%` | of the bar width (Centered arrangement); EqualWeight above the largest item count |
+| `ShortNavigationBar.kt.CenteredContentMeasurePolicy itemMinWidth (3)` | `(width - (barHorizontalPadding * 2)) / 3` | compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/ShortNavigationBar.kt@19991f2c0858aadfcb442ce02b2c8e4743c96898 L557 | `--m3e-comp-short-navigation-bar-centered-item-min-width-3` | `20%` | of the bar width (Centered arrangement); EqualWeight above the largest item count |
+| `ShortNavigationBar.kt.CenteredContentMeasurePolicy itemMaxWidth (3)` | `width / 3` | compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/ShortNavigationBar.kt@19991f2c0858aadfcb442ce02b2c8e4743c96898 L557 | `--m3e-comp-short-navigation-bar-centered-item-max-width-3` | `33.3333%` | of the bar width (Centered arrangement); EqualWeight above the largest item count |
+| `ShortNavigationBar.kt.calculateCenteredContentHorizontalPadding(4)` | `((100 - 10 * (4 + 3)) / 2f) / 100` | compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/ShortNavigationBar.kt@19991f2c0858aadfcb442ce02b2c8e4743c96898 L610 | `--m3e-comp-short-navigation-bar-centered-padding-4` | `15%` | of the bar width (Centered arrangement); EqualWeight above the largest item count |
+| `ShortNavigationBar.kt.CenteredContentMeasurePolicy itemMinWidth (4)` | `(width - (barHorizontalPadding * 2)) / 4` | compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/ShortNavigationBar.kt@19991f2c0858aadfcb442ce02b2c8e4743c96898 L557 | `--m3e-comp-short-navigation-bar-centered-item-min-width-4` | `17.5%` | of the bar width (Centered arrangement); EqualWeight above the largest item count |
+| `ShortNavigationBar.kt.CenteredContentMeasurePolicy itemMaxWidth (4)` | `width / 4` | compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/ShortNavigationBar.kt@19991f2c0858aadfcb442ce02b2c8e4743c96898 L557 | `--m3e-comp-short-navigation-bar-centered-item-max-width-4` | `25%` | of the bar width (Centered arrangement); EqualWeight above the largest item count |
+| `ShortNavigationBar.kt.calculateCenteredContentHorizontalPadding(5)` | `((100 - 10 * (5 + 3)) / 2f) / 100` | compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/ShortNavigationBar.kt@19991f2c0858aadfcb442ce02b2c8e4743c96898 L610 | `--m3e-comp-short-navigation-bar-centered-padding-5` | `10%` | of the bar width (Centered arrangement); EqualWeight above the largest item count |
+| `ShortNavigationBar.kt.CenteredContentMeasurePolicy itemMinWidth (5)` | `(width - (barHorizontalPadding * 2)) / 5` | compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/ShortNavigationBar.kt@19991f2c0858aadfcb442ce02b2c8e4743c96898 L557 | `--m3e-comp-short-navigation-bar-centered-item-min-width-5` | `16%` | of the bar width (Centered arrangement); EqualWeight above the largest item count |
+| `ShortNavigationBar.kt.CenteredContentMeasurePolicy itemMaxWidth (5)` | `width / 5` | compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/ShortNavigationBar.kt@19991f2c0858aadfcb442ce02b2c8e4743c96898 L557 | `--m3e-comp-short-navigation-bar-centered-item-max-width-5` | `20%` | of the bar width (Centered arrangement); EqualWeight above the largest item count |
+| `ShortNavigationBar.kt.calculateCenteredContentHorizontalPadding(6)` | `((100 - 10 * (6 + 3)) / 2f) / 100` | compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/ShortNavigationBar.kt@19991f2c0858aadfcb442ce02b2c8e4743c96898 L610 | `--m3e-comp-short-navigation-bar-centered-padding-6` | `5%` | of the bar width (Centered arrangement); EqualWeight above the largest item count |
+| `ShortNavigationBar.kt.CenteredContentMeasurePolicy itemMinWidth (6)` | `(width - (barHorizontalPadding * 2)) / 6` | compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/ShortNavigationBar.kt@19991f2c0858aadfcb442ce02b2c8e4743c96898 L557 | `--m3e-comp-short-navigation-bar-centered-item-min-width-6` | `15%` | of the bar width (Centered arrangement); EqualWeight above the largest item count |
+| `ShortNavigationBar.kt.CenteredContentMeasurePolicy itemMaxWidth (6)` | `width / 6` | compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/ShortNavigationBar.kt@19991f2c0858aadfcb442ce02b2c8e4743c96898 L557 | `--m3e-comp-short-navigation-bar-centered-item-max-width-6` | `16.6667%` | of the bar width (Centered arrangement); EqualWeight above the largest item count |
+
 ## navigation-drawer
 
 | Source token | Source value | Line | CSS variable | Emitted | Note |
@@ -3522,6 +3559,13 @@ Emitted: 371 system and 2587 component variables from 107 component token object
 | `TonalButtonTokens.UnselectedLabelTextColor` | `ColorSchemeKeyTokens.OnSecondaryContainer` | TonalButtonTokens.kt:121 | `--m3e-comp-tonal-button-label-text-color-unselected` | `var(--m3e-sys-color-on-secondary-container)` |  |
 | `TonalButtonTokens.UnselectedPressedIconColor` | `ColorSchemeKeyTokens.OnSecondaryContainer` | TonalButtonTokens.kt:124 | `--m3e-comp-tonal-button-icon-color-unselected-pressed` | `var(--m3e-sys-color-on-secondary-container)` |  |
 | `TonalButtonTokens.UnselectedPressedLabelTextColor` | `ColorSchemeKeyTokens.OnSecondaryContainer` | TonalButtonTokens.kt:127 | `--m3e-comp-tonal-button-label-text-color-unselected-pressed` | `var(--m3e-sys-color-on-secondary-container)` |  |
+
+## top-app-bar-defaults
+
+| Source token | Source value | Line | CSS variable | Emitted | Note |
+|---|---|---|---|---|---|
+| `AppBar.kt.TopAppBarHorizontalPadding` | `4.dp` | compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/AppBar.kt@19991f2c0858aadfcb442ce02b2c8e4743c96898 L3610 | `--m3e-comp-top-app-bar-horizontal-padding` | `4px` |  |
+| `AppBar.kt.TopAppBarTitleInset` | `16.dp - TopAppBarHorizontalPadding` | compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/AppBar.kt@19991f2c0858aadfcb442ce02b2c8e4743c96898 L3615 | `--m3e-comp-top-app-bar-title-inset` | `12px` | 16.dp - TopAppBarHorizontalPadding |
 
 ## vibrant-menu
 

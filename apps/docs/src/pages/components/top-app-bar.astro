@@ -1,0 +1,137 @@
+---
+import TopAppBarPlayground from '../../islands/TopAppBarPlayground.tsx';
+import Base from '../../layouts/Base.astro';
+
+const items = Array.from({ length: 24 }, (_, i) => `Item ${String(i + 1)}`);
+---
+
+<Base title="Top app bar">
+  <link rel="stylesheet" href="/icons/docs-icons.css" slot="head" />
+  <h1>Top app bar</h1>
+  <p>
+    The small top app bar (COMPONENT_SPEC §11, Compose <code>TopAppBar</code>). Plain HTML with
+    m3e-css classes; the scroll behaviors come from <code>attachTopAppBarScroll</code> (m3e-elements)
+    or <code>&lt;TopAppBar scrollBehavior&gt;</code> (m3e-react). The page decides positioning,
+    such as <code>position: sticky</code>.
+  </p>
+
+  <section aria-labelledby="static-heading">
+    <h2 id="static-heading">Static</h2>
+    <div class="docs-app-bars" data-testid="static">
+      <header class="m3e-top-app-bar" data-testid="title-only">
+        <div class="m3e-top-app-bar__headline">
+          <p class="m3e-top-app-bar__title">Title only</p>
+        </div>
+      </header>
+
+      <header class="m3e-top-app-bar" data-testid="full">
+        <div class="m3e-top-app-bar__navigation">
+          <button type="button" class="m3e-icon-button m3e-icon-button--standard" aria-label="Menu">
+            <span class="m3e-icon" aria-hidden="true">menu</span>
+          </button>
+        </div>
+        <div class="m3e-top-app-bar__headline">
+          <p class="m3e-top-app-bar__title">Navigation and actions</p>
+        </div>
+        <div class="m3e-top-app-bar__actions">
+          <button type="button" class="m3e-icon-button m3e-icon-button--standard" aria-label="Search">
+            <span class="m3e-icon" aria-hidden="true">search</span>
+          </button>
+          <button
+            type="button"
+            class="m3e-icon-button m3e-icon-button--standard"
+            aria-label="Favorite"
+          >
+            <span class="m3e-icon" aria-hidden="true">favorite</span>
+          </button>
+        </div>
+      </header>
+
+      <header class="m3e-top-app-bar" data-testid="subtitle">
+        <div class="m3e-top-app-bar__navigation">
+          <button type="button" class="m3e-icon-button m3e-icon-button--standard" aria-label="Back">
+            <span class="m3e-icon" aria-hidden="true">arrow_back</span>
+          </button>
+        </div>
+        <div class="m3e-top-app-bar__headline">
+          <p class="m3e-top-app-bar__title">With subtitle</p>
+          <p class="m3e-top-app-bar__subtitle">Subtitle</p>
+        </div>
+        <div class="m3e-top-app-bar__actions">
+          <button
+            type="button"
+            class="m3e-icon-button m3e-icon-button--standard"
+            aria-label="Settings"
+          >
+            <span class="m3e-icon" aria-hidden="true">settings</span>
+          </button>
+        </div>
+      </header>
+
+      <header class="m3e-top-app-bar" data-scrolled data-testid="scrolled">
+        <div class="m3e-top-app-bar__headline">
+          <p class="m3e-top-app-bar__title">Scrolled (data-scrolled)</p>
+        </div>
+      </header>
+    </div>
+  </section>
+
+  <section aria-labelledby="scroll-heading">
+    <h2 id="scroll-heading">Scroll behaviors</h2>
+    <div class="docs-app-bar-demos">
+      {
+        (['pinned', 'enter-always'] as const).map((behavior) => (
+          <div
+            class="docs-scroll"
+            data-behavior={behavior}
+            data-testid={`scroll-${behavior}`}
+            tabindex="0"
+            role="region"
+            aria-label={`${behavior} demo`}
+          >
+            <header class="m3e-top-app-bar docs-sticky">
+              <div class="m3e-top-app-bar__navigation">
+                <button
+                  type="button"
+                  class="m3e-icon-button m3e-icon-button--standard"
+                  aria-label="Menu"
+                >
+                  <span class="m3e-icon" aria-hidden="true">
+                    menu
+                  </span>
+                </button>
+              </div>
+              <div class="m3e-top-app-bar__headline">
+                <p class="m3e-top-app-bar__title">{behavior}</p>
+              </div>
+            </header>
+            <ul class="docs-scroll-list">
+              {items.map((item) => (
+                <li>{item}</li>
+              ))}
+            </ul>
+          </div>
+        ))
+      }
+    </div>
+  </section>
+
+  <section aria-labelledby="react-heading">
+    <h2 id="react-heading">React</h2>
+    <p><code>&lt;TopAppBar scrollBehavior="enter-always" scrollTarget=&#123;ref&#125;&gt;</code></p>
+    <TopAppBarPlayground client:only="react" />
+  </section>
+</Base>
+
+<script>
+  import { attachTopAppBarScroll } from '@kyralabs/m3exp-web/elements';
+
+  for (const scroller of document.querySelectorAll<HTMLElement>('.docs-scroll[data-behavior]')) {
+    const bar = scroller.querySelector<HTMLElement>('.m3e-top-app-bar')!;
+    attachTopAppBarScroll(bar, {
+      behavior: scroller.dataset['behavior'] as 'pinned' | 'enter-always',
+      target: scroller,
+      signal: new AbortController().signal,
+    });
+  }
+</script>

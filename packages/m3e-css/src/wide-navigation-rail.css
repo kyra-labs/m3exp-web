@@ -1,0 +1,161 @@
+/*
+ * Wide navigation rail (COMPONENT_SPEC §14; Compose WideNavigationRail), collapsed and expanded.
+ * No JavaScript needed for the static rail (M4); the animated expand/collapse and the modal rail
+ * land in M7.
+ *
+ *   <nav class="m3e-wide-navigation-rail" aria-label="Main">
+ *     <div class="m3e-wide-navigation-rail__header">…menu button, FAB…</div>   (optional)
+ *     <a class="m3e-navigation-item" href="/" aria-current="page">…</a>       (navigation-item.css)
+ *     …
+ *   </nav>
+ *
+ * Collapsed (default): icons above labels. --expanded: icons before labels, the rail as wide as
+ * its widest item within the expanded min/max widths.
+ *
+ * Sources (compose/material3 @ 19991f2c):
+ * - WideNavigationRail.kt (WideNavigationRailLayout): collapsed width
+ *   NavigationRailCollapsedTokens.ContainerWidth; expanded width between
+ *   NavigationRailExpandedTokens.ContainerWidthMinimum and ContainerWidthMaximum, at least the widest
+ *   item + WNRItemHorizontalPadding; top padding NavigationRailCollapsedTokens.TopSpace
+ *   (WideNavigationRailDefaults.ContentPadding); header then HeaderSpaceMinimum before the items;
+ *   items spaced NavigationRailCollapsedTokens.ItemVerticalSpace when collapsed, 0 expanded; item
+ *   min height NavigationRailBaselineItemTokens.ContainerHeight collapsed, the minimum touch target
+ *   expanded. Container NavigationRailCollapsedTokens.ContainerColor and ContainerShape (both
+ *   states when not modal); window insets vertical + start (here the safe-area insets).
+ * - WideNavigationRailItem (AnimatedNavigationItem): collapsed pill
+ *   NavigationRailVerticalItemTokens.ActiveIndicatorWidth × ActiveIndicatorHeight, label
+ *   NavigationRailVerticalItemTokens.IconLabelSpace below, content at the top of the item;
+ *   expanded pill padded by IndicatorExpandedPadding (FullWidthLeadingSpace, (ActiveIndicatorHeight
+ *   − IconSize) / 2), icon → label NavigationRailHorizontalItemTokens.IconLabelSpace, the pill
+ *   starting WNRItemHorizontalPadding from the rail's start edge. No label: a circle
+ *   (WNRItemNoLabelIndicatorPadding on all sides).
+ * - Colors: WideNavigationRailItemDefaults (NavigationRailColorTokens; selected label
+ *   ItemActiveLabelText on top, ItemActiveIcon at the start). The label color animates on
+ *   DefaultEffects, the indicator on DefaultSpatial.
+ */
+@import '@kyralabs/m3e-tokens/components/navigation-rail-collapsed.css';
+@import '@kyralabs/m3e-tokens/components/navigation-rail-expanded.css';
+@import '@kyralabs/m3e-tokens/components/navigation-rail-color.css';
+@import '@kyralabs/m3e-tokens/components/navigation-rail-baseline-item.css';
+@import '@kyralabs/m3e-tokens/components/navigation-rail-vertical-item.css';
+@import '@kyralabs/m3e-tokens/components/navigation-rail-horizontal-item.css';
+@import '@kyralabs/m3e-tokens/components/navigation-defaults.css';
+@import '@kyralabs/m3e-tokens/components/button-defaults.css';
+@import '@kyralabs/m3e-tokens/components/divider.css';
+@import './navigation-item.css';
+
+@layer m3e.components {
+  .m3e-wide-navigation-rail {
+    --_m3e-wnr-item-space: var(--m3e-comp-navigation-rail-collapsed-item-vertical-space);
+    --_m3e-nav-pill-inline: var(--m3e-comp-navigation-rail-vertical-item-active-indicator-width);
+    --_m3e-nav-pill-block: var(--m3e-comp-navigation-rail-vertical-item-active-indicator-height);
+    --_m3e-nav-pill-block-icon-only: var(
+      --m3e-comp-navigation-rail-vertical-item-active-indicator-width
+    );
+    --_m3e-nav-label-gap: var(--m3e-comp-navigation-rail-vertical-item-icon-label-space);
+    --_m3e-nav-item-min-block: var(--m3e-comp-navigation-rail-baseline-item-container-height);
+    --_m3e-nav-item-justify: flex-start;
+    --_m3e-nav-start-padding-block: calc(
+      (
+          var(--m3e-comp-navigation-rail-horizontal-item-active-indicator-height) -
+            var(--m3e-comp-navigation-rail-baseline-item-icon-size)
+        ) /
+        2
+    );
+    --_m3e-nav-start-padding-inline: var(
+      --m3e-comp-navigation-rail-horizontal-item-full-width-leading-space
+    );
+    --_m3e-nav-icon-label-gap: var(--m3e-comp-navigation-rail-horizontal-item-icon-label-space);
+    --_m3e-nav-label-font: var(--m3e-comp-navigation-rail-vertical-item-label-text-font);
+    --_m3e-nav-label-size: var(--m3e-comp-navigation-rail-vertical-item-label-text-size);
+    --_m3e-nav-label-weight: var(--m3e-comp-navigation-rail-vertical-item-label-text-weight);
+    --_m3e-nav-label-line-height: var(
+      --m3e-comp-navigation-rail-vertical-item-label-text-line-height
+    );
+    --_m3e-nav-label-tracking: var(--m3e-comp-navigation-rail-vertical-item-label-text-tracking);
+    --_m3e-nav-icon-unselected: var(--m3e-comp-navigation-rail-color-item-inactive-icon);
+    --_m3e-nav-icon-selected: var(--m3e-comp-navigation-rail-color-item-active-icon);
+    --_m3e-nav-label-unselected: var(--m3e-comp-navigation-rail-color-item-inactive-label-text);
+    --_m3e-nav-label-selected: var(--m3e-comp-navigation-rail-color-item-active-label-text);
+    --_m3e-nav-label-selected-start: var(--m3e-comp-navigation-rail-color-item-active-icon);
+    --_m3e-nav-indicator: var(--m3e-comp-navigation-rail-color-item-active-indicator);
+    --_m3e-nav-width-duration: var(--m3e-sys-motion-spring-default-spatial-duration);
+    --_m3e-nav-width-easing: var(--m3e-sys-motion-spring-default-spatial-easing);
+    --_m3e-nav-alpha-duration: var(--m3e-sys-motion-spring-default-spatial-duration);
+    --_m3e-nav-alpha-easing: var(--m3e-sys-motion-spring-default-spatial-easing);
+    --m3e-comp-state-layer-color: var(--m3e-sys-color-on-surface);
+
+    display: flex;
+    flex-direction: column;
+    row-gap: var(--_m3e-wnr-item-space);
+    box-sizing: border-box;
+    inline-size: var(--m3e-comp-navigation-rail-collapsed-container-width);
+    max-inline-size: var(--m3e-comp-navigation-rail-expanded-container-width-maximum);
+    padding-block: calc(
+        var(--m3e-comp-navigation-rail-collapsed-top-space) + env(safe-area-inset-top)
+      )
+      env(safe-area-inset-bottom);
+    padding-inline-start: env(safe-area-inset-left);
+    border-radius: var(--m3e-comp-navigation-rail-collapsed-container-shape);
+    background-color: var(--m3e-comp-navigation-rail-collapsed-container-color);
+    color: var(--m3e-sys-color-on-surface);
+  }
+
+  .m3e-wide-navigation-rail__header {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin-block-end: calc(
+      var(--m3e-comp-navigation-rail-baseline-item-header-space-minimum) -
+        var(--_m3e-wnr-item-space)
+    );
+  }
+
+  .m3e-wide-navigation-rail > .m3e-navigation-item {
+    align-self: stretch;
+  }
+
+  /* --- Expanded --------------------------------------------------------------------------- */
+  .m3e-wide-navigation-rail--expanded {
+    --_m3e-wnr-item-space: var(--m3e-sys-space-0);
+    --_m3e-nav-item-min-block: var(--m3e-comp-minimum-interactive-component-size);
+    --_m3e-nav-item-justify: center;
+    --_m3e-nav-item-padding-inline-start: var(
+      --m3e-comp-wide-navigation-rail-item-horizontal-padding
+    );
+    --_m3e-nav-label-font: var(--m3e-comp-navigation-rail-horizontal-item-label-text-font);
+    --_m3e-nav-label-size: var(--m3e-comp-navigation-rail-horizontal-item-label-text-size);
+    --_m3e-nav-label-weight: var(--m3e-comp-navigation-rail-horizontal-item-label-text-weight);
+    --_m3e-nav-label-line-height: var(
+      --m3e-comp-navigation-rail-horizontal-item-label-text-line-height
+    );
+    --_m3e-nav-label-tracking: var(--m3e-comp-navigation-rail-horizontal-item-label-text-tracking);
+
+    inline-size: fit-content;
+    min-inline-size: var(--m3e-comp-navigation-rail-expanded-container-width-minimum);
+    padding-inline-end: var(--m3e-comp-wide-navigation-rail-item-horizontal-padding);
+    border-radius: var(--m3e-comp-navigation-rail-expanded-container-shape);
+  }
+
+  .m3e-wide-navigation-rail--expanded > .m3e-navigation-item {
+    align-self: flex-start;
+    align-items: flex-start;
+    max-inline-size: 100%;
+  }
+
+  .m3e-wide-navigation-rail--expanded > .m3e-wide-navigation-rail__header {
+    margin-block-end: var(--m3e-comp-navigation-rail-baseline-item-header-space-minimum);
+  }
+
+  /* The label color animates on DefaultEffects (StyledLabel animateColor). */
+  .m3e-wide-navigation-rail .m3e-navigation-item__label {
+    transition: color var(--m3e-sys-motion-spring-default-effects-duration)
+      var(--m3e-sys-motion-spring-default-effects-easing);
+  }
+
+  @media (forced-colors: active) {
+    .m3e-wide-navigation-rail {
+      border-inline-end: var(--m3e-comp-divider-thickness) solid CanvasText;
+    }
+  }
+}

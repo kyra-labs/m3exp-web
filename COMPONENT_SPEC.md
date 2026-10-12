@@ -211,11 +211,12 @@
 - **Sources:** AppBar.kt.
 
 ## 11. Top app bars (small, center-aligned, medium/large flexible, two-rows)
-- **Tokens:** `TODO(verify)` heights, padding, title type per variant. Container surface; scrolled surface-container.
-- **Motion:** collapse tied to scroll offset; snap settle on defaultSpatial.
+- **Tokens:** small (verified, generated): `AppBarSmallTokens.kt` / `AppBarTokens.kt@19991f2c` — height 64, title title-large on-surface, subtitle label-medium on-surface-variant, container surface → on-scroll surface-container, leading icon on-surface, trailing on-surface-variant; layout literals `TopAppBarHorizontalPadding` 4dp and `TopAppBarTitleInset` 16dp − 4dp from `AppBar.kt` (`components/top-app-bar-defaults.css`). Other variants: `TODO(verify)` heights, padding, title type.
+- **Motion:** collapse tied to scroll offset (`TopAppBarState`, ported in m3e-motion `app-bar-scroll.ts`); the scrolled container color animates on the default effects spring; a partly hidden bar snaps on `TopAppBarDefaults.snapAnimationSpec`, which is the **default effects** spring in Compose (`AppBar.kt` L1540), not defaultSpatial.
 - **ARIA:** `<header>`; heading level by consumer.
 - **Layers:** css + react/elements (scroll behaviors).
-- **API:** `<TopAppBar variant title subtitle navigationIcon actions scrollBehavior />`.
+- **API:** `<TopAppBar variant title subtitle navigationIcon actions scrollBehavior />` (+ `scrollTarget`, `headingLevel`). Scroll behaviors: `pinned`, `enter-always` (elements: `attachTopAppBarScroll(bar, { behavior, target, signal })`).
+- **Classes:** `.m3e-top-app-bar`, `__navigation`, `__headline`, `__title`, `__subtitle`, `__actions`; state `[data-scrolled]`.
 - **Acceptance:**
   - [ ] Collapsed and expanded heights match tokens.
   - [ ] Container color changes when scrolled.
@@ -233,21 +234,23 @@
 
 ## 13. Navigation bar (ShortNavigationBar; legacy NavigationBar @deprecated)
 - **Variants:** vertical items; horizontal items at medium widths.
-- **Tokens:** `TODO(verify)` ShortNavigationBar*Tokens.kt. Indicator secondary-container.
-- **Motion:** indicator width on fastSpatial; icon FILL 0→1.
+- **Tokens (verified, generated):** ShortNavigationBar reads `NavigationBarTokens`, `NavigationBarVerticalItemTokens` and `NavigationBarHorizontalItemTokens` (there is no ShortNavigationBar*Tokens.kt at `19991f2c`); layout literals (`TopIconIndicatorToLabelPadding`, the Centered arrangement padding) generated into `components/navigation-defaults.css` from `ShortNavigationBar.kt`. Container surface-container, 64dp; indicator secondary-container 56×32 (horizontal: 40dp tall, hugging icon + label).
+- **Motion:** indicator width and alpha on **defaultSpatial** (`NavigationItem.kt` animateIndicatorProgressAsState; androidx overrides the earlier fastSpatial note); icon FILL 0→1 on defaultEffects. Legacy NavigationBar: width fastSpatial, alpha + colors defaultEffects.
 - **ARIA:** `<nav aria-label>`; links with `aria-current="page"`.
-- **Layers:** css + react; element for indicator animation.
-- **API:** `<NavigationBar items=[{key,icon,label,href,badge}] selectedKey />`.
+- **Layers:** css + react. No element in M4: the indicator animation is CSS (registered custom properties + spring `linear()` easings), so any script that moves `aria-current` animates it.
+- **Classes:** `.m3e-short-navigation-bar` (`--horizontal`), legacy `.m3e-navigation-bar`; items `.m3e-navigation-item` with `__content`, `__indicator`, `__state` (state layer + focus ring on the pill), `__icon`, `__label`.
+- **API:** `<ShortNavigationBar items=[{key,icon,label,href,isDisabled,isLabelHidden}] selectedKey defaultSelectedKey onSelectionChange layout />`; legacy `<NavigationBar>` (same props, @deprecated). Badges wait for the Badge component (§34).
 - **Acceptance:**
   - [ ] Only one item has `aria-current`.
   - [ ] Indicator animates between items.
   - [ ] Plus CAC.
 
 ## 14. Navigation rail (WideNavigationRail, Modal; legacy NavigationRail @deprecated)
-- **Tokens:** `TODO(verify)` widths, item heights, header/FAB placement.
-- **Motion:** width on defaultSpatial; labels on fastEffects.
+- **Tokens (verified, generated):** `NavigationRail{Collapsed,Expanded,Color,BaselineItem,VerticalItem,HorizontalItem}Tokens.kt@19991f2c`: collapsed 96dp, expanded 220–360dp, top space 44dp, header → items 40dp, collapsed item min height 64dp spaced 4dp; pill 56×32 collapsed, 56dp tall expanded starting `WNRItemHorizontalPadding` (20dp, generated from `WideNavigationRail.kt`) from the start edge. Header/FAB placement: header slot at the top start (`WideNavigationRailLayout`). Legacy NavigationRail: 80dp, items 56dp, literals from `NavigationRail.kt` (generated).
+- **Motion:** width on defaultSpatial; label color on defaultEffects (`StyledLabel` animateColor), not fastEffects; indicator on defaultSpatial.
 - **ARIA:** `<nav>`; modal is `dialog` with focus trap.
-- **Layers:** css + elements + react.
+- **Layers:** css + elements + react. M4 ships the static rail (css + react, `isExpanded` re-lays out without animating); the animated expand/collapse, the modal rail and the element land in M7 (ROADMAP).
+- **Classes / API:** `.m3e-wide-navigation-rail` (`--expanded`, `__header`), legacy `.m3e-navigation-rail` (`__header`); `<WideNavigationRail items selectedKey isExpanded header />`, legacy `<NavigationRail header />` (@deprecated).
 - **Acceptance:**
   - [ ] Expanding animates width without reflow more than once per frame.
   - [ ] Modal traps focus; Esc closes.
@@ -279,8 +282,9 @@
   - [ ] Plus CAC.
 
 ## 18. Chips (assist, filter, input, suggestion)
-- **Tokens:** `TODO(verify)` *ChipTokens.
-- **Motion:** expressive selection morphs (`TODO(verify)` properties).
+- **Tokens:** assist chip verified (generated): `AssistChipTokens.kt@19991f2c` + `AssistChipDefaults` literals (`Chip.kt` L1962 content padding 8dp; spacing 8dp via `DefaultHorizontalArrangement` = `SuggestionChipDefaults.HorizontalSpacing`, L2918/L4306): height 32, shape small, label-large on-surface, icon 18dp primary; flat = transparent + 1dp outline-variant border, Level0 except dragged Level4; elevated = surface-container-low, Level1 (hover Level2), no border. Filter/input/suggestion: `TODO(verify)` *ChipTokens.
+- **Classes (assist):** `.m3e-assist-chip`, `--elevated`, `__label`; icons are `.m3e-icon` before/after the label.
+- **Motion:** assist chips have no shape motion (fixed `shape`; elevation uses the `ElevationDefaults` tweens). Selectable chips: expressive selection morphs (`TODO(verify)` properties; `ChipsTokens` Unselected/Selected/PressedShape via `shapeByInteraction`, `Chip.kt` L3288–3346).
 - **ARIA:** filter `aria-pressed`/checkbox; input chip remove button "Remove X".
 - **Layers:** css + react.
 - **Acceptance:**

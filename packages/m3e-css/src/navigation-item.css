@@ -1,0 +1,239 @@
+/*
+ * Navigation item: the destination shared by the short navigation bar, the wide navigation rail
+ * and the legacy (D4) navigation bar / rail (COMPONENT_SPEC §13, §14). The container sets the
+ * geometry, colors and motion through --_m3e-nav-* properties; the item is never used alone.
+ *
+ *   <a class="m3e-navigation-item" href="/" aria-current="page">
+ *     <span class="m3e-navigation-item__content">
+ *       <span class="m3e-navigation-item__indicator" aria-hidden="true"></span>
+ *       <span class="m3e-navigation-item__state" aria-hidden="true"></span>
+ *       <span class="m3e-icon m3e-navigation-item__icon" aria-hidden="true">home</span>
+ *       <span class="m3e-navigation-item__label">Home</span>
+ *     </span>
+ *   </a>
+ *
+ * Selected: aria-current (any value but "false") or data-selected. Disabled: aria-disabled="true".
+ * Layout: icon above the label; icon before the label inside a horizontal short navigation bar
+ * and an expanded wide navigation rail (Compose NavigationItemIconPosition.Start).
+ *
+ * Sources (compose/material3 @ 19991f2c):
+ * - NavigationItem.kt (ShortNavigationBarItem, WideNavigationRailItem): the whole item is the
+ *   target, but the ripple, hover/focus overlay and focus ring sit on the indicator pill
+ *   (IndicatorRipple, `ripple(focusRingShape = indicatorShape)`, MappedInteractionSource). The
+ *   ripple color is the container's content color (LocalContentColor = onSurface).
+ * - The indicator grows from the center: width = full width × progress, alpha = progress, both
+ *   from one animateFloatAsState (animateIndicatorProgressAsState: DefaultSpatial). The legacy
+ *   NavigationBarItem / NavigationRailItem animate width on FastSpatial and alpha on DefaultEffects.
+ * - Top-icon layout: indicator pill above the label (TopIconOrIconOnlyMeasurePolicy); without a
+ *   label the pill alone is centered. Start-icon layout: the pill hugs icon + label
+ *   (StartIconMeasurePolicy, AnimatedMeasurePolicy).
+ * - Icon and label colors: NavigationItemColors (selected / unselected / disabled = unselected at
+ *   DisabledAlpha). Selected icons switch to FILL 1 (COMPONENT_SPEC §0, §13).
+ */
+
+/* Registered so the indicator's spring can drive its width and alpha (linear() may overshoot 1). */
+@property --_m3e-nav-indicator-progress {
+  syntax: '<number>';
+  inherits: false;
+  initial-value: 0;
+}
+
+@property --_m3e-nav-indicator-alpha {
+  syntax: '<number>';
+  inherits: false;
+  initial-value: 0;
+}
+
+@layer m3e.components {
+  .m3e-navigation-item {
+    --_m3e-nav-icon: var(--_m3e-nav-icon-unselected);
+    --_m3e-nav-label: var(--_m3e-nav-label-unselected);
+
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: var(--_m3e-nav-item-justify, center);
+    box-sizing: border-box;
+    min-inline-size: var(--m3e-comp-minimum-interactive-component-size);
+    min-block-size: max(
+      var(--m3e-comp-minimum-interactive-component-size),
+      var(--_m3e-nav-item-min-block, var(--m3e-comp-minimum-interactive-component-size))
+    );
+    margin: 0;
+    padding-block: var(--_m3e-nav-item-padding-block-start, var(--m3e-sys-space-0))
+      var(--_m3e-nav-item-padding-block-end, var(--m3e-sys-space-0));
+    padding-inline: var(--_m3e-nav-item-padding-inline-start, var(--m3e-sys-space-0))
+      var(--m3e-sys-space-0);
+    border: none;
+    background: none;
+    color: var(--_m3e-nav-label);
+    font: inherit;
+    text-align: center;
+    text-decoration: none;
+    outline: none;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .m3e-navigation-item__content {
+    display: grid;
+    grid-template:
+      'pill' var(--_m3e-nav-pill-block)
+      'label' auto;
+    row-gap: var(--_m3e-nav-label-gap);
+    place-items: center;
+  }
+
+  .m3e-navigation-item__indicator,
+  .m3e-navigation-item__state {
+    grid-area: pill;
+    box-sizing: border-box;
+    block-size: 100%;
+    border-radius: var(--m3e-sys-shape-corner-full);
+  }
+
+  .m3e-navigation-item__state {
+    inline-size: var(--_m3e-nav-pill-inline);
+  }
+
+  .m3e-navigation-item__indicator {
+    --_m3e-nav-indicator-progress: 0;
+    --_m3e-nav-indicator-alpha: 0;
+
+    inline-size: calc(var(--_m3e-nav-pill-inline) * max(0, var(--_m3e-nav-indicator-progress)));
+    background-color: var(--_m3e-nav-indicator);
+    opacity: var(--_m3e-nav-indicator-alpha);
+    transition:
+      --_m3e-nav-indicator-progress var(--_m3e-nav-width-duration) var(--_m3e-nav-width-easing),
+      --_m3e-nav-indicator-alpha var(--_m3e-nav-alpha-duration) var(--_m3e-nav-alpha-easing);
+  }
+
+  .m3e-navigation-item__icon {
+    grid-area: pill;
+    color: var(--_m3e-nav-icon);
+    transition: font-variation-settings var(--m3e-sys-motion-spring-default-effects-duration)
+      var(--m3e-sys-motion-spring-default-effects-easing);
+  }
+
+  .m3e-navigation-item__label {
+    grid-area: label;
+    font-family: var(--_m3e-nav-label-font);
+    font-size: var(--_m3e-nav-label-size);
+    font-weight: var(--_m3e-nav-label-weight);
+    line-height: var(--_m3e-nav-label-line-height);
+    letter-spacing: var(--_m3e-nav-label-tracking);
+    color: var(--_m3e-nav-label);
+  }
+
+  /* --- No label: the pill alone, centered ---------------------------------------------------- */
+  .m3e-navigation-item:not(:has(.m3e-navigation-item__label)) {
+    --_m3e-nav-pill-block: var(--_m3e-nav-pill-block-icon-only);
+    --_m3e-nav-item-justify: center;
+    --_m3e-nav-item-padding-block-start: var(--m3e-sys-space-0);
+    --_m3e-nav-item-padding-block-end: var(--m3e-sys-space-0);
+  }
+
+  /* --- Start-icon layout: the pill hugs icon + label --------------------------------------- */
+  :where(.m3e-short-navigation-bar--horizontal, .m3e-wide-navigation-rail--expanded)
+    > .m3e-navigation-item:has(.m3e-navigation-item__label) {
+    --_m3e-nav-label-selected: var(--_m3e-nav-label-selected-start);
+
+    text-align: start;
+  }
+
+  :where(.m3e-short-navigation-bar--horizontal, .m3e-wide-navigation-rail--expanded)
+    > .m3e-navigation-item:has(.m3e-navigation-item__label)
+    .m3e-navigation-item__content {
+    position: relative;
+    grid-template: 'icon label' auto / auto auto;
+    column-gap: var(--_m3e-nav-icon-label-gap);
+    padding: var(--_m3e-nav-start-padding-block) var(--_m3e-nav-start-padding-inline);
+  }
+
+  :where(.m3e-short-navigation-bar--horizontal, .m3e-wide-navigation-rail--expanded)
+    > .m3e-navigation-item:has(.m3e-navigation-item__label)
+    :is(.m3e-navigation-item__indicator, .m3e-navigation-item__state) {
+    position: absolute;
+    inset-block: 0;
+    inset-inline: 0;
+    margin-inline: auto;
+  }
+
+  :where(.m3e-short-navigation-bar--horizontal, .m3e-wide-navigation-rail--expanded)
+    > .m3e-navigation-item:has(.m3e-navigation-item__label)
+    .m3e-navigation-item__state {
+    inline-size: 100%;
+  }
+
+  :where(.m3e-short-navigation-bar--horizontal, .m3e-wide-navigation-rail--expanded)
+    > .m3e-navigation-item:has(.m3e-navigation-item__label)
+    .m3e-navigation-item__indicator {
+    inline-size: calc(100% * max(0, var(--_m3e-nav-indicator-progress)));
+  }
+
+  :where(.m3e-short-navigation-bar--horizontal, .m3e-wide-navigation-rail--expanded)
+    > .m3e-navigation-item:has(.m3e-navigation-item__label)
+    .m3e-navigation-item__icon {
+    grid-area: icon;
+  }
+
+  /* Positioned so they paint above the absolutely positioned indicator and overlay. */
+  :where(.m3e-short-navigation-bar--horizontal, .m3e-wide-navigation-rail--expanded)
+    > .m3e-navigation-item:has(.m3e-navigation-item__label)
+    :is(.m3e-navigation-item__icon, .m3e-navigation-item__label) {
+    position: relative;
+  }
+
+  /* --- Selected ------------------------------------------------------------------------------ */
+  .m3e-navigation-item:is([aria-current]:not([aria-current='false']), [data-selected]) {
+    --_m3e-nav-icon: var(--_m3e-nav-icon-selected);
+    --_m3e-nav-label: var(--_m3e-nav-label-selected);
+  }
+
+  .m3e-navigation-item:is([aria-current]:not([aria-current='false']), [data-selected])
+    .m3e-navigation-item__indicator {
+    --_m3e-nav-indicator-progress: 1;
+    --_m3e-nav-indicator-alpha: 1;
+  }
+
+  .m3e-navigation-item:is([aria-current]:not([aria-current='false']), [data-selected])
+    .m3e-navigation-item__icon {
+    --m3e-comp-icon-fill: var(--m3e-ref-typeface-icon-filled);
+  }
+
+  /* --- Disabled (wins over selected, as in NavigationItemColors) ---------------------------- */
+  .m3e-navigation-item.m3e-navigation-item[aria-disabled='true'] {
+    --_m3e-nav-icon: color-mix(
+      in srgb,
+      var(--_m3e-nav-icon-unselected) calc(var(--m3e-sys-state-disabled-alpha) * 100%),
+      transparent
+    );
+    --_m3e-nav-label: color-mix(
+      in srgb,
+      var(--_m3e-nav-label-unselected) calc(var(--m3e-sys-state-disabled-alpha) * 100%),
+      transparent
+    );
+
+    cursor: default;
+  }
+
+  @media (forced-colors: active) {
+    .m3e-navigation-item:is([aria-current]:not([aria-current='false']), [data-selected])
+      .m3e-navigation-item__indicator {
+      forced-color-adjust: none;
+      background-color: SelectedItem;
+    }
+
+    .m3e-navigation-item:is([aria-current]:not([aria-current='false']), [data-selected])
+      .m3e-navigation-item__icon {
+      forced-color-adjust: none;
+      color: SelectedItemText;
+    }
+
+    .m3e-navigation-item.m3e-navigation-item[aria-disabled='true']
+      :is(.m3e-navigation-item__icon, .m3e-navigation-item__label) {
+      color: GrayText;
+    }
+  }
+}
