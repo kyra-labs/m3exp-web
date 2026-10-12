@@ -7,7 +7,8 @@
   line-height: var(--m3e-sys-typescale-body-large-line-height);
 }
 
-a {
+/* Plain links only: component links (buttons, card actions) take their color from m3e-css. */
+:where(a:not([class])) {
   color: var(--m3e-sys-color-primary);
 }
 
@@ -232,4 +233,34 @@ button.docs-tile {
   gap: var(--m3e-sys-space-200);
   align-items: center;
   margin-block: var(--m3e-sys-space-200);
+}
+
+.docs-cards {
+  display: grid;
+  grid-template-columns: repeat(
+    auto-fill,
+    minmax(min(100%, calc(var(--m3e-sys-space-900) * 3)), 1fr)
+  );
+  gap: var(--m3e-sys-space-300);
+  margin: var(--m3e-sys-space-300) 0;
+  padding: var(--m3e-sys-space-100);
+  list-style: none;
+}
+
+.docs-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--m3e-sys-space-100);
+  align-items: flex-start;
+  padding: var(--m3e-sys-space-200);
+}
+
+.docs-card-body p {
+  margin: 0;
+}
+
+.docs-card-title {
+  margin: 0;
+  font-size: var(--m3e-sys-typescale-title-large-size);
+  line-height: var(--m3e-sys-typescale-title-large-line-height);
 }

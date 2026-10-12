@@ -4,7 +4,7 @@
 > Source: compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/tokens @ 19991f2c0858aadfcb442ce02b2c8e4743c96898  
 > Values: Copyright (C) The Android Open Source Project, Apache License 2.0 (see NOTICE).  
 
-Emitted: 370 system and 2577 component variables from 105 component token objects.
+Emitted: 371 system and 2582 component variables from 106 component token objects.
 
 ## Not emitted here
 
@@ -386,6 +386,7 @@ Emitted: 370 system and 2577 component variables from 105 component token object
 | `m3.material.io.md.sys.measurement.space700` | `56dp` | m3.material.io token DB "Google Material 3" v38.2.9 (_dsm/data/dsdb-m3/2026-09-23_06-10-05/MEASUREMENT.20543ce18892f7d9.json) set md.sys.measurement; matches material-web v2.5.0 labs/gb/styles/space/md-space-tokens.scss L6-27 | `--m3e-sys-space-700` | `56px` |  |
 | `m3.material.io.md.sys.measurement.space800` | `64dp` | m3.material.io token DB "Google Material 3" v38.2.9 (_dsm/data/dsdb-m3/2026-09-23_06-10-05/MEASUREMENT.20543ce18892f7d9.json) set md.sys.measurement; matches material-web v2.5.0 labs/gb/styles/space/md-space-tokens.scss L6-27 | `--m3e-sys-space-800` | `64px` |  |
 | `m3.material.io.md.sys.measurement.space900` | `72dp` | m3.material.io token DB "Google Material 3" v38.2.9 (_dsm/data/dsdb-m3/2026-09-23_06-10-05/MEASUREMENT.20543ce18892f7d9.json) set md.sys.measurement; matches material-web v2.5.0 labs/gb/styles/space/md-space-tokens.scss L6-27 | `--m3e-sys-space-900` | `72px` |  |
+| `ColorScheme.kt.DisabledAlpha` | `0.38f` | compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/ColorScheme.kt@19991f2c0858aadfcb442ce02b2c8e4743c96898 L1544 | `--m3e-sys-state-disabled-alpha` | `0.38` |  |
 | `Material Symbols.fvar FILL default` | `0` | Material Symbols 2.975 fvar default (packages/m3e-codegen/vendor/material-symbols/manifest.json) | `--m3e-ref-typeface-icon-fill` | `0` |  |
 | `Material Symbols.fvar GRAD default` | `0` | Material Symbols 2.975 fvar default (packages/m3e-codegen/vendor/material-symbols/manifest.json) | `--m3e-ref-typeface-icon-grade` | `0` |  |
 | `Material Symbols.fvar opsz default` | `24` | Material Symbols 2.975 fvar default (packages/m3e-codegen/vendor/material-symbols/manifest.json) | `--m3e-ref-typeface-icon-optical-size` | `24` |  |
@@ -1190,6 +1191,16 @@ Emitted: 370 system and 2577 component variables from 105 component token object
 | `ElevatedCardTokens.IconSize` | `24.0.dp` | ElevatedCardTokens.kt:55 | `--m3e-comp-elevated-card-icon-size` | `24px` |  |
 | `ElevatedCardTokens.PressedContainerElevation` | `ElevationTokens.Level1` | ElevatedCardTokens.kt:58 | `--m3e-comp-elevated-card-container-elevation-pressed` | `var(--m3e-sys-elevation-level1)` |  |
 | `ElevatedCardTokens.PressedContainerElevation` | `ElevationTokens.Level1` | ElevatedCardTokens.kt:58 | `--m3e-comp-elevated-card-container-shadow-pressed` | `var(--m3e-sys-elevation-level1-shadow)` | derived: box-shadow of the referenced elevation level |
+
+## elevation-motion
+
+| Source token | Source value | Line | CSS variable | Emitted | Note |
+|---|---|---|---|---|---|
+| `ElevationDefaults.DefaultIncomingSpec` | `120ms` | compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/internal/Elevation.kt@19991f2c0858aadfcb442ce02b2c8e4743c96898 L109 | `--m3e-comp-elevation-incoming-duration` | `120ms` |  |
+| `Easing.FastOutSlowInEasing` | `cubic-bezier(0.4, 0, 0.2, 1)` | compose/animation/animation-core/src/commonMain/kotlin/androidx/compose/animation/core/Easing.kt@19991f2c0858aadfcb442ce02b2c8e4743c96898 L50 | `--m3e-comp-elevation-incoming-easing` | `cubic-bezier(0.4, 0, 0.2, 1)` |  |
+| `ElevationDefaults.DefaultOutgoingSpec` | `150ms` | compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/internal/Elevation.kt@19991f2c0858aadfcb442ce02b2c8e4743c96898 L111 | `--m3e-comp-elevation-outgoing-duration` | `150ms` |  |
+| `ElevationDefaults.HoveredOutgoingSpec` | `120ms` | compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/internal/Elevation.kt@19991f2c0858aadfcb442ce02b2c8e4743c96898 L113 | `--m3e-comp-elevation-outgoing-duration-hovered` | `120ms` |  |
+| `ElevationDefaults.OutgoingSpecEasing` | `cubic-bezier(0.4, 0, 0.6, 1)` | compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/internal/Elevation.kt@19991f2c0858aadfcb442ce02b2c8e4743c96898 L107 | `--m3e-comp-elevation-outgoing-easing` | `cubic-bezier(0.4, 0, 0.6, 1)` |  |
 
 ## expanded-list
 

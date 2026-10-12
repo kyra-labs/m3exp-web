@@ -16,12 +16,15 @@ export const MATERIAL3_SOURCES = [
   'Button.kt',
   'ToggleButton.kt',
   'InteractiveComponentSize.kt',
+  'internal/Elevation.kt',
 ] as const;
 
 /** Compose spring physics ported by m3e-motion (and compiled as-is by its JVM reference harness). */
 export const ANIMATION_CORE_PATH =
   'compose/animation/animation-core/src/commonMain/kotlin/androidx/compose/animation/core';
 export const ANIMATION_CORE_SOURCES = ['SpringSimulation.kt', 'SpringEstimation.kt'] as const;
+/** Easing constants (FastOutSlowInEasing…), vendored apart so the spring harness stays minimal. */
+export const ANIMATION_CORE_EASING_SOURCES = ['Easing.kt'] as const;
 
 /** MaterialShapes and its helpers, ported by m3e-shapes (also compiled by its JVM harness). */
 export const MATERIAL3_SHAPE_SOURCES = ['MaterialShapes.kt', 'internal/ShapeUtil.kt'] as const;

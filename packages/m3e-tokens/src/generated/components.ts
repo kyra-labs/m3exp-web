@@ -680,6 +680,15 @@ export const elevatedCardTokens = {
   containerElevationPressed: "var(--m3e-sys-elevation-level1)"
 } as const;
 
+/** ElevationDefaults */
+export const elevationDefaults = {
+  elevationIncomingDuration: "120ms",
+  elevationIncomingEasing: "cubic-bezier(0.4, 0, 0.2, 1)",
+  elevationOutgoingDuration: "150ms",
+  elevationOutgoingDurationHovered: "120ms",
+  elevationOutgoingEasing: "cubic-bezier(0.4, 0, 0.6, 1)"
+} as const;
+
 /** ExpandedListTokens */
 export const expandedListTokens = {
   collapsedItemTrailingIconContainerColor: "var(--m3e-sys-color-surface)",

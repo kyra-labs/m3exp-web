@@ -289,8 +289,8 @@
   - [ ] Plus CAC.
 
 ## 19. Cards (elevated, filled, outlined)
-- **Tokens:** shape medium (`TODO(verify)` CardTokens); elevated Level1; filled surface-container-highest; outlined outline-variant.
-- **ARIA:** non-interactive by default; interactive cards have one primary action with stretched hit area.
+- **Tokens (verified, generated):** `{Filled,Elevated,Outlined}CardTokens.kt@19991f2c` via `CardDefaults`: shape medium; filled surface-container-highest; elevated surface-container-low, Level1 (hover Level2); outlined surface + 1dp outline-variant, no hover elevation (`outlinedCardElevation`); content on-surface. Elevation animates with the `ElevationDefaults` tweens (incoming 120ms FastOutSlowIn, outgoing 150/120ms).
+- **ARIA:** non-interactive by default; interactive cards have one primary action (`.m3e-card__action`, React `<CardAction>`) whose hit area stretches over the card; the card shows the state layer and focus ring; secondary controls stay clickable above it. Disabled = the action is `aria-disabled`.
 - **Layers:** css (+ react wrapper).
 - **Acceptance:**
   - [ ] Hover state layer only when interactive.

@@ -41,6 +41,7 @@ export function readGeneratorInputs(root: string, pin: SourcePin): GenerateOptio
         f.content,
       ]),
     ),
+    easingKt: vendorFile(vendor('androidx-animation-easing'), 'Easing.kt', commit).content,
     graphicsLayerScopeKt: vendorFile(vendor('androidx-ui-sources'), 'GraphicsLayerScope.kt', commit)
       .content,
     elevationScss: vendorFile(vendor('material-web'), '_elevation.scss', materialWebVersion)
