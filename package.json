@@ -32,7 +32,8 @@
     "icons:check": "pnpm --filter \"@kyralabs/m3e-codegen...\" build && node packages/m3e-codegen/dist/cli.js icons --check",
     "icons:fetch": "pnpm --filter \"@kyralabs/m3e-codegen...\" build && node packages/m3e-codegen/dist/cli.js icons:fetch",
     "reference:motion": "node tools/jvm/kotlin.mjs --main androidx.compose.animation.core.SpringReferenceKt --out packages/m3e-motion/src/__fixtures__/spring-reference.json packages/m3e-codegen/vendor/androidx-animation-core tools/jvm/shims/UiUtil.kt tools/jvm/shims/Annotations.kt packages/m3e-motion/reference",
-    "reference:shapes": "node tools/jvm/kotlin.mjs --main androidx.compose.material3.ShapesReferenceKt --out packages/m3e-shapes/src/__fixtures__/shapes-reference.json packages/m3e-codegen/vendor/androidx-graphics-shapes packages/m3e-codegen/vendor/androidx-material3-shapes packages/m3e-codegen/vendor/androidx-ui-graphics tools/jvm/shims packages/m3e-shapes/reference"
+    "reference:shapes": "node tools/jvm/kotlin.mjs --main androidx.compose.material3.ShapesReferenceKt --out packages/m3e-shapes/src/__fixtures__/shapes-reference.json packages/m3e-codegen/vendor/androidx-graphics-shapes packages/m3e-codegen/vendor/androidx-material3-shapes packages/m3e-codegen/vendor/androidx-ui-graphics tools/jvm/shims packages/m3e-shapes/reference",
+    "reference:loading-indicator": "node tools/jvm/kotlin.mjs --main androidx.compose.material3.LoadingIndicatorReferenceKt --out packages/m3e-shapes/src/__fixtures__/loading-indicator-reference.json packages/m3e-codegen/vendor/androidx-graphics-shapes packages/m3e-codegen/vendor/androidx-material3-shapes packages/m3e-codegen/vendor/androidx-ui-graphics tools/jvm/shims packages/m3e-shapes/reference/Material3Shims.kt packages/m3e-shapes/reference-loading-indicator"
   },
   "devDependencies": {
     "@changesets/cli": "3.0.3",

@@ -2,6 +2,13 @@
 // (bit-exact ports), FloatSpringSpec helpers, damping conversion and the CSS linear() sampler.
 export { type LinearEasing, type LinearEasingOptions, springToLinear } from './linear.js';
 export {
+  type IndeterminateFrame,
+  type LoadingIndicatorTiming,
+  indeterminateFrame,
+  initialIndeterminateFrame,
+  morphSpringDurationMillis,
+} from './loading-indicator.js';
+export {
   DEFAULT_DISPLACEMENT_THRESHOLD,
   type SpringSpec,
   dampingCoefficient,
