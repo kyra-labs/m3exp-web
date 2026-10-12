@@ -14,6 +14,7 @@ import { themeCss } from '@kyralabs/m3e-tokens/theme-css';
 import { type BaselineColor, baselineColors } from './color.js';
 import { extractButtonDefaults } from './button-defaults.js';
 import { extractElevationMotion } from './elevation-motion.js';
+import { extractLoadingIndicatorMotion } from './loading-indicator-motion.js';
 import {
   ANIMATION_CORE_PATH as ANIMATION_CORE_DIR,
   MATERIAL3_PATH as MATERIAL3_DIR,
@@ -728,6 +729,29 @@ export function generate({
     ),
   });
 
+  // Indeterminate LoadingIndicator choreography literals (see loading-indicator-motion.ts).
+  const loadingIndicatorMotion = extractLoadingIndicatorMotion(
+    material3Sources['LoadingIndicator.kt'] ?? '',
+  );
+  components.set('loading-indicator-motion', {
+    object: 'LoadingIndicator',
+    tokens: loadingIndicatorMotion.map((t) => ({
+      name: t.name,
+      value: t.value,
+      object: 'LoadingIndicator',
+      member: t.member,
+      raw: t.value,
+      line: t.line,
+      cite: `${MATERIAL3_DIR}/LoadingIndicator.kt@${commit} L${String(t.line)}`,
+    })),
+    js: Object.fromEntries(
+      loadingIndicatorMotion.map((t) => [
+        camel(t.name.replace(/^--m3e-comp-/, '').split('-')),
+        t.number,
+      ]),
+    ),
+  });
+
   for (const [name, c] of [...components].sort(([a], [b]) => a.localeCompare(b))) {
     out.set(
       `components/${name}.css`,
@@ -738,14 +762,21 @@ export function generate({
             [],
             `${MATERIAL3_DIR}/internal/Elevation.kt + ${ANIMATION_CORE_DIR}/Easing.kt`,
           )
-        : name === 'button-defaults'
+        : name === 'loading-indicator-motion'
           ? cssFile(
-              'Compose ButtonDefaults / ToggleButtonDefaults values that are not in Button*Tokens (lines: PARITY.md).',
+              'How the indeterminate Compose LoadingIndicator morphs and rotates (literals in LoadingIndicator.kt; lines: PARITY.md).',
               c.tokens,
               [],
-              `${MATERIAL3_DIR}/{Button,ToggleButton,InteractiveComponentSize}.kt`,
+              `${MATERIAL3_DIR}/LoadingIndicator.kt`,
             )
-          : cssFile(`Component tokens: ${c.object}.`, c.tokens),
+          : name === 'button-defaults'
+            ? cssFile(
+                'Compose ButtonDefaults / ToggleButtonDefaults values that are not in Button*Tokens (lines: PARITY.md).',
+                c.tokens,
+                [],
+                `${MATERIAL3_DIR}/{Button,ToggleButton,InteractiveComponentSize}.kt`,
+              )
+            : cssFile(`Component tokens: ${c.object}.`, c.tokens),
     );
   }
 

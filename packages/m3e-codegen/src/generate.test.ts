@@ -360,3 +360,20 @@ describe('elevation interaction tweens (M4 card)', () => {
     expect(decl.get('--m3e-comp-elevation-outgoing-easing')).toBe('cubic-bezier(0.4, 0, 0.6, 1)');
   });
 });
+
+describe('loading indicator choreography (M4 loading indicator)', () => {
+  it('matches the literals in LoadingIndicator.kt', () => {
+    const decl = declarations(output.get('components/loading-indicator-motion.css')!);
+    const kt = inputs.material3Sources['LoadingIndicator.kt']!.replace(/\r\n/g, '\n');
+    expect(kt).toContain('private const val GlobalRotationDurationMillis = 4666\n');
+    expect(kt).toContain('private const val MorphIntervalMillis = 650L\n');
+    expect(kt).toContain(
+      'spring(dampingRatio = 0.6f, stiffness = 200f, visibilityThreshold = 0.1f)',
+    );
+    expect(decl.get('--m3e-comp-loading-indicator-morph-interval')).toBe('650ms');
+    expect(decl.get('--m3e-comp-loading-indicator-rotation-duration')).toBe('4666ms');
+    expect(decl.get('--m3e-comp-loading-indicator-morph-spring-damping-ratio')).toBe('0.6');
+    expect(decl.get('--m3e-comp-loading-indicator-morph-spring-stiffness')).toBe('200');
+    expect(decl.get('--m3e-comp-loading-indicator-morph-spring-visibility-threshold')).toBe('0.1');
+  });
+});
