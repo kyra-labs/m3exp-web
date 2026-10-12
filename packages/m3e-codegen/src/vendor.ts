@@ -18,6 +18,10 @@ export const MATERIAL3_SOURCES = [
   'ToggleButton.kt',
   'InteractiveComponentSize.kt',
   'internal/Elevation.kt',
+  'NavigationBar.kt',
+  'NavigationRail.kt',
+  'ShortNavigationBar.kt',
+  'WideNavigationRail.kt',
   'AppBar.kt',
 ] as const;
 

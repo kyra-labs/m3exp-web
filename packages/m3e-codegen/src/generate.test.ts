@@ -386,6 +386,76 @@ describe('elevation interaction tweens (M4 card)', () => {
   });
 });
 
+describe('navigation layout literals (M4 navigation bar + rail)', () => {
+  const decl = declarations(output.get('components/navigation-defaults.css')!);
+  const src = (file: string) => inputs.material3Sources[file]!.replace(/\r\n/g, '\n');
+  const getter = (file: string, member: string) =>
+    new RegExp(`val ${member}(?:: Dp)?\\n\\s*get\\(\\) = (\\d+)\\.dp`).exec(src(file))?.[1];
+
+  it.each([
+    [
+      '--m3e-comp-short-navigation-bar-item-indicator-to-label-padding',
+      'ShortNavigationBar.kt',
+      'TopIconIndicatorToLabelPadding',
+    ],
+    [
+      '--m3e-comp-wide-navigation-rail-item-horizontal-padding',
+      'WideNavigationRail.kt',
+      'WNRItemHorizontalPadding',
+    ],
+    [
+      '--m3e-comp-navigation-bar-item-horizontal-padding',
+      'NavigationBar.kt',
+      'NavigationBarItemHorizontalPadding',
+    ],
+    [
+      '--m3e-comp-navigation-bar-indicator-to-label-padding',
+      'NavigationBar.kt',
+      'NavigationBarIndicatorToLabelPadding',
+    ],
+    [
+      '--m3e-comp-navigation-rail-vertical-padding',
+      'NavigationRail.kt',
+      'NavigationRailVerticalPadding',
+    ],
+    [
+      '--m3e-comp-navigation-rail-header-padding',
+      'NavigationRail.kt',
+      'NavigationRailHeaderPadding',
+    ],
+    [
+      '--m3e-comp-navigation-rail-item-vertical-padding',
+      'NavigationRail.kt',
+      'NavigationRailItemVerticalPadding',
+    ],
+  ] as const)('%s', (name, file, member) => {
+    const value = getter(file, member);
+    expect(value).toBeDefined();
+    expect(decl.get(name)).toBe(`${value!}px`);
+  });
+
+  it('evaluates the Centered arrangement padding for 1..6 items', () => {
+    const kt = src('ShortNavigationBar.kt');
+    expect(kt).toContain('if (itemsCount > 6) return 0');
+    expect(kt).toContain('val paddingPercentage = ((100 - 10 * (itemsCount + 3)) / 2f) / 100');
+    expect(kt).toContain('val itemMinWidth = (width - (barHorizontalPadding * 2)) / itemsCount');
+    const pct = (v: number) => `${String(Math.round(v * 1e4) / 1e4)}%`;
+    for (let n = 1; n <= 6; n++) {
+      const padding = (100 - 10 * (n + 3)) / 2;
+      expect(decl.get(`--m3e-comp-short-navigation-bar-centered-padding-${String(n)}`)).toBe(
+        pct(padding),
+      );
+      expect(decl.get(`--m3e-comp-short-navigation-bar-centered-item-min-width-${String(n)}`)).toBe(
+        pct((100 - 2 * padding) / n),
+      );
+      expect(decl.get(`--m3e-comp-short-navigation-bar-centered-item-max-width-${String(n)}`)).toBe(
+        pct(100 / n),
+      );
+    }
+    expect(decl.has('--m3e-comp-short-navigation-bar-centered-padding-7')).toBe(false);
+  });
+});
+
 describe('TopAppBar layout literals (M4 Top app bar)', () => {
   const decl = declarations(output.get('components/top-app-bar-defaults.css')!);
   const appBar = inputs.material3Sources['AppBar.kt']!.replace(/\r\n/g, '\n');

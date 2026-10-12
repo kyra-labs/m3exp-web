@@ -16,6 +16,7 @@ import { extractAppBarDefaults } from './app-bar-defaults.js';
 import { extractButtonDefaults } from './button-defaults.js';
 import { extractChipDefaults } from './chip-defaults.js';
 import { extractElevationMotion } from './elevation-motion.js';
+import { extractCenteredPadding, extractNavigationDefaults } from './navigation-defaults.js';
 import {
   ANIMATION_CORE_PATH as ANIMATION_CORE_DIR,
   MATERIAL3_PATH as MATERIAL3_DIR,
@@ -774,6 +775,48 @@ export function generate({
     ),
   });
 
+  // Navigation bar / rail layout literals and the Centered arrangement (see navigation-defaults.ts).
+  const navigationDefaults = extractNavigationDefaults(material3Sources);
+  const centeredPadding = extractCenteredPadding(material3Sources);
+  components.set('navigation-defaults', {
+    object: 'NavigationDefaults',
+    tokens: [
+      ...navigationDefaults.map((d) => {
+        const e: Emitted = {
+          name: d.name,
+          value: px(d.dp),
+          object: d.owner,
+          member: d.member,
+          raw: `${num(d.dp)}.dp`,
+          line: d.line,
+          cite: `${MATERIAL3_DIR}/${d.file}@${commit} L${String(d.line)}`,
+        };
+        if (d.note !== undefined) e.note = d.note;
+        return e;
+      }),
+      ...centeredPadding.map((p) => ({
+        name: p.name,
+        value: `${num(p.percent)}%`,
+        object: p.file,
+        member: p.member,
+        raw: p.raw,
+        line: p.line,
+        cite: `${MATERIAL3_DIR}/${p.file}@${commit} L${String(p.line)}`,
+        note: 'of the bar width (Centered arrangement); EqualWeight above the largest item count',
+      })),
+    ],
+    js: Object.fromEntries([
+      ...navigationDefaults.map((d): [string, number | string] => [
+        camel(d.name.replace(/^--m3e-comp-/, '').split('-')),
+        d.dp,
+      ]),
+      ...centeredPadding.map((p): [string, number | string] => [
+        camel(p.name.replace(/^--m3e-comp-/, '').split('-')),
+        `${num(p.percent)}%`,
+      ]),
+    ]),
+  });
+
   for (const [name, c] of [...components].sort(([a], [b]) => a.localeCompare(b))) {
     out.set(
       `components/${name}.css`,
@@ -805,7 +848,14 @@ export function generate({
                   [],
                   `${MATERIAL3_DIR}/{Button,ToggleButton,InteractiveComponentSize}.kt`,
                 )
-              : cssFile(`Component tokens: ${c.object}.`, c.tokens),
+              : name === 'navigation-defaults'
+                ? cssFile(
+                    'Compose navigation bar / rail layout values that are not in Navigation*Tokens (lines: PARITY.md).',
+                    c.tokens,
+                    [],
+                    `${MATERIAL3_DIR}/{NavigationBar,NavigationRail,ShortNavigationBar,WideNavigationRail}.kt`,
+                  )
+                : cssFile(`Component tokens: ${c.object}.`, c.tokens),
     );
   }
 

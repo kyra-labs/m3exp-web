@@ -67,8 +67,8 @@
 28. Docked toolbar tokens; BottomAppBar deprecation annotation.
 29. Top app bar flexible variants: heights and type.
 30. Search tokens.
-31. ShortNavigationBar tokens.
-32. WideNavigationRail tokens.
+31. ~~ShortNavigationBar tokens~~ — resolved: `ShortNavigationBar.kt@19991f2c` reads `NavigationBarTokens`, `NavigationBarVerticalItemTokens`, `NavigationBarHorizontalItemTokens` (generated; no ShortNavigationBar*Tokens.kt exists); `TopIconIndicatorToLabelPadding` and the Centered arrangement (`calculateCenteredContentHorizontalPadding`, `CenteredContentMeasurePolicy`) generated into `components/navigation-defaults.css`; indicator motion from `NavigationItem.kt` (animateIndicatorProgressAsState, DefaultSpatial). Legacy `NavigationBar.kt` literals generated likewise.
+32. ~~WideNavigationRail tokens~~ — resolved: `NavigationRail{Collapsed,Expanded,Color,BaselineItem,VerticalItem,HorizontalItem}Tokens.kt@19991f2c` (generated) as read by `WideNavigationRail.kt` (WideNavigationRailLayout, WideNavigationRailItemDefaults); `WNRItemHorizontalPadding` generated into `components/navigation-defaults.css`. Legacy `NavigationRail.kt` literals generated likewise. Modal rail values stay for M7.
 33. Navigation drawer tokens.
 34. Tabs tokens.
 35. Chip tokens and expressive morph properties — partly resolved: assist chip from `AssistChipTokens.kt@19991f2c` (generated) and the `AssistChipDefaults` literals Compose renders (`Chip.kt` L1962, L2918 via `DefaultHorizontalArrangement` L4306; generated into `components/assist-chip-defaults.css`). Still open: filter/input/suggestion chip tokens and the selection morph (`ChipsTokens` shapes through `shapeByInteraction`, `Chip.kt` L3288–3346), to be verified when those chips land.

@@ -1,0 +1,81 @@
+---
+import NavItems, { type Item } from '../../components/NavItems.astro';
+import NavigationPlayground from '../../islands/NavigationPlayground.tsx';
+import Base from '../../layouts/Base.astro';
+
+const items: Item[] = [
+  { icon: 'home', label: 'Home', selected: true },
+  { icon: 'search', label: 'Search' },
+  { icon: 'favorite', label: 'Favorites' },
+  { icon: 'settings', label: 'Settings' },
+];
+---
+
+<Base title="Navigation rail">
+  <link rel="stylesheet" href="/icons/docs-icons.css" slot="head" />
+  <h1>Navigation rail</h1>
+  <p>
+    The wide navigation rail (COMPONENT_SPEC §14; Compose <code>WideNavigationRail</code>),
+    collapsed and expanded. Plain HTML with m3e-css classes. The animated expand/collapse and the
+    modal rail come in M7.
+  </p>
+
+  <section aria-labelledby="rails-heading">
+    <h2 id="rails-heading">Collapsed and expanded</h2>
+    <div class="docs-rail-frames">
+      <nav class="m3e-wide-navigation-rail" aria-label="Collapsed example" data-testid="rail-collapsed">
+        <div class="m3e-wide-navigation-rail__header">
+          <button
+            type="button"
+            class="m3e-icon-button m3e-icon-button--standard docs-rail-menu"
+            aria-label="Expand"
+          >
+            <span class="m3e-icon" aria-hidden="true">menu</span>
+          </button>
+        </div>
+        <NavItems items={items} prefix="c" />
+      </nav>
+      <nav
+        class="m3e-wide-navigation-rail m3e-wide-navigation-rail--expanded"
+        aria-label="Expanded example"
+        data-testid="rail-expanded"
+      >
+        <div class="m3e-wide-navigation-rail__header">
+          <button
+            type="button"
+            class="m3e-icon-button m3e-icon-button--standard docs-rail-menu"
+            aria-label="Collapse"
+          >
+            <span class="m3e-icon" aria-hidden="true">menu</span>
+          </button>
+        </div>
+        <NavItems items={items} prefix="e" />
+      </nav>
+    </div>
+  </section>
+
+  <section aria-labelledby="react-heading">
+    <h2 id="react-heading">React</h2>
+    <p>
+      <code>&lt;WideNavigationRail&gt;</code>: press an item to move the indicator; the menu button
+      switches <code>isExpanded</code>.
+    </p>
+    <NavigationPlayground client:only="react" kind="rail" />
+  </section>
+
+  <section aria-labelledby="legacy-heading" data-deprecated>
+    <h2 id="legacy-heading">Navigation rail (deprecated)</h2>
+    <p class="docs-deprecated" role="note">
+      Deprecated (DECISIONS D4): the legacy <code>NavigationRail</code> ships until 2.0 for
+      migration and gets no new features. Use the wide navigation rail.
+    </p>
+    <div class="docs-rail-frames">
+      <nav class="m3e-navigation-rail" aria-label="Legacy example" data-testid="legacy-rail">
+        <NavItems items={items} prefix="l" />
+      </nav>
+      <nav class="m3e-navigation-rail" aria-label="Legacy icon-only example" data-testid="legacy-rail-icons">
+        <NavItems items={items.map((item) => ({ ...item, iconOnly: true }))} prefix="li" />
+      </nav>
+    </div>
+  </section>
+</Base>

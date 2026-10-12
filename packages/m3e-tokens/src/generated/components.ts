@@ -1594,6 +1594,35 @@ export const navigationBarVerticalItemTokens = {
   iconSize: 24
 } as const;
 
+/** NavigationDefaults */
+export const navigationDefaults = {
+  shortNavigationBarItemIndicatorToLabelPadding: 4,
+  wideNavigationRailItemHorizontalPadding: 20,
+  navigationBarItemHorizontalPadding: 8,
+  navigationBarIndicatorToLabelPadding: 4,
+  navigationRailVerticalPadding: 4,
+  navigationRailHeaderPadding: 8,
+  navigationRailItemVerticalPadding: 4,
+  shortNavigationBarCenteredPadding1: "30%",
+  shortNavigationBarCenteredItemMinWidth1: "40%",
+  shortNavigationBarCenteredItemMaxWidth1: "100%",
+  shortNavigationBarCenteredPadding2: "25%",
+  shortNavigationBarCenteredItemMinWidth2: "25%",
+  shortNavigationBarCenteredItemMaxWidth2: "50%",
+  shortNavigationBarCenteredPadding3: "20%",
+  shortNavigationBarCenteredItemMinWidth3: "20%",
+  shortNavigationBarCenteredItemMaxWidth3: "33.3333%",
+  shortNavigationBarCenteredPadding4: "15%",
+  shortNavigationBarCenteredItemMinWidth4: "17.5%",
+  shortNavigationBarCenteredItemMaxWidth4: "25%",
+  shortNavigationBarCenteredPadding5: "10%",
+  shortNavigationBarCenteredItemMinWidth5: "16%",
+  shortNavigationBarCenteredItemMaxWidth5: "20%",
+  shortNavigationBarCenteredPadding6: "5%",
+  shortNavigationBarCenteredItemMinWidth6: "15%",
+  shortNavigationBarCenteredItemMaxWidth6: "16.6667%"
+} as const;
+
 /** NavigationDrawerTokens */
 export const navigationDrawerTokens = {
   activeIconColorFocus: "var(--m3e-sys-color-on-secondary-container)",

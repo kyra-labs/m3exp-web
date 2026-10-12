@@ -15,7 +15,7 @@ export interface ExtractedDefault {
   note?: string;
 }
 
-interface Rule {
+export interface LiteralRule {
   name: string;
   /** Kotlin object (or file) that declares the member. */
   owner: string;
@@ -25,7 +25,7 @@ interface Rule {
   note?: string;
 }
 
-const RULES: readonly Rule[] = [
+const RULES: readonly LiteralRule[] = [
   {
     name: '--m3e-comp-button-min-width',
     owner: 'ButtonDefaults',
@@ -113,7 +113,15 @@ export const BUTTON_DEFAULTS_SOURCES = [...new Set(RULES.map((r) => r.file))];
 export function extractButtonDefaults(
   sources: Readonly<Record<string, string>>,
 ): ExtractedDefault[] {
-  return RULES.map((rule) => {
+  return extractLiteralDefaults(RULES, sources);
+}
+
+/** Reads each rule's dp literal from its vendored file (shared by the other *-defaults tables). */
+export function extractLiteralDefaults(
+  rules: readonly LiteralRule[],
+  sources: Readonly<Record<string, string>>,
+): ExtractedDefault[] {
+  return rules.map((rule) => {
     const text = sources[rule.file]?.replace(/\r\n/g, '\n');
     if (text === undefined) throw new Error(`${rule.file} is not vendored`);
     const match = rule.pattern.exec(text);

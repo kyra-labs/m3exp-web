@@ -1,0 +1,114 @@
+/*
+ * @deprecated (D4) Legacy navigation rail (COMPONENT_SPEC §14; Compose NavigationRail). Use the wide
+ * navigation rail (wide-navigation-rail.css). Shipped until 2.0; no new features.
+ *
+ *   <nav class="m3e-navigation-rail" aria-label="Main">
+ *     <div class="m3e-navigation-rail__header">…FAB…</div>                   (optional)
+ *     <a class="m3e-navigation-item" href="/" aria-current="page">…</a>      (navigation-item.css)
+ *     …
+ *   </nav>
+ *
+ * Sources (compose/material3 @ 19991f2c):
+ * - NavigationRail.kt: container NavigationRailCollapsedTokens.ContainerColor, content
+ *   contentColorFor (onSurface), min width NavigationRailCollapsedTokens.NarrowContainerWidth,
+ *   vertical padding and item spacing NavigationRailVerticalPadding, header followed by a
+ *   NavigationRailHeaderPadding spacer, everything centered horizontally; window insets vertical +
+ *   start (here the safe-area insets).
+ * - NavigationRailItem: min width NavigationRailItemWidth (NarrowContainerWidth), min height
+ *   NavigationRailItemHeight (NavigationRailVerticalItemTokens.ActiveIndicatorWidth); indicator
+ *   ActiveIndicatorWidth × ActiveIndicatorHeight with a label (NavigationRailItemVerticalPadding
+ *   below), a CornerFull circle of ActiveIndicatorWidth without one; content centered with the
+ *   indicator's vertical padding counted once (placeLabelAndIcon). Icon and label colors animate on
+ *   DefaultEffects; the indicator width on FastSpatial, its alpha on DefaultEffects. Colors:
+ *   NavigationRailItemDefaults (NavigationRailColorTokens).
+ */
+@import '@kyralabs/m3e-tokens/components/navigation-rail-collapsed.css';
+@import '@kyralabs/m3e-tokens/components/navigation-rail-color.css';
+@import '@kyralabs/m3e-tokens/components/navigation-rail-baseline-item.css';
+@import '@kyralabs/m3e-tokens/components/navigation-rail-vertical-item.css';
+@import '@kyralabs/m3e-tokens/components/navigation-defaults.css';
+@import '@kyralabs/m3e-tokens/components/button-defaults.css';
+@import '@kyralabs/m3e-tokens/components/divider.css';
+@import './navigation-item.css';
+
+@layer m3e.components {
+  .m3e-navigation-rail {
+    --_m3e-nav-pill-inline: var(--m3e-comp-navigation-rail-vertical-item-active-indicator-width);
+    --_m3e-nav-pill-block: var(--m3e-comp-navigation-rail-vertical-item-active-indicator-height);
+    --_m3e-nav-pill-block-icon-only: var(
+      --m3e-comp-navigation-rail-vertical-item-active-indicator-width
+    );
+    --_m3e-nav-label-gap: var(--m3e-comp-navigation-rail-item-vertical-padding);
+    --_m3e-nav-item-min-block: var(--m3e-comp-navigation-rail-vertical-item-active-indicator-width);
+    --_m3e-nav-label-font: var(--m3e-comp-navigation-rail-vertical-item-label-text-font);
+    --_m3e-nav-label-size: var(--m3e-comp-navigation-rail-vertical-item-label-text-size);
+    --_m3e-nav-label-weight: var(--m3e-comp-navigation-rail-vertical-item-label-text-weight);
+    --_m3e-nav-label-line-height: var(
+      --m3e-comp-navigation-rail-vertical-item-label-text-line-height
+    );
+    --_m3e-nav-label-tracking: var(--m3e-comp-navigation-rail-vertical-item-label-text-tracking);
+    --_m3e-nav-icon-unselected: var(--m3e-comp-navigation-rail-color-item-inactive-icon);
+    --_m3e-nav-icon-selected: var(--m3e-comp-navigation-rail-color-item-active-icon);
+    --_m3e-nav-label-unselected: var(--m3e-comp-navigation-rail-color-item-inactive-label-text);
+    --_m3e-nav-label-selected: var(--m3e-comp-navigation-rail-color-item-active-label-text);
+    --_m3e-nav-indicator: var(--m3e-comp-navigation-rail-color-item-active-indicator);
+    --_m3e-nav-width-duration: var(--m3e-sys-motion-spring-fast-spatial-duration);
+    --_m3e-nav-width-easing: var(--m3e-sys-motion-spring-fast-spatial-easing);
+    --_m3e-nav-alpha-duration: var(--m3e-sys-motion-spring-default-effects-duration);
+    --_m3e-nav-alpha-easing: var(--m3e-sys-motion-spring-default-effects-easing);
+    --m3e-comp-state-layer-color: var(--m3e-sys-color-on-surface);
+
+    display: flex;
+    flex-direction: column;
+    row-gap: var(--m3e-comp-navigation-rail-vertical-padding);
+    align-items: center;
+    box-sizing: border-box;
+    min-inline-size: var(--m3e-comp-navigation-rail-collapsed-narrow-container-width);
+    padding-block: calc(var(--m3e-comp-navigation-rail-vertical-padding) + env(safe-area-inset-top))
+      calc(var(--m3e-comp-navigation-rail-vertical-padding) + env(safe-area-inset-bottom));
+    padding-inline-start: env(safe-area-inset-left);
+    background-color: var(--m3e-comp-navigation-rail-collapsed-container-color);
+    color: var(--m3e-sys-color-on-surface);
+  }
+
+  /* Header, the spacer, then the items: spacer + one more item gap after the header. */
+  .m3e-navigation-rail__header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-block-end: calc(
+      var(--m3e-comp-navigation-rail-header-padding) +
+        var(--m3e-comp-navigation-rail-vertical-padding)
+    );
+  }
+
+  .m3e-navigation-rail > .m3e-navigation-item {
+    min-inline-size: var(--m3e-comp-navigation-rail-collapsed-narrow-container-width);
+  }
+
+  .m3e-navigation-rail > .m3e-navigation-item:has(.m3e-navigation-item__label) {
+    --_m3e-nav-item-padding-block-end: calc(
+      (
+          var(--m3e-comp-navigation-rail-vertical-item-active-indicator-height) -
+            var(--m3e-comp-navigation-rail-baseline-item-icon-size)
+        ) /
+        2
+    );
+  }
+
+  /* Icon and label colors animate on DefaultEffects (animateColorAsState). */
+  .m3e-navigation-rail .m3e-navigation-item__icon {
+    transition-property: color, font-variation-settings;
+  }
+
+  .m3e-navigation-rail .m3e-navigation-item__label {
+    transition: color var(--m3e-sys-motion-spring-default-effects-duration)
+      var(--m3e-sys-motion-spring-default-effects-easing);
+  }
+
+  @media (forced-colors: active) {
+    .m3e-navigation-rail {
+      border-inline-end: var(--m3e-comp-divider-thickness) solid CanvasText;
+    }
+  }
+}

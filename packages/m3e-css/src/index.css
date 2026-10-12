@@ -18,5 +18,9 @@
 @import './icon-button.css';
 @import './card.css';
 @import './divider.css';
+@import './short-navigation-bar.css';
+@import './wide-navigation-rail.css';
+@import './navigation-bar.css'; /* @deprecated (D4) */
+@import './navigation-rail.css'; /* @deprecated (D4) */
 @import './top-app-bar.css';
 @import './assist-chip.css';
