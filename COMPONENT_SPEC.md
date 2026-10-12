@@ -441,8 +441,9 @@
   - [ ] Plus CAC.
 
 ## 35. Divider
-- **Tokens:** `TODO(verify)` DividerTokens (1px outline-variant).
-- **ARIA:** `<hr>`/`role="separator"`.
+- **Tokens (verified, generated):** `DividerTokens.kt@19991f2c` via `DividerDefaults` (`Divider.kt` L111–118): thickness 1dp, color outline-variant. `HorizontalDivider` fills the width, `VerticalDivider` the height (L49–89); no built-in insets (margins on the element).
+- **Classes:** `.m3e-divider`, `.m3e-divider--vertical`.
+- **ARIA:** `<hr>`/`role="separator"`; vertical adds `aria-orientation="vertical"`.
 - **Layers:** css.
 - **Acceptance:**
   - [ ] Renders at 1 device-independent px.

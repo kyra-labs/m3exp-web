@@ -88,7 +88,7 @@
 49. Snackbar tokens.
 50. Tooltip tokens.
 51. Badge tokens.
-52. Divider tokens.
+52. ~~Divider tokens~~ — resolved: `DividerTokens.kt@19991f2c` (generated; Thickness 1dp, Color OutlineVariant) as read by `DividerDefaults` (`Divider.kt` L111–118).
 53. Carousel tokens.
 54. Segmented button guidance.
 55. Pull-to-refresh indicator.
