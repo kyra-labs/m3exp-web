@@ -1,0 +1,39 @@
+---
+// Static navigation items in the m3e-css contract (navigation-item.css), for the docs pages.
+export interface Item {
+  icon: string;
+  label: string;
+  selected?: boolean;
+  disabled?: boolean;
+  iconOnly?: boolean;
+}
+
+interface Props {
+  items: readonly Item[];
+  prefix: string;
+}
+
+const { items, prefix } = Astro.props;
+---
+
+{
+  items.map((item) => (
+    <a
+      class="m3e-navigation-item"
+      href={item.disabled ? undefined : `#${prefix}-${item.icon}`}
+      aria-current={item.selected ? 'page' : undefined}
+      aria-disabled={item.disabled ? 'true' : undefined}
+      aria-label={item.iconOnly ? item.label : undefined}
+      data-testid={`${prefix}-${item.icon}`}
+    >
+      <span class="m3e-navigation-item__content">
+        <span class="m3e-navigation-item__indicator" aria-hidden="true" />
+        <span class="m3e-navigation-item__state" aria-hidden="true" />
+        <span class="m3e-icon m3e-navigation-item__icon" aria-hidden="true">
+          {item.icon}
+        </span>
+        {item.iconOnly ? null : <span class="m3e-navigation-item__label">{item.label}</span>}
+      </span>
+    </a>
+  ))
+}

@@ -17,12 +17,24 @@
 }
 
 @layer m3e.base {
-  :where(.m3e-state-layer, .m3e-button, .m3e-icon-button, .m3e-card--interactive) {
+  :where(
+    .m3e-state-layer,
+    .m3e-button,
+    .m3e-icon-button,
+    .m3e-card--interactive,
+    .m3e-navigation-item__state
+  ) {
     position: relative;
     isolation: isolate;
   }
 
-  :where(.m3e-state-layer, .m3e-button, .m3e-icon-button, .m3e-card--interactive)::before {
+  :where(
+    .m3e-state-layer,
+    .m3e-button,
+    .m3e-icon-button,
+    .m3e-card--interactive,
+    .m3e-navigation-item__state
+  )::before {
     content: '';
     position: absolute;
     inset: 0;
@@ -36,6 +48,28 @@
         var(--m3e-sys-motion-spring-default-effects-easing),
       --_m3e-ripple-size var(--m3e-sys-motion-spring-default-effects-duration)
         var(--m3e-sys-motion-spring-default-effects-easing);
+  }
+
+  /*
+   * Navigation items: the whole item takes the pointer and focus, the indicator pill
+   * (.m3e-navigation-item__state) shows it. Zero specificity, so [data-pressed] still wins.
+   */
+  @media (hover: hover) {
+    :where(.m3e-navigation-item:hover .m3e-navigation-item__state)::before {
+      opacity: var(--m3e-sys-state-hover-state-layer-opacity);
+    }
+  }
+
+  :where(.m3e-navigation-item:focus-visible .m3e-navigation-item__state)::before {
+    opacity: var(--m3e-sys-state-focus-state-layer-opacity);
+  }
+
+  :where(.m3e-navigation-item:active .m3e-navigation-item__state)::before {
+    opacity: var(--m3e-sys-state-pressed-state-layer-opacity);
+  }
+
+  :where(.m3e-navigation-item[aria-disabled='true'] .m3e-navigation-item__state)::before {
+    display: none;
   }
 
   @media (hover: hover) {
@@ -58,7 +92,8 @@
       .m3e-state-layer,
       .m3e-button,
       .m3e-icon-button,
-      .m3e-card--interactive
+      .m3e-card--interactive,
+      .m3e-navigation-item__state
     )[data-pressed]::before {
     opacity: var(--m3e-sys-state-pressed-state-layer-opacity);
   }
@@ -76,7 +111,8 @@
       .m3e-state-layer,
       .m3e-button,
       .m3e-icon-button,
-      .m3e-card--interactive
+      .m3e-card--interactive,
+      .m3e-navigation-item__state
     )[data-ripple]::before {
     background: radial-gradient(
       circle at var(--_m3e-ripple-x, 50%) var(--_m3e-ripple-y, 50%),
@@ -89,7 +125,8 @@
       .m3e-state-layer,
       .m3e-button,
       .m3e-icon-button,
-      .m3e-card--interactive
+      .m3e-card--interactive,
+      .m3e-navigation-item__state
     )[data-ripple][data-pressed]::before {
     --_m3e-ripple-size: var(--_m3e-ripple-radius, 100%);
   }
@@ -118,7 +155,13 @@
   }
 
   @media (forced-colors: active) {
-    :where(.m3e-state-layer, .m3e-button, .m3e-icon-button, .m3e-card--interactive)::before {
+    :where(
+      .m3e-state-layer,
+      .m3e-button,
+      .m3e-icon-button,
+      .m3e-card--interactive,
+      .m3e-navigation-item__state
+    )::before {
       display: none;
     }
   }

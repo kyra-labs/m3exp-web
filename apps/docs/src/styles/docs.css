@@ -286,3 +286,39 @@ button.docs-tile {
   margin: var(--m3e-sys-space-300) 0;
   padding: var(--m3e-sys-space-200);
 }
+
+/* Navigation bar / rail demos: a phone-width frame, a medium-width frame, rails side by side. */
+.docs-nav-frame {
+  max-inline-size: calc(var(--m3e-sys-space-900) * 6);
+  margin: var(--m3e-sys-space-300) 0;
+  border: var(--m3e-comp-divider-thickness) solid var(--m3e-sys-color-outline-variant);
+}
+
+.docs-nav-frame--wide {
+  max-inline-size: calc(var(--m3e-sys-space-900) * 12);
+}
+
+.docs-rail-frames {
+  display: flex;
+  gap: var(--m3e-sys-space-300);
+  align-items: stretch;
+  block-size: calc(var(--m3e-sys-space-900) * 7);
+  margin: var(--m3e-sys-space-300) 0;
+}
+
+/* An outline, not a border: the rails keep their exact widths. */
+.docs-rail-frames > * {
+  outline: var(--m3e-comp-divider-thickness) solid var(--m3e-sys-color-outline-variant);
+}
+
+/* Compose's WideNavigationRail sample pads its menu button 24dp from the start edge. */
+.docs-rail-menu {
+  margin-inline-start: var(--m3e-sys-space-300);
+}
+
+.docs-deprecated {
+  padding: var(--m3e-sys-space-150) var(--m3e-sys-space-200);
+  border-radius: var(--m3e-sys-shape-corner-medium);
+  background: var(--m3e-sys-color-error-container);
+  color: var(--m3e-sys-color-on-error-container);
+}

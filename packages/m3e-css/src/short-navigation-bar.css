@@ -1,0 +1,145 @@
+/*
+ * Short navigation bar (COMPONENT_SPEC §13; Compose ShortNavigationBar). No JavaScript needed.
+ *
+ *   <nav class="m3e-short-navigation-bar" aria-label="Main">
+ *     <a class="m3e-navigation-item" href="/" aria-current="page">…</a>   (navigation-item.css)
+ *     …
+ *   </nav>
+ *
+ * Vertical items (default): icon above the label, items share the width equally
+ * (ShortNavigationBarArrangement.EqualWeight). --horizontal: icon before the label and the items
+ * centered (NavigationItemIconPosition.Start + ShortNavigationBarArrangement.Centered, the
+ * medium-width configuration).
+ *
+ * Sources (compose/material3 @ 19991f2c):
+ * - ShortNavigationBar.kt: container NavigationBarTokens.ContainerColor, content contentColorFor
+ *   (onSurface), min height NavigationBarTokens.ContainerHeight, no elevation; window insets
+ *   horizontal + bottom (here the safe-area insets).
+ * - ShortNavigationBarItem: indicator NavigationBarVerticalItemTokens.ActiveIndicatorWidth ×
+ *   ActiveIndicatorHeight, item padding ContainerBetweenSpace, indicator → label
+ *   TopIconIndicatorToLabelPadding; start icon: indicator height
+ *   NavigationBarHorizontalItemTokens.ActiveIndicatorHeight, leading space ActiveIndicatorLeadingSpace,
+ *   icon → label NavigationBarTokens.ItemActiveIndicatorIconLabelSpace.
+ * - Colors: ShortNavigationBarItemDefaults (selected label: ItemActiveLabelTextColor with the icon
+ *   on top, ItemActiveIconColor with the icon at the start). No color animation (animateColor =
+ *   false); the indicator springs on DefaultSpatial.
+ * - EqualWeight: width / count per item. Centered: calculateCenteredContentHorizontalPadding per
+ *   side (navigation-defaults.css, 1–6 items; 0 above), item width between (width − 2 × padding) /
+ *   count and width / count, the row kept centered.
+ */
+@import '@kyralabs/m3e-tokens/components/navigation-bar.css';
+@import '@kyralabs/m3e-tokens/components/navigation-bar-vertical-item.css';
+@import '@kyralabs/m3e-tokens/components/navigation-bar-horizontal-item.css';
+@import '@kyralabs/m3e-tokens/components/navigation-defaults.css';
+@import '@kyralabs/m3e-tokens/components/button-defaults.css';
+@import '@kyralabs/m3e-tokens/components/divider.css';
+@import './navigation-item.css';
+
+@layer m3e.components {
+  .m3e-short-navigation-bar {
+    --_m3e-nav-pill-inline: var(--m3e-comp-navigation-bar-vertical-item-active-indicator-width);
+    --_m3e-nav-pill-block: var(--m3e-comp-navigation-bar-vertical-item-active-indicator-height);
+    --_m3e-nav-pill-block-icon-only: var(--_m3e-nav-pill-block);
+    --_m3e-nav-label-gap: var(--m3e-comp-short-navigation-bar-item-indicator-to-label-padding);
+    --_m3e-nav-item-padding-block-start: var(
+      --m3e-comp-navigation-bar-vertical-item-container-between-space
+    );
+    --_m3e-nav-item-padding-block-end: var(
+      --m3e-comp-navigation-bar-vertical-item-container-between-space
+    );
+    --_m3e-nav-start-padding-block: calc(
+      (
+          var(--m3e-comp-navigation-bar-horizontal-item-active-indicator-height) -
+            var(--m3e-comp-navigation-bar-horizontal-item-icon-size)
+        ) /
+        2
+    );
+    --_m3e-nav-start-padding-inline: var(
+      --m3e-comp-navigation-bar-horizontal-item-active-indicator-leading-space
+    );
+    --_m3e-nav-icon-label-gap: var(
+      --m3e-comp-navigation-bar-item-active-indicator-icon-label-space
+    );
+    --_m3e-nav-label-font: var(--m3e-comp-navigation-bar-label-text-font);
+    --_m3e-nav-label-size: var(--m3e-comp-navigation-bar-label-text-size);
+    --_m3e-nav-label-weight: var(--m3e-comp-navigation-bar-label-text-weight);
+    --_m3e-nav-label-line-height: var(--m3e-comp-navigation-bar-label-text-line-height);
+    --_m3e-nav-label-tracking: var(--m3e-comp-navigation-bar-label-text-tracking);
+    --_m3e-nav-icon-unselected: var(--m3e-comp-navigation-bar-item-inactive-icon-color);
+    --_m3e-nav-icon-selected: var(--m3e-comp-navigation-bar-item-active-icon-color);
+    --_m3e-nav-label-unselected: var(--m3e-comp-navigation-bar-item-inactive-label-text-color);
+    --_m3e-nav-label-selected: var(--m3e-comp-navigation-bar-item-active-label-text-color);
+    --_m3e-nav-label-selected-start: var(--m3e-comp-navigation-bar-item-active-icon-color);
+    --_m3e-nav-indicator: var(--m3e-comp-navigation-bar-item-active-indicator-color);
+    --_m3e-nav-width-duration: var(--m3e-sys-motion-spring-default-spatial-duration);
+    --_m3e-nav-width-easing: var(--m3e-sys-motion-spring-default-spatial-easing);
+    --_m3e-nav-alpha-duration: var(--m3e-sys-motion-spring-default-spatial-duration);
+    --_m3e-nav-alpha-easing: var(--m3e-sys-motion-spring-default-spatial-easing);
+    --m3e-comp-state-layer-color: var(--m3e-sys-color-on-surface);
+
+    display: flex;
+    box-sizing: border-box;
+    min-block-size: var(--m3e-comp-navigation-bar-container-height);
+    padding: 0 env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+    background-color: var(--m3e-comp-navigation-bar-container-color);
+    color: var(--m3e-sys-color-on-surface);
+  }
+
+  .m3e-short-navigation-bar > .m3e-navigation-item {
+    flex: 1 1 0;
+  }
+
+  /* --- Horizontal items, centered -------------------------------------------------------- */
+  .m3e-short-navigation-bar--horizontal {
+    --_m3e-nav-item-padding-block-start: 0;
+    --_m3e-nav-item-padding-block-end: 0;
+
+    justify-content: center;
+  }
+
+  .m3e-short-navigation-bar--horizontal:has(> .m3e-navigation-item:nth-child(-n + 6):last-child)
+    > .m3e-navigation-item {
+    flex: 0 0 auto;
+    min-inline-size: max(
+      var(--m3e-comp-minimum-interactive-component-size),
+      var(--_m3e-nav-centered-min)
+    );
+    max-inline-size: var(--_m3e-nav-centered-max);
+  }
+
+  .m3e-short-navigation-bar--horizontal:has(> :nth-child(1):last-child) {
+    --_m3e-nav-centered-min: var(--m3e-comp-short-navigation-bar-centered-item-min-width-1);
+    --_m3e-nav-centered-max: var(--m3e-comp-short-navigation-bar-centered-item-max-width-1);
+  }
+
+  .m3e-short-navigation-bar--horizontal:has(> :nth-child(2):last-child) {
+    --_m3e-nav-centered-min: var(--m3e-comp-short-navigation-bar-centered-item-min-width-2);
+    --_m3e-nav-centered-max: var(--m3e-comp-short-navigation-bar-centered-item-max-width-2);
+  }
+
+  .m3e-short-navigation-bar--horizontal:has(> :nth-child(3):last-child) {
+    --_m3e-nav-centered-min: var(--m3e-comp-short-navigation-bar-centered-item-min-width-3);
+    --_m3e-nav-centered-max: var(--m3e-comp-short-navigation-bar-centered-item-max-width-3);
+  }
+
+  .m3e-short-navigation-bar--horizontal:has(> :nth-child(4):last-child) {
+    --_m3e-nav-centered-min: var(--m3e-comp-short-navigation-bar-centered-item-min-width-4);
+    --_m3e-nav-centered-max: var(--m3e-comp-short-navigation-bar-centered-item-max-width-4);
+  }
+
+  .m3e-short-navigation-bar--horizontal:has(> :nth-child(5):last-child) {
+    --_m3e-nav-centered-min: var(--m3e-comp-short-navigation-bar-centered-item-min-width-5);
+    --_m3e-nav-centered-max: var(--m3e-comp-short-navigation-bar-centered-item-max-width-5);
+  }
+
+  .m3e-short-navigation-bar--horizontal:has(> :nth-child(6):last-child) {
+    --_m3e-nav-centered-min: var(--m3e-comp-short-navigation-bar-centered-item-min-width-6);
+    --_m3e-nav-centered-max: var(--m3e-comp-short-navigation-bar-centered-item-max-width-6);
+  }
+
+  @media (forced-colors: active) {
+    .m3e-short-navigation-bar {
+      border-block-start: var(--m3e-comp-divider-thickness) solid CanvasText;
+    }
+  }
+}

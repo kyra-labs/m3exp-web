@@ -233,21 +233,23 @@
 
 ## 13. Navigation bar (ShortNavigationBar; legacy NavigationBar @deprecated)
 - **Variants:** vertical items; horizontal items at medium widths.
-- **Tokens:** `TODO(verify)` ShortNavigationBar*Tokens.kt. Indicator secondary-container.
-- **Motion:** indicator width on fastSpatial; icon FILL 0→1.
+- **Tokens (verified, generated):** ShortNavigationBar reads `NavigationBarTokens`, `NavigationBarVerticalItemTokens` and `NavigationBarHorizontalItemTokens` (there is no ShortNavigationBar*Tokens.kt at `19991f2c`); layout literals (`TopIconIndicatorToLabelPadding`, the Centered arrangement padding) generated into `components/navigation-defaults.css` from `ShortNavigationBar.kt`. Container surface-container, 64dp; indicator secondary-container 56×32 (horizontal: 40dp tall, hugging icon + label).
+- **Motion:** indicator width and alpha on **defaultSpatial** (`NavigationItem.kt` animateIndicatorProgressAsState; androidx overrides the earlier fastSpatial note); icon FILL 0→1 on defaultEffects. Legacy NavigationBar: width fastSpatial, alpha + colors defaultEffects.
 - **ARIA:** `<nav aria-label>`; links with `aria-current="page"`.
-- **Layers:** css + react; element for indicator animation.
-- **API:** `<NavigationBar items=[{key,icon,label,href,badge}] selectedKey />`.
+- **Layers:** css + react. No element in M4: the indicator animation is CSS (registered custom properties + spring `linear()` easings), so any script that moves `aria-current` animates it.
+- **Classes:** `.m3e-short-navigation-bar` (`--horizontal`), legacy `.m3e-navigation-bar`; items `.m3e-navigation-item` with `__content`, `__indicator`, `__state` (state layer + focus ring on the pill), `__icon`, `__label`.
+- **API:** `<ShortNavigationBar items=[{key,icon,label,href,isDisabled,isLabelHidden}] selectedKey defaultSelectedKey onSelectionChange layout />`; legacy `<NavigationBar>` (same props, @deprecated). Badges wait for the Badge component (§34).
 - **Acceptance:**
   - [ ] Only one item has `aria-current`.
   - [ ] Indicator animates between items.
   - [ ] Plus CAC.
 
 ## 14. Navigation rail (WideNavigationRail, Modal; legacy NavigationRail @deprecated)
-- **Tokens:** `TODO(verify)` widths, item heights, header/FAB placement.
-- **Motion:** width on defaultSpatial; labels on fastEffects.
+- **Tokens (verified, generated):** `NavigationRail{Collapsed,Expanded,Color,BaselineItem,VerticalItem,HorizontalItem}Tokens.kt@19991f2c`: collapsed 96dp, expanded 220–360dp, top space 44dp, header → items 40dp, collapsed item min height 64dp spaced 4dp; pill 56×32 collapsed, 56dp tall expanded starting `WNRItemHorizontalPadding` (20dp, generated from `WideNavigationRail.kt`) from the start edge. Header/FAB placement: header slot at the top start (`WideNavigationRailLayout`). Legacy NavigationRail: 80dp, items 56dp, literals from `NavigationRail.kt` (generated).
+- **Motion:** width on defaultSpatial; label color on defaultEffects (`StyledLabel` animateColor), not fastEffects; indicator on defaultSpatial.
 - **ARIA:** `<nav>`; modal is `dialog` with focus trap.
-- **Layers:** css + elements + react.
+- **Layers:** css + elements + react. M4 ships the static rail (css + react, `isExpanded` re-lays out without animating); the animated expand/collapse, the modal rail and the element land in M7 (ROADMAP).
+- **Classes / API:** `.m3e-wide-navigation-rail` (`--expanded`, `__header`), legacy `.m3e-navigation-rail` (`__header`); `<WideNavigationRail items selectedKey isExpanded header />`, legacy `<NavigationRail header />` (@deprecated).
 - **Acceptance:**
   - [ ] Expanding animates width without reflow more than once per frame.
   - [ ] Modal traps focus; Esc closes.

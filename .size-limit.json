@@ -50,6 +50,27 @@
     "limit": "1 KB"
   },
   {
+    "name": "m3e-css: short navigation bar (incl. navigation item)",
+    "path": "packages/m3e-css/dist/short-navigation-bar.css",
+    "rolldown": false,
+    "limit": "4 KB"
+  },
+  {
+    "name": "m3e-css: wide navigation rail (incl. navigation item)",
+    "path": "packages/m3e-css/dist/wide-navigation-rail.css",
+    "rolldown": false,
+    "limit": "4 KB"
+  },
+  {
+    "name": "m3e-css: legacy navigation bar + rail (D4)",
+    "path": [
+      "packages/m3e-css/dist/navigation-bar.css",
+      "packages/m3e-css/dist/navigation-rail.css"
+    ],
+    "rolldown": false,
+    "limit": "6 KB"
+  },
+  {
     "name": "m3e-elements (all)",
     "path": "packages/m3e-elements/dist/index.js",
     "limit": "30 KB"
