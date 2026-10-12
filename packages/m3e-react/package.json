@@ -47,6 +47,7 @@
   },
   "devDependencies": {
     "@kyralabs/m3e-elements": "workspace:^",
+    "@kyralabs/m3e-motion": "workspace:^",
     "@types/react": "19.3.0",
     "@types/react-dom": "19.3.0",
     "react": "19.3.0",

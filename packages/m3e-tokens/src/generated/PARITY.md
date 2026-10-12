@@ -4,7 +4,7 @@
 > Source: compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/tokens @ 19991f2c0858aadfcb442ce02b2c8e4743c96898  
 > Values: Copyright (C) The Android Open Source Project, Apache License 2.0 (see NOTICE).  
 
-Emitted: 371 system and 2607 component variables from 107 component token objects.
+Emitted: 371 system and 2611 component variables from 109 component token objects.
 
 ## Not emitted here
 
@@ -638,6 +638,13 @@ Emitted: 371 system and 2607 component variables from 107 component token object
 | `AssistChipTokens.IconColor` | `ColorSchemeKeyTokens.Primary` | AssistChipTokens.kt:109 | `--m3e-comp-assist-chip-icon-color` | `var(--m3e-sys-color-primary)` |  |
 | `AssistChipTokens.IconSize` | `18.0.dp` | AssistChipTokens.kt:112 | `--m3e-comp-assist-chip-icon-size` | `18px` |  |
 | `AssistChipTokens.PressedIconColor` | `ColorSchemeKeyTokens.Primary` | AssistChipTokens.kt:115 | `--m3e-comp-assist-chip-icon-color-pressed` | `var(--m3e-sys-color-primary)` |  |
+
+## assist-chip-defaults
+
+| Source token | Source value | Line | CSS variable | Emitted | Note |
+|---|---|---|---|---|---|
+| `AssistChipDefaults.ContentPadding (horizontal)` | `8.dp` | compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/Chip.kt@19991f2c0858aadfcb442ce02b2c8e4743c96898 L1962 | `--m3e-comp-assist-chip-content-padding-horizontal` | `8px` |  |
+| `SuggestionChipDefaults.HorizontalSpacing` | `8.dp` | compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/Chip.kt@19991f2c0858aadfcb442ce02b2c8e4743c96898 L2918 | `--m3e-comp-assist-chip-horizontal-spacing` | `8px` | AssistChipDefaults.horizontalArrangement() = ChipArrangement(SuggestionChipDefaults.HorizontalSpacing) |
 
 ## badge
 
@@ -3542,6 +3549,13 @@ Emitted: 371 system and 2607 component variables from 107 component token object
 | `TonalButtonTokens.UnselectedLabelTextColor` | `ColorSchemeKeyTokens.OnSecondaryContainer` | TonalButtonTokens.kt:121 | `--m3e-comp-tonal-button-label-text-color-unselected` | `var(--m3e-sys-color-on-secondary-container)` |  |
 | `TonalButtonTokens.UnselectedPressedIconColor` | `ColorSchemeKeyTokens.OnSecondaryContainer` | TonalButtonTokens.kt:124 | `--m3e-comp-tonal-button-icon-color-unselected-pressed` | `var(--m3e-sys-color-on-secondary-container)` |  |
 | `TonalButtonTokens.UnselectedPressedLabelTextColor` | `ColorSchemeKeyTokens.OnSecondaryContainer` | TonalButtonTokens.kt:127 | `--m3e-comp-tonal-button-label-text-color-unselected-pressed` | `var(--m3e-sys-color-on-secondary-container)` |  |
+
+## top-app-bar-defaults
+
+| Source token | Source value | Line | CSS variable | Emitted | Note |
+|---|---|---|---|---|---|
+| `AppBar.kt.TopAppBarHorizontalPadding` | `4.dp` | compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/AppBar.kt@19991f2c0858aadfcb442ce02b2c8e4743c96898 L3610 | `--m3e-comp-top-app-bar-horizontal-padding` | `4px` |  |
+| `AppBar.kt.TopAppBarTitleInset` | `16.dp - TopAppBarHorizontalPadding` | compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/AppBar.kt@19991f2c0858aadfcb442ce02b2c8e4743c96898 L3615 | `--m3e-comp-top-app-bar-title-inset` | `12px` | 16.dp - TopAppBarHorizontalPadding |
 
 ## vibrant-menu
 

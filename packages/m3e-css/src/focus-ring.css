@@ -9,7 +9,7 @@
  * the ring appears without animation.
  */
 @layer m3e.base {
-  :where(.m3e-focus-ring, .m3e-button, .m3e-icon-button):focus-visible {
+  :where(.m3e-focus-ring, .m3e-button, .m3e-icon-button, .m3e-assist-chip):focus-visible {
     outline: var(--m3e-sys-state-focus-indicator-thickness) solid var(--m3e-sys-color-secondary);
     outline-offset: var(--m3e-sys-state-focus-indicator-outer-offset);
   }
@@ -30,12 +30,14 @@
     outline-offset: var(--m3e-sys-state-focus-indicator-inner-offset);
   }
 
-  :where(.m3e-focus-ring, .m3e-button, .m3e-icon-button):focus:not(:focus-visible) {
+  :where(.m3e-focus-ring, .m3e-button, .m3e-icon-button, .m3e-assist-chip):focus:not(
+      :focus-visible
+    ) {
     outline: none;
   }
 
   @media (forced-colors: active) {
-    :where(.m3e-focus-ring, .m3e-button, .m3e-icon-button):focus-visible,
+    :where(.m3e-focus-ring, .m3e-button, .m3e-icon-button, .m3e-assist-chip):focus-visible,
     :where(.m3e-card--interactive):has(.m3e-card__action:focus-visible),
     :where(.m3e-navigation-item:focus-visible .m3e-navigation-item__state) {
       outline-color: Highlight;

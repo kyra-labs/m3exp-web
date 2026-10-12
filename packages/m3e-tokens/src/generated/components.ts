@@ -147,6 +147,12 @@ export const assistChipTokens = {
   iconColorPressed: "var(--m3e-sys-color-primary)"
 } as const;
 
+/** AssistChipDefaults */
+export const assistChipDefaults = {
+  assistChipContentPaddingHorizontal: 8,
+  assistChipHorizontalSpacing: 8
+} as const;
+
 /** BadgeTokens */
 export const badgeTokens = {
   color: "var(--m3e-sys-color-error)",
@@ -2985,6 +2991,12 @@ export const tonalButtonTokens = {
   labelTextColorUnselected: "var(--m3e-sys-color-on-secondary-container)",
   iconColorUnselectedPressed: "var(--m3e-sys-color-on-secondary-container)",
   labelTextColorUnselectedPressed: "var(--m3e-sys-color-on-secondary-container)"
+} as const;
+
+/** AppBar.kt */
+export const appBar = {
+  topAppBarHorizontalPadding: 4,
+  topAppBarTitleInset: 12
 } as const;
 
 /** VibrantMenuTokens */

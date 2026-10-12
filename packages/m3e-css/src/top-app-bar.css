@@ -1,0 +1,143 @@
+/*
+ * Top app bar, small (COMPONENT_SPEC §11; Compose TopAppBar). No JavaScript needed for the static
+ * bar; scroll behaviors (m3e-elements attachTopAppBarScroll, m3e-react <TopAppBar>) only set
+ * `data-scroll-behavior`, `data-scrolled` and `--_m3e-top-app-bar-offset`.
+ *
+ *   <header class="m3e-top-app-bar">
+ *     <div class="m3e-top-app-bar__navigation"><button class="m3e-icon-button …">…</button></div>
+ *     <div class="m3e-top-app-bar__headline">
+ *       <h1 class="m3e-top-app-bar__title">Title</h1>
+ *       <p class="m3e-top-app-bar__subtitle">Subtitle</p>
+ *     </div>
+ *     <div class="m3e-top-app-bar__actions">…icon buttons…</div>
+ *   </header>
+ *
+ * Sources (compose/material3 @ 19991f2c, AppBar.kt):
+ * - Height AppBarSmallTokens.ContainerHeight (TopAppBarExpandedHeight); the bar grows if the
+ *   headline is taller (TopAppBarMeasurePolicy: max(height, title height)).
+ * - TopAppBarLayout: navigation icon padded start by TopAppBarHorizontalPadding, title padded by it
+ *   on both sides and starting at max(TopAppBarTitleInset, navigation width), actions padded end
+ *   (top-app-bar-defaults.css). Everything is vertically centered.
+ * - Colors: defaultTopAppBarColors (AppBarTokens). The container switches to OnScrollContainerColor
+ *   once content scrolls under the bar, animated with the default effects spring
+ *   (SingleRowTopAppBar). No elevation change.
+ * - Enter-always: the bar's height shrinks by the height offset, content stays centered in what is
+ *   left and is clipped (layoutHeight = height + heightOffset, clipToBounds). Here the box keeps its
+ *   height (so nothing reflows) and is clipped instead, with the content shifted by half the offset.
+ */
+@import '@kyralabs/m3e-tokens/components/app-bar.css';
+@import '@kyralabs/m3e-tokens/components/app-bar-small.css';
+@import '@kyralabs/m3e-tokens/components/top-app-bar-defaults.css';
+@import '@kyralabs/m3e-tokens/components/divider.css';
+@import '@kyralabs/m3e-tokens/components/button-defaults.css';
+
+/* Height offset in px (0 to minus the bar height), written by the scroll behaviors. */
+@property --_m3e-top-app-bar-offset {
+  syntax: '<length-percentage>';
+  inherits: true;
+  initial-value: 0%;
+}
+
+@layer m3e.components {
+  .m3e-top-app-bar {
+    display: flex;
+    align-items: center;
+    box-sizing: border-box;
+    min-block-size: var(--m3e-comp-app-bar-small-container-height);
+    margin: 0;
+    padding: 0;
+    border-radius: var(--m3e-comp-app-bar-container-shape);
+    background-color: var(--m3e-comp-app-bar-container-color);
+    color: var(--m3e-comp-app-bar-title-color);
+    transition: background-color var(--m3e-sys-motion-spring-default-effects-duration)
+      var(--m3e-sys-motion-spring-default-effects-easing);
+  }
+
+  .m3e-top-app-bar[data-scrolled] {
+    background-color: var(--m3e-comp-app-bar-on-scroll-container-color);
+  }
+
+  /* Set by the scroll behaviors; static bars keep no clip or transform. */
+  .m3e-top-app-bar[data-scroll-behavior='enter-always'] {
+    clip-path: inset(0 0 calc(var(--_m3e-top-app-bar-offset) * -1) 0);
+  }
+
+  .m3e-top-app-bar[data-scroll-behavior='enter-always'] > * {
+    translate: 0 calc(var(--_m3e-top-app-bar-offset) / 2);
+  }
+
+  .m3e-top-app-bar__navigation,
+  .m3e-top-app-bar__actions {
+    display: flex;
+    flex: none;
+    align-items: center;
+  }
+
+  /*
+   * Compose's IconButton reserves LocalMinimumInteractiveComponentSize in layout
+   * (minimumInteractiveComponentSize), so a 40dp button takes a 48dp slot in the bar; ours lays out
+   * at its visual size (touch target via ::after), so the bar adds the difference as margin.
+   */
+  :is(.m3e-top-app-bar__navigation, .m3e-top-app-bar__actions) > .m3e-icon-button {
+    margin-inline: max(
+      0%,
+      calc((var(--m3e-comp-minimum-interactive-component-size) - var(--_m3e-icon-button-width)) / 2)
+    );
+  }
+
+  .m3e-top-app-bar__navigation {
+    padding-inline-start: var(--m3e-comp-top-app-bar-horizontal-padding);
+    color: var(--m3e-comp-app-bar-leading-icon-color);
+  }
+
+  .m3e-top-app-bar__actions {
+    gap: var(--m3e-comp-app-bar-icon-button-space);
+    justify-content: flex-end;
+    margin-inline-start: auto;
+    padding-inline-end: var(--m3e-comp-top-app-bar-horizontal-padding);
+    color: var(--m3e-comp-app-bar-trailing-icon-color);
+  }
+
+  .m3e-top-app-bar__headline {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    justify-content: center;
+    min-inline-size: 0;
+    padding-inline: var(--m3e-comp-top-app-bar-horizontal-padding);
+  }
+
+  /* No navigation icon: the title starts at TopAppBarTitleInset. */
+  .m3e-top-app-bar__headline:first-child {
+    margin-inline-start: var(--m3e-comp-top-app-bar-title-inset);
+  }
+
+  .m3e-top-app-bar__title,
+  .m3e-top-app-bar__subtitle {
+    margin: 0;
+  }
+
+  .m3e-top-app-bar__title {
+    color: var(--m3e-comp-app-bar-title-color);
+    font-family: var(--m3e-comp-app-bar-small-title-font);
+    font-size: var(--m3e-comp-app-bar-small-title-size);
+    font-weight: var(--m3e-comp-app-bar-small-title-weight);
+    line-height: var(--m3e-comp-app-bar-small-title-line-height);
+    letter-spacing: var(--m3e-comp-app-bar-small-title-tracking);
+  }
+
+  .m3e-top-app-bar__subtitle {
+    color: var(--m3e-comp-app-bar-subtitle-color);
+    font-family: var(--m3e-comp-app-bar-small-subtitle-font);
+    font-size: var(--m3e-comp-app-bar-small-subtitle-size);
+    font-weight: var(--m3e-comp-app-bar-small-subtitle-weight);
+    line-height: var(--m3e-comp-app-bar-small-subtitle-line-height);
+    letter-spacing: var(--m3e-comp-app-bar-small-subtitle-tracking);
+  }
+
+  @media (forced-colors: active) {
+    .m3e-top-app-bar {
+      border-block-end: var(--m3e-comp-divider-thickness) solid CanvasText;
+    }
+  }
+}

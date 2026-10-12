@@ -332,6 +332,31 @@ describe('ButtonDefaults tokens (M4 Button)', () => {
   });
 });
 
+describe('AssistChipDefaults tokens (M4 assist chip)', () => {
+  const decl = declarations(output.get('components/assist-chip-defaults.css')!);
+  const chip = inputs.material3Sources['Chip.kt']!.replace(/\r\n/g, '\n');
+  const member = (object: string, pattern: RegExp) =>
+    pattern.exec(chip.slice(chip.indexOf(`public object ${object} {`)))?.[1];
+
+  it('content padding comes from AssistChipDefaults.ContentPadding', () => {
+    const value = member(
+      'AssistChipDefaults',
+      /ContentPadding: PaddingValues = PaddingValues\(horizontal = (\d+)\.dp\)/,
+    );
+    expect(value).toBeDefined();
+    expect(decl.get('--m3e-comp-assist-chip-content-padding-horizontal')).toBe(`${value!}px`);
+  });
+
+  it('spacing follows the arrangement AssistChip actually uses', () => {
+    expect(chip).toContain(
+      'private val DefaultHorizontalArrangement = ChipArrangement(SuggestionChipDefaults.HorizontalSpacing)',
+    );
+    const value = member('SuggestionChipDefaults', /HorizontalSpacing: Dp = (\d+)\.dp/);
+    expect(value).toBeDefined();
+    expect(decl.get('--m3e-comp-assist-chip-horizontal-spacing')).toBe(`${value!}px`);
+  });
+});
+
 describe('elevation interaction tweens (M4 card)', () => {
   it('match internal/Elevation.kt and animation-core Easing.kt', () => {
     const decl = declarations(output.get('components/elevation-motion.css')!);
@@ -428,5 +453,19 @@ describe('navigation layout literals (M4 navigation bar + rail)', () => {
       );
     }
     expect(decl.has('--m3e-comp-short-navigation-bar-centered-padding-7')).toBe(false);
+  });
+});
+
+describe('TopAppBar layout literals (M4 Top app bar)', () => {
+  const decl = declarations(output.get('components/top-app-bar-defaults.css')!);
+  const appBar = inputs.material3Sources['AppBar.kt']!.replace(/\r\n/g, '\n');
+
+  it('horizontal padding and title inset come from AppBar.kt', () => {
+    const padding = /private val TopAppBarHorizontalPadding\n\s*get\(\) = (\d+)\.dp/.exec(appBar);
+    const inset = /TopAppBarTitleInset = (\d+)\.dp - TopAppBarHorizontalPadding/.exec(appBar);
+    expect(decl.get('--m3e-comp-top-app-bar-horizontal-padding')).toBe(`${padding![1]!}px`);
+    expect(decl.get('--m3e-comp-top-app-bar-title-inset')).toBe(
+      `${String(Number(inset![1]) - Number(padding![1]))}px`,
+    );
   });
 });

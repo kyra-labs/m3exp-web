@@ -211,11 +211,12 @@
 - **Sources:** AppBar.kt.
 
 ## 11. Top app bars (small, center-aligned, medium/large flexible, two-rows)
-- **Tokens:** `TODO(verify)` heights, padding, title type per variant. Container surface; scrolled surface-container.
-- **Motion:** collapse tied to scroll offset; snap settle on defaultSpatial.
+- **Tokens:** small (verified, generated): `AppBarSmallTokens.kt` / `AppBarTokens.kt@19991f2c` — height 64, title title-large on-surface, subtitle label-medium on-surface-variant, container surface → on-scroll surface-container, leading icon on-surface, trailing on-surface-variant; layout literals `TopAppBarHorizontalPadding` 4dp and `TopAppBarTitleInset` 16dp − 4dp from `AppBar.kt` (`components/top-app-bar-defaults.css`). Other variants: `TODO(verify)` heights, padding, title type.
+- **Motion:** collapse tied to scroll offset (`TopAppBarState`, ported in m3e-motion `app-bar-scroll.ts`); the scrolled container color animates on the default effects spring; a partly hidden bar snaps on `TopAppBarDefaults.snapAnimationSpec`, which is the **default effects** spring in Compose (`AppBar.kt` L1540), not defaultSpatial.
 - **ARIA:** `<header>`; heading level by consumer.
 - **Layers:** css + react/elements (scroll behaviors).
-- **API:** `<TopAppBar variant title subtitle navigationIcon actions scrollBehavior />`.
+- **API:** `<TopAppBar variant title subtitle navigationIcon actions scrollBehavior />` (+ `scrollTarget`, `headingLevel`). Scroll behaviors: `pinned`, `enter-always` (elements: `attachTopAppBarScroll(bar, { behavior, target, signal })`).
+- **Classes:** `.m3e-top-app-bar`, `__navigation`, `__headline`, `__title`, `__subtitle`, `__actions`; state `[data-scrolled]`.
 - **Acceptance:**
   - [ ] Collapsed and expanded heights match tokens.
   - [ ] Container color changes when scrolled.
@@ -281,8 +282,9 @@
   - [ ] Plus CAC.
 
 ## 18. Chips (assist, filter, input, suggestion)
-- **Tokens:** `TODO(verify)` *ChipTokens.
-- **Motion:** expressive selection morphs (`TODO(verify)` properties).
+- **Tokens:** assist chip verified (generated): `AssistChipTokens.kt@19991f2c` + `AssistChipDefaults` literals (`Chip.kt` L1962 content padding 8dp; spacing 8dp via `DefaultHorizontalArrangement` = `SuggestionChipDefaults.HorizontalSpacing`, L2918/L4306): height 32, shape small, label-large on-surface, icon 18dp primary; flat = transparent + 1dp outline-variant border, Level0 except dragged Level4; elevated = surface-container-low, Level1 (hover Level2), no border. Filter/input/suggestion: `TODO(verify)` *ChipTokens.
+- **Classes (assist):** `.m3e-assist-chip`, `--elevated`, `__label`; icons are `.m3e-icon` before/after the label.
+- **Motion:** assist chips have no shape motion (fixed `shape`; elevation uses the `ElevationDefaults` tweens). Selectable chips: expressive selection morphs (`TODO(verify)` properties; `ChipsTokens` Unselected/Selected/PressedShape via `shapeByInteraction`, `Chip.kt` L3288–3346).
 - **ARIA:** filter `aria-pressed`/checkbox; input chip remove button "Remove X".
 - **Layers:** css + react.
 - **Acceptance:**

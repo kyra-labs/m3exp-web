@@ -50,6 +50,23 @@
     "limit": "1 KB"
   },
   {
+    "name": "m3e-css: top app bar",
+    "path": "packages/m3e-css/dist/top-app-bar.css",
+    "rolldown": false,
+    "limit": "2 KB"
+  },
+  {
+    "name": "m3e-elements: top app bar scroll (attachTopAppBarScroll)",
+    "path": "packages/m3e-elements/dist/top-app-bar/index.js",
+    "limit": "3 KB"
+  },
+  {
+    "name": "m3e-css: assist chip",
+    "path": "packages/m3e-css/dist/assist-chip.css",
+    "rolldown": false,
+    "limit": "4 KB"
+  },
+  {
     "name": "m3e-css: short navigation bar (incl. navigation item)",
     "path": "packages/m3e-css/dist/short-navigation-bar.css",
     "rolldown": false,

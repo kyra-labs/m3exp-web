@@ -1,0 +1,70 @@
+---
+import AssistChipPlayground from '../../islands/AssistChipPlayground.tsx';
+import Base from '../../layouts/Base.astro';
+
+const variants = ['flat', 'elevated'] as const;
+const chipClass = (variant: (typeof variants)[number]) =>
+  variant === 'elevated' ? 'm3e-assist-chip m3e-assist-chip--elevated' : 'm3e-assist-chip';
+---
+
+<Base title="Assist chip">
+  <link rel="stylesheet" href="/icons/docs-icons.css" slot="head" />
+  <h1>Assist chip</h1>
+  <p>
+    Flat and elevated assist chips (COMPONENT_SPEC §18), for smart or contextual actions. Plain HTML
+    with m3e-css classes; the label sits in <code>.m3e-assist-chip__label</code>.
+  </p>
+
+  <section aria-labelledby="variants-heading">
+    <h2 id="variants-heading">Variants</h2>
+    {
+      variants.map((variant) => (
+        <div class="docs-button-row" data-testid={variant}>
+          <button type="button" class={chipClass(variant)} data-testid={`${variant}-plain`}>
+            <span class="m3e-assist-chip__label">Plain</span>
+          </button>
+          <button type="button" class={chipClass(variant)} data-testid={`${variant}-leading`}>
+            <span class="m3e-icon" aria-hidden="true">
+              add
+            </span>
+            <span class="m3e-assist-chip__label">Add to calendar</span>
+          </button>
+          <button type="button" class={chipClass(variant)} data-testid={`${variant}-trailing`}>
+            <span class="m3e-assist-chip__label">Rating</span>
+            <span class="m3e-icon" aria-hidden="true">
+              star
+            </span>
+          </button>
+          <button
+            type="button"
+            class={chipClass(variant)}
+            disabled
+            data-testid={`${variant}-disabled`}
+          >
+            <span class="m3e-icon" aria-hidden="true">
+              settings
+            </span>
+            <span class="m3e-assist-chip__label">Disabled</span>
+          </button>
+          <span class={chipClass(variant)} data-dragged data-testid={`${variant}-dragged`}>
+            <span class="m3e-icon" aria-hidden="true">
+              favorite
+            </span>
+            <span class="m3e-assist-chip__label">Dragged</span>
+          </span>
+        </div>
+      ))
+    }
+    <div class="docs-button-row">
+      <a class="m3e-assist-chip" href="#variants-heading">
+        <span class="m3e-assist-chip__label">Link styled as a chip</span>
+      </a>
+    </div>
+  </section>
+
+  <section aria-labelledby="react-heading">
+    <h2 id="react-heading">React</h2>
+    <p><code>&lt;AssistChip&gt;</code> with React Aria press handling and a ripple.</p>
+    <AssistChipPlayground client:only="react" />
+  </section>
+</Base>

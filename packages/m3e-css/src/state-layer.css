@@ -22,6 +22,7 @@
     .m3e-button,
     .m3e-icon-button,
     .m3e-card--interactive,
+    .m3e-assist-chip,
     .m3e-navigation-item__state
   ) {
     position: relative;
@@ -33,6 +34,7 @@
     .m3e-button,
     .m3e-icon-button,
     .m3e-card--interactive,
+    .m3e-assist-chip,
     .m3e-navigation-item__state
   )::before {
     content: '';
@@ -73,7 +75,13 @@
   }
 
   @media (hover: hover) {
-    :where(.m3e-state-layer, .m3e-button, .m3e-icon-button, .m3e-card--interactive):hover::before {
+    :where(
+        .m3e-state-layer,
+        .m3e-button,
+        .m3e-icon-button,
+        .m3e-card--interactive,
+        .m3e-assist-chip
+      ):hover::before {
       opacity: var(--m3e-sys-state-hover-state-layer-opacity);
     }
   }
@@ -82,17 +90,25 @@
       .m3e-state-layer,
       .m3e-button,
       .m3e-icon-button,
-      .m3e-card--interactive
+      .m3e-card--interactive,
+      .m3e-assist-chip
     ):focus-visible::before {
     opacity: var(--m3e-sys-state-focus-state-layer-opacity);
   }
 
-  :where(.m3e-state-layer, .m3e-button, .m3e-icon-button, .m3e-card--interactive):active::before,
   :where(
       .m3e-state-layer,
       .m3e-button,
       .m3e-icon-button,
       .m3e-card--interactive,
+      .m3e-assist-chip
+    ):active::before,
+  :where(
+      .m3e-state-layer,
+      .m3e-button,
+      .m3e-icon-button,
+      .m3e-card--interactive,
+      .m3e-assist-chip,
       .m3e-navigation-item__state
     )[data-pressed]::before {
     opacity: var(--m3e-sys-state-pressed-state-layer-opacity);
@@ -102,7 +118,8 @@
       .m3e-state-layer,
       .m3e-button,
       .m3e-icon-button,
-      .m3e-card--interactive
+      .m3e-card--interactive,
+      .m3e-assist-chip
     )[data-dragged]::before {
     opacity: var(--m3e-sys-state-dragged-state-layer-opacity);
   }
@@ -112,6 +129,7 @@
       .m3e-button,
       .m3e-icon-button,
       .m3e-card--interactive,
+      .m3e-assist-chip,
       .m3e-navigation-item__state
     )[data-ripple]::before {
     background: radial-gradient(
@@ -126,15 +144,19 @@
       .m3e-button,
       .m3e-icon-button,
       .m3e-card--interactive,
+      .m3e-assist-chip,
       .m3e-navigation-item__state
     )[data-ripple][data-pressed]::before {
     --_m3e-ripple-size: var(--_m3e-ripple-radius, 100%);
   }
 
-  :where(.m3e-state-layer, .m3e-button, .m3e-icon-button, .m3e-card--interactive):is(
-      :disabled,
-      [aria-disabled='true']
-    )::before {
+  :where(
+      .m3e-state-layer,
+      .m3e-button,
+      .m3e-icon-button,
+      .m3e-card--interactive,
+      .m3e-assist-chip
+    ):is(:disabled, [aria-disabled='true'])::before {
     display: none;
   }
 
@@ -160,6 +182,7 @@
       .m3e-button,
       .m3e-icon-button,
       .m3e-card--interactive,
+      .m3e-assist-chip,
       .m3e-navigation-item__state
     )::before {
       display: none;
