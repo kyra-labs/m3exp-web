@@ -1524,6 +1524,15 @@ export const loadingIndicatorTokens = {
   containerWidth: 48
 } as const;
 
+/** LoadingIndicator */
+export const loadingIndicator = {
+  loadingIndicatorMorphInterval: 650,
+  loadingIndicatorRotationDuration: 4666,
+  loadingIndicatorMorphSpringDampingRatio: 0.6,
+  loadingIndicatorMorphSpringStiffness: 200,
+  loadingIndicatorMorphSpringVisibilityThreshold: 0.1
+} as const;
+
 /** MediumIconButtonTokens */
 export const mediumIconButtonTokens = {
   containerHeight: 56,

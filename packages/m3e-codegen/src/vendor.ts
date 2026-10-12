@@ -23,6 +23,7 @@ export const MATERIAL3_SOURCES = [
   'ShortNavigationBar.kt',
   'WideNavigationRail.kt',
   'AppBar.kt',
+  'LoadingIndicator.kt',
 ] as const;
 
 /** Compose spring physics ported by m3e-motion (and compiled as-is by its JVM reference harness). */

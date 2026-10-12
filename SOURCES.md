@@ -61,7 +61,7 @@
 22. Split button tokens.
 23. FAB sizes/icons/radii, elevation, extended FAB heights.
 24. FAB menu tokens and item-count guidance.
-25. Loading indicator timings and determinate polygon list.
+25. ~~Loading indicator timings and determinate polygon list~~ — resolved: `LoadingIndicator.kt@19991f2c` (vendored): morph spring ζ 0.6 / k 200 / visibility threshold 0.1 (L401), `MorphIntervalMillis` 650 (L681), `GlobalRotationDurationMillis` 4666 (L680) → generated `components/loading-indicator-motion.css`; `DeterminateIndicatorPolygons` = Circle rotated 360°/20 + SoftBurst (L560–566). Geometry ported float32-faithfully to `m3e-shapes/src/loading-indicator.ts` and checked bit-exact against `pnpm reference:loading-indicator`.
 26. Wavy progress defaults and progress animation spec.
 27. Floating toolbar tokens and animationSpec.
 28. Docked toolbar tokens; BottomAppBar deprecation annotation.

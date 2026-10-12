@@ -146,4 +146,6 @@ jobs:
         run: pnpm reference:motion
       - name: Shapes reference (graphics-shapes 1.0.1, MaterialShapes, ShapeUtil)
         run: pnpm reference:shapes
+      - name: Loading indicator reference (LoadingIndicator.kt geometry)
+        run: pnpm reference:loading-indicator
       - run: git diff --exit-code -- packages/m3e-motion/src/__fixtures__ packages/m3e-shapes/src/__fixtures__

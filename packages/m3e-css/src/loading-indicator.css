@@ -1,0 +1,86 @@
+/*
+ * Loading indicator: uncontained (default) and contained (COMPONENT_SPEC §7).
+ *
+ *   <div class="m3e-loading-indicator" role="progressbar" aria-label="Loading">
+ *     <svg class="m3e-loading-indicator__shape" viewBox="0 0 100 100" aria-hidden="true">
+ *       <path d="…" />
+ *     </svg>
+ *   </div>
+ *
+ * <m3e-loading-indicator> and React <LoadingIndicator> render this DOM and drive the morphing
+ * shape (path d + rotation) with JS, marking the root [data-driven]. Without JS (CSS only),
+ * whatever static shape the markup carries (e.g. SoftBurst from @kyralabs/m3e-shapes) rotates
+ * linearly, one turn per Compose GlobalRotationDuration. Determinate indicators
+ * ([aria-valuenow]) never auto-rotate.
+ *
+ * Sources (compose/material3 @ 19991f2c):
+ * - LoadingIndicatorTokens: container 48 × 48, shape full, active size 38, colors (uncontained
+ *   primary; contained primary-container / on-primary-container).
+ * - LoadingIndicator.kt: the shape keeps a square aspect ratio, centered in the container
+ *   (Spacer.aspectRatio(1f, matchHeightConstraintsFirst = true)); the container is clipped to its
+ *   shape. Resizing the root scales the indicator with the 48 / 38 ratio intact.
+ * - choreography tokens: components/loading-indicator-motion.css.
+ */
+@import '@kyralabs/m3e-tokens/components/loading-indicator.css';
+@import '@kyralabs/m3e-tokens/components/loading-indicator-motion.css';
+
+@layer m3e.components {
+  .m3e-loading-indicator {
+    display: inline-grid;
+    flex: none;
+    place-items: center;
+    box-sizing: border-box;
+    inline-size: var(--m3e-comp-loading-indicator-container-width);
+    block-size: var(--m3e-comp-loading-indicator-container-height);
+    overflow: clip;
+    border-radius: var(--m3e-comp-loading-indicator-container-shape);
+    color: var(--m3e-comp-loading-indicator-active-indicator-color);
+    vertical-align: middle;
+  }
+
+  .m3e-loading-indicator--contained {
+    background-color: var(--m3e-comp-loading-indicator-contained-container-color);
+    color: var(--m3e-comp-loading-indicator-contained-active-color);
+  }
+
+  /* A square drawing area as large as the container allows, centered (xMidYMid meet). */
+  .m3e-loading-indicator__shape {
+    display: block;
+    inline-size: 100%;
+    block-size: 100%;
+    overflow: visible;
+    fill: currentcolor;
+  }
+
+  /* CSS-only fallback: rotate the static shape (Compose's global rotation, linear). */
+  .m3e-loading-indicator:not([data-driven], [aria-valuenow]) .m3e-loading-indicator__shape {
+    animation: m3e-loading-indicator-rotate var(--m3e-comp-loading-indicator-rotation-duration)
+      var(--m3e-sys-motion-easing-linear) infinite;
+  }
+
+  @keyframes m3e-loading-indicator-rotate {
+    to {
+      rotate: 1turn;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .m3e-loading-indicator:not([data-driven], [aria-valuenow]) .m3e-loading-indicator__shape {
+      animation: none;
+    }
+  }
+
+  /* Forced colors drop the container background; the shape stays in the text color. */
+  @media (forced-colors: active) {
+    .m3e-loading-indicator {
+      color: CanvasText;
+    }
+  }
+}
+
+@layer m3e.base {
+  /* <m3e-loading-indicator> renders the contract inside itself. */
+  :where(m3e-loading-indicator) {
+    display: contents;
+  }
+}

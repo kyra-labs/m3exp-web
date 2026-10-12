@@ -4,7 +4,7 @@
 > Source: compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/tokens @ 19991f2c0858aadfcb442ce02b2c8e4743c96898  
 > Values: Copyright (C) The Android Open Source Project, Apache License 2.0 (see NOTICE).  
 
-Emitted: 371 system and 2611 component variables from 109 component token objects.
+Emitted: 371 system and 2616 component variables from 110 component token objects.
 
 ## Not emitted here
 
@@ -2081,6 +2081,16 @@ Emitted: 371 system and 2611 component variables from 109 component token object
 | `LoadingIndicatorTokens.ContainerHeight` | `48.0.dp` | LoadingIndicatorTokens.kt:36 | `--m3e-comp-loading-indicator-container-height` | `48px` |  |
 | `LoadingIndicatorTokens.ContainerShape` | `ShapeKeyTokens.CornerFull` | LoadingIndicatorTokens.kt:39 | `--m3e-comp-loading-indicator-container-shape` | `var(--m3e-sys-shape-corner-full)` |  |
 | `LoadingIndicatorTokens.ContainerWidth` | `48.0.dp` | LoadingIndicatorTokens.kt:42 | `--m3e-comp-loading-indicator-container-width` | `48px` |  |
+
+## loading-indicator-motion
+
+| Source token | Source value | Line | CSS variable | Emitted | Note |
+|---|---|---|---|---|---|
+| `LoadingIndicator.MorphIntervalMillis` | `650ms` | compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/LoadingIndicator.kt@19991f2c0858aadfcb442ce02b2c8e4743c96898 L681 | `--m3e-comp-loading-indicator-morph-interval` | `650ms` |  |
+| `LoadingIndicator.GlobalRotationDurationMillis` | `4666ms` | compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/LoadingIndicator.kt@19991f2c0858aadfcb442ce02b2c8e4743c96898 L680 | `--m3e-comp-loading-indicator-rotation-duration` | `4666ms` |  |
+| `LoadingIndicator.morphAnimationSpec.dampingRatio` | `0.6` | compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/LoadingIndicator.kt@19991f2c0858aadfcb442ce02b2c8e4743c96898 L401 | `--m3e-comp-loading-indicator-morph-spring-damping-ratio` | `0.6` |  |
+| `LoadingIndicator.morphAnimationSpec.stiffness` | `200` | compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/LoadingIndicator.kt@19991f2c0858aadfcb442ce02b2c8e4743c96898 L401 | `--m3e-comp-loading-indicator-morph-spring-stiffness` | `200` |  |
+| `LoadingIndicator.morphAnimationSpec.visibilityThreshold` | `0.1` | compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/LoadingIndicator.kt@19991f2c0858aadfcb442ce02b2c8e4743c96898 L401 | `--m3e-comp-loading-indicator-morph-spring-visibility-threshold` | `0.1` |  |
 
 ## medium-icon-button
 

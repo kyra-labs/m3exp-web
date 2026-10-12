@@ -17,6 +17,7 @@ import { extractButtonDefaults } from './button-defaults.js';
 import { extractChipDefaults } from './chip-defaults.js';
 import { extractElevationMotion } from './elevation-motion.js';
 import { extractCenteredPadding, extractNavigationDefaults } from './navigation-defaults.js';
+import { extractLoadingIndicatorMotion } from './loading-indicator-motion.js';
 import {
   ANIMATION_CORE_PATH as ANIMATION_CORE_DIR,
   MATERIAL3_PATH as MATERIAL3_DIR,
@@ -775,6 +776,29 @@ export function generate({
     ),
   });
 
+  // Indeterminate LoadingIndicator choreography literals (see loading-indicator-motion.ts).
+  const loadingIndicatorMotion = extractLoadingIndicatorMotion(
+    material3Sources['LoadingIndicator.kt'] ?? '',
+  );
+  components.set('loading-indicator-motion', {
+    object: 'LoadingIndicator',
+    tokens: loadingIndicatorMotion.map((t) => ({
+      name: t.name,
+      value: t.value,
+      object: 'LoadingIndicator',
+      member: t.member,
+      raw: t.value,
+      line: t.line,
+      cite: `${MATERIAL3_DIR}/LoadingIndicator.kt@${commit} L${String(t.line)}`,
+    })),
+    js: Object.fromEntries(
+      loadingIndicatorMotion.map((t) => [
+        camel(t.name.replace(/^--m3e-comp-/, '').split('-')),
+        t.number,
+      ]),
+    ),
+  });
+
   // Navigation bar / rail layout literals and the Centered arrangement (see navigation-defaults.ts).
   const navigationDefaults = extractNavigationDefaults(material3Sources);
   const centeredPadding = extractCenteredPadding(material3Sources);
@@ -827,35 +851,42 @@ export function generate({
             [],
             `${MATERIAL3_DIR}/internal/Elevation.kt + ${ANIMATION_CORE_DIR}/Easing.kt`,
           )
-        : name === 'top-app-bar-defaults'
+        : name === 'loading-indicator-motion'
           ? cssFile(
-              'Compose single-row TopAppBar layout values that are not in AppBar*Tokens (lines: PARITY.md).',
+              'How the indeterminate Compose LoadingIndicator morphs and rotates (literals in LoadingIndicator.kt; lines: PARITY.md).',
               c.tokens,
               [],
-              `${MATERIAL3_DIR}/AppBar.kt`,
+              `${MATERIAL3_DIR}/LoadingIndicator.kt`,
             )
-          : name === 'assist-chip-defaults'
+          : name === 'top-app-bar-defaults'
             ? cssFile(
-                'Compose AssistChipDefaults values that are not in AssistChipTokens (lines: PARITY.md).',
+                'Compose single-row TopAppBar layout values that are not in AppBar*Tokens (lines: PARITY.md).',
                 c.tokens,
                 [],
-                `${MATERIAL3_DIR}/Chip.kt`,
+                `${MATERIAL3_DIR}/AppBar.kt`,
               )
-            : name === 'button-defaults'
+            : name === 'assist-chip-defaults'
               ? cssFile(
-                  'Compose ButtonDefaults / ToggleButtonDefaults values that are not in Button*Tokens (lines: PARITY.md).',
+                  'Compose AssistChipDefaults values that are not in AssistChipTokens (lines: PARITY.md).',
                   c.tokens,
                   [],
-                  `${MATERIAL3_DIR}/{Button,ToggleButton,InteractiveComponentSize}.kt`,
+                  `${MATERIAL3_DIR}/Chip.kt`,
                 )
-              : name === 'navigation-defaults'
+              : name === 'button-defaults'
                 ? cssFile(
-                    'Compose navigation bar / rail layout values that are not in Navigation*Tokens (lines: PARITY.md).',
+                    'Compose ButtonDefaults / ToggleButtonDefaults values that are not in Button*Tokens (lines: PARITY.md).',
                     c.tokens,
                     [],
-                    `${MATERIAL3_DIR}/{NavigationBar,NavigationRail,ShortNavigationBar,WideNavigationRail}.kt`,
+                    `${MATERIAL3_DIR}/{Button,ToggleButton,InteractiveComponentSize}.kt`,
                   )
-                : cssFile(`Component tokens: ${c.object}.`, c.tokens),
+                : name === 'navigation-defaults'
+                  ? cssFile(
+                      'Compose navigation bar / rail layout values that are not in Navigation*Tokens (lines: PARITY.md).',
+                      c.tokens,
+                      [],
+                      `${MATERIAL3_DIR}/{NavigationBar,NavigationRail,ShortNavigationBar,WideNavigationRail}.kt`,
+                    )
+                  : cssFile(`Component tokens: ${c.object}.`, c.tokens),
     );
   }
 

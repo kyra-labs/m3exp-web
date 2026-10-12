@@ -88,9 +88,20 @@
     "limit": "6 KB"
   },
   {
+    "name": "m3e-css: loading indicator",
+    "path": "packages/m3e-css/dist/loading-indicator.css",
+    "rolldown": false,
+    "limit": "4 KB"
+  },
+  {
     "name": "m3e-elements (all)",
     "path": "packages/m3e-elements/dist/index.js",
     "limit": "30 KB"
+  },
+  {
+    "name": "m3e-elements: <m3e-loading-indicator> entry (bundles m3e-shapes + m3e-motion; D13 proposed: shapes budget, not 8 KB)",
+    "path": "packages/m3e-elements/dist/loading-indicator/index.js",
+    "limit": "14 KB"
   },
   {
     "name": "M3eElement base class (D7)",

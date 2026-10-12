@@ -9,6 +9,17 @@ export type { Point, PointTransformer } from './graphics-shapes/point.js';
 export { RoundedPolygon } from './graphics-shapes/rounded-polygon.js';
 export { circle, pill, pillStar, rectangle, star } from './graphics-shapes/shapes.js';
 export {
+  type LoadingIndicatorFrame,
+  LoadingIndicatorShapes,
+  calculateScaleFactor,
+  determinateFrame,
+  determinateIndicatorPolygons,
+  indeterminateIndicatorPolygons,
+  loadingIndicatorShapes,
+  morphSequence,
+  processPath,
+} from './loading-indicator.js';
+export {
   type MaterialShapeName,
   materialShape,
   materialShapeNames,

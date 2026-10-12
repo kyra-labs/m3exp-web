@@ -3,6 +3,13 @@
 // top app bar scroll state (TopAppBarState) shared by m3e-elements and m3e-react.
 export { type LinearEasing, type LinearEasingOptions, springToLinear } from './linear.js';
 export {
+  type IndeterminateFrame,
+  type LoadingIndicatorTiming,
+  indeterminateFrame,
+  initialIndeterminateFrame,
+  morphSpringDurationMillis,
+} from './loading-indicator.js';
+export {
   DEFAULT_DISPLACEMENT_THRESHOLD,
   type SpringSpec,
   dampingCoefficient,

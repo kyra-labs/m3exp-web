@@ -38,11 +38,12 @@
     "typecheck": "tsc --noEmit -p tsconfig.json",
     "prepack": "node ../../tools/copy-legal.js"
   },
-  "devDependencies": {
-    "@kyralabs/m3e-motion": "workspace:^"
-  },
   "publishConfig": {
     "access": "public",
     "provenance": true
+  },
+  "devDependencies": {
+    "@kyralabs/m3e-motion": "workspace:^",
+    "@kyralabs/m3e-shapes": "workspace:^"
   }
 }

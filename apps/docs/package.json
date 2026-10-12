@@ -13,6 +13,7 @@
   "dependencies": {
     "@astrojs/react": "7.0.1",
     "@kyralabs/m3e-shapes": "workspace:^",
+    "@kyralabs/m3e-tokens": "workspace:^",
     "@kyralabs/m3exp-web": "workspace:^",
     "astro": "7.3.8",
     "react": "19.3.0",

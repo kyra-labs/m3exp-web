@@ -1,0 +1,94 @@
+---
+import { loadingIndicatorShapes } from '@kyralabs/m3e-shapes';
+import { loadingIndicatorTokens } from '@kyralabs/m3e-tokens/components';
+import LoadingIndicatorPlayground from '../../islands/LoadingIndicatorPlayground.tsx';
+import Base from '../../layouts/Base.astro';
+
+// CSS-only fallback: the first indeterminate frame (SoftBurst), rendered at build time.
+const scale =
+  loadingIndicatorTokens.activeSize /
+  Math.min(loadingIndicatorTokens.containerWidth, loadingIndicatorTokens.containerHeight);
+const softBurst = loadingIndicatorShapes(null, true, scale).pathData(0, 0, 100);
+---
+
+<Base title="Loading indicator">
+  <h1>Loading indicator</h1>
+  <p>
+    The expressive loading indicator (COMPONENT_SPEC §7): a shape morphing through Compose's seven
+    polygons on its spring while it rotates.
+  </p>
+  <p>
+    The element <code>&lt;m3e-loading-indicator&gt;</code> and the React component{' '}
+    <code>&lt;LoadingIndicator&gt;</code> draw it with SVG. Under{' '}
+    <code>prefers-reduced-motion</code> it holds its first frame.
+  </p>
+
+  <section aria-labelledby="indeterminate-heading">
+    <h2 id="indeterminate-heading">Indeterminate</h2>
+    <div class="docs-loading-row" data-testid="indeterminate">
+      <m3e-loading-indicator aria-label="Loading" data-testid="uncontained"
+      ></m3e-loading-indicator>
+      <m3e-loading-indicator contained aria-label="Loading" data-testid="contained"
+      ></m3e-loading-indicator>
+    </div>
+  </section>
+
+  <section aria-labelledby="determinate-heading">
+    <h2 id="determinate-heading">Determinate</h2>
+    <div class="docs-loading-row" data-testid="determinate">
+      <m3e-loading-indicator progress="0" label="Progress 0%"></m3e-loading-indicator>
+      <m3e-loading-indicator progress="0.5" label="Progress 50%"></m3e-loading-indicator>
+      <m3e-loading-indicator progress="1" label="Progress 100%"></m3e-loading-indicator>
+      <m3e-loading-indicator contained progress="0.5" label="Contained 50%"
+      ></m3e-loading-indicator>
+    </div>
+    <div class="docs-controls">
+      <label>
+        Progress
+        <input id="progress" type="range" min="0" max="1" step="0.01" value="0.3" />
+      </label>
+      <m3e-loading-indicator id="live" contained progress="0.3" label="Live progress"
+      ></m3e-loading-indicator>
+    </div>
+  </section>
+
+  <section aria-labelledby="sizes-heading">
+    <h2 id="sizes-heading">Sizes</h2>
+    <p>Resize the root: the 48 / 38 container-to-shape ratio holds from 24 to 240.</p>
+    <div class="docs-loading-row" data-testid="sizes">
+      <m3e-loading-indicator class="docs-loading--min" contained label="24" data-testid="size-24"
+      ></m3e-loading-indicator>
+      <m3e-loading-indicator contained label="48" data-testid="size-48"></m3e-loading-indicator>
+      <m3e-loading-indicator class="docs-loading--max" contained label="240" data-testid="size-240"
+      ></m3e-loading-indicator>
+    </div>
+  </section>
+
+  <section aria-labelledby="css-heading">
+    <h2 id="css-heading">CSS only</h2>
+    <p>
+      Without JavaScript, a static shape (here SoftBurst, rendered at build time with{' '}
+      <code>@kyralabs/m3e-shapes</code>) rotates once per Compose global rotation.
+    </p>
+    <div class="m3e-loading-indicator" role="progressbar" aria-label="Loading" data-testid="css">
+      <svg class="m3e-loading-indicator__shape" viewBox="0 0 100 100" aria-hidden="true">
+        <path d={softBurst}></path>
+      </svg>
+    </div>
+  </section>
+
+  <section aria-labelledby="react-heading">
+    <h2 id="react-heading">React</h2>
+    <LoadingIndicatorPlayground client:only="react" />
+  </section>
+</Base>
+
+<script>
+  import '@kyralabs/m3exp-web/elements';
+
+  const slider = document.querySelector<HTMLInputElement>('#progress')!;
+  const live = document.querySelector('#live')!;
+  slider.addEventListener('input', () => {
+    live.setAttribute('progress', slider.value);
+  });
+</script>
