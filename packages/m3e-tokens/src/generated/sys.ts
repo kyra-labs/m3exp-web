@@ -306,6 +306,7 @@ export const state = {
   focusStateLayerOpacity: 0.1,
   hoverStateLayerOpacity: 0.08,
   pressedStateLayerOpacity: 0.1,
+  disabledAlpha: 0.38,
   focusIndicator: {
     thickness: 3,
     outerOffset: 2,

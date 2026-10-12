@@ -331,3 +331,32 @@ describe('ButtonDefaults tokens (M4 Button)', () => {
     );
   });
 });
+
+describe('elevation interaction tweens (M4 card)', () => {
+  it('match internal/Elevation.kt and animation-core Easing.kt', () => {
+    const decl = declarations(output.get('components/elevation-motion.css')!);
+    const elevation = inputs.material3Sources['Elevation.kt']!;
+    const duration = (spec: string) =>
+      elevation
+        .split('\n')
+        .find((l) => l.includes(`val ${spec} = TweenSpec<Dp>`))
+        ?.match(/durationMillis = (\d+)/)?.[1];
+    expect(decl.get('--m3e-comp-elevation-incoming-duration')).toBe(
+      `${duration('DefaultIncomingSpec')!}ms`,
+    );
+    expect(decl.get('--m3e-comp-elevation-outgoing-duration')).toBe(
+      `${duration('DefaultOutgoingSpec')!}ms`,
+    );
+    expect(decl.get('--m3e-comp-elevation-outgoing-duration-hovered')).toBe(
+      `${duration('HoveredOutgoingSpec')!}ms`,
+    );
+    expect(inputs.easingKt).toContain(
+      'FastOutSlowInEasing: Easing = CubicBezierEasing(0.4f, 0.0f, 0.2f, 1.0f)',
+    );
+    expect(decl.get('--m3e-comp-elevation-incoming-easing')).toBe('cubic-bezier(0.4, 0, 0.2, 1)');
+    expect(elevation).toContain(
+      'OutgoingSpecEasing: Easing = CubicBezierEasing(0.40f, 0.00f, 0.60f, 1.00f)',
+    );
+    expect(decl.get('--m3e-comp-elevation-outgoing-easing')).toBe('cubic-bezier(0.4, 0, 0.6, 1)');
+  });
+});

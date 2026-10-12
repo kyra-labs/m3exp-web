@@ -13,7 +13,11 @@ import { springToLinear } from '@kyralabs/m3e-motion';
 import { themeCss } from '@kyralabs/m3e-tokens/theme-css';
 import { type BaselineColor, baselineColors } from './color.js';
 import { extractButtonDefaults } from './button-defaults.js';
-import { MATERIAL3_PATH as MATERIAL3_DIR } from './vendor.js';
+import { extractElevationMotion } from './elevation-motion.js';
+import {
+  ANIMATION_CORE_PATH as ANIMATION_CORE_DIR,
+  MATERIAL3_PATH as MATERIAL3_DIR,
+} from './vendor.js';
 import { boxShadow, parseElevationShadows } from './elevation.js';
 import { type Expr, type Member, type TokenFile, parseTokenFile } from './kotlin.js';
 import {
@@ -41,6 +45,8 @@ export interface GenerateOptions {
   colorSchemeKt: string;
   /** Other vendored Material3 sources by file name (Button.kt, ToggleButton.kt, …). */
   material3Sources: Readonly<Record<string, string>>;
+  /** Vendored animation-core `Easing.kt` (FastOutSlowInEasing, …). */
+  easingKt: string;
   /** Vendored compose/ui `GraphicsLayerScope.kt` (`DefaultShadowColor`). */
   graphicsLayerScopeKt: string;
   /** Vendored Material Web `elevation/internal/_elevation.scss` (shadow geometry per level). */
@@ -131,6 +137,7 @@ export function generate({
   upstreamPath,
   colorSchemeKt,
   material3Sources,
+  easingKt,
   graphicsLayerScopeKt,
   elevationScss,
   materialWebVersion,
@@ -442,6 +449,22 @@ export function generate({
   });
   sys.push(...FOCUS_INDICATOR.map(supplementary), ...SPACE.map(supplementary));
 
+  // --- DisabledAlpha (ColorScheme.kt): content alpha of disabled components without a token ----
+  const disabledAlpha = /internal const val DisabledAlpha = ([\d.]+)f/.exec(
+    colorSchemeKt.replace(/\r\n/g, '\n'),
+  );
+  if (!disabledAlpha) throw new Error('ColorScheme.kt: DisabledAlpha not found');
+  sys.push({
+    name: '--m3e-sys-state-disabled-alpha',
+    value: num(Number(disabledAlpha[1])),
+    object: 'ColorScheme.kt',
+    member: 'DisabledAlpha',
+    raw: `${disabledAlpha[1]!}f`,
+    line: 0,
+    cite: `${MATERIAL3_DIR}/ColorScheme.kt@${commit} L${String(colorSchemeKt.replace(/\r\n/g, '\n').slice(0, disabledAlpha.index).split('\n').length)}`,
+  });
+  state['disabledAlpha'] = Number(disabledAlpha[1]);
+
   // --- Icon axis defaults (Material Symbols fvar; consumed by .m3e-icon) ----------------------
   const ICON_AXES = [
     ['FILL', 'fill'],
@@ -687,17 +710,42 @@ export function generate({
     ),
   });
 
+  // Elevation interaction tweens (material3 internal/Elevation.kt; see elevation-motion.ts).
+  const elevationMotion = extractElevationMotion(material3Sources['Elevation.kt'] ?? '', easingKt);
+  components.set('elevation-motion', {
+    object: 'ElevationDefaults',
+    tokens: elevationMotion.map((t) => ({
+      name: t.name,
+      value: t.value,
+      object: t.file === 'Easing.kt' ? 'Easing' : 'ElevationDefaults',
+      member: t.member,
+      raw: t.value,
+      line: t.line,
+      cite: `${t.file === 'Easing.kt' ? ANIMATION_CORE_DIR : MATERIAL3_DIR}/${t.file}@${commit} L${String(t.line)}`,
+    })),
+    js: Object.fromEntries(
+      elevationMotion.map((t) => [camel(t.name.replace(/^--m3e-comp-/, '').split('-')), t.value]),
+    ),
+  });
+
   for (const [name, c] of [...components].sort(([a], [b]) => a.localeCompare(b))) {
     out.set(
       `components/${name}.css`,
-      name === 'button-defaults'
+      name === 'elevation-motion'
         ? cssFile(
-            'Compose ButtonDefaults / ToggleButtonDefaults values that are not in Button*Tokens (lines: PARITY.md).',
+            'How Compose animates elevation on interaction (ElevationDefaults tweens; lines: PARITY.md).',
             c.tokens,
             [],
-            `${MATERIAL3_DIR}/{Button,ToggleButton,InteractiveComponentSize}.kt`,
+            `${MATERIAL3_DIR}/internal/Elevation.kt + ${ANIMATION_CORE_DIR}/Easing.kt`,
           )
-        : cssFile(`Component tokens: ${c.object}.`, c.tokens),
+        : name === 'button-defaults'
+          ? cssFile(
+              'Compose ButtonDefaults / ToggleButtonDefaults values that are not in Button*Tokens (lines: PARITY.md).',
+              c.tokens,
+              [],
+              `${MATERIAL3_DIR}/{Button,ToggleButton,InteractiveComponentSize}.kt`,
+            )
+          : cssFile(`Component tokens: ${c.object}.`, c.tokens),
     );
   }
 
