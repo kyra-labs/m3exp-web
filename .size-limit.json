@@ -32,6 +32,12 @@
     "limit": "4 KB"
   },
   {
+    "name": "m3e-css: icon button",
+    "path": "packages/m3e-css/dist/icon-button.css",
+    "rolldown": false,
+    "limit": "4 KB"
+  },
+  {
     "name": "m3e-elements (all)",
     "path": "packages/m3e-elements/dist/index.js",
     "limit": "30 KB"

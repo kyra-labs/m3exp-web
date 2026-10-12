@@ -68,8 +68,8 @@
   | default width | 32 | 40 | 56 | 96 | 136 |
   | wide width | 40 | 52 | 72 | 128 | 184 |
 
-  `TODO(verify)` XSmallIconButtonTokens…XLargeIconButtonTokens.
-- **Motion:** press and select morph as Button.
+  Verified (generated): `{XSmall…XLarge}IconButtonTokens.kt@19991f2c`; width = icon + leading + trailing space (`IconButtonDefaults.*ContainerSize`). Selected: round → SelectedContainerShapeRound, square → SelectedContainerShapeSquare (CornerFull). Colors: standard and outlined inherit the content color (Compose `LocalContentColor`); `--vibrant` uses StandardIconButtonTokens / OutlinedIconButtonTokens; filled = FilledIconButtonTokens; tonal = FilledTonalIconButtonTokens; selected outlined toggles drop the border.
+- **Motion:** press and select morph on the **default effects** spring (`IconButton.kt` `shapeForInteraction`, "to prevent any bounce"), unlike ToggleButton.
 - **Behavior:** toggle shows FILL 0 unselected, FILL 1 selected.
 - **Keyboard/ARIA:** `<button aria-label>`; toggle `aria-pressed`.
 - **Layers:** css + react.

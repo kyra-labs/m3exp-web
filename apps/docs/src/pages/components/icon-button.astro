@@ -1,0 +1,137 @@
+---
+import IconButtonPlayground from '../../islands/IconButtonPlayground.tsx';
+import Base from '../../layouts/Base.astro';
+
+const variants = ['standard', 'filled', 'tonal', 'outlined'] as const;
+const sizes = ['xs', 's', 'm', 'l', 'xl'] as const;
+const widths = ['narrow', 'default', 'wide'] as const;
+---
+
+<Base title="Icon button">
+  <link rel="stylesheet" href="/icons/docs-icons.css" slot="head" />
+  <h1>Icon button</h1>
+  <p>
+    Icon buttons and icon toggle buttons (COMPONENT_SPEC §2). Standard and outlined take the
+    surrounding content color, as in Compose; <code>--vibrant</code> uses the token colors. The grids
+    are plain HTML with m3e-css classes.
+  </p>
+
+  <section aria-labelledby="sizes-heading">
+    <h2 id="sizes-heading">Sizes and widths</h2>
+    {
+      widths.map((width) => (
+        <div class="docs-button-row" data-width={width}>
+          {sizes.map((size) => (
+            <button
+              type="button"
+              class={`m3e-icon-button m3e-icon-button--filled m3e-icon-button--size-${size} m3e-icon-button--width-${width}`}
+              data-size={size}
+              aria-label={`Add, ${size} ${width}`}
+            >
+              <span class="m3e-icon" aria-hidden="true">
+                add
+              </span>
+            </button>
+          ))}
+        </div>
+      ))
+    }
+  </section>
+
+  <section aria-labelledby="variants-heading">
+    <h2 id="variants-heading">Variants</h2>
+    {
+      [false, true].map((vibrant) => (
+        <div class="docs-button-row" data-testid={vibrant ? 'vibrant' : 'default'}>
+          {variants.map((variant) => (
+            <button
+              type="button"
+              class:list={[
+                'm3e-icon-button',
+                `m3e-icon-button--${variant}`,
+                vibrant && 'm3e-icon-button--vibrant',
+                'm3e-icon-button--size-m',
+              ]}
+              data-variant={variant}
+              aria-label={`Settings (${variant}${vibrant ? ', vibrant' : ''})`}
+            >
+              <span class="m3e-icon" aria-hidden="true">
+                settings
+              </span>
+            </button>
+          ))}
+          <button
+            type="button"
+            class:list={[
+              'm3e-icon-button m3e-icon-button--filled m3e-icon-button--size-m m3e-icon-button--square',
+              vibrant && 'm3e-icon-button--vibrant',
+            ]}
+            aria-label="Settings (square)"
+          >
+            <span class="m3e-icon" aria-hidden="true">
+              settings
+            </span>
+          </button>
+        </div>
+      ))
+    }
+    <div class="docs-button-row" data-testid="disabled">
+      {
+        variants.map((variant) => (
+          <button
+            type="button"
+            class={`m3e-icon-button m3e-icon-button--${variant} m3e-icon-button--size-m`}
+            disabled
+            aria-label={`Delete (${variant}, disabled)`}
+          >
+            <span class="m3e-icon" aria-hidden="true">
+              delete
+            </span>
+          </button>
+        ))
+      }
+    </div>
+  </section>
+
+  <section aria-labelledby="toggle-heading">
+    <h2 id="toggle-heading">Toggle</h2>
+    <p>Selected icon toggles fill the icon (FILL 1) and change shape.</p>
+    {
+      (['false', 'true'] as const).map((pressed) => (
+        <div class="docs-button-row" data-testid={`toggles-${pressed}`}>
+          {variants.map((variant) => (
+            <button
+              type="button"
+              class={`m3e-icon-button m3e-icon-button--${variant} m3e-icon-button--size-m`}
+              aria-pressed={pressed}
+              aria-label={`Favorite (${variant})`}
+            >
+              <span class="m3e-icon" aria-hidden="true">
+                favorite
+              </span>
+            </button>
+          ))}
+          <button
+            type="button"
+            class="m3e-icon-button m3e-icon-button--filled m3e-icon-button--size-m m3e-icon-button--square"
+            aria-pressed={pressed}
+            aria-label="Favorite (square)"
+          >
+            <span class="m3e-icon" aria-hidden="true">
+              favorite
+            </span>
+          </button>
+        </div>
+      ))
+    }
+  </section>
+
+  <section aria-labelledby="react-heading">
+    <h2 id="react-heading">React</h2>
+    <p>
+      <code>&lt;IconButton&gt;</code>; with <code>isSelected</code> or <code>defaultSelected</code> it
+      is a toggle.
+    </p>
+    <IconButtonPlayground client:only="react" />
+  </section>
+</Base>
