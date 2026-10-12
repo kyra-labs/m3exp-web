@@ -4,7 +4,7 @@
 > Source: compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/tokens @ 19991f2c0858aadfcb442ce02b2c8e4743c96898  
 > Values: Copyright (C) The Android Open Source Project, Apache License 2.0 (see NOTICE).  
 
-Emitted: 371 system and 2584 component variables from 107 component token objects.
+Emitted: 371 system and 2586 component variables from 108 component token objects.
 
 ## Not emitted here
 
@@ -638,6 +638,13 @@ Emitted: 371 system and 2584 component variables from 107 component token object
 | `AssistChipTokens.IconColor` | `ColorSchemeKeyTokens.Primary` | AssistChipTokens.kt:109 | `--m3e-comp-assist-chip-icon-color` | `var(--m3e-sys-color-primary)` |  |
 | `AssistChipTokens.IconSize` | `18.0.dp` | AssistChipTokens.kt:112 | `--m3e-comp-assist-chip-icon-size` | `18px` |  |
 | `AssistChipTokens.PressedIconColor` | `ColorSchemeKeyTokens.Primary` | AssistChipTokens.kt:115 | `--m3e-comp-assist-chip-icon-color-pressed` | `var(--m3e-sys-color-primary)` |  |
+
+## assist-chip-defaults
+
+| Source token | Source value | Line | CSS variable | Emitted | Note |
+|---|---|---|---|---|---|
+| `AssistChipDefaults.ContentPadding (horizontal)` | `8.dp` | compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/Chip.kt@19991f2c0858aadfcb442ce02b2c8e4743c96898 L1962 | `--m3e-comp-assist-chip-content-padding-horizontal` | `8px` |  |
+| `SuggestionChipDefaults.HorizontalSpacing` | `8.dp` | compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/Chip.kt@19991f2c0858aadfcb442ce02b2c8e4743c96898 L2918 | `--m3e-comp-assist-chip-horizontal-spacing` | `8px` | AssistChipDefaults.horizontalArrangement() = ChipArrangement(SuggestionChipDefaults.HorizontalSpacing) |
 
 ## badge
 

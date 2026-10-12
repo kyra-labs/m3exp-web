@@ -280,8 +280,9 @@
   - [ ] Plus CAC.
 
 ## 18. Chips (assist, filter, input, suggestion)
-- **Tokens:** `TODO(verify)` *ChipTokens.
-- **Motion:** expressive selection morphs (`TODO(verify)` properties).
+- **Tokens:** assist chip verified (generated): `AssistChipTokens.kt@19991f2c` + `AssistChipDefaults` literals (`Chip.kt` L1962 content padding 8dp; spacing 8dp via `DefaultHorizontalArrangement` = `SuggestionChipDefaults.HorizontalSpacing`, L2918/L4306): height 32, shape small, label-large on-surface, icon 18dp primary; flat = transparent + 1dp outline-variant border, Level0 except dragged Level4; elevated = surface-container-low, Level1 (hover Level2), no border. Filter/input/suggestion: `TODO(verify)` *ChipTokens.
+- **Classes (assist):** `.m3e-assist-chip`, `--elevated`, `__label`; icons are `.m3e-icon` before/after the label.
+- **Motion:** assist chips have no shape motion (fixed `shape`; elevation uses the `ElevationDefaults` tweens). Selectable chips: expressive selection morphs (`TODO(verify)` properties; `ChipsTokens` Unselected/Selected/PressedShape via `shapeByInteraction`, `Chip.kt` L3288–3346).
 - **ARIA:** filter `aria-pressed`/checkbox; input chip remove button "Remove X".
 - **Layers:** css + react.
 - **Acceptance:**

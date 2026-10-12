@@ -5,6 +5,7 @@
   "files": {
     "AppBar.kt": "3261fd559fd0f9abff24c75f46deae40bbb76de2cc8899243fe139a18b046270",
     "Button.kt": "9095ad12e5b26a20bf0cdc53ba01f54b7c8ca41ba4ece933d578ef28a2d97240",
+    "Chip.kt": "d3f1c95d15522e08a2b8222956ff0503c346f97aab670741ab8b7aedcfe538d9",
     "ColorScheme.kt": "2cae5584a44f5b6ffd15203f75b67138d386642589359a047bccdc31b046fd91",
     "InteractiveComponentSize.kt": "fb19262a174f765f71ac43a7a44c3398d40b8b550043c034bcd0700b5799245a",
     "ToggleButton.kt": "176a1adf0656d8c9fb51d0b34207b2775ee1e31c20a5d68915a9fc6ee318ebbe",

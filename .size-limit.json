@@ -61,6 +61,12 @@
     "limit": "3 KB"
   },
   {
+    "name": "m3e-css: assist chip",
+    "path": "packages/m3e-css/dist/assist-chip.css",
+    "rolldown": false,
+    "limit": "4 KB"
+  },
+  {
     "name": "m3e-elements (all)",
     "path": "packages/m3e-elements/dist/index.js",
     "limit": "30 KB"

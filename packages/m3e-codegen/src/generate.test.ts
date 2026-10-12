@@ -332,6 +332,31 @@ describe('ButtonDefaults tokens (M4 Button)', () => {
   });
 });
 
+describe('AssistChipDefaults tokens (M4 assist chip)', () => {
+  const decl = declarations(output.get('components/assist-chip-defaults.css')!);
+  const chip = inputs.material3Sources['Chip.kt']!.replace(/\r\n/g, '\n');
+  const member = (object: string, pattern: RegExp) =>
+    pattern.exec(chip.slice(chip.indexOf(`public object ${object} {`)))?.[1];
+
+  it('content padding comes from AssistChipDefaults.ContentPadding', () => {
+    const value = member(
+      'AssistChipDefaults',
+      /ContentPadding: PaddingValues = PaddingValues\(horizontal = (\d+)\.dp\)/,
+    );
+    expect(value).toBeDefined();
+    expect(decl.get('--m3e-comp-assist-chip-content-padding-horizontal')).toBe(`${value!}px`);
+  });
+
+  it('spacing follows the arrangement AssistChip actually uses', () => {
+    expect(chip).toContain(
+      'private val DefaultHorizontalArrangement = ChipArrangement(SuggestionChipDefaults.HorizontalSpacing)',
+    );
+    const value = member('SuggestionChipDefaults', /HorizontalSpacing: Dp = (\d+)\.dp/);
+    expect(value).toBeDefined();
+    expect(decl.get('--m3e-comp-assist-chip-horizontal-spacing')).toBe(`${value!}px`);
+  });
+});
+
 describe('elevation interaction tweens (M4 card)', () => {
   it('match internal/Elevation.kt and animation-core Easing.kt', () => {
     const decl = declarations(output.get('components/elevation-motion.css')!);

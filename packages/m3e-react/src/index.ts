@@ -6,3 +6,4 @@ export * from './button/index.js';
 export * from './icon-button/index.js';
 export * from './card/index.js';
 export * from './top-app-bar/index.js';
+export * from './assist-chip/index.js';
