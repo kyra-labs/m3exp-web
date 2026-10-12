@@ -264,3 +264,25 @@ button.docs-tile {
   font-size: var(--m3e-sys-typescale-title-large-size);
   line-height: var(--m3e-sys-typescale-title-large-line-height);
 }
+
+.docs-divider-list {
+  max-inline-size: calc(var(--m3e-sys-space-900) * 4);
+  margin: var(--m3e-sys-space-300) 0;
+}
+
+.docs-divider-list p {
+  margin: 0;
+  padding: var(--m3e-sys-space-200);
+}
+
+.docs-divider-inset {
+  margin-inline-start: var(--m3e-sys-space-200);
+}
+
+.docs-divider-row {
+  display: flex;
+  gap: var(--m3e-sys-space-200);
+  align-items: center;
+  margin: var(--m3e-sys-space-300) 0;
+  padding: var(--m3e-sys-space-200);
+}

@@ -1,0 +1,34 @@
+---
+import Base from '../../layouts/Base.astro';
+---
+
+<Base title="Divider">
+  <h1>Divider</h1>
+  <p>
+    Horizontal and vertical dividers (COMPONENT_SPEC §35): a 1dp outline-variant line. Plain HTML
+    with m3e-css classes. Insets are margins on the element, as Compose leaves them to the modifier.
+  </p>
+
+  <section aria-labelledby="horizontal-heading">
+    <h2 id="horizontal-heading">Horizontal</h2>
+    <div class="docs-divider-list" data-testid="horizontal">
+      <p>Full width</p>
+      <hr class="m3e-divider" data-testid="full" />
+      <p>Inset (margin-inline-start)</p>
+      <hr class="m3e-divider docs-divider-inset" data-testid="inset" />
+      <p>Last item</p>
+    </div>
+  </section>
+
+  <section aria-labelledby="vertical-heading">
+    <h2 id="vertical-heading">Vertical</h2>
+    <div class="docs-divider-row" data-testid="vertical-row">
+      <span>Left</span>
+      <hr class="m3e-divider m3e-divider--vertical" aria-orientation="vertical" data-testid="vertical" />
+      <span>Center</span>
+      <div class="m3e-divider m3e-divider--vertical" role="separator" aria-orientation="vertical">
+      </div>
+      <span>Right</span>
+    </div>
+  </section>
+</Base>
