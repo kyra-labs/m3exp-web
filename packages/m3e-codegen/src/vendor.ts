@@ -17,6 +17,7 @@ export const MATERIAL3_SOURCES = [
   'ToggleButton.kt',
   'InteractiveComponentSize.kt',
   'internal/Elevation.kt',
+  'AppBar.kt',
 ] as const;
 
 /** Compose spring physics ported by m3e-motion (and compiled as-is by its JVM reference harness). */

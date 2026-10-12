@@ -2958,6 +2958,12 @@ export const tonalButtonTokens = {
   labelTextColorUnselectedPressed: "var(--m3e-sys-color-on-secondary-container)"
 } as const;
 
+/** AppBar.kt */
+export const appBar = {
+  topAppBarHorizontalPadding: 4,
+  topAppBarTitleInset: 12
+} as const;
+
 /** VibrantMenuTokens */
 export const vibrantMenuTokens = {
   buttonIconIconColorDisabled: "var(--m3e-sys-color-on-tertiary-container)",

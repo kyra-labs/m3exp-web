@@ -360,3 +360,17 @@ describe('elevation interaction tweens (M4 card)', () => {
     expect(decl.get('--m3e-comp-elevation-outgoing-easing')).toBe('cubic-bezier(0.4, 0, 0.6, 1)');
   });
 });
+
+describe('TopAppBar layout literals (M4 Top app bar)', () => {
+  const decl = declarations(output.get('components/top-app-bar-defaults.css')!);
+  const appBar = inputs.material3Sources['AppBar.kt']!.replace(/\r\n/g, '\n');
+
+  it('horizontal padding and title inset come from AppBar.kt', () => {
+    const padding = /private val TopAppBarHorizontalPadding\n\s*get\(\) = (\d+)\.dp/.exec(appBar);
+    const inset = /TopAppBarTitleInset = (\d+)\.dp - TopAppBarHorizontalPadding/.exec(appBar);
+    expect(decl.get('--m3e-comp-top-app-bar-horizontal-padding')).toBe(`${padding![1]!}px`);
+    expect(decl.get('--m3e-comp-top-app-bar-title-inset')).toBe(
+      `${String(Number(inset![1]) - Number(padding![1]))}px`,
+    );
+  });
+});
