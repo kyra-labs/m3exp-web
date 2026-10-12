@@ -286,3 +286,42 @@ button.docs-tile {
   margin: var(--m3e-sys-space-300) 0;
   padding: var(--m3e-sys-space-200);
 }
+
+.docs-app-bars {
+  display: flex;
+  flex-direction: column;
+  gap: var(--m3e-sys-space-200);
+  max-inline-size: calc(var(--m3e-sys-space-900) * 8);
+  margin: var(--m3e-sys-space-300) 0;
+}
+
+.docs-app-bar-demos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--m3e-sys-space-300);
+  margin: var(--m3e-sys-space-300) 0;
+}
+
+.docs-scroll {
+  overflow: auto;
+  flex: 1 1 calc(var(--m3e-sys-space-900) * 4);
+  max-inline-size: calc(var(--m3e-sys-space-900) * 6);
+  block-size: calc(var(--m3e-sys-space-900) * 4);
+  border: var(--m3e-comp-divider-thickness) solid var(--m3e-comp-divider-color);
+}
+
+.docs-sticky {
+  position: sticky;
+  z-index: 1;
+  inset-block-start: 0;
+}
+
+.docs-scroll-list {
+  margin: 0;
+  padding: var(--m3e-sys-space-200);
+  list-style: none;
+}
+
+.docs-scroll-list li {
+  padding-block: var(--m3e-sys-space-150);
+}

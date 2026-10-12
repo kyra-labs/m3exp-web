@@ -211,11 +211,12 @@
 - **Sources:** AppBar.kt.
 
 ## 11. Top app bars (small, center-aligned, medium/large flexible, two-rows)
-- **Tokens:** `TODO(verify)` heights, padding, title type per variant. Container surface; scrolled surface-container.
-- **Motion:** collapse tied to scroll offset; snap settle on defaultSpatial.
+- **Tokens:** small (verified, generated): `AppBarSmallTokens.kt` / `AppBarTokens.kt@19991f2c` — height 64, title title-large on-surface, subtitle label-medium on-surface-variant, container surface → on-scroll surface-container, leading icon on-surface, trailing on-surface-variant; layout literals `TopAppBarHorizontalPadding` 4dp and `TopAppBarTitleInset` 16dp − 4dp from `AppBar.kt` (`components/top-app-bar-defaults.css`). Other variants: `TODO(verify)` heights, padding, title type.
+- **Motion:** collapse tied to scroll offset (`TopAppBarState`, ported in m3e-motion `app-bar-scroll.ts`); the scrolled container color animates on the default effects spring; a partly hidden bar snaps on `TopAppBarDefaults.snapAnimationSpec`, which is the **default effects** spring in Compose (`AppBar.kt` L1540), not defaultSpatial.
 - **ARIA:** `<header>`; heading level by consumer.
 - **Layers:** css + react/elements (scroll behaviors).
-- **API:** `<TopAppBar variant title subtitle navigationIcon actions scrollBehavior />`.
+- **API:** `<TopAppBar variant title subtitle navigationIcon actions scrollBehavior />` (+ `scrollTarget`, `headingLevel`). Scroll behaviors: `pinned`, `enter-always` (elements: `attachTopAppBarScroll(bar, { behavior, target, signal })`).
+- **Classes:** `.m3e-top-app-bar`, `__navigation`, `__headline`, `__title`, `__subtitle`, `__actions`; state `[data-scrolled]`.
 - **Acceptance:**
   - [ ] Collapsed and expanded heights match tokens.
   - [ ] Container color changes when scrolled.
