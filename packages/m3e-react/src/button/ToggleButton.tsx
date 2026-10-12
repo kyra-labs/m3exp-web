@@ -11,7 +11,7 @@ import { useToggleState } from 'react-stately';
 import { useStateLayer } from '../state-layer/useStateLayer.js';
 import { type ButtonStyleProps, buttonClassName } from './Button.js';
 import { defined } from '../utils/cx.js';
-import { useShapeSpring } from './useShapeSpring.js';
+import { useShapeSpring } from '../motion/useShapeSpring.js';
 
 type NativeButtonProps = Omit<
   ButtonHTMLAttributes<HTMLButtonElement>,
@@ -70,7 +70,7 @@ export const ToggleButton = forwardRef(function ToggleButton(
   const { hoverProps } = useHover({ isDisabled });
   useShapeSpring(
     ref,
-    true,
+    { shapeVar: '--_m3e-button-shape', spring: 'fast-spatial' },
     `${String(isPressed)}|${String(state.isSelected)}|${variant ?? ''}|${size ?? ''}|${shape ?? ''}`,
   );
   return (

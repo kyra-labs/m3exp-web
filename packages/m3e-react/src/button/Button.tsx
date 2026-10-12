@@ -16,7 +16,7 @@ import {
 } from 'react-aria';
 import { useStateLayer } from '../state-layer/useStateLayer.js';
 import { cx, defined } from '../utils/cx.js';
-import { useShapeSpring } from './useShapeSpring.js';
+import { useShapeSpring } from '../motion/useShapeSpring.js';
 
 export type ButtonVariant = 'filled' | 'tonal' | 'elevated' | 'outlined' | 'text';
 export type ButtonSize = 'xs' | 's' | 'm' | 'l' | 'xl';
@@ -129,7 +129,11 @@ export const Button = forwardRef(function Button(
   const { hoverProps } = useHover({ isDisabled });
   const isLink = href !== undefined;
   const isPressed = (isLink ? link.isPressed : button.isPressed) && !softDisabled;
-  useShapeSpring(ref, false, `${String(isPressed)}|${variant ?? ''}|${size ?? ''}|${shape ?? ''}`);
+  useShapeSpring(
+    ref,
+    { shapeVar: '--_m3e-button-shape', spring: 'default-effects' },
+    `${String(isPressed)}|${variant ?? ''}|${size ?? ''}|${shape ?? ''}`,
+  );
 
   const common = mergeProps(rest, focusProps, hoverProps, stateLayer.stateLayerProps, {
     className: buttonClassName({ variant, size, shape }, className),

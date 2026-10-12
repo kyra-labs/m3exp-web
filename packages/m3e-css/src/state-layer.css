@@ -17,12 +17,12 @@
 }
 
 @layer m3e.base {
-  :where(.m3e-state-layer, .m3e-button) {
+  :where(.m3e-state-layer, .m3e-button, .m3e-icon-button) {
     position: relative;
     isolation: isolate;
   }
 
-  :where(.m3e-state-layer, .m3e-button)::before {
+  :where(.m3e-state-layer, .m3e-button, .m3e-icon-button)::before {
     content: '';
     position: absolute;
     inset: 0;
@@ -39,25 +39,25 @@
   }
 
   @media (hover: hover) {
-    :where(.m3e-state-layer, .m3e-button):hover::before {
+    :where(.m3e-state-layer, .m3e-button, .m3e-icon-button):hover::before {
       opacity: var(--m3e-sys-state-hover-state-layer-opacity);
     }
   }
 
-  :where(.m3e-state-layer, .m3e-button):focus-visible::before {
+  :where(.m3e-state-layer, .m3e-button, .m3e-icon-button):focus-visible::before {
     opacity: var(--m3e-sys-state-focus-state-layer-opacity);
   }
 
-  :where(.m3e-state-layer, .m3e-button):active::before,
-  :where(.m3e-state-layer, .m3e-button)[data-pressed]::before {
+  :where(.m3e-state-layer, .m3e-button, .m3e-icon-button):active::before,
+  :where(.m3e-state-layer, .m3e-button, .m3e-icon-button)[data-pressed]::before {
     opacity: var(--m3e-sys-state-pressed-state-layer-opacity);
   }
 
-  :where(.m3e-state-layer, .m3e-button)[data-dragged]::before {
+  :where(.m3e-state-layer, .m3e-button, .m3e-icon-button)[data-dragged]::before {
     opacity: var(--m3e-sys-state-dragged-state-layer-opacity);
   }
 
-  :where(.m3e-state-layer, .m3e-button)[data-ripple]::before {
+  :where(.m3e-state-layer, .m3e-button, .m3e-icon-button)[data-ripple]::before {
     background: radial-gradient(
       circle at var(--_m3e-ripple-x, 50%) var(--_m3e-ripple-y, 50%),
       var(--m3e-comp-state-layer-color, currentcolor) var(--_m3e-ripple-size),
@@ -65,16 +65,19 @@
     );
   }
 
-  :where(.m3e-state-layer, .m3e-button)[data-ripple][data-pressed]::before {
+  :where(.m3e-state-layer, .m3e-button, .m3e-icon-button)[data-ripple][data-pressed]::before {
     --_m3e-ripple-size: var(--_m3e-ripple-radius, 100%);
   }
 
-  :where(.m3e-state-layer, .m3e-button):is(:disabled, [aria-disabled='true'])::before {
+  :where(.m3e-state-layer, .m3e-button, .m3e-icon-button):is(
+      :disabled,
+      [aria-disabled='true']
+    )::before {
     display: none;
   }
 
   @media (forced-colors: active) {
-    :where(.m3e-state-layer, .m3e-button)::before {
+    :where(.m3e-state-layer, .m3e-button, .m3e-icon-button)::before {
       display: none;
     }
   }
