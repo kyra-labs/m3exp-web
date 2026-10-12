@@ -72,7 +72,7 @@
 33. Navigation drawer tokens.
 34. Tabs tokens.
 35. Chip tokens and expressive morph properties.
-36. Card tokens.
+36. ~~Card tokens~~ — resolved: `{Filled,Elevated,Outlined}CardTokens.kt@19991f2c` (generated) as read by `CardDefaults` (`Card.kt`): content = contentColorFor(container) = onSurface (`ColorScheme.kt` L1108–1116); outlined cards keep their default elevation on press/focus/hover (`outlinedCardElevation`); disabled colors composited per `CardDefaults` with `DisabledAlpha` 0.38 (`ColorScheme.kt` L1544). Elevation changes use the `ElevationDefaults` tweens (`internal/Elevation.kt` L107–113; FastOutSlowInEasing from animation-core `Easing.kt` L50), now also used by buttons.
 37. List/segmented list tokens.
 38. Menu tokens.
 39. Checkbox tokens.

@@ -1,0 +1,92 @@
+---
+import CardPlayground from '../../islands/CardPlayground.tsx';
+import Base from '../../layouts/Base.astro';
+
+const variants = ['filled', 'elevated', 'outlined'] as const;
+---
+
+<Base title="Card">
+  <link rel="stylesheet" href="/icons/docs-icons.css" slot="head" />
+  <h1>Card</h1>
+  <p>
+    Filled, elevated and outlined cards (COMPONENT_SPEC §19). Plain HTML with m3e-css classes. An
+    interactive card has one primary action whose hit area covers the card; other controls inside it
+    keep working.
+  </p>
+
+  <section aria-labelledby="static-heading">
+    <h2 id="static-heading">Cards</h2>
+    <ul class="docs-cards" data-testid="static">
+      {
+        variants.map((variant) => (
+          <li class={`m3e-card m3e-card--${variant}`} data-variant={variant}>
+            <div class="docs-card-body">
+              <h3 class="docs-card-title">{variant}</h3>
+              <p>Non-interactive: no state layer, no elevation change.</p>
+            </div>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+
+  <section aria-labelledby="interactive-heading">
+    <h2 id="interactive-heading">Interactive</h2>
+    <ul class="docs-cards" data-testid="interactive">
+      {
+        variants.map((variant) => (
+          <li class={`m3e-card m3e-card--${variant} m3e-card--interactive`} data-variant={variant}>
+            <div class="docs-card-body">
+              <h3 class="docs-card-title">
+                <a class="m3e-card__action" href={`#${variant}`}>
+                  {variant} card
+                </a>
+              </h3>
+              <p>The whole card opens the link.</p>
+              <button
+                type="button"
+                class="m3e-icon-button m3e-icon-button--standard"
+                aria-label={`Favorite ${variant}`}
+                data-testid="secondary"
+              >
+                <span class="m3e-icon" aria-hidden="true">
+                  favorite
+                </span>
+              </button>
+            </div>
+          </li>
+        ))
+      }
+    </ul>
+    <ul class="docs-cards" data-testid="other-states">
+      <li class="m3e-card m3e-card--filled m3e-card--interactive" data-testid="disabled">
+        <div class="docs-card-body">
+          <h3 class="docs-card-title">
+            <a class="m3e-card__action" aria-disabled="true">Disabled</a>
+          </h3>
+          <p>Action is aria-disabled.</p>
+        </div>
+      </li>
+      <li class="m3e-card m3e-card--outlined m3e-card--interactive" data-testid="disabled-outlined">
+        <div class="docs-card-body">
+          <h3 class="docs-card-title">
+            <a class="m3e-card__action" aria-disabled="true">Disabled outlined</a>
+          </h3>
+          <p>Border at 12% outline.</p>
+        </div>
+      </li>
+      <li class="m3e-card m3e-card--elevated" data-dragged data-testid="dragged">
+        <div class="docs-card-body">
+          <h3 class="docs-card-title">Dragged</h3>
+          <p><code>data-dragged</code>: dragged elevation.</p>
+        </div>
+      </li>
+    </ul>
+  </section>
+
+  <section aria-labelledby="react-heading">
+    <h2 id="react-heading">React</h2>
+    <p><code>&lt;Card&gt;</code> with a <code>&lt;CardAction&gt;</code>.</p>
+    <CardPlayground client:only="react" />
+  </section>
+</Base>

@@ -27,8 +27,9 @@
  *   toggles: ToggleButtonDefaults.pressedShape). Selected: round → SelectedContainerShapeSquare,
  *   square → round.
  * - Motion: press morph on the default effects spring (Button.kt L212-215, chosen upstream "to
- *   prevent any bounce"); toggle shape on the fast spatial spring (ToggleButton.kt L176); colors and
- *   elevation on the fast effects spring (COMPONENT_SPEC §1).
+ *   prevent any bounce"); toggle shape on the fast spatial spring (ToggleButton.kt L176); colors on
+ *   the fast effects spring (COMPONENT_SPEC §1); elevation with the ElevationDefaults tweens
+ *   (internal/Elevation.kt, elevation-motion.css), as Compose's ButtonElevation does.
  * - Touch target: ≥ LocalMinimumInteractiveComponentSize via ::after; ::before is the state layer.
  */
 @import '@kyralabs/m3e-tokens/components/button-x-small.css';
@@ -39,6 +40,7 @@
 @import '@kyralabs/m3e-tokens/components/button-defaults.css';
 @import '@kyralabs/m3e-tokens/components/filled-button.css';
 @import '@kyralabs/m3e-tokens/components/elevated-button.css';
+@import '@kyralabs/m3e-tokens/components/elevation-motion.css';
 @import '@kyralabs/m3e-tokens/components/filled-tonal-button.css';
 @import '@kyralabs/m3e-tokens/components/tonal-button.css';
 @import '@kyralabs/m3e-tokens/components/outlined-button.css';
@@ -95,6 +97,10 @@
       --m3e-comp-filled-button-label-text-opacity-disabled
     );
     --_m3e-button-shape-duration: var(--m3e-sys-motion-spring-default-effects-duration);
+
+    /* Elevation tweens (ElevationDefaults): outgoing here, incoming in the state rules. */
+    --_m3e-button-shadow-duration: var(--m3e-comp-elevation-outgoing-duration-hovered);
+    --_m3e-button-shadow-easing: var(--m3e-comp-elevation-outgoing-easing);
     --_m3e-button-shape-easing: var(--m3e-sys-motion-spring-default-effects-easing);
     --m3e-comp-state-layer-color: var(--_m3e-button-content);
 
@@ -130,8 +136,7 @@
         var(--m3e-sys-motion-spring-fast-effects-easing),
       color var(--m3e-sys-motion-spring-fast-effects-duration)
         var(--m3e-sys-motion-spring-fast-effects-easing),
-      box-shadow var(--m3e-sys-motion-spring-fast-effects-duration)
-        var(--m3e-sys-motion-spring-fast-effects-easing);
+      box-shadow var(--_m3e-button-shadow-duration) var(--_m3e-button-shadow-easing);
   }
 
   .m3e-button > .m3e-icon {
@@ -374,11 +379,17 @@
   /* --- Interaction states ------------------------------------------------------------------ */
   @media (hover: hover) {
     .m3e-button:hover {
+      --_m3e-button-shadow-duration: var(--m3e-comp-elevation-incoming-duration);
+      --_m3e-button-shadow-easing: var(--m3e-comp-elevation-incoming-easing);
+
       box-shadow: var(--_m3e-button-shadow-hovered);
     }
   }
 
   .m3e-button:focus-visible {
+    --_m3e-button-shadow-duration: var(--m3e-comp-elevation-incoming-duration);
+    --_m3e-button-shadow-easing: var(--m3e-comp-elevation-incoming-easing);
+
     box-shadow: var(--_m3e-button-shadow-focused);
   }
 
@@ -400,6 +411,8 @@
 
   .m3e-button:is(:active, [data-pressed]):not(:disabled, [aria-disabled='true']) {
     --_m3e-button-shape: var(--_m3e-button-shape-pressed);
+    --_m3e-button-shadow-duration: var(--m3e-comp-elevation-incoming-duration);
+    --_m3e-button-shadow-easing: var(--m3e-comp-elevation-incoming-easing);
 
     box-shadow: var(--_m3e-button-shadow-pressed);
   }

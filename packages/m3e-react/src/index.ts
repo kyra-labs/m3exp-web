@@ -4,3 +4,4 @@ export * from './surface/index.js';
 export * from './state-layer/index.js';
 export * from './button/index.js';
 export * from './icon-button/index.js';
+export * from './card/index.js';

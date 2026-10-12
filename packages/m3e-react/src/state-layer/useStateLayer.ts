@@ -1,4 +1,4 @@
-import { type CSSProperties, useCallback, useState } from 'react';
+import { type CSSProperties, type RefObject, useCallback, useState } from 'react';
 import type { PressEvent } from 'react-aria';
 
 /**
@@ -35,17 +35,26 @@ export interface StateLayer {
 /**
  * Drives the m3e-css state-layer ripple (`data-ripple`, `data-pressed`, `--_m3e-ripple-*`), the
  * same attributes m3e-elements' `attachRipple` writes. Hover and focus overlays need no JS.
+ *
+ * Pass `hostRef` when the overlay lives on a container while a child takes the presses
+ * (interactive cards): the ripple then starts from the press point within the host.
  */
-export function useStateLayer(): StateLayer {
+export function useStateLayer(hostRef?: RefObject<HTMLElement | null>): StateLayer {
   const [pressed, setPressed] = useState(false);
   const [style, setStyle] = useState<CSSProperties | undefined>(undefined);
-  const onPressStart = useCallback((e: PressEvent) => {
-    const box = e.target.getBoundingClientRect();
-    const point =
-      e.pointerType === 'keyboard' || e.pointerType === 'virtual' ? null : { x: e.x, y: e.y };
-    setStyle(rippleStyle(box.width, box.height, point) as CSSProperties);
-    setPressed(true);
-  }, []);
+  const onPressStart = useCallback(
+    (e: PressEvent) => {
+      const target = e.target.getBoundingClientRect();
+      const host = hostRef?.current?.getBoundingClientRect() ?? target;
+      const point =
+        e.pointerType === 'keyboard' || e.pointerType === 'virtual'
+          ? null
+          : { x: target.left + e.x - host.left, y: target.top + e.y - host.top };
+      setStyle(rippleStyle(host.width, host.height, point) as CSSProperties);
+      setPressed(true);
+    },
+    [hostRef],
+  );
   const onPressEnd = useCallback(() => {
     setPressed(false);
   }, []);

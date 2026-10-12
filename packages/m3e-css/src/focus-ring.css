@@ -14,6 +14,12 @@
     outline-offset: var(--m3e-sys-state-focus-indicator-outer-offset);
   }
 
+  /* Proxy host: the card draws the ring for its stretched action. */
+  :where(.m3e-card--interactive):has(.m3e-card__action:focus-visible) {
+    outline: var(--m3e-sys-state-focus-indicator-thickness) solid var(--m3e-sys-color-secondary);
+    outline-offset: var(--m3e-sys-state-focus-indicator-outer-offset);
+  }
+
   :where(.m3e-focus-ring--inward):focus-visible {
     outline-offset: var(--m3e-sys-state-focus-indicator-inner-offset);
   }
@@ -23,7 +29,8 @@
   }
 
   @media (forced-colors: active) {
-    :where(.m3e-focus-ring, .m3e-button, .m3e-icon-button):focus-visible {
+    :where(.m3e-focus-ring, .m3e-button, .m3e-icon-button):focus-visible,
+    :where(.m3e-card--interactive):has(.m3e-card__action:focus-visible) {
       outline-color: Highlight;
     }
   }
