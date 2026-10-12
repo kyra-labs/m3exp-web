@@ -232,6 +232,9 @@ importers:
       '@kyralabs/m3e-shapes':
         specifier: workspace:^
         version: link:../../packages/m3e-shapes
+      '@kyralabs/m3e-tokens':
+        specifier: workspace:^
+        version: link:../../packages/m3e-tokens
       '@kyralabs/m3exp-web':
         specifier: workspace:^
         version: link:../../packages/m3exp-web
@@ -266,6 +269,12 @@ importers:
       '@axe-core/playwright':
         specifier: 4.13.0
         version: 4.13.0(playwright-core@1.64.0)
+      '@kyralabs/m3e-motion':
+        specifier: workspace:^
+        version: link:../../packages/m3e-motion
+      '@kyralabs/m3e-shapes':
+        specifier: workspace:^
+        version: link:../../packages/m3e-shapes
       '@playwright/test':
         specifier: 1.64.0
         version: 1.64.0
@@ -301,7 +310,14 @@ importers:
         specifier: workspace:^
         version: link:../m3e-tokens
 
-  packages/m3e-elements: {}
+  packages/m3e-elements:
+    devDependencies:
+      '@kyralabs/m3e-motion':
+        specifier: workspace:^
+        version: link:../m3e-motion
+      '@kyralabs/m3e-shapes':
+        specifier: workspace:^
+        version: link:../m3e-shapes
 
   packages/m3e-icons:
     dependencies:
@@ -320,6 +336,12 @@ importers:
 
   packages/m3e-react:
     dependencies:
+      '@kyralabs/m3e-motion':
+        specifier: workspace:^
+        version: link:../m3e-motion
+      '@kyralabs/m3e-shapes':
+        specifier: workspace:^
+        version: link:../m3e-shapes
       motion:
         specifier: 14.1.0
         version: 14.1.0(react-dom@19.3.0(react@19.3.0))(react@19.3.0)

@@ -158,12 +158,12 @@
 - **Purpose:** short waits (under 5 s); replaces most indeterminate circular progress uses.
 - **Variants:** uncontained, contained; indeterminate, determinate.
 - **Anatomy:** active indicator (morphing shape), optional container.
-- **Tokens:** container 48, indicator 38 (MDC-Android LoadingIndicator.md). Container shape full. Uncontained color primary. Contained: primary-container / on-primary-container (`TODO(verify)` LoadingIndicatorTokens). Scalable 24–240 keeping ratio.
-- **Motion:** indeterminate polygons in order SoftBurst, Cookie9Sided, Pentagon, Pill, Sunny, Cookie4Sided, Oval (m3.material.io). `TODO(verify)` LoadingIndicator.kt: morph interval (~650ms), rotation period (~4666ms), +90° per morph, morph ζ (~0.6), determinate polygon list.
-- **Behavior:** shapes scaled uniformly so the widest fits 38. Reduced motion slows (`TODO(verify)`).
+- **Tokens (verified, generated):** `LoadingIndicatorTokens.kt@19991f2c`: container 48 × 48, active size 38, container shape full; uncontained primary; contained primary-container / on-primary-container. Scalable 24–240 keeping ratio (resize the root; the shape is drawn in a square viewBox at `ActiveSize / min(ContainerWidth, ContainerHeight)`).
+- **Motion (verified, `LoadingIndicator.kt@19991f2c`):** indeterminate polygons in order SoftBurst, Cookie9Sided, Pentagon, Pill, Sunny, Cookie4Sided, Oval (`IndeterminateIndicatorPolygons` L541–550); a morph spring (ζ 0.6, k 200, visibility threshold 0.1, L401) starts every 650ms (`MorphIntervalMillis` L681), each finished morph adds +90° (L415–416), plus a linear global rotation of 4666ms per turn (`GlobalRotationDurationMillis` L680). Generated as `components/loading-indicator-motion.css`. Determinate: Circle rotated 360°/20 → SoftBurst (`DeterminateIndicatorPolygons` L560–566), rotating −180° over the range (L330).
+- **Behavior:** shapes scaled uniformly by `calculateScaleFactor` (max-bounds, so no rotation clips) × 38/48. Reduced motion: the indeterminate indicator holds its first frame and the CSS fallback stops rotating (FOUNDATIONS_SPEC reduced-motion policy: spatial motion snaps; m3.material.io Transitions: "disable decorative effects like … shape morphing"). Compose has no reduced-motion branch at the pin.
 - **Keyboard/ARIA:** `role="progressbar" aria-label`; determinate `aria-valuenow/min/max`. Not focusable.
 - **Layers:** elements (SVG path morph via m3e-shapes, rAF) + react. CSS fallback: rotating static SoftBurst.
-- **API:** `<LoadingIndicator contained? progress?: number polygons?: Shape[] aria-label />`; `<m3e-loading-indicator contained progress="0.4">`.
+- **API:** `<LoadingIndicator contained? progress?: number polygons?: RoundedPolygon[] aria-label />`; `<m3e-loading-indicator contained progress="0.4" aria-label="…">` (also `label`; no custom polygons: the element bundles m3e-shapes, D7).
 - **Acceptance:**
   - [ ] Morph sequence order matches Compose.
   - [ ] Path `d` at t=0 of each segment equals TS-ported `MaterialShapes` output (snapshot vs Compose reference export).

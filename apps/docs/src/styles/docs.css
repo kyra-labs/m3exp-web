@@ -286,3 +286,22 @@ button.docs-tile {
   margin: var(--m3e-sys-space-300) 0;
   padding: var(--m3e-sys-space-200);
 }
+
+.docs-loading-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--m3e-sys-space-300);
+  align-items: center;
+  margin: var(--m3e-sys-space-300) 0;
+}
+
+/* The spec's 24–240 range: resize the contract root (the host is display: contents). */
+.docs-loading--min [role='progressbar'] {
+  inline-size: var(--m3e-sys-space-300);
+  block-size: var(--m3e-sys-space-300);
+}
+
+.docs-loading--max [role='progressbar'] {
+  inline-size: calc(var(--m3e-sys-space-300) * 10);
+  block-size: calc(var(--m3e-sys-space-300) * 10);
+}
