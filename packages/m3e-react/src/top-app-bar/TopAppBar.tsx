@@ -1,7 +1,7 @@
-import {
-  type AppBarScrollBehavior,
-  attachTopAppBarScroll,
-} from '@kyralabs/m3e-elements/top-app-bar.js';
+// m3e-elements is bundled (a devDependency), so the public type comes from m3e-motion, a
+// dependency, keeping the published d.ts free of m3e-elements imports.
+import { attachTopAppBarScroll } from '@kyralabs/m3e-elements/top-app-bar.js';
+import type { AppBarScrollBehavior } from '@kyralabs/m3e-motion';
 import {
   type ForwardedRef,
   type HTMLAttributes,
