@@ -2,16 +2,29 @@
   "name": "@kyralabs/m3e-react",
   "version": "0.0.0",
   "description": "Material 3 Expressive React components (React Aria + Motion). Client-side rendering only.",
+  "keywords": [
+    "material-design",
+    "material-3",
+    "material-you",
+    "m3-expressive",
+    "design-system",
+    "react",
+    "react-aria",
+    "components"
+  ],
   "license": "Apache-2.0",
   "author": "Kyra Labs",
-  "homepage": "https://github.com/kyra-labs/m3exp-web#readme",
+  "homepage": "https://github.com/kyra-labs/m3exp-web/tree/main/packages/m3e-react#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/kyra-labs/m3exp-web.git",
+    "url": "https://github.com/kyra-labs/m3exp-web",
     "directory": "packages/m3e-react"
   },
   "bugs": "https://github.com/kyra-labs/m3exp-web/issues",
   "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "sideEffects": false,
   "exports": {
     ".": {
@@ -25,7 +38,8 @@
   "files": [
     "dist",
     "LICENSE",
-    "NOTICE"
+    "NOTICE",
+    "README.md"
   ],
   "scripts": {
     "build": "tsup",
