@@ -1,0 +1,214 @@
+/*
+ * Assist chip: flat (default) and elevated (COMPONENT_SPEC §18). No JavaScript needed; m3e-react
+ * adds React Aria behavior on the same classes.
+ *
+ *   <button type="button" class="m3e-assist-chip">
+ *     <span class="m3e-icon" aria-hidden="true">event</span>
+ *     <span class="m3e-assist-chip__label">Add to calendar</span>
+ *   </button>
+ *   <button type="button" class="m3e-assist-chip m3e-assist-chip--elevated">…</button>
+ *
+ * Icons go before (leading) or after (trailing) the label. The label element is required: Compose
+ * spaces it from both sides even when an icon is absent.
+ *
+ * Sources (compose/material3 @ 19991f2c, Chip.kt):
+ * - AssistChip / ElevatedAssistChip L135-167 / L377-409 → Chip() L3186-3231: a clickable Surface
+ *   (role Button, minimum interactive size) with AssistChipTokens shape, height, label type style.
+ * - Colors: AssistChipDefaults.defaultAssistChipColors L2020-2040 (flat: transparent container) and
+ *   defaultElevatedAssistChipColors L2165-2187. Disabled colors are the token color at its opacity,
+ *   not composited (Color.copy(alpha)).
+ * - Elevation: assistChipElevation L2054-2069 (flat: Level0 in every state but dragged) and
+ *   elevatedAssistChipElevation L2201-2216, animated by ChipElevation with the ElevationDefaults
+ *   tweens (elevation-motion.css); disabled snaps without a transition (L3674-3676).
+ * - Border: assistChipBorder L2080-2088 (flat only; ElevatedAssistChip passes border = null). It is
+ *   drawn inside the shape, so here it is an inset shadow that takes no layout space.
+ * - Layout: ChipContent L3355-3416 lays out [leading | label | trailing] with ChipArrangement
+ *   L3147-3181, which spaces the label from both slots even when they are empty, inside
+ *   AssistChipDefaults.ContentPadding (assist-chip-defaults.css).
+ * - State layer: the Surface ripple uses the content color, on-surface here (label color tokens).
+ * - Touch target: ≥ LocalMinimumInteractiveComponentSize via ::after; ::before is the state layer.
+ */
+@import '@kyralabs/m3e-tokens/components/assist-chip.css';
+@import '@kyralabs/m3e-tokens/components/assist-chip-defaults.css';
+@import '@kyralabs/m3e-tokens/components/button-defaults.css';
+@import '@kyralabs/m3e-tokens/components/elevation-motion.css';
+
+@layer m3e.components {
+  .m3e-assist-chip {
+    /* Variant: flat. */
+    --_m3e-assist-chip-outline: inset 0 0 0 var(--m3e-comp-assist-chip-flat-outline-width)
+      var(--m3e-comp-assist-chip-flat-outline-color);
+    --_m3e-assist-chip-container: transparent;
+    --_m3e-assist-chip-shadow: var(--_m3e-assist-chip-outline);
+    --_m3e-assist-chip-shadow-hovered: var(--_m3e-assist-chip-outline);
+    --_m3e-assist-chip-shadow-focused: var(--_m3e-assist-chip-outline);
+    --_m3e-assist-chip-shadow-pressed: var(--_m3e-assist-chip-outline);
+    --_m3e-assist-chip-shadow-dragged:
+      var(--m3e-comp-assist-chip-container-shadow-dragged), var(--_m3e-assist-chip-outline);
+    --_m3e-assist-chip-shadow-disabled: inset 0 0 0 var(--m3e-comp-assist-chip-flat-outline-width)
+      color-mix(
+        in srgb,
+        var(--m3e-comp-assist-chip-flat-outline-color-disabled)
+          calc(var(--m3e-comp-assist-chip-flat-outline-opacity-disabled) * 100%),
+        transparent
+      );
+    --_m3e-assist-chip-container-disabled: transparent;
+    --_m3e-assist-chip-label: var(--m3e-comp-assist-chip-label-text-color);
+    --_m3e-assist-chip-icon: var(--m3e-comp-assist-chip-icon-color);
+
+    /* Elevation tweens (ElevationDefaults): outgoing here, incoming in the state rules. */
+    --_m3e-assist-chip-shadow-duration: var(--m3e-comp-elevation-outgoing-duration-hovered);
+    --_m3e-assist-chip-shadow-easing: var(--m3e-comp-elevation-outgoing-easing);
+    --m3e-comp-state-layer-color: var(--_m3e-assist-chip-label);
+
+    display: inline-flex;
+    align-items: center;
+    box-sizing: border-box;
+    min-block-size: var(--m3e-comp-assist-chip-container-height);
+    margin: 0;
+    padding-block: 0;
+    padding-inline: var(--m3e-comp-assist-chip-content-padding-horizontal);
+    border: none;
+    border-radius: var(--m3e-comp-assist-chip-container-shape);
+    background-color: var(--_m3e-assist-chip-container);
+    box-shadow: var(--_m3e-assist-chip-shadow);
+    color: var(--_m3e-assist-chip-label);
+    font-family: var(--m3e-comp-assist-chip-label-text-font);
+    font-size: var(--m3e-comp-assist-chip-label-text-size);
+    font-weight: var(--m3e-comp-assist-chip-label-text-weight);
+    line-height: var(--m3e-comp-assist-chip-label-text-line-height);
+    letter-spacing: var(--m3e-comp-assist-chip-label-text-tracking);
+    text-align: start;
+    text-decoration: none;
+    vertical-align: middle;
+    cursor: pointer;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    transition: box-shadow var(--_m3e-assist-chip-shadow-duration)
+      var(--_m3e-assist-chip-shadow-easing);
+  }
+
+  .m3e-assist-chip__label {
+    flex: 1 1 auto;
+    padding-inline: var(--m3e-comp-assist-chip-horizontal-spacing);
+  }
+
+  .m3e-assist-chip > .m3e-icon {
+    --m3e-comp-icon-size: var(--m3e-comp-assist-chip-icon-size);
+
+    color: var(--_m3e-assist-chip-icon);
+  }
+
+  /* Touch target ≥ the Material minimum (the chip is 32dp tall). */
+  .m3e-assist-chip::after {
+    content: '';
+    position: absolute;
+    inset-block: min(
+      0%,
+      calc(
+        (
+            var(--m3e-comp-assist-chip-container-height) -
+              var(--m3e-comp-minimum-interactive-component-size)
+          ) /
+          2
+      )
+    );
+    inset-inline: min(0%, calc((100% - var(--m3e-comp-minimum-interactive-component-size)) / 2));
+  }
+
+  /* --- Variant: elevated (no border) ------------------------------------------------------- */
+  .m3e-assist-chip--elevated {
+    --_m3e-assist-chip-container: var(--m3e-comp-assist-chip-elevated-container-color);
+    --_m3e-assist-chip-shadow: var(--m3e-comp-assist-chip-elevated-container-shadow);
+    --_m3e-assist-chip-shadow-hovered: var(--m3e-comp-assist-chip-elevated-container-shadow-hover);
+    --_m3e-assist-chip-shadow-focused: var(--m3e-comp-assist-chip-elevated-container-shadow-focus);
+    --_m3e-assist-chip-shadow-pressed: var(
+      --m3e-comp-assist-chip-elevated-container-shadow-pressed
+    );
+    --_m3e-assist-chip-shadow-dragged: var(--m3e-comp-assist-chip-container-shadow-dragged);
+    --_m3e-assist-chip-shadow-disabled: var(
+      --m3e-comp-assist-chip-elevated-container-shadow-disabled
+    );
+    --_m3e-assist-chip-container-disabled: color-mix(
+      in srgb,
+      var(--m3e-comp-assist-chip-elevated-container-color-disabled)
+        calc(var(--m3e-comp-assist-chip-elevated-container-opacity-disabled) * 100%),
+      transparent
+    );
+  }
+
+  /* --- Interaction states ------------------------------------------------------------------ */
+  @media (hover: hover) {
+    .m3e-assist-chip:hover {
+      --_m3e-assist-chip-shadow-duration: var(--m3e-comp-elevation-incoming-duration);
+      --_m3e-assist-chip-shadow-easing: var(--m3e-comp-elevation-incoming-easing);
+      --_m3e-assist-chip-label: var(--m3e-comp-assist-chip-label-text-color-hover);
+      --_m3e-assist-chip-icon: var(--m3e-comp-assist-chip-icon-color-hover);
+
+      box-shadow: var(--_m3e-assist-chip-shadow-hovered);
+    }
+  }
+
+  .m3e-assist-chip:focus-visible {
+    --_m3e-assist-chip-shadow-duration: var(--m3e-comp-elevation-incoming-duration);
+    --_m3e-assist-chip-shadow-easing: var(--m3e-comp-elevation-incoming-easing);
+    --_m3e-assist-chip-label: var(--m3e-comp-assist-chip-label-text-color-focus);
+    --_m3e-assist-chip-icon: var(--m3e-comp-assist-chip-icon-color-focus);
+
+    box-shadow: var(--_m3e-assist-chip-shadow-focused);
+  }
+
+  .m3e-assist-chip:is(:active, [data-pressed]) {
+    --_m3e-assist-chip-shadow-duration: var(--m3e-comp-elevation-incoming-duration);
+    --_m3e-assist-chip-shadow-easing: var(--m3e-comp-elevation-incoming-easing);
+    --_m3e-assist-chip-label: var(--m3e-comp-assist-chip-label-text-color-pressed);
+    --_m3e-assist-chip-icon: var(--m3e-comp-assist-chip-icon-color-pressed);
+
+    box-shadow: var(--_m3e-assist-chip-shadow-pressed);
+  }
+
+  .m3e-assist-chip[data-dragged] {
+    --_m3e-assist-chip-shadow-duration: var(--m3e-comp-elevation-incoming-duration);
+    --_m3e-assist-chip-shadow-easing: var(--m3e-comp-elevation-incoming-easing);
+    --_m3e-assist-chip-label: var(--m3e-comp-assist-chip-label-text-color-dragged);
+    --_m3e-assist-chip-icon: var(--m3e-comp-assist-chip-icon-color-dragged);
+
+    box-shadow: var(--_m3e-assist-chip-shadow-dragged);
+  }
+
+  .m3e-assist-chip:is(:disabled, [aria-disabled='true']) {
+    --_m3e-assist-chip-label: color-mix(
+      in srgb,
+      var(--m3e-comp-assist-chip-label-text-color-disabled)
+        calc(var(--m3e-comp-assist-chip-label-text-opacity-disabled) * 100%),
+      transparent
+    );
+    --_m3e-assist-chip-icon: color-mix(
+      in srgb,
+      var(--m3e-comp-assist-chip-icon-color-disabled)
+        calc(var(--m3e-comp-assist-chip-icon-opacity-disabled) * 100%),
+      transparent
+    );
+
+    background-color: var(--_m3e-assist-chip-container-disabled);
+    box-shadow: var(--_m3e-assist-chip-shadow-disabled);
+    cursor: default;
+    transition: none;
+  }
+
+  @media (forced-colors: active) {
+    .m3e-assist-chip {
+      border: var(--m3e-comp-assist-chip-flat-outline-width) solid ButtonText;
+    }
+
+    .m3e-assist-chip > .m3e-icon {
+      color: ButtonText;
+    }
+
+    .m3e-assist-chip:is(:disabled, [aria-disabled='true']),
+    .m3e-assist-chip:is(:disabled, [aria-disabled='true']) > .m3e-icon {
+      border-color: GrayText;
+      color: GrayText;
+    }
+  }
+}

@@ -17,12 +17,24 @@
 }
 
 @layer m3e.base {
-  :where(.m3e-state-layer, .m3e-button, .m3e-icon-button, .m3e-card--interactive) {
+  :where(
+    .m3e-state-layer,
+    .m3e-button,
+    .m3e-icon-button,
+    .m3e-card--interactive,
+    .m3e-assist-chip
+  ) {
     position: relative;
     isolation: isolate;
   }
 
-  :where(.m3e-state-layer, .m3e-button, .m3e-icon-button, .m3e-card--interactive)::before {
+  :where(
+    .m3e-state-layer,
+    .m3e-button,
+    .m3e-icon-button,
+    .m3e-card--interactive,
+    .m3e-assist-chip
+  )::before {
     content: '';
     position: absolute;
     inset: 0;
@@ -39,7 +51,13 @@
   }
 
   @media (hover: hover) {
-    :where(.m3e-state-layer, .m3e-button, .m3e-icon-button, .m3e-card--interactive):hover::before {
+    :where(
+        .m3e-state-layer,
+        .m3e-button,
+        .m3e-icon-button,
+        .m3e-card--interactive,
+        .m3e-assist-chip
+      ):hover::before {
       opacity: var(--m3e-sys-state-hover-state-layer-opacity);
     }
   }
@@ -48,17 +66,25 @@
       .m3e-state-layer,
       .m3e-button,
       .m3e-icon-button,
-      .m3e-card--interactive
+      .m3e-card--interactive,
+      .m3e-assist-chip
     ):focus-visible::before {
     opacity: var(--m3e-sys-state-focus-state-layer-opacity);
   }
 
-  :where(.m3e-state-layer, .m3e-button, .m3e-icon-button, .m3e-card--interactive):active::before,
   :where(
       .m3e-state-layer,
       .m3e-button,
       .m3e-icon-button,
-      .m3e-card--interactive
+      .m3e-card--interactive,
+      .m3e-assist-chip
+    ):active::before,
+  :where(
+      .m3e-state-layer,
+      .m3e-button,
+      .m3e-icon-button,
+      .m3e-card--interactive,
+      .m3e-assist-chip
     )[data-pressed]::before {
     opacity: var(--m3e-sys-state-pressed-state-layer-opacity);
   }
@@ -67,7 +93,8 @@
       .m3e-state-layer,
       .m3e-button,
       .m3e-icon-button,
-      .m3e-card--interactive
+      .m3e-card--interactive,
+      .m3e-assist-chip
     )[data-dragged]::before {
     opacity: var(--m3e-sys-state-dragged-state-layer-opacity);
   }
@@ -76,7 +103,8 @@
       .m3e-state-layer,
       .m3e-button,
       .m3e-icon-button,
-      .m3e-card--interactive
+      .m3e-card--interactive,
+      .m3e-assist-chip
     )[data-ripple]::before {
     background: radial-gradient(
       circle at var(--_m3e-ripple-x, 50%) var(--_m3e-ripple-y, 50%),
@@ -89,15 +117,19 @@
       .m3e-state-layer,
       .m3e-button,
       .m3e-icon-button,
-      .m3e-card--interactive
+      .m3e-card--interactive,
+      .m3e-assist-chip
     )[data-ripple][data-pressed]::before {
     --_m3e-ripple-size: var(--_m3e-ripple-radius, 100%);
   }
 
-  :where(.m3e-state-layer, .m3e-button, .m3e-icon-button, .m3e-card--interactive):is(
-      :disabled,
-      [aria-disabled='true']
-    )::before {
+  :where(
+      .m3e-state-layer,
+      .m3e-button,
+      .m3e-icon-button,
+      .m3e-card--interactive,
+      .m3e-assist-chip
+    ):is(:disabled, [aria-disabled='true'])::before {
     display: none;
   }
 
@@ -118,7 +150,13 @@
   }
 
   @media (forced-colors: active) {
-    :where(.m3e-state-layer, .m3e-button, .m3e-icon-button, .m3e-card--interactive)::before {
+    :where(
+      .m3e-state-layer,
+      .m3e-button,
+      .m3e-icon-button,
+      .m3e-card--interactive,
+      .m3e-assist-chip
+    )::before {
       display: none;
     }
   }
