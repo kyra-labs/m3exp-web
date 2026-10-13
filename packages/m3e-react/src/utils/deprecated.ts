@@ -1,8 +1,6 @@
+import { isDev } from './dev.js';
+
 const warned = new Set<string>();
-// Bundlers replace `process.env.NODE_ENV`; without one it is undefined and the check stays on.
-declare const process: { env: { NODE_ENV?: string } } | undefined;
-// eslint-disable-next-line @typescript-eslint/prefer-optional-chain -- `process?.env` would not match bundler defines
-const isDev = () => typeof process === 'undefined' || process.env.NODE_ENV !== 'production';
 
 /**
  * D4: a deprecated component warns once per page load (dev only) and names its replacement.

@@ -68,6 +68,8 @@ jobs:
           done
           test -f packages/m3e-css/dist/index.css
           test -f packages/m3exp-web/dist/css/index.css
+      - name: process.env.NODE_ENV is left for consumer bundlers
+        run: node tools/check-node-env.js
       - name: Fonts rebuild byte-identically from the pinned TTF
         run: pnpm fonts:check
       - name: m3e-theme CLI runs under plain Node
