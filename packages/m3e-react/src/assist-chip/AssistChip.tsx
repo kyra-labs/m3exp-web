@@ -58,7 +58,7 @@ export const assistChipClassName = (
  * Assist chip (COMPONENT_SPEC §18): React Aria behavior on the m3e-css `.m3e-assist-chip` classes.
  * A smart or contextual action, e.g. "Add to calendar".
  */
-export const AssistChip = forwardRef(function AssistChip(
+export const AssistChip = /* @__PURE__ */ forwardRef(function AssistChip(
   props: AssistChipProps,
   forwardedRef: ForwardedRef<HTMLButtonElement | HTMLAnchorElement>,
 ) {

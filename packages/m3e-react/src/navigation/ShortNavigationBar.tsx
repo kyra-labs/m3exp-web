@@ -23,7 +23,7 @@ export interface ShortNavigationBarProps extends NavigationNativeProps, Navigati
  * Short navigation bar (COMPONENT_SPEC §13; Compose `ShortNavigationBar`): a `<nav>` of
  * destinations, the selected one marked `aria-current="page"`. Give it an `aria-label`.
  */
-export const ShortNavigationBar = forwardRef(function ShortNavigationBar(
+export const ShortNavigationBar = /* @__PURE__ */ forwardRef(function ShortNavigationBar(
   {
     items,
     selectedKey,

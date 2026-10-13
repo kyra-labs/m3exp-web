@@ -40,7 +40,7 @@ export interface TopAppBarProps extends Omit<HTMLAttributes<HTMLElement>, 'title
  * `<header>`. Scroll behaviors run m3e-elements' `attachTopAppBarScroll`, so both layers write the
  * same attributes.
  */
-export const TopAppBar = forwardRef(function TopAppBar(
+export const TopAppBar = /* @__PURE__ */ forwardRef(function TopAppBar(
   {
     variant: _variant = 'small',
     title,

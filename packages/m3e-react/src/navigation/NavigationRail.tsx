@@ -18,7 +18,7 @@ export interface NavigationRailProps extends NavigationNativeProps, NavigationSe
  *
  * @deprecated D4: use {@link WideNavigationRail}. Shipped until 2.0; no new features.
  */
-export const NavigationRail = forwardRef(function NavigationRail(
+export const NavigationRail = /* @__PURE__ */ forwardRef(function NavigationRail(
   {
     items,
     selectedKey,

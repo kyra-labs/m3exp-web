@@ -99,7 +99,7 @@
     "limit": "30 KB"
   },
   {
-    "name": "m3e-elements: <m3e-loading-indicator> entry (bundles m3e-shapes + m3e-motion; D13 proposed: shapes budget, not 8 KB)",
+    "name": "m3e-elements: <m3e-loading-indicator> entry (bundles m3e-shapes + m3e-motion; D13/D14: m3e-shapes budget, not 8 KB)",
     "path": "packages/m3e-elements/dist/loading-indicator/index.js",
     "limit": "14 KB"
   },
@@ -124,5 +124,40 @@
     "path": "packages/m3e-react/dist/index.js",
     "ignore": ["react", "react-dom"],
     "limit": "60 KB"
+  },
+  {
+    "name": "m3e-react: { Icon } only (tree-shaking guard: any other component leaking in fails this)",
+    "path": "packages/m3e-react/dist/index.js",
+    "import": "{ Icon }",
+    "ignore": ["react", "react-dom"],
+    "limit": "1 KB"
+  },
+  {
+    "name": "m3e-react: { Button } only (incl. react-aria press/focus/hover + motion spring)",
+    "path": "packages/m3e-react/dist/index.js",
+    "import": "{ Button }",
+    "ignore": ["react", "react-dom"],
+    "limit": "16 KB"
+  },
+  {
+    "name": "m3e-react: { LoadingIndicator } only (bundles m3e-shapes + m3e-motion; D13/D14 m3e-shapes budget)",
+    "path": "packages/m3e-react/dist/index.js",
+    "import": "{ LoadingIndicator }",
+    "ignore": ["react", "react-dom"],
+    "limit": "14 KB"
+  },
+  {
+    "name": "m3exp-web/react: { Icon } only",
+    "path": "packages/m3exp-web/dist/react.js",
+    "import": "{ Icon }",
+    "ignore": ["react", "react-dom"],
+    "limit": "1 KB"
+  },
+  {
+    "name": "m3exp-web (root): { Icon } (the root entry registers every custom element by design, ~12 kB; a leaked React component adds ~10 kB of react-aria. Raise with m3e-elements (all), max 31 KB)",
+    "path": "packages/m3exp-web/dist/index.js",
+    "import": "{ Icon }",
+    "ignore": ["react", "react-dom"],
+    "limit": "16 KB"
   }
 ]

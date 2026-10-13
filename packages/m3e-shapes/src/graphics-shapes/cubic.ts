@@ -340,9 +340,9 @@ export class Cubic {
 }
 
 /** Kotlin `0.999f`, `1f / 3f` and `2f / 3f`. */
-const COS_NEARLY_ZERO_ANGLE = f(0.999);
-const ONE_THIRD = f(1 / 3);
-const TWO_THIRDS = f(2 / 3);
+const COS_NEARLY_ZERO_ANGLE = /* @__PURE__ */ f(0.999);
+const ONE_THIRD = /* @__PURE__ */ f(1 / 3);
+const TWO_THIRDS = /* @__PURE__ */ f(2 / 3);
 
 /** This is a Mutable version of [Cubic], used mostly for performance critical paths. */
 export class MutableCubic extends Cubic {

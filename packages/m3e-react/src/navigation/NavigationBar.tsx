@@ -15,7 +15,7 @@ export interface NavigationBarProps extends NavigationNativeProps, NavigationSel
  *
  * @deprecated D4: use {@link ShortNavigationBar}. Shipped until 2.0; no new features.
  */
-export const NavigationBar = forwardRef(function NavigationBar(
+export const NavigationBar = /* @__PURE__ */ forwardRef(function NavigationBar(
   {
     items,
     selectedKey,

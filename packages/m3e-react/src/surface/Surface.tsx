@@ -17,7 +17,7 @@ export interface SurfaceProps extends HTMLAttributes<HTMLDivElement> {
 }
 
 /** Surface primitive (COMPONENT_SPEC §39): the `.m3e-surface` classes as a `<div>`. */
-export const Surface = forwardRef<HTMLDivElement, SurfaceProps>(function Surface(
+export const Surface = /* @__PURE__ */ forwardRef<HTMLDivElement, SurfaceProps>(function Surface(
   { container, variant = false, elevation, shape, className, ...rest },
   ref,
 ) {

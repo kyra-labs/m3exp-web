@@ -20,7 +20,7 @@ export interface IconProps extends Omit<HTMLAttributes<HTMLSpanElement>, 'childr
  * Material Symbols icon (D5, COMPONENT_SPEC §39). Renders the m3e-css `.m3e-icon` contract,
  * the same DOM as `<m3e-icon>`.
  */
-export const Icon = forwardRef<HTMLSpanElement, IconProps>(function Icon(
+export const Icon = /* @__PURE__ */ forwardRef<HTMLSpanElement, IconProps>(function Icon(
   { name, fill = false, weight, grade, opticalSize, label, className, style, ...rest },
   ref,
 ) {

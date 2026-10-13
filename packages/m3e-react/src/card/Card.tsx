@@ -22,7 +22,7 @@ interface CardContextValue {
   onPressEnd: (e: PressEvent) => void;
 }
 
-const CardContext = createContext<CardContextValue | null>(null);
+const CardContext = /* @__PURE__ */ createContext<CardContextValue | null>(null);
 
 export interface CardProps extends HTMLAttributes<HTMLElement> {
   /** Default `filled` (Compose `Card`). */
@@ -37,7 +37,7 @@ export interface CardProps extends HTMLAttributes<HTMLElement> {
  * interactive: its hit area stretches over the card, which then shows the state layer, the
  * elevation change and the focus ring.
  */
-export const Card = forwardRef(function Card(
+export const Card = /* @__PURE__ */ forwardRef(function Card(
   { variant = 'filled', as = 'div', className, children, ...rest }: CardProps,
   forwardedRef: ForwardedRef<HTMLElement>,
 ) {
@@ -86,7 +86,7 @@ export interface CardActionProps extends Omit<HTMLAttributes<HTMLElement>, 'onCl
 }
 
 /** The primary action of an interactive {@link Card} (`.m3e-card__action`). */
-export const CardAction = forwardRef(function CardAction(
+export const CardAction = /* @__PURE__ */ forwardRef(function CardAction(
   { href, isDisabled = false, onPress, className, children, ...rest }: CardActionProps,
   forwardedRef: ForwardedRef<HTMLAnchorElement | HTMLButtonElement>,
 ) {

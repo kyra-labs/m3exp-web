@@ -19,7 +19,7 @@ export interface WideNavigationRailProps extends NavigationNativeProps, Navigati
  * Static in M4: switching `isExpanded` re-lays the rail out without the width animation, and the
  * modal rail comes in M7. Give it an `aria-label`.
  */
-export const WideNavigationRail = forwardRef(function WideNavigationRail(
+export const WideNavigationRail = /* @__PURE__ */ forwardRef(function WideNavigationRail(
   {
     items,
     selectedKey,

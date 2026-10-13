@@ -100,7 +100,7 @@ const shapeKey = (s: IconButtonStyle, ...state: boolean[]) =>
  * Icon toggle button (COMPONENT_SPEC §2): `aria-pressed`; the selected icon is filled (FILL 1).
  * Press and selection morph on the default effects spring (IconButton.kt).
  */
-export const IconToggleButton = forwardRef(function IconToggleButton(
+export const IconToggleButton = /* @__PURE__ */ forwardRef(function IconToggleButton(
   props: IconToggleButtonProps,
   forwardedRef: ForwardedRef<HTMLButtonElement>,
 ) {
@@ -159,7 +159,7 @@ export const IconToggleButton = forwardRef(function IconToggleButton(
  * Icon button (COMPONENT_SPEC §2). With `isSelected` or `defaultSelected` it is an
  * {@link IconToggleButton}.
  */
-export const IconButton = forwardRef(function IconButton(
+export const IconButton = /* @__PURE__ */ forwardRef(function IconButton(
   props: IconButtonProps,
   forwardedRef: ForwardedRef<HTMLButtonElement>,
 ) {
@@ -176,7 +176,7 @@ export const IconButton = forwardRef(function IconButton(
   return <PlainIconButton {...common} {...defined({ type })} ref={forwardedRef} />;
 });
 
-const PlainIconButton = forwardRef(function PlainIconButton(
+const PlainIconButton = /* @__PURE__ */ forwardRef(function PlainIconButton(
   props: IconButtonBaseProps & { type?: 'button' | 'submit' | 'reset' },
   forwardedRef: ForwardedRef<HTMLButtonElement>,
 ) {
