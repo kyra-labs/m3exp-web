@@ -95,7 +95,7 @@ Rules:
 - No layout thrash in springs: animate only transform/opacity/clip-path/`d` where possible.
 
 ## 9. Theming API
-- **Inputs:** `seed` (hex), `variant` (`tonalSpot | neutral | vibrant | expressive | fidelity | content | rainbow | fruitSalad | monochrome`), `mode` (`light | dark | system`), `contrast` (number −1…1; presets `standard=0`, `medium=0.5`, `high=1`), `specVersion` (default = latest shipped by MCU 0.4.0, D3; older selectable), `motionScheme` (`expressive | standard`, default `expressive`, matching `MaterialExpressiveTheme`), and optional overrides per role.
+- **Inputs:** `seed` (hex), `variant` (`tonalSpot | neutral | vibrant | expressive | fidelity | content | rainbow | fruitSalad | monochrome`), `mode` (`light | dark | system`), `contrast` (number −1…1; presets `standard=0`, `medium=0.5`, `high=1`), `specVersion` (default = latest shipped by MCU 0.4.0, D3; older selectable), `motionScheme` (`expressive | standard`, default `expressive`, matching `MaterialExpressiveTheme`), optional `coreColors` (hex `secondary`, `tertiary`, `neutral`, `neutralVariant`, `error`; each replaces the palette derived from `seed`, like Material Theme Builder core colors), and optional overrides per role.
 - **Build-time:** CLI `m3e-theme --seed "#6750A4" --variant expressive --out theme.css` emits `:root` + `[data-theme="dark"]` + `@media (prefers-color-scheme)` blocks.
 - **Runtime (CSR):** `createTheme(options)` returns `{ cssText, tokens }`. `<ThemeProvider>` (React) and `<m3e-theme>` (element) set the CSS vars on a subtree. Nesting is allowed.
 - **Image seed:** `seedFromImage(img)` uses the MCU quantizer + score.

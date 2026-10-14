@@ -2,7 +2,7 @@
 // its published ESM uses extensionless relative imports that Node cannot load).
 import {
   DynamicColor,
-  type DynamicScheme,
+  DynamicScheme,
   Hct,
   MaterialDynamicColors,
   SchemeContent,
@@ -14,6 +14,7 @@ import {
   SchemeRainbow,
   SchemeTonalSpot,
   SchemeVibrant,
+  TonalPalette,
   argbFromHex,
   hexFromArgb,
 } from '@material/material-color-utilities';
@@ -96,9 +97,54 @@ export const rolesFor = (specVersion: SpecVersion): readonly string[] =>
 const HEX = /^#(?:[0-9a-f]{3}|[0-9a-f]{6})$/i;
 const normalizeHex = (hex: string): string => hexFromArgb(argbFromHex(hex));
 
+/**
+ * Optional source colors for the palettes other than primary, like Material Theme Builder's
+ * "core colors". Each one replaces the palette the variant would derive from `seed` with
+ * `TonalPalette.fromInt(color)` (the color's own hue and chroma); the variant still maps the
+ * roles to tones. Keys are the `DynamicScheme` palette names (`dynamiccolor/dynamic_scheme.d.ts`
+ * L63–L68, MCU 0.4.0). The same mapping as Angular Material's `theme-color` schematic
+ * (`TonalPalette.fromHct` per custom color); Theme Builder's own is `TODO(verify)` (SOURCES.md
+ * register #62).
+ *
+ * `neutralVariant` has no effect with spec 2025 (tonalSpot, neutral, vibrant, expressive): that
+ * spec draws on-surface-variant, outline and outline-variant from the neutral palette with a
+ * chroma multiplier (`dynamiccolor/color_spec_2025.js` L449–L524) and maps surface-variant to
+ * surface-container-highest (L1105–L1107), so set `neutral` instead.
+ */
+export const CORE_COLORS = ['secondary', 'tertiary', 'neutral', 'neutralVariant', 'error'] as const;
+export type CoreColor = (typeof CORE_COLORS)[number];
+/** `undefined` means unset, the same as leaving the key out. */
+export type CoreColors = Partial<Record<CoreColor, string | undefined>>;
+
+/** Validates core colors and normalizes them to `#rrggbb`, in `CORE_COLORS` order. */
+function normalizeCoreColors(coreColors: CoreColors, caller: string): CoreColors {
+  const out: CoreColors = {};
+  for (const key of Object.keys(coreColors)) {
+    if (!(CORE_COLORS as readonly string[]).includes(key)) {
+      throw new Error(`${caller}: unknown core color "${key}"`);
+    }
+  }
+  for (const key of CORE_COLORS) {
+    const hex = coreColors[key];
+    if (hex === undefined) continue;
+    if (typeof hex !== 'string' || !HEX.test(hex)) {
+      throw new Error(
+        `${caller}: core color ${key} must be #rgb or #rrggbb, got ${JSON.stringify(hex)}`,
+      );
+    }
+    out[key] = normalizeHex(hex);
+  }
+  return out;
+}
+
 export interface CreateThemeOptions {
   /** Source color, `#rgb` or `#rrggbb`. */
   seed: string;
+  /**
+   * Optional source colors for the secondary, tertiary, neutral, neutral variant and error
+   * palettes (`#rgb` or `#rrggbb`). Unset palettes come from `seed` and `variant` as usual.
+   */
+  coreColors?: CoreColors;
   variant?: Variant;
   mode?: ThemeMode;
   /** −1…1 (0 = standard) or a preset name. Spec 2025 treats negative contrast as 0. */
@@ -116,6 +162,8 @@ export interface Theme {
   cssText: string;
   tokens: {
     seed: string;
+    /** Normalized core colors; present only when at least one was given. */
+    coreColors?: CoreColors;
     variant: Variant;
     contrast: number;
     specVersion: SpecVersion;
@@ -125,6 +173,35 @@ export interface Theme {
   };
 }
 
+/**
+ * Rebuilds `scheme` with a core color's palette in place of each derived one. The `Scheme*`
+ * classes only pass their variant to `DynamicScheme` (e.g. `scheme/scheme_fidelity.js` L29–L37),
+ * and `DynamicScheme` derives every palette it is not given (`dynamiccolor/dynamic_scheme.js`
+ * L50–L68), so the other palettes, the variant's tone mapping, the (fallback) spec version and
+ * the platform stay as they were.
+ */
+function withCoreColors(scheme: DynamicScheme, coreColors: CoreColors): DynamicScheme {
+  if (CORE_COLORS.every((key) => coreColors[key] === undefined)) return scheme;
+  const palette = (key: CoreColor) => {
+    const hex = coreColors[key];
+    return hex === undefined ? undefined : TonalPalette.fromInt(argbFromHex(hex));
+  };
+  return new DynamicScheme({
+    sourceColorHct: scheme.sourceColorHct,
+    variant: scheme.variant,
+    contrastLevel: scheme.contrastLevel,
+    isDark: scheme.isDark,
+    platform: scheme.platform,
+    specVersion: scheme.specVersion,
+    primaryPalette: scheme.primaryPalette,
+    secondaryPalette: palette('secondary') ?? scheme.secondaryPalette,
+    tertiaryPalette: palette('tertiary') ?? scheme.tertiaryPalette,
+    neutralPalette: palette('neutral') ?? scheme.neutralPalette,
+    neutralVariantPalette: palette('neutralVariant') ?? scheme.neutralVariantPalette,
+    errorPalette: palette('error') ?? scheme.errorPalette,
+  });
+}
+
 /** Resolves every role of one scheme to `#rrggbb`. */
 export function schemeColors(
   seed: string,
@@ -132,13 +209,15 @@ export function schemeColors(
   isDark: boolean,
   contrast: number,
   specVersion: SpecVersion,
+  coreColors: CoreColors = {},
 ): Record<string, string> {
-  const scheme = new SCHEMES[variant](
+  const variantScheme = new SCHEMES[variant](
     Hct.fromInt(argbFromHex(seed)),
     isDark,
     contrast,
     specVersion,
   );
+  const scheme = withCoreColors(variantScheme, normalizeCoreColors(coreColors, 'schemeColors'));
   const out: Record<string, string> = {};
   for (const role of rolesFor(specVersion)) {
     const method = (dynamicColors as unknown as Record<string, (() => DynamicColor) | undefined>)[
@@ -174,9 +253,11 @@ export function createTheme(options: CreateThemeOptions): Theme {
       `createTheme: contrast must be within [-1, 1], got ${String(options.contrast)}`,
     );
   }
+  const coreColors = normalizeCoreColors(options.coreColors ?? {}, 'createTheme');
+  const hasCoreColors = Object.keys(coreColors).length > 0;
   const roles = rolesFor(specVersion);
   const build = (isDark: boolean, extra: ColorRoles | undefined) => {
-    const colors = schemeColors(seed, variant, isDark, contrast, specVersion);
+    const colors = schemeColors(seed, variant, isDark, contrast, specVersion, coreColors);
     for (const [role, hex] of Object.entries(extra ?? {})) {
       if (!roles.includes(role)) throw new Error(`createTheme: unknown color role "${role}"`);
       if (!HEX.test(hex)) throw new Error(`createTheme: override ${role} must be a hex color`);
@@ -197,6 +278,7 @@ export function createTheme(options: CreateThemeOptions): Theme {
     cssText,
     tokens: {
       seed: normalizeHex(seed),
+      ...(hasCoreColors ? { coreColors } : {}),
       variant,
       contrast,
       specVersion,
