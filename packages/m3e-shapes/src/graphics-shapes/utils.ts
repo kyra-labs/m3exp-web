@@ -50,12 +50,12 @@ export const directionVectorFromAngle = (angleRadians: number): Point =>
  * reasonable roundoff error. The distance epsilon is smaller, with the intention that the roundoff
  * should not be larger than a pixel on any reasonable sized display.
  */
-export const DistanceEpsilon = f(1e-4);
-export const AngleEpsilon = f(1e-6);
+export const DistanceEpsilon = /* @__PURE__ */ f(1e-4);
+export const AngleEpsilon = /* @__PURE__ */ f(1e-6);
 
-export const Zero: Point = point(0, 0);
-export const FloatPi = f(Math.PI);
-export const TwoPi = f(2 * FloatPi);
+export const Zero: Point = /* @__PURE__ */ point(0, 0);
+export const FloatPi = /* @__PURE__ */ f(Math.PI);
+export const TwoPi = /* @__PURE__ */ f(2 * FloatPi);
 
 export const angle = (x: number, y: number): number => f(f(f(Math.atan2(y, x)) + TwoPi) % TwoPi);
 
@@ -100,4 +100,4 @@ export function findMinimum(
 }
 
 /** Kotlin's default `findMinimum` tolerance. */
-export const FIND_MINIMUM_TOLERANCE = f(1e-3);
+export const FIND_MINIMUM_TOLERANCE = /* @__PURE__ */ f(1e-3);

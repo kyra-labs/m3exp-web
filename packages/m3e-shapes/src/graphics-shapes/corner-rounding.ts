@@ -42,7 +42,7 @@
  */
 export class CornerRounding {
   /** [Unrounded] has a rounding radius of zero, producing a sharp corner at a vertex. */
-  static readonly Unrounded = new CornerRounding();
+  static readonly Unrounded = /* @__PURE__ */ new CornerRounding();
 
   readonly radius: number;
   readonly smoothing: number;

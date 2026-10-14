@@ -44,15 +44,19 @@ export function toShapeOutline(
 }
 
 // Cache various roundings for use below
-const cornerRound15 = new CornerRounding(f(0.15));
-const cornerRound20 = new CornerRounding(f(0.2));
-const cornerRound30 = new CornerRounding(f(0.3));
-const cornerRound50 = new CornerRounding(f(0.5));
-const cornerRound100 = new CornerRounding(1);
+const cornerRound15 = /* @__PURE__ */ new CornerRounding(/* @__PURE__ */ f(0.15));
+const cornerRound20 = /* @__PURE__ */ new CornerRounding(/* @__PURE__ */ f(0.2));
+const cornerRound30 = /* @__PURE__ */ new CornerRounding(/* @__PURE__ */ f(0.3));
+const cornerRound50 = /* @__PURE__ */ new CornerRounding(/* @__PURE__ */ f(0.5));
+const cornerRound100 = /* @__PURE__ */ new CornerRounding(1);
 
-const rotateNeg45 = new Matrix().rotateZ(-45);
-const rotateNeg90 = new Matrix().rotateZ(-90);
-const rotateNeg135 = new Matrix().rotateZ(-135);
+// A function call, so the module constants below can carry a `@__PURE__` annotation (an
+// annotated `new Matrix().rotateZ(…)` chain is ambiguous to bundlers).
+const rotationZ = (degrees: number): Matrix => new Matrix().rotateZ(degrees);
+
+const rotateNeg45 = /* @__PURE__ */ rotationZ(-45);
+const rotateNeg90 = /* @__PURE__ */ rotationZ(-90);
+const rotateNeg135 = /* @__PURE__ */ rotationZ(-135);
 
 interface PointNRound {
   readonly x: number;
@@ -358,7 +362,7 @@ const builders = {
 export type MaterialShapeName = keyof typeof builders;
 
 /** The 35 Material shape names, in MaterialShapes.kt order. */
-export const materialShapeNames = Object.keys(builders) as MaterialShapeName[];
+export const materialShapeNames = /* @__PURE__ */ Object.keys(builders) as MaterialShapeName[];
 
 const cache = new Map<MaterialShapeName, RoundedPolygon>();
 

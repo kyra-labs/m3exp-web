@@ -84,7 +84,7 @@ export interface ButtonProps extends ButtonStyleProps, NativeButtonProps {
  * Material 3 Expressive button (COMPONENT_SPEC §1): React Aria behavior on the m3e-css
  * `.m3e-button` classes, with the press morph as an interruptible spring.
  */
-export const Button = forwardRef(function Button(
+export const Button = /* @__PURE__ */ forwardRef(function Button(
   props: ButtonProps,
   forwardedRef: ForwardedRef<HTMLButtonElement | HTMLAnchorElement>,
 ) {

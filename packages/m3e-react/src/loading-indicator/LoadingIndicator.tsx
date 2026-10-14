@@ -44,7 +44,7 @@ export interface LoadingIndicatorProps extends Omit<HTMLAttributes<HTMLDivElemen
  * spring and rotates, timed by the `--m3e-comp-loading-indicator-*` tokens; holds its first frame
  * under `prefers-reduced-motion: reduce`. Determinate: morphs between its shapes by `progress`.
  */
-export const LoadingIndicator = forwardRef(function LoadingIndicator(
+export const LoadingIndicator = /* @__PURE__ */ forwardRef(function LoadingIndicator(
   { contained = false, progress, polygons, className, ...rest }: LoadingIndicatorProps,
   forwardedRef: ForwardedRef<HTMLDivElement>,
 ) {

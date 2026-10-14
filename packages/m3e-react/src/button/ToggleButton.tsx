@@ -34,7 +34,7 @@ export interface ToggleButtonProps extends Omit<ButtonStyleProps, 'variant'>, Na
  * Toggle button (COMPONENT_SPEC §1, Compose ToggleButton): `aria-pressed`; round buttons turn
  * square when selected and square ones round, on the fast spatial spring.
  */
-export const ToggleButton = forwardRef(function ToggleButton(
+export const ToggleButton = /* @__PURE__ */ forwardRef(function ToggleButton(
   props: ToggleButtonProps,
   forwardedRef: ForwardedRef<HTMLButtonElement>,
 ) {

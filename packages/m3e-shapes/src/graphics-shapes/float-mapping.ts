@@ -90,7 +90,7 @@ export class DoubleMapper {
     return linearMap(this.targetValues, this.sourceValues, x);
   }
 
-  static readonly Identity = new DoubleMapper(
+  static readonly Identity = /* @__PURE__ */ new DoubleMapper(
     // We need any 2 points in the (x, x) diagonal, with x in the [0, 1) range,
     // We spread them as much as possible to minimize float errors.
     [0, 0],
