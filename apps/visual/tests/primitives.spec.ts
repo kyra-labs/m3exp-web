@@ -66,7 +66,8 @@ test.describe('primitives', () => {
     await expect(button).toHaveAttribute('data-pressed', '');
     await expect(button).toHaveAttribute('data-ripple', '');
     const x = await button.evaluate((el) => el.style.getPropertyValue('--_m3e-ripple-x'));
-    expect(Number.parseFloat(x)).toBeCloseTo(box.width * 0.25, 0);
+    // Firefox reports whole-pixel pointer coordinates.
+    expect(Math.abs(Number.parseFloat(x) - box.width * 0.25)).toBeLessThanOrEqual(1);
     await expect(demo).toHaveScreenshot('primitives-auto-ripple-pressed.png');
     await page.mouse.up();
     await expect(button).not.toHaveAttribute('data-pressed', '');
