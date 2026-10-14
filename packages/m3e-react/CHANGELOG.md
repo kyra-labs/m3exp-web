@@ -1,5 +1,12 @@
 # @kyralabs/m3e-react
 
+## 1.1.0
+
+### Patch Changes
+
+- @kyralabs/m3e-motion@1.1.0
+  - @kyralabs/m3e-shapes@1.1.0
+
 ## 1.0.1
 
 ### Patch Changes
