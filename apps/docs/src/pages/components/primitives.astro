@@ -103,12 +103,53 @@ const icons = ['home', 'search', 'favorite', 'settings', 'star', 'delete'] as co
       </button>
     </div>
   </section>
+
+  <section aria-labelledby="ripple-heading">
+    <h2 id="ripple-heading">Ripple for plain HTML</h2>
+    <p>
+      Plain-HTML components get their hover, focus and pressed overlays from m3e-css alone; the
+      ripple needs JS. <code>import '@kyralabs/m3e-elements/ripple.js'</code> adds it to every
+      button, icon button, assist chip, <code>.m3e-state-layer</code>, interactive card (pressed
+      through <code>.m3e-card__action</code>) and navigation item (drawn on its indicator) in the
+      document, current and future, through one set of delegated listeners. Hosts that m3e-react or{' '}
+      <code>attachRipple</code> already drive carry <code>data-ripple</code> and are skipped.{' '}
+      <code>attachAutoRipple(root, signal)</code> does the same within one root; this demo uses it.
+    </p>
+    <div id="auto-ripple-demo">
+      <div class="docs-button-row">
+        <button type="button" class="m3e-button m3e-button--filled">Button</button>
+        <button
+          type="button"
+          class="m3e-icon-button m3e-icon-button--filled"
+          aria-label="Favorite"
+        >
+          <span class="m3e-icon" aria-hidden="true">favorite</span>
+        </button>
+        <button type="button" class="m3e-assist-chip">
+          <span class="m3e-icon" aria-hidden="true">add</span>
+          <span class="m3e-assist-chip__label">Add to calendar</span>
+        </button>
+      </div>
+      <ul class="docs-cards">
+        <li class="m3e-card m3e-card--outlined m3e-card--interactive">
+          <div class="docs-card-body">
+            <h3 class="docs-card-title">
+              <a class="m3e-card__action" href="#ripple-heading">Outlined card</a>
+            </h3>
+            <p>The ripple grows on the card.</p>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </section>
 </Base>
 
 <script>
-  import { attachRipple } from '@kyralabs/m3exp-web/elements';
+  import { attachAutoRipple, attachRipple } from '@kyralabs/m3exp-web/elements';
 
   for (const tile of document.querySelectorAll<HTMLElement>('#state-demo .m3e-state-layer')) {
     attachRipple(tile, new AbortController().signal);
   }
+  const demo = document.querySelector<HTMLElement>('#auto-ripple-demo');
+  if (demo) attachAutoRipple(demo, new AbortController().signal);
 </script>
