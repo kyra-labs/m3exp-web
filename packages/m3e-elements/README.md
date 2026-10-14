@@ -25,4 +25,22 @@ Each `@kyralabs/m3e-elements/<element>.js` entry registers one element; `.` regi
 them, and `./base.js` exports the `M3eElement` base class without registering anything.
 Registration is skipped outside the browser.
 
+## Ripple for plain HTML
+
+m3e-css draws hover, focus and pressed overlays without JS; the press ripple needs a little.
+One import adds it to every plain-HTML button, icon button, assist chip, `.m3e-state-layer`,
+interactive card (pressed through `.m3e-card__action`, drawn on the card) and navigation item
+(drawn on `.m3e-navigation-item__state`) in the document, including ones added later:
+
+```js
+import '@kyralabs/m3e-elements/ripple.js';
+```
+
+It uses one set of delegated pointer and keyboard listeners on `document` and writes the same
+contract as `attachRipple` (`data-ripple`, `data-pressed`, `--_m3e-ripple-x/-y/-radius`) for the
+length of each press. Hosts that already carry `data-ripple` (m3e-react components and
+`attachRipple` hosts) are skipped, as are disabled ones. Enter and Space press from the center
+(links: Enter only). To scope it or stop it, call `attachAutoRipple(root, signal)` from the
+package root instead; that import has no side effect.
+
 Apache-2.0; see `LICENSE` and `NOTICE`.

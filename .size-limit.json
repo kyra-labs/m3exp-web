@@ -94,6 +94,11 @@
     "limit": "4 KB"
   },
   {
+    "name": "m3e-elements: ripple entry (plain-HTML press ripple, delegated on document)",
+    "path": "packages/m3e-elements/dist/ripple/index.js",
+    "limit": "1 KB"
+  },
+  {
     "name": "m3e-elements (all)",
     "path": "packages/m3e-elements/dist/index.js",
     "limit": "30 KB"

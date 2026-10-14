@@ -6,6 +6,7 @@
  * - `--_m3e-ripple-x`, `--_m3e-ripple-y`: the press point (center for keyboard presses),
  * - `--_m3e-ripple-radius`: distance from the press point to the farthest corner.
  * m3e-react's `useStateLayer` writes the same attributes, so both layers render one DOM contract.
+ * The `ripple.js` entry (`attachAutoRipple`) reuses the press helpers below for plain HTML.
  */
 
 /** Ripple geometry for a press at (`x`, `y`) inside a `width` × `height` box (keyboard: null). */
@@ -21,7 +22,31 @@ export function rippleStyle(
   return { '--_m3e-ripple-x': px(x), '--_m3e-ripple-y': px(y), '--_m3e-ripple-radius': px(radius) };
 }
 
-const PRESS_KEYS = new Set(['Enter', ' ']);
+/** Keys that press a button (Enter and Space). */
+export const PRESS_KEYS: ReadonlySet<string> = new Set(['Enter', ' ']);
+
+/** `:disabled` or `aria-disabled="true"`: m3e-css draws no state layer, so presses are ignored. */
+export function isRippleDisabled(el: Element): boolean {
+  return el.matches(':disabled') || el.getAttribute('aria-disabled') === 'true';
+}
+
+/**
+ * Starts a press on `host`: writes the ripple geometry for the client-space `point` (null:
+ * keyboard, from the center) and `data-pressed`.
+ */
+export function pressRipple(host: HTMLElement, point: { x: number; y: number } | null): void {
+  const box = host.getBoundingClientRect();
+  const local = point ? { x: point.x - box.left, y: point.y - box.top } : null;
+  for (const [name, value] of Object.entries(rippleStyle(box.width, box.height, local))) {
+    host.style.setProperty(name, value);
+  }
+  host.setAttribute('data-pressed', '');
+}
+
+/** Ends a press on `host`. */
+export function releaseRipple(host: HTMLElement): void {
+  host.removeAttribute('data-pressed');
+}
 
 /**
  * Tracks presses on `host` until `signal` aborts. Disabled hosts (`:disabled`,
@@ -29,18 +54,11 @@ const PRESS_KEYS = new Set(['Enter', ' ']);
  */
 export function attachRipple(host: HTMLElement, signal: AbortSignal): void {
   host.setAttribute('data-ripple', '');
-  const disabled = () => host.matches(':disabled') || host.getAttribute('aria-disabled') === 'true';
   const press = (point: { x: number; y: number } | null) => {
-    if (disabled()) return;
-    const box = host.getBoundingClientRect();
-    const local = point ? { x: point.x - box.left, y: point.y - box.top } : null;
-    for (const [name, value] of Object.entries(rippleStyle(box.width, box.height, local))) {
-      host.style.setProperty(name, value);
-    }
-    host.setAttribute('data-pressed', '');
+    if (!isRippleDisabled(host)) pressRipple(host, point);
   };
   const release = () => {
-    host.removeAttribute('data-pressed');
+    releaseRipple(host);
   };
   const options = { signal };
   host.addEventListener(

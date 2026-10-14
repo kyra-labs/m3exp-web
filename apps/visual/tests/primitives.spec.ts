@@ -56,6 +56,39 @@ test.describe('primitives', () => {
     await expect(tile(page, 1)).not.toHaveAttribute('data-pressed', '');
   });
 
+  test('plain HTML: attachAutoRipple ripples a button from the press point', async ({ page }) => {
+    const demo = page.locator('#auto-ripple-demo');
+    const button = demo.locator('.m3e-button');
+    await button.scrollIntoViewIfNeeded();
+    const box = (await button.boundingBox())!;
+    await page.mouse.move(box.x + box.width * 0.25, box.y + box.height / 2);
+    await page.mouse.down();
+    await expect(button).toHaveAttribute('data-pressed', '');
+    await expect(button).toHaveAttribute('data-ripple', '');
+    const x = await button.evaluate((el) => el.style.getPropertyValue('--_m3e-ripple-x'));
+    expect(Number.parseFloat(x)).toBeCloseTo(box.width * 0.25, 0);
+    await expect(demo).toHaveScreenshot('primitives-auto-ripple-pressed.png');
+    await page.mouse.up();
+    await expect(button).not.toHaveAttribute('data-pressed', '');
+    // data-ripple goes with the press, so the hover overlay keeps its flat shape.
+    await expect(button).not.toHaveAttribute('data-ripple', '');
+    const image = await button.evaluate((el) => getComputedStyle(el, '::before').backgroundImage);
+    expect(image).toBe('none');
+  });
+
+  test('plain HTML: a card action press ripples the card', async ({ page }) => {
+    const card = page.locator('#auto-ripple-demo .m3e-card');
+    const action = card.locator('.m3e-card__action');
+    await card.scrollIntoViewIfNeeded();
+    const box = (await card.boundingBox())!;
+    await page.mouse.move(box.x + box.width * 0.75, box.y + box.height * 0.75);
+    await page.mouse.down();
+    await expect(card).toHaveAttribute('data-pressed', '');
+    await expect(action).not.toHaveAttribute('data-pressed', '');
+    await page.mouse.up();
+    await expect(card).not.toHaveAttribute('data-pressed', '');
+  });
+
   test('a mouse click never shows the focus ring', async ({ page }) => {
     await tile(page, 0).click();
     const outline = await tile(page, 0).evaluate((el) => getComputedStyle(el).outlineStyle);
