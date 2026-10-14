@@ -18,26 +18,29 @@ jobs:
     name: Version or publish
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0
-      - uses: pnpm/action-setup@v4
-      - uses: actions/setup-node@v4
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v7
         with:
           node-version: 22
           cache: pnpm
           registry-url: https://registry.npmjs.org
       - run: pnpm install --frozen-lockfile
       - run: pnpm build
+      # v2 supports Changesets 3: it reads the published packages from the CHANGESETS_OUTPUT file
+      # (v1 parsed "New tag:" log lines that Changesets 3 no longer prints), then pushes the git
+      # tags and creates the GitHub releases.
       - name: Create Version PR or publish to npm
-        uses: changesets/action@v1
+        uses: changesets/action@v2
         with:
-          version: pnpm run version-packages
-          publish: pnpm run release
-          title: 'chore: version packages'
-          commit: 'chore: version packages'
+          version-script: pnpm run version-packages
+          publish-script: pnpm run release
+          commit-message: 'chore: version packages'
+          pr-title: 'chore: version packages'
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          # pnpm reads it through the .npmrc that setup-node writes (NPM_CONFIG_USERCONFIG).
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-          NPM_CONFIG_PROVENANCE: true
+          # pnpm 12 reads provenance only from PNPM_CONFIG_*; NPM_CONFIG_PROVENANCE is ignored.
+          PNPM_CONFIG_PROVENANCE: true
