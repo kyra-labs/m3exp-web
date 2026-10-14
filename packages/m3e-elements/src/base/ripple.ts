@@ -1,7 +1,7 @@
 /**
  * Pointer/keyboard tracking for the state-layer ripple (m3e-css state-layer.css, REQUIREMENTS §12).
  * Sets on the host:
- * - `data-ripple` (the overlay grows as a circle instead of fading in flat),
+ * - `data-ripple` (a press grows a circle from the press point; hover and focus stay flat),
  * - `data-pressed` while pressed,
  * - `--_m3e-ripple-x`, `--_m3e-ripple-y`: the press point (center for keyboard presses),
  * - `--_m3e-ripple-radius`: distance from the press point to the farthest corner.

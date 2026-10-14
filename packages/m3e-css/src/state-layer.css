@@ -6,14 +6,27 @@
  * - Overlay: ::before in the host's own stacking context (isolation), under the content.
  * - Color: --m3e-comp-state-layer-color (components set their content role), else currentColor.
  * - Opacity: --m3e-sys-state-* (StateTokens.kt), animated with the default effects spring.
- * - Pressed: :active, or [data-pressed] set by m3e-elements / m3e-react. With [data-ripple] the
- *   overlay grows as a circle from --_m3e-ripple-x/-y (REQUIREMENTS §12 ripple approximation).
+ *   Hover, focus and dragged write --_m3e-state-layer-opacity (the resting layer); a press
+ *   overrides the opacity.
+ * - Pressed: :active, or [data-pressed] set by m3e-elements / m3e-react. With [data-ripple] a
+ *   press grows a circle from --_m3e-ripple-x/-y to --_m3e-ripple-radius (REQUIREMENTS §12
+ *   ripple approximation) while the resting layer stays visible around it, as Compose draws the
+ *   ripple over a state layer that ignores presses (material-ripple Ripple.kt@19991f2c
+ *   StateLayer, L433–503). Inside the circle the two layers composite
+ *   (rest + pressed − rest × pressed). Release fades back to the resting layer; the circle does
+ *   not shrink.
  * - Disabled hosts (:disabled, [aria-disabled='true']) draw no state layer.
  */
 @property --_m3e-ripple-size {
   syntax: '<length-percentage>';
   inherits: false;
   initial-value: 0%;
+}
+
+@keyframes m3e-ripple-grow {
+  from {
+    --_m3e-ripple-size: 0%;
+  }
 }
 
 @layer m3e.base {
@@ -37,19 +50,18 @@
     .m3e-assist-chip,
     .m3e-navigation-item__state
   )::before {
+    --_m3e-state-layer-opacity: 0;
+
     content: '';
     position: absolute;
     inset: 0;
     z-index: -1;
     border-radius: inherit;
     background-color: var(--m3e-comp-state-layer-color, currentcolor);
-    opacity: 0;
+    opacity: var(--_m3e-state-layer-opacity);
     pointer-events: none;
-    transition:
-      opacity var(--m3e-sys-motion-spring-default-effects-duration)
-        var(--m3e-sys-motion-spring-default-effects-easing),
-      --_m3e-ripple-size var(--m3e-sys-motion-spring-default-effects-duration)
-        var(--m3e-sys-motion-spring-default-effects-easing);
+    transition: opacity var(--m3e-sys-motion-spring-default-effects-duration)
+      var(--m3e-sys-motion-spring-default-effects-easing);
   }
 
   /*
@@ -58,12 +70,12 @@
    */
   @media (hover: hover) {
     :where(.m3e-navigation-item:hover .m3e-navigation-item__state)::before {
-      opacity: var(--m3e-sys-state-hover-state-layer-opacity);
+      --_m3e-state-layer-opacity: var(--m3e-sys-state-hover-state-layer-opacity);
     }
   }
 
   :where(.m3e-navigation-item:focus-visible .m3e-navigation-item__state)::before {
-    opacity: var(--m3e-sys-state-focus-state-layer-opacity);
+    --_m3e-state-layer-opacity: var(--m3e-sys-state-focus-state-layer-opacity);
   }
 
   :where(.m3e-navigation-item:active .m3e-navigation-item__state)::before {
@@ -82,7 +94,7 @@
         .m3e-card--interactive,
         .m3e-assist-chip
       ):hover::before {
-      opacity: var(--m3e-sys-state-hover-state-layer-opacity);
+      --_m3e-state-layer-opacity: var(--m3e-sys-state-hover-state-layer-opacity);
     }
   }
 
@@ -93,7 +105,17 @@
       .m3e-card--interactive,
       .m3e-assist-chip
     ):focus-visible::before {
-    opacity: var(--m3e-sys-state-focus-state-layer-opacity);
+    --_m3e-state-layer-opacity: var(--m3e-sys-state-focus-state-layer-opacity);
+  }
+
+  :where(
+      .m3e-state-layer,
+      .m3e-button,
+      .m3e-icon-button,
+      .m3e-card--interactive,
+      .m3e-assist-chip
+    )[data-dragged]::before {
+    --_m3e-state-layer-opacity: var(--m3e-sys-state-dragged-state-layer-opacity);
   }
 
   :where(
@@ -120,42 +142,6 @@
       .m3e-icon-button,
       .m3e-card--interactive,
       .m3e-assist-chip
-    )[data-dragged]::before {
-    opacity: var(--m3e-sys-state-dragged-state-layer-opacity);
-  }
-
-  :where(
-      .m3e-state-layer,
-      .m3e-button,
-      .m3e-icon-button,
-      .m3e-card--interactive,
-      .m3e-assist-chip,
-      .m3e-navigation-item__state
-    )[data-ripple]::before {
-    background: radial-gradient(
-      circle at var(--_m3e-ripple-x, 50%) var(--_m3e-ripple-y, 50%),
-      var(--m3e-comp-state-layer-color, currentcolor) var(--_m3e-ripple-size),
-      transparent var(--_m3e-ripple-size)
-    );
-  }
-
-  :where(
-      .m3e-state-layer,
-      .m3e-button,
-      .m3e-icon-button,
-      .m3e-card--interactive,
-      .m3e-assist-chip,
-      .m3e-navigation-item__state
-    )[data-ripple][data-pressed]::before {
-    --_m3e-ripple-size: var(--_m3e-ripple-radius, 100%);
-  }
-
-  :where(
-      .m3e-state-layer,
-      .m3e-button,
-      .m3e-icon-button,
-      .m3e-card--interactive,
-      .m3e-assist-chip
     ):is(:disabled, [aria-disabled='true'])::before {
     display: none;
   }
@@ -165,7 +151,7 @@
    * (interactive cards: the stretched .m3e-card__action).
    */
   :where(.m3e-card--interactive):has(.m3e-card__action:focus-visible)::before {
-    opacity: var(--m3e-sys-state-focus-state-layer-opacity);
+    --_m3e-state-layer-opacity: var(--m3e-sys-state-focus-state-layer-opacity);
   }
 
   :where(.m3e-card--interactive):has(.m3e-card__action:active)::before {
@@ -174,6 +160,45 @@
 
   :where(.m3e-card--interactive):has(.m3e-card__action[aria-disabled='true'])::before {
     display: none;
+  }
+
+  /*
+   * Ripple: only while pressed. The circle (pressed layer composited over the resting one) grows
+   * from 0% to the radius; outside it the resting layer keeps its own opacity. A re-press
+   * restarts the animation (the attribute is removed in between). After the card proxies, which
+   * have the same specificity.
+   */
+  :where(
+      .m3e-state-layer,
+      .m3e-button,
+      .m3e-icon-button,
+      .m3e-card--interactive,
+      .m3e-assist-chip,
+      .m3e-navigation-item__state
+    )[data-ripple][data-pressed]::before {
+    --_m3e-ripple-opacity: calc(
+      var(--_m3e-state-layer-opacity) + var(--m3e-sys-state-pressed-state-layer-opacity) -
+        var(--_m3e-state-layer-opacity) * var(--m3e-sys-state-pressed-state-layer-opacity)
+    );
+    --_m3e-ripple-size: var(--_m3e-ripple-radius, 100%);
+
+    background: radial-gradient(
+      circle at var(--_m3e-ripple-x, 50%) var(--_m3e-ripple-y, 50%),
+      var(--m3e-comp-state-layer-color, currentcolor) var(--_m3e-ripple-size),
+      color-mix(
+          in srgb,
+          var(--m3e-comp-state-layer-color, currentcolor)
+            calc(var(--_m3e-state-layer-opacity) / var(--_m3e-ripple-opacity) * 100%),
+          transparent
+        )
+        var(--_m3e-ripple-size)
+    );
+    opacity: var(--_m3e-ripple-opacity);
+
+    /* No opacity fade in: the resting layer around the circle must not dip. */
+    transition: none;
+    animation: m3e-ripple-grow var(--m3e-sys-motion-spring-default-effects-duration)
+      var(--m3e-sys-motion-spring-default-effects-easing) both;
   }
 
   @media (forced-colors: active) {
