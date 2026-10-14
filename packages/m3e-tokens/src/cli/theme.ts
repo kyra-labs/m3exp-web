@@ -1,58 +1,19 @@
 // m3e-theme --seed "#6750A4" [--variant expressive] [--mode system] [--contrast 0|medium]
 //           [--spec 2025] [--motion expressive] [--selector :root] [--out theme.css]
+//           [--secondary #hex] [--tertiary #hex] [--neutral #hex] [--neutral-variant #hex]
+//           [--error #hex]
 import { writeFileSync } from 'node:fs';
-import { parseArgs } from 'node:util';
-import {
-  CONTRAST,
-  type CreateThemeOptions,
-  SPEC_VERSIONS,
-  VARIANTS,
-  createTheme,
-} from '../theme/create-theme.js';
-
-const USAGE = `usage: m3e-theme --seed <#hex> [options]
-
-  --variant   ${VARIANTS.join(' | ')}  (default tonalSpot)
-  --mode      light | dark | system  (default system)
-  --contrast  -1…1 or ${Object.keys(CONTRAST).join(' | ')}  (default standard)
-  --spec      ${SPEC_VERSIONS.join(' | ')}  (default 2025)
-  --motion    expressive | standard  (default expressive)
-  --selector  single compound selector  (default :root)
-  --out       file to write  (default stdout)`;
+import { createTheme } from '../theme/create-theme.js';
+import { USAGE, parseThemeArgs } from './theme-args.js';
 
 function run(argv: string[]): number {
-  const { values } = parseArgs({
-    args: argv,
-    options: {
-      seed: { type: 'string' },
-      variant: { type: 'string' },
-      mode: { type: 'string' },
-      contrast: { type: 'string' },
-      spec: { type: 'string' },
-      motion: { type: 'string' },
-      selector: { type: 'string' },
-      out: { type: 'string' },
-      help: { type: 'boolean', short: 'h' },
-    },
-  });
-  if (values.help || !values.seed) {
+  const args = parseThemeArgs(argv);
+  if (args.help) {
     console.error(USAGE);
-    return values.help ? 0 : 2;
+    return args.exitCode;
   }
-  const contrast = values.contrast;
-  const options = {
-    seed: values.seed,
-    ...(values.variant ? { variant: values.variant } : {}),
-    ...(values.mode ? { mode: values.mode } : {}),
-    ...(contrast === undefined
-      ? {}
-      : { contrast: contrast in CONTRAST ? contrast : Number(contrast) }),
-    ...(values.spec ? { specVersion: values.spec } : {}),
-    ...(values.motion ? { motionScheme: values.motion } : {}),
-    ...(values.selector ? { selector: values.selector } : {}),
-  } as CreateThemeOptions;
-  const { cssText } = createTheme(options);
-  if (values.out) writeFileSync(values.out, cssText);
+  const { cssText } = createTheme(args.options);
+  if (args.out) writeFileSync(args.out, cssText);
   else process.stdout.write(cssText);
   return 0;
 }

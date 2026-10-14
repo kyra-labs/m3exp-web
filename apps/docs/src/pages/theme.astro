@@ -1,5 +1,15 @@
 ---
 import Base from '../layouts/Base.astro';
+
+// Starting values for the core color pickers: the baseline palette key tones
+// (PaletteTokens.kt@19991f2c Secondary40, Tertiary40, Error40) and a plain grey for the neutrals.
+const CORE_COLOR_FIELDS = [
+  { key: 'secondary', label: 'Secondary', value: '#625b71' },
+  { key: 'tertiary', label: 'Tertiary', value: '#7d5260' },
+  { key: 'neutral', label: 'Neutral', value: '#808080' },
+  { key: 'neutralVariant', label: 'Neutral variant', value: '#808080' },
+  { key: 'error', label: 'Error', value: '#b3261e' },
+];
 ---
 
 <Base title="Theme">
@@ -29,7 +39,37 @@ import Base from '../layouts/Base.astro';
         <option value="2021">2021</option>
       </select>
     </label>
+    <fieldset class="docs-core-colors">
+      <legend>Core colors (optional; unchecked palettes come from the seed)</legend>
+      {
+        CORE_COLOR_FIELDS.map(({ key, label, value }) => (
+          <div class="docs-core-colors__item">
+            <label>
+              <input type="checkbox" name="core" value={key} />
+              {label}
+            </label>
+            <input name={key} type="color" value={value} aria-label={`${label} color`} />
+          </div>
+        ))
+      }
+    </fieldset>
   </form>
+  <p>
+    A red seed with the <code>fidelity</code> variant tints every surface red. A grey core color for
+    the <code>neutral</code> palettes keeps the red primary on grey surfaces:
+  </p>
+  <pre class="docs-code"><code>{`createTheme({
+  seed: '#d84848',
+  variant: 'fidelity',
+  coreColors: { neutral: '#808080', neutralVariant: '#808080' },
+});
+
+m3e-theme --seed "#d84848" --variant fidelity \\
+  --neutral "#808080" --neutral-variant "#808080"`}</code></pre>
+  <p>
+    With spec 2025 (tonalSpot, neutral, vibrant, expressive) the outline and surface-variant roles
+    come from the neutral palette, so <code>neutralVariant</code> has no effect there.
+  </p>
   <div class="docs-schemes">
     <section aria-labelledby="light-heading">
       <h2 id="light-heading">Light</h2>
@@ -43,7 +83,13 @@ import Base from '../layouts/Base.astro';
 </Base>
 
 <script>
-  import { VARIANTS, createTheme, type SpecVersion, type Variant } from '@kyralabs/m3exp-web/theme';
+  import {
+    VARIANTS,
+    createTheme,
+    type CoreColor,
+    type SpecVersion,
+    type Variant,
+  } from '@kyralabs/m3exp-web/theme';
 
   const form = document.getElementById('theme-form') as HTMLFormElement;
   const variantSelect = document.getElementById('variant') as HTMLSelectElement;
@@ -53,8 +99,12 @@ import Base from '../layouts/Base.astro';
 
   function render() {
     const data = new FormData(form);
+    const coreColors = Object.fromEntries(
+      data.getAll('core').map((key) => [key, String(data.get(String(key)))]),
+    ) as Partial<Record<CoreColor, string>>;
     const { tokens } = createTheme({
       seed: String(data.get('seed')),
+      coreColors,
       variant: String(data.get('variant')) as Variant,
       contrast: String(data.get('contrast')) as 'standard' | 'medium' | 'high',
       specVersion: String(data.get('spec')) as SpecVersion,

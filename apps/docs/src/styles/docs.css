@@ -36,6 +36,41 @@
   accent-color: var(--m3e-sys-color-primary);
 }
 
+/* Theme page: optional core colors, a checkbox and a color picker each. */
+.docs-core-colors {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--m3e-sys-space-200);
+  margin: 0;
+  border: var(--m3e-comp-divider-thickness) solid var(--m3e-sys-color-outline-variant);
+  border-radius: var(--m3e-sys-shape-corner-medium);
+}
+
+.docs-core-colors__item {
+  display: flex;
+  flex-direction: column;
+  gap: var(--m3e-sys-space-50);
+}
+
+.docs-controls .docs-core-colors label {
+  flex-direction: row;
+  align-items: center;
+  min-block-size: var(--m3e-sys-space-600);
+}
+
+.docs-controls input[type='checkbox'] {
+  min-block-size: auto;
+  min-inline-size: auto;
+  accent-color: var(--m3e-sys-color-primary);
+}
+
+.docs-code {
+  padding: var(--m3e-sys-space-200);
+  border-radius: var(--m3e-sys-shape-corner-medium);
+  background-color: var(--m3e-sys-color-surface-container);
+  color: var(--m3e-sys-color-on-surface);
+}
+
 .docs-schemes {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr));

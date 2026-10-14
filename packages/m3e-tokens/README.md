@@ -35,6 +35,27 @@ or from the command line:
 npx m3e-theme --seed "#6750A4" --variant expressive > theme.css
 ```
 
+Optional core colors replace the palettes the variant would derive from the seed, like Material
+Theme Builder's: `secondary`, `tertiary`, `neutral`, `neutralVariant` and `error`. Each palette
+keeps the given color's hue and chroma (`TonalPalette.fromInt`); the variant still maps the roles
+to tones. For example, a red primary on grey surfaces:
+
+```ts
+createTheme({
+  seed: '#d84848',
+  variant: 'fidelity',
+  coreColors: { neutral: '#808080', neutralVariant: '#808080' },
+});
+```
+
+```sh
+npx m3e-theme --seed "#d84848" --variant fidelity --neutral "#808080" --neutral-variant "#808080"
+```
+
+The CLI flags are `--secondary`, `--tertiary`, `--neutral`, `--neutral-variant` and `--error`.
+With spec 2025 (the `tonalSpot`, `neutral`, `vibrant` and `expressive` variants) the outline and
+surface-variant roles come from the neutral palette, so `neutralVariant` has no effect there.
+
 Other entries: `./components/<name>.css` (component tokens), `./material-symbols.css` (Rounded;
 `-outlined` and `-sharp` too), `./fonts-full.css` (every Google Sans Flex axis), and JS token
 objects from `.` and `./components`.

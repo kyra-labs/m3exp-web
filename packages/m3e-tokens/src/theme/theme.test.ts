@@ -3,7 +3,7 @@ import { createRequire } from 'node:module';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import {
-  type DynamicScheme,
+  DynamicScheme,
   Hct,
   MaterialDynamicColors,
   SchemeContent,
@@ -15,6 +15,8 @@ import {
   SchemeRainbow,
   SchemeTonalSpot,
   SchemeVibrant,
+  TonalPalette,
+  Variant as McuVariant,
   argbFromHex,
   hexFromArgb,
 } from '@material/material-color-utilities';
@@ -22,6 +24,9 @@ import { describe, expect, it } from 'vitest';
 import { baselineColors } from '../generated/baseline-colors.js';
 import {
   COLOR_ROLES,
+  CORE_COLORS,
+  type CoreColor,
+  type CoreColors,
   SPEC_2025_ONLY_ROLES,
   VARIANTS,
   type Variant,
@@ -200,6 +205,190 @@ describe('createTheme options', () => {
     [{ seed: '#6750a4', selector: ':root, .x' }, 'single compound selector'],
   ])('rejects %j', (options, message) => {
     expect(() => createTheme(options)).toThrow(message);
+  });
+});
+
+describe('core colors', () => {
+  const SEED = '#d84848';
+  const GREY = '#808080';
+  const MCU_VARIANT: Record<Variant, McuVariant> = {
+    monochrome: McuVariant.MONOCHROME,
+    neutral: McuVariant.NEUTRAL,
+    tonalSpot: McuVariant.TONAL_SPOT,
+    vibrant: McuVariant.VIBRANT,
+    expressive: McuVariant.EXPRESSIVE,
+    fidelity: McuVariant.FIDELITY,
+    content: McuVariant.CONTENT,
+    rainbow: McuVariant.RAINBOW,
+    fruitSalad: McuVariant.FRUIT_SALAD,
+  };
+  const PALETTE = {
+    secondary: 'secondaryPalette',
+    tertiary: 'tertiaryPalette',
+    neutral: 'neutralPalette',
+    neutralVariant: 'neutralVariantPalette',
+    error: 'errorPalette',
+  } as const satisfies Record<CoreColor, keyof DynamicScheme>;
+  interface Role {
+    getArgb(s: DynamicScheme): number;
+    palette(s: DynamicScheme): TonalPalette;
+  }
+  const role = (name: string) => (mdc as unknown as Record<string, () => Role>)[name]!.call(mdc);
+  /** Independent reference: MCU's `DynamicScheme` given `TonalPalette.fromInt` palettes. */
+  const referenceScheme = (
+    variant: Variant,
+    isDark: boolean,
+    specVersion: '2021' | '2025',
+    core: Partial<Record<CoreColor, string>>,
+  ) =>
+    new DynamicScheme({
+      sourceColorHct: Hct.fromInt(argbFromHex(SEED)),
+      variant: MCU_VARIANT[variant],
+      contrastLevel: 0,
+      isDark,
+      specVersion,
+      ...Object.fromEntries(
+        Object.entries(core).map(([key, hex]) => [
+          PALETTE[key as CoreColor],
+          TonalPalette.fromInt(argbFromHex(hex)),
+        ]),
+      ),
+    });
+  const chroma = (hex: string) => Hct.fromInt(argbFromHex(hex)).chroma;
+  /** max − min of the 8-bit RGB channels: 0 for a pure grey. */
+  const spread = (hex: string) => {
+    const channels = [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16));
+    return Math.max(...channels) - Math.min(...channels);
+  };
+  /** Variants MCU 0.4.0 keeps on spec 2025 (`dynamiccolor/dynamic_scheme.js` L31–L41). */
+  const SPEC_2025_NEUTRAL_VARIANTS: readonly Variant[] = [
+    'expressive',
+    'vibrant',
+    'tonalSpot',
+    'neutral',
+  ];
+  const ALL: Record<CoreColor, string> = {
+    secondary: '#3d5afe',
+    tertiary: '#386a20',
+    neutral: GREY,
+    neutralVariant: '#7a7f86',
+    error: '#ffb300',
+  };
+
+  it('unset (or empty) core colors change nothing', () => {
+    for (const variant of VARIANTS) {
+      const plain = createTheme({ seed: SEED, variant });
+      expect(createTheme({ seed: SEED, variant, coreColors: {} })).toEqual(plain);
+      expect(createTheme({ seed: SEED, variant, coreColors: { neutral: undefined } })).toEqual(
+        plain,
+      );
+      expect(plain.tokens).not.toHaveProperty('coreColors');
+    }
+  });
+
+  for (const specVersion of ['2021', '2025'] as const) {
+    for (const variant of VARIANTS) {
+      it(`match DynamicScheme with TonalPalette.fromInt palettes (${variant}, spec ${specVersion})`, () => {
+        const { tokens } = createTheme({ seed: SEED, variant, specVersion, coreColors: ALL });
+        for (const mode of ['light', 'dark'] as const) {
+          const scheme = referenceScheme(variant, mode === 'dark', specVersion, ALL);
+          const expected = Object.fromEntries(
+            rolesFor(specVersion).map((r) => [r, hexFromArgb(role(r).getArgb(scheme))]),
+          );
+          expect(tokens[mode]).toEqual(expected);
+        }
+      });
+    }
+  }
+
+  it('each core color changes only the roles drawn from its own palette (seed #d84848)', () => {
+    for (const specVersion of ['2021', '2025'] as const) {
+      for (const variant of VARIANTS) {
+        const base = createTheme({ seed: SEED, variant, specVersion });
+        for (const key of CORE_COLORS) {
+          const withCore = createTheme({
+            seed: SEED,
+            variant,
+            specVersion,
+            coreColors: { [key]: ALL[key] },
+          });
+          for (const mode of ['light', 'dark'] as const) {
+            // Which palette each role reads, from MCU's own DynamicColor.palette.
+            const scheme = referenceScheme(variant, mode === 'dark', specVersion, {});
+            const roles = rolesFor(specVersion);
+            const own = roles.filter((r) => role(r).palette(scheme) === scheme[PALETTE[key]]);
+            const label = `${variant} ${specVersion} ${key} ${mode}`;
+            if (key === 'neutralVariant' && SPEC_2025_NEUTRAL_VARIANTS.includes(variant)) {
+              // Spec 2025 draws the surface-variant and outline roles from the neutral palette.
+              if (specVersion === '2025') {
+                expect(own, label).toEqual([]);
+                expect(withCore.tokens[mode], label).toEqual(base.tokens[mode]);
+                continue;
+              }
+            }
+            expect(own.length, label).toBeGreaterThan(0);
+            for (const r of roles.filter((r) => !own.includes(r))) {
+              expect(withCore.tokens[mode]![r], `${label} ${r}`).toBe(base.tokens[mode]![r]);
+            }
+            expect(
+              own.some((r) => withCore.tokens[mode]![r] !== base.tokens[mode]![r]),
+              label,
+            ).toBe(true);
+          }
+        }
+      }
+    }
+  });
+
+  it('a grey neutral gives grey surfaces while primary stays red (seed #d84848, fidelity)', () => {
+    const red = createTheme({ seed: SEED, variant: 'fidelity' }).tokens;
+    const grey = createTheme({
+      seed: SEED,
+      variant: 'fidelity',
+      coreColors: { neutral: GREY, neutralVariant: GREY },
+    }).tokens;
+    // The owner's site theme today (seed only): a red-tinted dark surface.
+    expect(red.dark).toMatchObject({ surface: '#1d100f', onSurface: '#f6dddb' });
+    for (const mode of ['light', 'dark'] as const) {
+      for (const r of ['background', 'surface', 'surfaceContainer', 'onSurface', 'outline']) {
+        // HCT chroma is noisy near white after 8-bit rounding, so measure the RGB channel spread.
+        const [before, after] = [spread(red[mode]![r]!), spread(grey[mode]![r]!)];
+        expect(before, `${mode} ${r} ${red[mode]![r]!} (seed only)`).toBeGreaterThan(6);
+        expect(after, `${mode} ${r} ${grey[mode]![r]!} (grey neutral)`).toBeLessThanOrEqual(2);
+      }
+      for (const r of ['primary', 'primaryContainer', 'onPrimary', 'secondary', 'tertiary']) {
+        expect(grey[mode]![r], `${mode} ${r}`).toBe(red[mode]![r]);
+      }
+      expect(chroma(grey[mode]!['primary']!), 'primary stays colorful').toBeGreaterThan(20);
+    }
+  });
+
+  it('exposes normalized core colors in tokens, in CORE_COLORS order', () => {
+    const { tokens } = createTheme({
+      seed: SEED,
+      coreColors: { neutralVariant: '#ABC', tertiary: '#4A6FA5' },
+    });
+    expect(tokens.coreColors).toEqual({ tertiary: '#4a6fa5', neutralVariant: '#aabbcc' });
+    expect(Object.keys(tokens.coreColors!)).toEqual(['tertiary', 'neutralVariant']);
+  });
+
+  it('keeps per-role overrides on top of core colors', () => {
+    const { tokens } = createTheme({
+      seed: SEED,
+      coreColors: { neutral: GREY },
+      overrides: { dark: { surface: '#000' } },
+    });
+    expect(tokens.dark!['surface']).toBe('#000000');
+  });
+
+  it.each([
+    [{ neutral: 'grey' }, 'core color neutral must be #rgb or #rrggbb'],
+    [{ tertiary: '#12345' }, 'core color tertiary must be #rgb or #rrggbb'],
+    [{ primary: '#ff0000' }, 'unknown core color "primary"'],
+  ])('rejects core colors %j', (coreColors, message) => {
+    expect(() => createTheme({ seed: SEED, coreColors: coreColors as CoreColors })).toThrow(
+      message,
+    );
   });
 });
 
