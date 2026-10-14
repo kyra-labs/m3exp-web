@@ -149,11 +149,12 @@ for (const c of HOSTS) {
       // No circle left to shrink: a flat fill fading back to the hover layer.
       expect((await layer(host)).image).toBe('none');
       await expect.poll(() => opacity(host)).toBeCloseTo(hover, 2);
-      // A re-press restarts the growth.
+      // A re-press restarts the growth (held until it starts: a press and release within one
+      // frame never computes the pressed style at all).
       await page.mouse.down();
       await expect(host).toHaveAttribute('data-pressed', '');
-      await page.mouse.up();
       await expect.poll(() => ripples(page)).toBe(2);
+      await page.mouse.up();
     });
   });
 }
