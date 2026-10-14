@@ -14,4 +14,8 @@ export const baseOptions = {
   splitting: false,
   minify: false,
   outDir: 'dist',
+  // esbuild's browser platform defines `process.env.NODE_ENV` as "development" (unminified),
+  // which baked dev-only warnings into the published JS. Defining it as itself leaves the
+  // expression for the consumer's bundler. tsup's `replaceNodeEnv` is already off by default.
+  define: { 'process.env.NODE_ENV': 'process.env.NODE_ENV' },
 } satisfies Options;

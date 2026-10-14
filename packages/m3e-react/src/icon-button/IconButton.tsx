@@ -12,6 +12,7 @@ import { useToggleState } from 'react-stately';
 import { useShapeSpring } from '../motion/useShapeSpring.js';
 import { useStateLayer } from '../state-layer/useStateLayer.js';
 import { cx, defined } from '../utils/cx.js';
+import { isDev } from '../utils/dev.js';
 
 export type IconButtonVariant = 'standard' | 'filled' | 'tonal' | 'outlined';
 export type IconButtonSize = 'xs' | 's' | 'm' | 'l' | 'xl';
@@ -78,10 +79,6 @@ export interface IconButtonProps extends IconToggleButtonProps {
 }
 
 const warned = new Set<string>();
-// Bundlers replace `process.env.NODE_ENV`; without one it is undefined and the check stays on.
-declare const process: { env: { NODE_ENV?: string } } | undefined;
-// eslint-disable-next-line @typescript-eslint/prefer-optional-chain -- `process?.env` would not match bundler defines
-const isDev = () => typeof process === 'undefined' || process.env.NODE_ENV !== 'production';
 
 /** COMPONENT_SPEC §2: an icon-only button without an accessible name warns once (dev only). */
 function useLabelWarning(props: NativeProps & { 'aria-label'?: string }, component: string) {
