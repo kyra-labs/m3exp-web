@@ -34,7 +34,7 @@ const readNumber = (style: CSSStyleDeclaration, name: string) =>
  * The motion-scheme spring `token` resolved on `el` (`--m3e-sys-motion-spring-<token>-*`), or null
  * when its duration resolves to 0ms (reduced motion snaps spatial springs).
  */
-function readSpring(style: CSSStyleDeclaration, token: string): SpringSpec | null {
+export function readSpring(style: CSSStyleDeclaration, token: string): SpringSpec | null {
   if (readNumber(style, `--m3e-sys-motion-spring-${token}-duration`) === 0) return null;
   const dampingRatio = readNumber(style, `--m3e-sys-motion-spring-${token}-damping-ratio`);
   const stiffness = readNumber(style, `--m3e-sys-motion-spring-${token}-stiffness`);
@@ -44,7 +44,7 @@ function readSpring(style: CSSStyleDeclaration, token: string): SpringSpec | nul
 }
 
 /** One interruptible Compose spring: a new target starts from the current value and velocity. */
-class Spring {
+export class Spring {
   value: number;
   #from: number;
   #to: number;
