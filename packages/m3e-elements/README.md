@@ -51,6 +51,32 @@ it like Compose's `DropdownMenuPositionProvider` and springs it open and closed.
 `checked-icon`, `supporting-text`, `trailing-icon`, `trailing-text`, `submenu="<menu id>"`. The
 `menu-popup.js` entry exports `MenuPopup` (placement and springs only) for other components.
 
+## Button group
+
+```js
+import '@kyralabs/m3e-elements/button-group.js';
+```
+
+```html
+<m3e-button-group variant="connected" selection-mode="single" label="View">
+  <m3e-button-group-item value="day" selected>Day</m3e-button-group-item>
+  <m3e-button-group-item value="week">Week</m3e-button-group-item>
+</m3e-button-group>
+```
+
+`<m3e-button-group>` renders the `.m3e-button-group` contract from its `<m3e-button-group-item>`
+children. Standard groups (default) grow a pressed button by Compose's `ExpandedRatio` while its
+neighbors shrink, on an interruptible fast spatial spring; connected groups only morph the pressed
+or selected button's corners. Attributes: `variant` (`standard` | `connected`), `size` (`xs`–`xl`),
+`shape` (`round` | `square`), `button-variant`, `selection-mode` (`none` | `single` | `multiple`),
+`selection-required`, `overflow` (trailing items collapse into a "More options" menu; loads
+`<m3e-menu>` on first use), `overflow-label`, `label`, `disabled`. Items: `value`, `icon`,
+`selected`, `disabled`, `variant`, `label` (icon-only). Events: `change` on the group
+(`detail: { value, selected, values }`) and `action` on the item (`detail: { value }`). Arrow keys,
+Home and End move focus (one tab stop). The `button-group-layout.js` entry exports
+`ButtonGroupLayout` (springs, overflow measurement and roving focus for a rendered group), which
+m3e-react's `<ButtonGroup>` uses too.
+
 ## Ripple for plain HTML
 
 m3e-css draws hover, focus and pressed overlays without JS; the press ripple needs a little.

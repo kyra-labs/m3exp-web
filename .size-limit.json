@@ -106,6 +106,12 @@
     "limit": "4 KB"
   },
   {
+    "name": "m3e-css: button group",
+    "path": "packages/m3e-css/dist/button-group.css",
+    "rolldown": false,
+    "limit": "4 KB"
+  },
+  {
     "name": "m3e-elements: ripple entry (plain-HTML press ripple, delegated on document)",
     "path": "packages/m3e-elements/dist/ripple/index.js",
     "limit": "1 KB"
@@ -140,6 +146,17 @@
     "name": "m3e-elements: menu-popup entry (MenuPopup, used by m3e-react <Menu>)",
     "path": "packages/m3e-elements/dist/menu-popup/index.js",
     "limit": "4 KB"
+  },
+  {
+    "name": "m3e-elements: <m3e-button-group> entry (bundles ButtonGroupLayout + m3e-motion; the <m3e-menu> entry is imported lazily on the first overflow and measured on its own)",
+    "path": "packages/m3e-elements/dist/button-group/index.js",
+    "ignore": ["@kyralabs/m3e-elements"],
+    "limit": "8 KB"
+  },
+  {
+    "name": "m3e-elements: button-group-layout entry (ButtonGroupLayout, used by m3e-react <ButtonGroup>)",
+    "path": "packages/m3e-elements/dist/button-group-layout/index.js",
+    "limit": "5 KB"
   },
   {
     "name": "m3e-shapes (all presets + Morph)",
@@ -188,6 +205,13 @@
     "limit": "34 KB"
   },
   {
+    "name": "m3e-react: { ButtonGroup, ButtonGroupItem } only (incl. react-aria buttons + menu hooks, ButtonGroupLayout)",
+    "path": "packages/m3e-react/dist/index.js",
+    "import": "{ ButtonGroup, ButtonGroupItem }",
+    "ignore": ["react", "react-dom"],
+    "limit": "40 KB"
+  },
+  {
     "name": "m3exp-web/react: { Icon } only",
     "path": "packages/m3exp-web/dist/react.js",
     "import": "{ Icon }",
@@ -195,10 +219,10 @@
     "limit": "1 KB"
   },
   {
-    "name": "m3exp-web (root): { Icon } (the root entry registers every custom element by design, ~17 kB with <m3e-menu>; a leaked React component adds ~10 kB of react-aria. Raise with m3e-elements (all), max 31 KB)",
+    "name": "m3exp-web (root): { Icon } (the root entry registers every custom element by design, ~21 kB with <m3e-menu> and <m3e-button-group>; a leaked React component adds ~10 kB of react-aria. Raise with m3e-elements (all), max 31 KB)",
     "path": "packages/m3exp-web/dist/index.js",
     "import": "{ Icon }",
     "ignore": ["react", "react-dom"],
-    "limit": "20 KB"
+    "limit": "23 KB"
   }
 ]

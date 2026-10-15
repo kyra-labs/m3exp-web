@@ -307,7 +307,7 @@ describe('press width springs (ButtonGroupLayout)', () => {
     // First item: min(0.15 × 100, B's 16px end padding) = 15.
     expect(a!.style.getPropertyValue('inline-size')).toBe('115px');
     expect(b!.style.getPropertyValue('inline-size')).toBe('85px');
-    expect(b!.style.getPropertyValue('min-inline-size')).toBe('0px');
+    expect(b!.style.getPropertyValue('min-inline-size')).toBe('0');
     a!.removeAttribute('data-pressed');
     await settle();
     for (let i = 0; i < 5; i++) for (const cb of frames.splice(0)) cb(performance.now());

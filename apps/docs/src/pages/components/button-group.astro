@@ -105,6 +105,7 @@ const shapes = ['round', 'square'] as const;
         <m3e-button-group-item value="next" icon="skip_next">Next</m3e-button-group-item>
       </m3e-button-group>
 
+      <div class="docs-button-group-connected">
       <m3e-button-group
         variant="connected"
         selection-mode="single"
@@ -116,6 +117,7 @@ const shapes = ['round', 'square'] as const;
         <m3e-button-group-item value="restaurant" icon="restaurant">Restaurant</m3e-button-group-item>
         <m3e-button-group-item value="coffee" icon="coffee">Coffee</m3e-button-group-item>
       </m3e-button-group>
+      </div>
 
       <m3e-button-group
         selection-mode="multiple"
@@ -145,11 +147,13 @@ const shapes = ['round', 'square'] as const;
     </div>
 
     <div dir="rtl" class="docs-button-group-demos" data-testid="rtl">
+      <div class="docs-button-group-connected">
       <m3e-button-group label="عرض" variant="connected" selection-mode="single" data-testid="el-rtl">
         <m3e-button-group-item value="day" selected>يوم</m3e-button-group-item>
         <m3e-button-group-item value="week">أسبوع</m3e-button-group-item>
         <m3e-button-group-item value="month">شهر</m3e-button-group-item>
       </m3e-button-group>
+      </div>
     </div>
   </section>
 

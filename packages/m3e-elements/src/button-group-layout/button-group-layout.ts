@@ -4,7 +4,7 @@ import {
   buttonGroupVisibleCount,
   buttonGroupWidths,
 } from '@kyralabs/m3e-motion';
-import { Spring, readSpring } from '../menu-popup/menu-popup.js';
+import { Spring, readSpring } from '../base/spring.js';
 
 const ITEM = '.m3e-button-group__item';
 const OVERFLOW = '.m3e-button-group__overflow';
@@ -436,8 +436,8 @@ export class ButtonGroupLayout {
     const ratio = num(rootStyle, '--m3e-comp-button-group-expanded-ratio') || 0;
     const widths = buttonGroupWidths(rest, values, ratio);
     items.forEach((el, i) => {
-      el.style.setProperty('inline-size', px(widths[i]!));
-      el.style.setProperty('min-inline-size', '0px');
+      el.style.setProperty('inline-size', px(widths[i] ?? 0));
+      el.style.setProperty('min-inline-size', '0');
     });
   }
 }

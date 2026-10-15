@@ -28,19 +28,21 @@ export default function ButtonGroupPlayground() {
         </ButtonGroupItem>
       </ButtonGroup>
 
-      <ButtonGroup
-        variant="connected"
-        selectionMode="single"
-        disallowEmptySelection
-        selectedKeys={view}
-        onSelectionChange={setView}
-        aria-label="View (React)"
-        data-testid="react-connected"
-      >
-        <ButtonGroupItem id="day">Day</ButtonGroupItem>
-        <ButtonGroupItem id="week">Week</ButtonGroupItem>
-        <ButtonGroupItem id="month">Month</ButtonGroupItem>
-      </ButtonGroup>
+      <div className="docs-button-group-connected">
+        <ButtonGroup
+          variant="connected"
+          selectionMode="single"
+          disallowEmptySelection
+          selectedKeys={view}
+          onSelectionChange={setView}
+          aria-label="View (React)"
+          data-testid="react-connected"
+        >
+          <ButtonGroupItem id="day">Day</ButtonGroupItem>
+          <ButtonGroupItem id="week">Week</ButtonGroupItem>
+          <ButtonGroupItem id="month">Month</ButtonGroupItem>
+        </ButtonGroup>
+      </div>
 
       <div className="docs-button-group-resizable" data-testid="react-overflow-box">
         <ButtonGroup

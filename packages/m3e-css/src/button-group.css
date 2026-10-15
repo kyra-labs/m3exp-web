@@ -108,9 +108,6 @@
     --_m3e-button-group-inner-pressed: var(
       --m3e-comp-connected-button-group-small-inner-corner-corner-size-pressed
     );
-    --_m3e-button-group-selected-percent: var(
-      --m3e-comp-connected-button-group-small-inner-corner-corner-size-percent-selected
-    );
 
     display: grid;
     grid-auto-columns: 1fr;
@@ -125,9 +122,6 @@
     --_m3e-button-group-inner-pressed: var(
       --m3e-comp-connected-button-group-x-small-inner-corner-corner-size-pressed
     );
-    --_m3e-button-group-selected-percent: var(
-      --m3e-comp-connected-button-group-x-small-inner-corner-corner-size-percent-selected
-    );
   }
 
   .m3e-button-group--connected.m3e-button-group--size-m {
@@ -137,9 +131,6 @@
     );
     --_m3e-button-group-inner-pressed: var(
       --m3e-comp-connected-button-group-medium-inner-corner-corner-size-pressed
-    );
-    --_m3e-button-group-selected-percent: var(
-      --m3e-comp-connected-button-group-medium-inner-corner-corner-size-percent-selected
     );
   }
 
@@ -151,9 +142,6 @@
     --_m3e-button-group-inner-pressed: var(
       --m3e-comp-connected-button-group-large-inner-corner-corner-size-pressed
     );
-    --_m3e-button-group-selected-percent: var(
-      --m3e-comp-connected-button-group-large-inner-corner-corner-size-percent-selected
-    );
   }
 
   .m3e-button-group--connected.m3e-button-group--size-xl {
@@ -164,9 +152,6 @@
     --_m3e-button-group-inner-pressed: var(
       --m3e-comp-connected-button-group-x-large-inner-corner-corner-size-pressed
     );
-    --_m3e-button-group-selected-percent: var(
-      --m3e-comp-connected-button-group-x-large-inner-corner-corner-size-percent-selected
-    );
   }
 
   .m3e-button-group--connected > .m3e-button-group__item {
@@ -176,9 +161,6 @@
     --_m3e-button-group-end-rest: var(--_m3e-button-group-inner);
     --_m3e-button-group-start-pressed: var(--_m3e-button-group-inner-pressed);
     --_m3e-button-group-end-pressed: var(--_m3e-button-group-inner-pressed);
-    --_m3e-button-group-selected: calc(
-      var(--_m3e-button-height) * var(--_m3e-button-group-selected-percent) / 100
-    );
     --_m3e-button-group-start: var(--_m3e-button-group-start-rest);
     --_m3e-button-group-end: var(--_m3e-button-group-end-rest);
 
@@ -202,6 +184,25 @@
     --_m3e-button-group-outer: var(--_m3e-button-group-inner);
   }
 
+  /* The ring spans the 2dp gap; keep it above the neighbors. */
+  .m3e-button-group--connected > .m3e-button-group__item:focus-visible {
+    z-index: 1;
+  }
+
+  /* Checked: CornerFull. */
+  .m3e-button-group--connected
+    > .m3e-button-group__item:is([aria-pressed='true'], [aria-checked='true']) {
+    --_m3e-button-group-start: var(--_m3e-button-round);
+    --_m3e-button-group-end: var(--_m3e-button-round);
+  }
+
+  /* Pressed wins over checked. */
+  .m3e-button-group--connected
+    > .m3e-button-group__item:is(:active, [data-pressed]):not(:disabled, [aria-disabled='true']) {
+    --_m3e-button-group-start: var(--_m3e-button-group-start-pressed);
+    --_m3e-button-group-end: var(--_m3e-button-group-end-pressed);
+  }
+
   .m3e-button-group--connected
     > .m3e-button-group__item:nth-child(1 of .m3e-button-group__item:not([hidden])) {
     --_m3e-button-group-start-rest: var(--_m3e-button-group-outer);
@@ -212,25 +213,6 @@
     > .m3e-button-group__item:nth-last-child(1 of .m3e-button-group__item:not([hidden])) {
     --_m3e-button-group-end-rest: var(--_m3e-button-group-outer);
     --_m3e-button-group-end-pressed: var(--_m3e-button-group-outer);
-  }
-
-  /* Checked: CornerFull. */
-  .m3e-button-group--connected
-    > .m3e-button-group__item:is([aria-pressed='true'], [aria-checked='true']) {
-    --_m3e-button-group-start: var(--_m3e-button-group-selected);
-    --_m3e-button-group-end: var(--_m3e-button-group-selected);
-  }
-
-  /* Pressed wins over checked. */
-  .m3e-button-group--connected
-    > .m3e-button-group__item:is(:active, [data-pressed]):not(:disabled, [aria-disabled='true']) {
-    --_m3e-button-group-start: var(--_m3e-button-group-start-pressed);
-    --_m3e-button-group-end: var(--_m3e-button-group-end-pressed);
-  }
-
-  /* The ring spans the 2dp gap; keep it above the neighbors. */
-  .m3e-button-group--connected > .m3e-button-group__item:focus-visible {
-    z-index: 1;
   }
 
   /* JavaScript springs the corners (inline style); CSS keeps the color transitions. */

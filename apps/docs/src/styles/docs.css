@@ -505,9 +505,8 @@ button.docs-tile {
   margin-block: var(--m3e-sys-space-300);
 }
 
-.docs-button-group-demos > .m3e-button-group--connected,
-.docs-button-group-demos > m3e-button-group[variant='connected'] > .m3e-button-group {
-  inline-size: 100%;
+.docs-button-group-connected {
+  align-self: stretch;
   max-inline-size: 480px;
 }
 

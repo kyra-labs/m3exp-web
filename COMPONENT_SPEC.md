@@ -83,21 +83,33 @@
 
 ## 3. Button group (standard, connected)
 - **Purpose:** organize buttons with shape/width interaction. Connected groups replace segmented selection patterns.
-- **Variants:** standard, connected; sizes XS–XL; round/square; single/multi-select; overflow menu.
-- **Anatomy:** group container, items, overflow indicator.
-- **Tokens:** Standard XS height 32, between-space 18 (m3.material.io button-group specs). S height 40, between 12 (ButtonGroupSmallTokens; `TODO(verify)`). Connected inner padding 2 at every size, outer shape full, inner corners square (m3.material.io). XS/S connected min width 48. ExpandedRatio 0.15 (`ButtonGroupDefaults`; `TODO(verify)`). Other sizes `TODO(verify)`.
-- **Motion:** pressed item expands width by ExpandedRatio while neighbors compress, on fastSpatial. Selection morphs inner corners.
-- **Behavior:** overflow collapses trailing items into a menu.
-- **Keyboard/ARIA:** standard `role="group"`; connected select `role="radiogroup"` (single) or `aria-pressed` buttons (multi). Arrow keys move focus (roving tabindex).
-- **Layers:** css (static, connected corners); elements + react (width redistribution, overflow measurement).
-- **API:** `.m3e-button-group--connected`; React `<ButtonGroup variant:'standard'|'connected' size selectionMode?:'none'|'single'|'multiple' selectedKeys onSelectionChange overflow?: boolean>`; element `<m3e-button-group variant selection-mode>` emits `change`.
+- **Variants:** standard, connected; sizes XS–XL; round/square; single/multi-select (and selection required); overflow menu (standard).
+- **Anatomy:** group container, items (buttons), overflow indicator (filled icon button, `more_vert`, "More options") and its menu.
+- **Tokens (verified, generated):** `ButtonGroupSmallTokens.kt`, `ConnectedButtonGroupSmallTokens.kt`@19991f2c plus `components/button-group-defaults.css` (SOURCES register #21): the `ButtonGroupDefaults` values Compose renders (`ExpandedRatio` 0.15, width spring = fast spatial, release threshold 0.75 / max wait 1000ms from `EnlargeOnPressNode`) and the per-size values Compose lacks from the m3.material.io token DB (`md.comp.button-group.*`; Compose spaces and shapes every size with the small tokens).
+
+  | | XS | S | M | L | XL |
+  |---|---|---|---|---|---|
+  | height (= button) | 32 | 40 | 56 | 96 | 136 |
+  | standard between-space | 18 | 12 | 8 | 8 | 8 |
+  | connected between-space | 2 | 2 | 2 | 2 | 2 |
+  | connected inner corner | 8 (`TODO(verify)` #63: specs caption says 4) | 8 | 8 | 16 | 20 |
+  | connected pressed inner corner | 4 | 4 | 4 | 12 | 16 |
+
+  - Connected outer corners: round (CornerFull); square groups keep the inner corner size outside too (m3.material.io Measurements). Checked = CornerFull (`connectedButtonCheckedShape`); pressed wins over checked (`ToggleButton.kt` shapeByInteraction).
+  - Items keep their intrinsic width (standard groups hug them, top-aligned); connected groups span their container with equal-width items, never narrower than the button minimum width (58dp ≥ the 48dp XS/S connected minimum).
+- **Motion:** standard groups only: a pressed item's 0→1 value springs on **fast spatial** (`ButtonGroup.kt` L138; token DB `pressed.item.width.motion.spring` = fast spatial at every size) and `ButtonGroupMeasurePolicy` turns it into widths: a middle item grows by `min(ExpandedRatio × width / 2, neighbors' compression limits)` on each side, the first/last by `min(ExpandedRatio × width, neighbor's limit)`; neighbors give up the same width, so the total stays constant. The compression limit is the item's end padding (Compose `contentPadding.calculateEndPadding`). On release the value keeps going until it passes 0.75 (≤ 1s), then springs back; a new press retargets from the current value and velocity. Connected groups never change their neighbors (m3.material.io). Shapes: press morph on default effects for plain buttons (Button.kt), fast spatial for toggles/radios and connected corners (ToggleButton.kt L176), interruptible.
+- **Behavior:** overflow (standard groups): when the items and their spacing do not fit, the indicator's width is reserved and leading items are shown while each fits (`ButtonGroupMeasurePolicy` L673–716); the rest are listed in a baseline menu (Compose `DropdownMenu` + `DropdownMenuItem`), re-measured on resize.
+- **Keyboard/ARIA:** none → `role="group"` with buttons; single → `role="radiogroup"`, radios with `aria-checked`; multiple → `role="group"`, `aria-pressed` buttons (React Aria `useToggleButtonGroupItem` semantics). One tab stop (last focused, else the checked radio, else the first); ArrowLeft/Right (mirrored in RTL), Home/End move focus without wrapping; Enter/Space activate. Overflow button: `aria-haspopup="true"` (≡ `menu`), `aria-expanded`, `aria-controls` while open.
+- **Layers:** css (static layout, connected corners, spacing); elements + react share m3e-elements `ButtonGroupLayout` (width springs, shape springs, roving focus, overflow measurement) and m3e-motion `buttonGroupWidths` / `buttonGroupVisibleCount`.
+- **API:** CSS `.m3e-button-group.m3e-button-group--{standard|connected}.m3e-button-group--size-{xs…xl}[.m3e-button-group--overflow]` > `.m3e-button.m3e-button-group__item`, `.m3e-icon-button.m3e-button-group__overflow`. React `<ButtonGroup variant size shape buttonVariant selectionMode selectedKeys defaultSelectedKeys onSelectionChange disallowEmptySelection onAction overflow overflowLabel isDisabled>` with `<ButtonGroupItem id icon variant isDisabled onPress aria-label textValue>`. Element `<m3e-button-group variant size shape button-variant selection-mode selection-required overflow overflow-label label disabled>` with `<m3e-button-group-item value icon selected disabled variant label>`; events `change` (`{ value, selected, values }`) and `action` (`{ value }`).
 - **Acceptance:**
-  - [ ] XS between-space = 18px.
-  - [ ] Pressed item grows 15% and neighbors shrink; total width constant.
-  - [ ] Arrow keys move focus.
-  - [ ] Overflow menu appears below available width.
-  - [ ] Plus CAC.
-- **Sources:** m3.material.io/components/button-groups/specs; ButtonGroup.kt; ButtonGroup*Tokens.kt.
+  - [x] XS between-space = generated value (18px).
+  - [x] Pressed item grows by ExpandedRatio (capped by the neighbors' compression limits) and neighbors shrink; total width constant.
+  - [x] Arrow keys move focus.
+  - [x] Overflow menu appears below available width.
+  - [x] Plus CAC.
+- **Fidelity:** widths keep fractions (Compose rounds each growth to whole device px); items use the size's button padding (Compose's clickableItem uses `ButtonDefaults.ContentPadding`, 24dp); the overflow indicator matches the group size (Compose: a default 40dp `FilledIconButton`) and selectable items show a check in the menu (Compose's menu items show no selection); no tooltip on the indicator yet (Tooltip component).
+- **Sources:** ButtonGroup.kt, ButtonGroupSamples.kt, ButtonGroup*Tokens.kt, ToggleButton.kt; m3.material.io/components/button-groups (specs, guidelines, accessibility) and its token DB.
 
 ## 4. Split button
 - **Purpose:** primary action plus a menu of related actions. Sizes XS–XL.

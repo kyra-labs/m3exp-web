@@ -206,10 +206,11 @@ export class M3eButtonGroup extends M3eElement {
 
     const items = this.#items();
     const visible = overflow ? this.#visible : Number.POSITIVE_INFINITY;
-    const parts: Element[] = items.map((item) => this.#renderItem(item, size, mode));
-    items.forEach((_, i) => {
-      parts[i]!.toggleAttribute('hidden', i >= visible);
+    const buttons = items.map((item) => this.#renderItem(item, size, mode));
+    buttons.forEach((button, i) => {
+      button.toggleAttribute('hidden', i >= visible);
     });
+    const parts: Element[] = [...buttons];
     for (const item of this.#buttons.keys()) if (!items.includes(item)) this.#buttons.delete(item);
     if (overflow) {
       parts.push(this.#renderTrigger(size, visible >= items.length));
@@ -251,7 +252,7 @@ export class M3eButtonGroup extends M3eElement {
     attr(button, 'role', mode === 'single' && 'radio');
     attr(button, 'aria-checked', mode === 'single' && String(selected));
     attr(button, 'aria-pressed', mode === 'multiple' && String(selected));
-    button.disabled = Boolean(item.disabled || this.disabled);
+    button.disabled = item.disabled === true || this.disabled === true;
     attr(button, 'aria-label', item.label);
     const label = item.textContent.trim();
     const children: Node[] = [];
@@ -260,7 +261,7 @@ export class M3eButtonGroup extends M3eElement {
     const same =
       button.childNodes.length === children.length &&
       children.every((c, i) => {
-        const current = button.childNodes[i]!;
+        const current = button.childNodes.item(i);
         return current.nodeType === c.nodeType && current.textContent === c.textContent;
       });
     if (!same) button.replaceChildren(...children);
@@ -304,9 +305,9 @@ export class M3eButtonGroup extends M3eElement {
   ): M3eMenu {
     const doc = this.ownerDocument;
     if (!this.#menu) {
-      // The menu element registers on first use (keeps this entry within its size budget).
-      void import('../menu/index.js');
-      const menu = doc.createElement('m3e-menu') as M3eMenu;
+      // The <m3e-menu> entry loads on first use (keeps this entry within its size budget).
+      void import('@kyralabs/m3e-elements/menu.js');
+      const menu = doc.createElement('m3e-menu');
       menu.setAttribute('variant', 'baseline');
       menu.addEventListener('action', (e) => {
         const target = e.target as M3eMenuItem;
@@ -321,16 +322,17 @@ export class M3eButtonGroup extends M3eElement {
     const items = this.#items();
     const nodes = hidden.map((item) => {
       const index = items.indexOf(item);
-      const el = (menu.querySelector<M3eMenuItem>(`:scope > [data-index="${String(index)}"]`) ??
-        doc.createElement('m3e-menu-item')) as M3eMenuItem;
+      const el =
+        menu.querySelector<M3eMenuItem>(`:scope > [data-index="${String(index)}"]`) ??
+        doc.createElement('m3e-menu-item');
       el.dataset['index'] = String(index);
       attr(el, 'value', valueOf(item, index));
       attr(el, 'type', mode === 'single' ? 'radio' : mode === 'multiple' ? 'checkbox' : null);
       el.toggleAttribute('checked', mode !== 'none' && Boolean(item.selected));
-      el.toggleAttribute('disabled', Boolean(item.disabled || this.disabled));
+      el.toggleAttribute('disabled', item.disabled === true || this.disabled === true);
       attr(el, 'icon', item.icon);
       attr(el, 'checked-icon', mode === 'none' ? null : 'check');
-      const text = item.textContent.trim() || item.label || '';
+      const text = item.textContent.trim() || (item.label ?? '');
       if (el.textContent !== text) el.textContent = text;
       return el;
     });
