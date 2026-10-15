@@ -199,8 +199,19 @@
 
   /* --- Trailing button: inner start corners, full end corners ------------------------------- */
   .m3e-split-button > .m3e-split-button__trailing {
+    /*
+     * HorizontalCenterOptically: the content moves toward the end by coefficient × (start − end
+     * corners), i.e. toward the inner corners while they are smaller. Moved through the paddings,
+     * so the width stays and the shift follows the page direction (icons are direction: ltr).
+     */
+    --_m3e-split-button-optical: calc(
+      var(--m3e-comp-split-button-center-optically-coefficient) *
+        (var(--_m3e-split-button-corner) - var(--_m3e-split-button-outer))
+    );
+
     min-inline-size: var(--m3e-comp-split-button-trailing-button-min-width);
-    padding-inline: var(--_m3e-split-button-trailing-start) var(--_m3e-split-button-trailing-end);
+    padding-inline: calc(var(--_m3e-split-button-trailing-start) + var(--_m3e-split-button-optical))
+      calc(var(--_m3e-split-button-trailing-end) - var(--_m3e-split-button-optical));
     border-start-start-radius: var(--_m3e-split-button-corner);
     border-end-start-radius: var(--_m3e-split-button-corner);
     border-start-end-radius: var(--_m3e-split-button-outer);
@@ -210,13 +221,6 @@
   .m3e-split-button > .m3e-split-button__trailing > .m3e-icon {
     --m3e-comp-icon-size: var(--_m3e-split-button-icon-size);
 
-    position: relative;
-
-    /* HorizontalCenterOptically: toward the end by coefficient × (start − end corners). */
-    inset-inline-start: calc(
-      var(--m3e-comp-split-button-center-optically-coefficient) *
-        (var(--_m3e-split-button-corner) - var(--_m3e-split-button-outer))
-    );
     rotate: var(--_m3e-split-button-rotation-now, var(--_m3e-split-button-rotation));
     transition: --_m3e-split-button-rotation
       var(--m3e-comp-split-button-trailing-icon-rotation-duration)

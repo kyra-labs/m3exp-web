@@ -1,0 +1,175 @@
+---
+import SplitButtonPlayground from '../../islands/SplitButtonPlayground.tsx';
+import Base from '../../layouts/Base.astro';
+
+const variants = ['filled', 'tonal', 'elevated', 'outlined'] as const;
+const sizes = ['xs', 's', 'm', 'l', 'xl'] as const;
+const states = ['rest', 'open', 'disabled'] as const;
+const classes = (variant: string, size: string) =>
+  `m3e-button m3e-button--${variant} m3e-button--size-${size} m3e-button--round`;
+---
+
+<Base title="Split button">
+  <link rel="stylesheet" href="/icons/docs-icons.css" slot="head" />
+  <h1>Split button</h1>
+  <p>
+    Split buttons (COMPONENT_SPEC §4; Compose <code>SplitButtonLayout</code> with <code>SplitButtonDefaults.LeadingButton</code> and the checkable <code>TrailingButton</code>): a leading button for the primary action and a trailing button that opens a menu of related actions, 2dp apart. While the menu is open the trailing button is checked: its inner corners morph to full and its icon turns 180°. The grids are plain HTML with m3e-css classes; <code>aria-expanded="true"</code> shows the open state. The <code>&lt;m3e-split-button&gt;</code> element and <code>&lt;SplitButton&gt;</code> (React) wire the menu and spring the corners and the icon.
+  </p>
+
+  <section aria-labelledby="variants-heading">
+    <h2 id="variants-heading">Variants and states (static, CSS only)</h2>
+    <div data-testid="variants">
+      {
+        variants.map((variant) => (
+          <div class="docs-button-row" data-variant={variant}>
+            {states.map((state) => (
+              <div class="m3e-split-button" data-state={state}>
+                <button
+                  type="button"
+                  class={`${classes(variant, 's')} m3e-split-button__leading`}
+                  disabled={state === 'disabled'}
+                >
+                  <span class="m3e-icon" aria-hidden="true">
+                    edit
+                  </span>
+                  {variant}
+                </button>
+                <button
+                  type="button"
+                  class={`${classes(variant, 's')} m3e-split-button__trailing`}
+                  aria-label={`More ${variant} options`}
+                  aria-haspopup="true"
+                  aria-expanded={state === 'open' ? 'true' : 'false'}
+                  disabled={state === 'disabled'}
+                >
+                  <span class="m3e-icon" aria-hidden="true">
+                    keyboard_arrow_down
+                  </span>
+                </button>
+              </div>
+            ))}
+          </div>
+        ))
+      }
+    </div>
+  </section>
+
+  <section aria-labelledby="sizes-heading">
+    <h2 id="sizes-heading">Sizes</h2>
+    <p>
+      XS to XL: <code>SplitButton*Tokens</code> heights, paddings, inner corners and trailing icon sizes; the leading icon, spacing and label follow the button of the same size.
+    </p>
+    <div data-testid="sizes">
+      {
+        (['false', 'true'] as const).map((expanded) => (
+          <div class="docs-button-row" data-expanded={expanded}>
+            {sizes.map((size) => (
+              <div class="m3e-split-button" data-size={size}>
+                <button type="button" class={`${classes('filled', size)} m3e-split-button__leading`}>
+                  <span class="m3e-icon" aria-hidden="true">
+                    edit
+                  </span>
+                  Edit {size}
+                </button>
+                <button
+                  type="button"
+                  class={`${classes('filled', size)} m3e-split-button__trailing`}
+                  aria-label={`More edit options (${size})`}
+                  aria-haspopup="true"
+                  aria-expanded={expanded}
+                >
+                  <span class="m3e-icon" aria-hidden="true">
+                    keyboard_arrow_down
+                  </span>
+                </button>
+              </div>
+            ))}
+          </div>
+        ))
+      }
+    </div>
+  </section>
+
+  <section aria-labelledby="elements-heading">
+    <h2 id="elements-heading">Custom element</h2>
+    <p>
+      <code>&lt;m3e-split-button label icon menu-label variant size&gt;</code> with an <code>&lt;m3e-menu&gt;</code> child: the trailing button becomes the menu's anchor (press, ArrowDown / ArrowUp / Enter / Space open it, Escape closes it and returns focus to the trailing button). Events: <code>press</code> for the leading button, <code>action</code> from the menu items.
+    </p>
+    <div class="docs-menu-demos" data-testid="elements">
+      <m3e-split-button
+        id="el-split"
+        label="Send"
+        icon="mail"
+        menu-label="More send options"
+        data-testid="el-split"
+      >
+        <m3e-menu>
+          <m3e-menu-item value="copy" icon="content_copy">Send a copy</m3e-menu-item>
+          <m3e-menu-item value="share" icon="share">Share link</m3e-menu-item>
+          <m3e-menu-item value="delete" icon="delete">Discard</m3e-menu-item>
+        </m3e-menu>
+      </m3e-split-button>
+      <m3e-split-button
+        variant="tonal"
+        size="m"
+        label="Edit"
+        icon="edit"
+        menu-label="More edit options"
+        data-testid="el-tonal"
+      >
+        <m3e-menu>
+          <m3e-menu-item value="cut" icon="content_cut">Cut</m3e-menu-item>
+          <m3e-menu-item value="paste" icon="content_paste">Paste</m3e-menu-item>
+        </m3e-menu>
+      </m3e-split-button>
+      <m3e-split-button
+        variant="outlined"
+        size="xs"
+        label="Share"
+        icon="share"
+        menu-label="More share options"
+        data-testid="el-xs"
+      >
+        <m3e-menu>
+          <m3e-menu-item value="mail" icon="mail">Mail</m3e-menu-item>
+        </m3e-menu>
+      </m3e-split-button>
+      <p class="docs-menu-log">Last event: <output id="el-split-log">none</output></p>
+    </div>
+
+    <div dir="rtl" class="docs-menu-demos" data-testid="rtl">
+      <m3e-split-button
+        variant="elevated"
+        label="إرسال"
+        icon="mail"
+        menu-label="خيارات الإرسال"
+        data-testid="el-rtl"
+      >
+        <m3e-menu>
+          <m3e-menu-item value="copy" icon="content_copy">إرسال نسخة</m3e-menu-item>
+        </m3e-menu>
+      </m3e-split-button>
+    </div>
+  </section>
+
+  <section aria-labelledby="react-heading">
+    <h2 id="react-heading">React</h2>
+    <p>
+      <code>&lt;SplitButton variant size icon onPress menu=&#123;&lt;Menu&gt;…&lt;/Menu&gt;&#125; menuLabel&gt;</code>. The menu's open state can be controlled with <code>isOpen</code> / <code>onOpenChange</code>.
+    </p>
+    <SplitButtonPlayground client:only="react" />
+  </section>
+</Base>
+
+<script>
+  import '@kyralabs/m3exp-web/elements';
+
+  const log = document.getElementById('el-split-log')!;
+  const demos = document.querySelector('[data-testid="elements"]')!;
+  demos.addEventListener('press', (e) => {
+    log.textContent = `press: ${(e.target as HTMLElement).getAttribute('label') ?? ''}`;
+  });
+  demos.addEventListener('action', (e) => {
+    log.textContent = `action: ${(e as CustomEvent<{ value: string }>).detail.value}`;
+  });
+</script>
