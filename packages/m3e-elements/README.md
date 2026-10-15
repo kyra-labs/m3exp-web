@@ -54,7 +54,7 @@ it like Compose's `DropdownMenuPositionProvider` and springs it open and closed.
 ## Ripple for plain HTML
 
 m3e-css draws hover, focus and pressed overlays without JS; the press ripple needs a little.
-One import adds it to every plain-HTML button, icon button, assist chip, `.m3e-state-layer`,
+One import adds it to every plain-HTML button, icon button, assist chip, FAB, extended FAB, `.m3e-state-layer`,
 interactive card (pressed through `.m3e-card__action`, drawn on the card) and navigation item
 (drawn on `.m3e-navigation-item__state`) in the document, including ones added later:
 

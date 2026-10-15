@@ -24,6 +24,8 @@ export const MATERIAL3_SOURCES = [
   'WideNavigationRail.kt',
   'AppBar.kt',
   'LoadingIndicator.kt',
+  'FloatingActionButton.kt',
+  'Shapes.kt',
   'Menu.kt',
   'MenuDefaults.kt',
   'internal/MenuPosition.kt',

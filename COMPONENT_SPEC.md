@@ -117,26 +117,35 @@
 - **Sources:** m3.material.io/components/split-button/overview; SplitButtonLayout; Material Web labs split button (2.5.0).
 
 ## 5. FAB and extended FAB
-- **Variants:** FAB baseline 56, medium 80, large 96; small 40 **@deprecated (D4)**. Extended FAB small/medium/large. Colors primary/secondary/tertiary-container plus vibrant sets (`TODO(verify)` FabPrimary*Tokens).
-- **Tokens:**
+- **Variants:** FAB baseline 56, medium 80, large 96; small 40 **@deprecated (D4)**. Extended FAB small/medium/large. Six color styles (m3.material.io FAB › Specs › Color styles): primary container (default), secondary container, tertiary container, primary, secondary, tertiary. Primary/secondary container read `FabPrimaryContainerTokens` / `FabSecondaryContainerTokens`; the pin has no tertiary or "vibrant" FAB token objects, so the others pair each role with its on-role as Compose's `contentColorFor` does (`ColorScheme.kt` L1096–1105). Surface FABs are no longer recommended (m3.material.io) and not shipped.
+- **Tokens (verified, generated):** `Fab{Small,Baseline,Medium,Large}Tokens.kt`, `ExtendedFab{Small,Medium,Large,Primary}Tokens.kt`, `FabPrimaryContainerTokens.kt`@19991f2c plus the `FloatingActionButtonDefaults` / extended FAB values Compose renders (`components/fab-defaults.css`; SOURCES register #23).
 
   | | small (deprecated) | baseline | medium | large |
   |---|---|---|---|---|
   | container | 40 | 56 | 80 | 96 |
-  | icon | 24 | 24 | 28 | 32 |
-  | radius | 12 | 16 | 20 | 28 |
+  | icon | 24 | 24 | 28 | 36 (`LargeIconSize`; upstream: `FabLargeTokens.IconSize` 32 "is incorrect") |
+  | radius | 12 | 16 | 20 (`mediumShape` = ShapeDefaults.LargeIncreased) | 28 |
 
-  `TODO(verify)` FabSmall/Baseline/Medium/LargeTokens.kt. Elevation Level3, hover Level4 (`TODO(verify)`). Extended heights 56/80/96 (`TODO(verify)` ExtendedFab*Tokens).
-- **Motion:** extend/collapse width on defaultSpatial; elevation on fastEffects.
-- **Keyboard/ARIA:** `<button aria-label>`; extended FAB label is its name.
-- **Layers:** css + react (scroll-collapse).
-- **API:** `<Fab size:'baseline'|'medium'|'large'|'small' color icon aria-label />` (`'small'` deprecated), `<ExtendedFab size icon label expanded />`.
+  | extended | small | medium | large |
+  |---|---|---|---|
+  | height = minimum width | 56 | 80 | 96 |
+  | radius | 16 | 20 (LargeIncreased) | 28 |
+  | icon | 24 | 28 | 36 (`LargeIconSize`, as the samples) |
+  | leading = trailing space | 16 | 26 | 28 |
+  | icon–label space | 8 | 12 (literal; token 16) | 16 (literal; token 20) |
+  | label | titleMedium | titleLarge | headlineSmall |
+
+  Elevation (`FloatingActionButtonDefaults.elevation()`): Level3, hovered Level4, focused and pressed Level3. No disabled state (Compose FABs have none).
+- **Motion:** expressive extended FAB width = lerp(container height, full row width, progress) with progress on **fastSpatial** and the label alpha on fastEffects (`FloatingActionButton.kt` L961–998; supersedes the earlier defaultSpatial note, which is the non-expressive `ExtendedFloatingActionButton`'s collapse, L1485–1493). Elevation with the ElevationDefaults tweens (`internal/Elevation.kt`), as buttons and cards.
+- **Keyboard/ARIA:** `<button aria-label>`; extended FAB label is its name (also when collapsed).
+- **Layers:** css + react (scroll-collapse: `useExtendedFabScroll`). No element.
+- **API:** CSS `.m3e-fab.m3e-fab--size-{medium|large|small}.m3e-fab--<color>`, `.m3e-extended-fab.m3e-extended-fab--size-{medium|large}.m3e-extended-fab--collapsed` with `__label`. React `<Fab size:'baseline'|'medium'|'large'|'small' color icon aria-label />` (`'small'` deprecated), `<ExtendedFab size icon label expanded />`, `useExtendedFabScroll({ target, threshold, expandOnScrollUp })`.
 - **Acceptance:**
   - [ ] Sizes and radii match generated tokens.
   - [ ] Extended FAB collapses to icon-only when `expanded=false` with width spring.
   - [ ] `size="small"` logs a deprecation warning in dev.
   - [ ] Plus CAC.
-- **Sources:** FloatingActionButton.kt, Fab*Tokens.kt.
+- **Sources:** FloatingActionButton.kt, Fab*Tokens.kt, ExtendedFab*Tokens.kt, Shapes.kt (ShapeDefaults), FloatingActionButtonSamples.kt; m3.material.io FAB and Extended FAB pages (color styles, scroll behavior).
 
 ## 6. FAB menu
 - **Purpose:** a FAB that opens related actions (`TODO(verify)` item-count guidance on m3.material.io).

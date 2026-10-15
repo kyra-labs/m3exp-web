@@ -100,6 +100,12 @@
     "limit": "4 KB"
   },
   {
+    "name": "m3e-css: FAB + extended FAB",
+    "path": "packages/m3e-css/dist/fab.css",
+    "rolldown": false,
+    "limit": "4 KB"
+  },
+  {
     "name": "m3e-elements: ripple entry (plain-HTML press ripple, delegated on document)",
     "path": "packages/m3e-elements/dist/ripple/index.js",
     "limit": "1 KB"
@@ -166,6 +172,13 @@
     "import": "{ LoadingIndicator }",
     "ignore": ["react", "react-dom"],
     "limit": "14 KB"
+  },
+  {
+    "name": "m3e-react: { ExtendedFab } only (incl. react-aria press/focus/hover + motion springs)",
+    "path": "packages/m3e-react/dist/index.js",
+    "import": "{ ExtendedFab }",
+    "ignore": ["react", "react-dom"],
+    "limit": "16 KB"
   },
   {
     "name": "m3e-react: { Menu, MenuItem, MenuSection, MenuTrigger } only (incl. react-aria menu hooks + MenuPopup)",

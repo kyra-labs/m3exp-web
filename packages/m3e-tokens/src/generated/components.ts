@@ -775,6 +775,34 @@ export const fabBaselineTokens = {
   iconSize: 24
 } as const;
 
+/** FloatingActionButtonDefaults */
+export const floatingActionButtonDefaults = {
+  fabDefaultsLargeIconSize: 36,
+  fabDefaultsMediumShape: "var(--m3e-sys-shape-corner-large-increased)",
+  fabDefaultsMediumExtendedShape: "var(--m3e-sys-shape-corner-large-increased)",
+  fabDefaultsMediumExtendedIconPadding: 12,
+  fabDefaultsLargeExtendedIconPadding: 16,
+  fabDefaultsSmallExtendedLabelFont: "var(--m3e-sys-typescale-title-medium-font)",
+  fabDefaultsSmallExtendedLabelWeight: "var(--m3e-sys-typescale-title-medium-weight)",
+  fabDefaultsSmallExtendedLabelSize: "var(--m3e-sys-typescale-title-medium-size)",
+  fabDefaultsSmallExtendedLabelLineHeight: "var(--m3e-sys-typescale-title-medium-line-height)",
+  fabDefaultsSmallExtendedLabelTracking: "var(--m3e-sys-typescale-title-medium-tracking)",
+  fabDefaultsMediumExtendedLabelFont: "var(--m3e-sys-typescale-title-large-font)",
+  fabDefaultsMediumExtendedLabelWeight: "var(--m3e-sys-typescale-title-large-weight)",
+  fabDefaultsMediumExtendedLabelSize: "var(--m3e-sys-typescale-title-large-size)",
+  fabDefaultsMediumExtendedLabelLineHeight: "var(--m3e-sys-typescale-title-large-line-height)",
+  fabDefaultsMediumExtendedLabelTracking: "var(--m3e-sys-typescale-title-large-tracking)",
+  fabDefaultsLargeExtendedLabelFont: "var(--m3e-sys-typescale-headline-small-font)",
+  fabDefaultsLargeExtendedLabelWeight: "var(--m3e-sys-typescale-headline-small-weight)",
+  fabDefaultsLargeExtendedLabelSize: "var(--m3e-sys-typescale-headline-small-size)",
+  fabDefaultsLargeExtendedLabelLineHeight: "var(--m3e-sys-typescale-headline-small-line-height)",
+  fabDefaultsLargeExtendedLabelTracking: "var(--m3e-sys-typescale-headline-small-tracking)",
+  fabDefaultsExtendedWidthDuration: "var(--m3e-sys-motion-spring-fast-spatial-duration)",
+  fabDefaultsExtendedWidthEasing: "var(--m3e-sys-motion-spring-fast-spatial-easing)",
+  fabDefaultsExtendedLabelOpacityDuration: "var(--m3e-sys-motion-spring-fast-effects-duration)",
+  fabDefaultsExtendedLabelOpacityEasing: "var(--m3e-sys-motion-spring-fast-effects-easing)"
+} as const;
+
 /** FabLargeTokens */
 export const fabLargeTokens = {
   containerHeight: 96,

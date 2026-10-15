@@ -437,6 +437,23 @@ button.docs-tile {
   block-size: calc(var(--m3e-sys-space-300) * 10);
 }
 
+/* FAB demos: FABs float over content; the scroll demo pins one to the frame's end corner. */
+.docs-fab-frame {
+  position: relative;
+  max-inline-size: calc(var(--m3e-sys-space-900) * 6);
+  margin: var(--m3e-sys-space-300) 0;
+}
+
+.docs-fab-frame > .docs-scroll {
+  max-inline-size: none;
+}
+
+.docs-fab-anchor {
+  position: absolute;
+  inset-block-end: var(--m3e-sys-space-200);
+  inset-inline-end: var(--m3e-sys-space-200);
+}
+
 /* Menus page: static menus side by side, triggers in a row. */
 .docs-menus {
   display: flex;

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { LengthSpring, readSpring } from './shape-spring.js';
+import { LengthSpring, ValueSpring, readSpring } from './shape-spring.js';
 
 const waitFor = async (check: () => boolean, ms = 2000) => {
   const start = performance.now();
@@ -31,6 +31,27 @@ describe('LengthSpring', () => {
     spring.to(20, { dampingRatio: 1, stiffness: 1600 });
     expect(spring.value).toBe(midway);
     await waitFor(() => el.style.borderRadius === '20px');
+  });
+});
+
+describe('ValueSpring', () => {
+  it('snaps silently, then settles once on the target with every value reported', async () => {
+    const values: number[] = [];
+    const settled: number[] = [];
+    const spring = new ValueSpring(
+      (v) => values.push(v),
+      (v) => settled.push(v),
+    );
+    spring.snap(1);
+    expect(values).toEqual([]);
+    spring.to(0, { dampingRatio: 0.6, stiffness: 800 });
+    expect(spring.isAnimating).toBe(true);
+    await waitFor(() => settled.length > 0);
+    expect(settled).toEqual([0]);
+    expect(values.at(-1)).toBe(0);
+    // Underdamped: it overshoots below the target before settling.
+    expect(values.reduce((min, v) => Math.min(min, v), 0)).toBeLessThan(0);
+    expect(spring.isAnimating).toBe(false);
   });
 });
 
