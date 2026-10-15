@@ -1,5 +1,12 @@
 # @kyralabs/m3e-css
 
+## 1.2.0
+
+### Patch Changes
+
+- Updated dependencies [c4ea9a0]
+  - @kyralabs/m3e-tokens@1.2.0
+
 ## 1.1.0
 
 ### Patch Changes

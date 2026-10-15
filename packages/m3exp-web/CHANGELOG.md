@@ -1,5 +1,16 @@
 # @kyralabs/m3exp-web
 
+## 1.2.0
+
+### Patch Changes
+
+- Updated dependencies [d874a9c]
+- Updated dependencies [c4ea9a0]
+  - @kyralabs/m3e-elements@1.2.0
+  - @kyralabs/m3e-tokens@1.2.0
+  - @kyralabs/m3e-css@1.2.0
+  - @kyralabs/m3e-react@1.2.0
+
 ## 1.1.0
 
 ### Patch Changes

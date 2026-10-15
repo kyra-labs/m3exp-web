@@ -1,6 +1,6 @@
 {
   "name": "@kyralabs/m3e-motion",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Spring and easing math for m3exp-web (internal-first).",
   "keywords": [
     "material-design",
