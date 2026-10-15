@@ -130,79 +130,79 @@ test('small FAB (deprecated) keeps a ≥ 48×48 hit area', async ({ page }) => {
   await expect(page.locator('[data-deprecated] .docs-deprecated')).toBeVisible();
 });
 
-/** Clicks the React toggle in the page (optionally again after `reverseAfterMs`) and records every inline width the spring writes. */
-const recordWidths = (fab: Locator, reverseAfterMs: number | null) =>
-  fab.evaluate(
-    async (el, [toggleSelector, reverse]) => {
-      const button = document.querySelector<HTMLElement>(toggleSelector)!;
-      const writes: { t: number; w: number }[] = [];
-      const t0 = performance.now();
-      const observer = new MutationObserver(() => {
-        const w = Number.parseFloat((el as HTMLElement).style.getPropertyValue('inline-size'));
-        if (Number.isFinite(w)) writes.push({ t: performance.now() - t0, w });
-      });
-      observer.observe(el, { attributes: true, attributeFilter: ['style'] });
-      button.click();
-      let reversedAt: number | null = null;
-      if (reverse !== null) {
-        await new Promise((r) => setTimeout(r, reverse));
-        reversedAt = performance.now() - t0;
-        button.click();
-      }
-      await new Promise((r) => setTimeout(r, 1500));
-      observer.disconnect();
-      return { writes, reversedAt };
-    },
-    ['[data-testid="react-extended-toggle"]', reverseAfterMs] as const,
-  );
+test.describe('width spring (frames driven by the Playwright clock)', () => {
+  // Fake timers make the trace deterministic: every requestAnimationFrame and performance.now()
+  // the spring sees comes from page.clock, so a loaded CI machine cannot drop frames.
+  test.beforeEach(async ({ page }) => {
+    await page.clock.install();
+    await page.reload();
+    await expect(page.getByTestId('react-extended').locator('button')).toHaveCount(3);
+  });
 
-test('React extended FAB collapses and expands with a width spring', async ({ page }) => {
-  const fab = page.getByTestId('react-extended').locator('[data-size="medium"]');
-  await fab.scrollIntoViewIfNeeded();
-  const height = await token(page, '--m3e-comp-extended-fab-medium-container-height');
-  const open = await width(fab);
-  const { writes } = await recordWidths(fab, null);
-  await expect(fab).toHaveClass(/m3e-extended-fab--collapsed/);
-  // A spring writes many intermediate widths; a jump would write none or one.
-  expect(new Set(writes.map((s) => Math.round(s.w))).size).toBeGreaterThanOrEqual(5);
-  expect(Math.min(...writes.map((s) => s.w))).toBeLessThan(open);
-  await expect.poll(() => width(fab), { timeout: 2000 }).toBeCloseTo(height, 0);
-  await expect(fab).toHaveAccessibleName('Create');
-  // Settled: the inline styles are gone, m3e-css holds the collapsed layout.
-  expect(
-    await fab.evaluate((el) => (el as HTMLElement).style.getPropertyValue('inline-size')),
-  ).toBe('');
-  await recordWidths(fab, null);
-  await expect(fab).not.toHaveClass(/m3e-extended-fab--collapsed/);
-  await expect.poll(() => width(fab), { timeout: 2000 }).toBeCloseTo(open, 0);
-});
+  const toggle = (page: Page) =>
+    page.evaluate(() => {
+      document.querySelector<HTMLElement>('[data-testid="react-extended-toggle"]')!.click();
+    });
 
-test('the width spring is interruptible and keeps its velocity (trace)', async ({ page }) => {
-  const fab = page.getByTestId('react-extended').locator('[data-size="medium"]');
-  await fab.scrollIntoViewIfNeeded();
-  const open = await width(fab);
-  const height = await token(page, '--m3e-comp-extended-fab-medium-container-height');
-  // Collapse, then reverse mid-flight.
-  const { writes, reversedAt } = await recordWidths(fab, 90);
-  const before = writes.filter((s) => s.t < reversedAt!);
-  const after = writes.filter((s) => s.t >= reversedAt!);
-  expect(before.length, 'frames before the reversal').toBeGreaterThanOrEqual(2);
-  expect(after.length, 'frames after the reversal').toBeGreaterThanOrEqual(5);
-  const last = before.at(-1)!.w;
-  expect(last, 'reversed mid-flight').toBeLessThan(open - 1);
-  expect(last, 'reversed mid-flight').toBeGreaterThan(height + 1);
-  // No jump anywhere: consecutive writes stay close (a restart would snap to an endpoint).
-  const range = open - height;
-  for (let i = 1; i < writes.length; i++) {
-    expect(Math.abs(writes[i]!.w - writes[i - 1]!.w), `step ${String(i)}`).toBeLessThan(
-      range * 0.35,
-    );
+  /** Toggles, then steps `frames` 16ms frames (toggling again before frame `reverseAt`). */
+  async function trace(page: Page, fab: Locator, frames: number, reverseAt?: number) {
+    // Freeze time (install() lets it flow): from here on only runFor() advances it.
+    await page.clock.pauseAt((await page.evaluate(() => Date.now())) + 100);
+    await toggle(page);
+    const widths: number[] = [];
+    for (let i = 0; i < frames; i++) {
+      if (i === reverseAt) await toggle(page);
+      await page.clock.runFor(16);
+      widths.push(await width(fab));
+    }
+    return widths;
   }
-  // Velocity kept: right after the reversal the width is still shrinking, then turns around.
-  expect(after[0]!.w, 'continues in the old direction').toBeLessThanOrEqual(last);
-  expect(Math.min(...after.map((s) => s.w))).toBeLessThan(last);
-  await expect(fab).not.toHaveClass(/m3e-extended-fab--collapsed/);
-  await expect.poll(() => width(fab), { timeout: 2000 }).toBeCloseTo(open, 0);
+
+  test('React extended FAB collapses and expands with a width spring', async ({ page }) => {
+    const fab = page.getByTestId('react-extended').locator('[data-size="medium"]');
+    await fab.scrollIntoViewIfNeeded();
+    const height = await token(page, '--m3e-comp-extended-fab-medium-container-height');
+    const open = await width(fab);
+    const closing = await trace(page, fab, 60);
+    await expect(fab).toHaveClass(/m3e-extended-fab--collapsed/);
+    // A spring passes through many intermediate widths; a jump would show one.
+    expect(new Set(closing.slice(0, 15).map(Math.round)).size).toBeGreaterThanOrEqual(5);
+    expect(closing[0]!).toBeLessThan(open);
+    expect(closing[0]!).toBeGreaterThan(height);
+    expect(closing.at(-1)!).toBeCloseTo(height, 0);
+    await expect(fab).toHaveAccessibleName('Create');
+    // Settled: the inline styles are gone, m3e-css holds the collapsed layout.
+    expect(
+      await fab.evaluate((el) => (el as HTMLElement).style.getPropertyValue('inline-size')),
+    ).toBe('');
+    const opening = await trace(page, fab, 60);
+    await expect(fab).not.toHaveClass(/m3e-extended-fab--collapsed/);
+    expect(new Set(opening.slice(0, 15).map(Math.round)).size).toBeGreaterThanOrEqual(5);
+    expect(opening.at(-1)!).toBeCloseTo(open, 0);
+  });
+
+  test('the width spring is interruptible and keeps its velocity (trace)', async ({ page }) => {
+    const fab = page.getByTestId('react-extended').locator('[data-size="medium"]');
+    await fab.scrollIntoViewIfNeeded();
+    const open = await width(fab);
+    const height = await token(page, '--m3e-comp-extended-fab-medium-container-height');
+    const range = open - height;
+    // Collapse, then expand again before frame 4 (mid-flight).
+    const widths = await trace(page, fab, 60, 4);
+    const last = widths[3]!;
+    expect(last, 'reversed mid-flight').toBeLessThan(open - range * 0.1);
+    expect(last, 'reversed mid-flight').toBeGreaterThan(height + range * 0.1);
+    // Velocity kept: the frame after the reversal is still shrinking, then the width turns around.
+    expect(widths[4]!, 'continues in the old direction').toBeLessThan(last);
+    const turn = widths.indexOf(Math.min(...widths));
+    expect(turn).toBeGreaterThanOrEqual(4);
+    expect(widths.at(-1)!).toBeCloseTo(open, 0);
+    // No jump anywhere: a restart would snap to an endpoint.
+    for (let i = 1; i < widths.length; i++) {
+      expect(Math.abs(widths[i]! - widths[i - 1]!), `frame ${String(i)}`).toBeLessThan(range * 0.4);
+    }
+    await expect(fab).not.toHaveClass(/m3e-extended-fab--collapsed/);
+  });
 });
 
 test('scroll-driven collapse (useExtendedFabScroll)', async ({ page }) => {

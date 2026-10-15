@@ -62,18 +62,20 @@ const colors = [
         ))
       }
     </div>
-    <div class="docs-button-row" data-testid="extended-colors">
-      {
-        colors.map((color) => (
-          <button type="button" class={`m3e-extended-fab m3e-extended-fab--${color}`} data-color={color}>
-            <span class="m3e-icon" aria-hidden="true">
-              favorite
-            </span>
-            <span class="m3e-extended-fab__label">{color}</span>
-          </button>
-        ))
-      }
-    </div>
+    {
+      [colors.slice(0, 3), colors.slice(3)].map((row) => (
+        <div class="docs-button-row" data-testid="extended-colors">
+          {row.map((color) => (
+            <button type="button" class={`m3e-extended-fab m3e-extended-fab--${color}`} data-color={color}>
+              <span class="m3e-icon" aria-hidden="true">
+                favorite
+              </span>
+              <span class="m3e-extended-fab__label">{color}</span>
+            </button>
+          ))}
+        </div>
+      ))
+    }
   </section>
 
   <section aria-labelledby="extended-heading">
