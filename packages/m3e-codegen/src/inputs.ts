@@ -43,6 +43,9 @@ export function readGeneratorInputs(root: string, pin: SourcePin): GenerateOptio
           'AndroidMenu.android.kt',
           commit,
         ).files,
+        ...vendorFile(vendor('androidx-material3-samples'), 'SplitButtonSamples.kt', commit)
+          .files,
+        ...vendorFile(vendor('androidx-animation-core-specs'), 'AnimateAsState.kt', commit).files,
       ].map((f) => [f.name, f.content]),
     ),
     easingKt: vendorFile(vendor('androidx-animation-easing'), 'Easing.kt', commit).content,
