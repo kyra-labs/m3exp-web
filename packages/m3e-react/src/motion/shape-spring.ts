@@ -30,26 +30,37 @@ export function readSpring(el: Element, token: string): SpringSpec | null {
 }
 
 /**
- * Animates one CSS length property (px) of an element with an interruptible spring: a new target
- * starts from the current value *and velocity*, like Compose's Animatable. Uses Motion's spring
- * generator and frame loop.
+ * A number animated with an interruptible spring: a new target starts from the current value
+ * *and velocity*, like Compose's Animatable. Uses Motion's spring generator and frame loop.
+ * `onValue` receives every value written; `onSettle` runs once the value rests on its target.
  */
-export class LengthSpring {
+export class ValueSpring {
   #value: number | null = null;
   #generator: ReturnType<typeof spring> | null = null;
   #startedAt = 0;
   #step: (() => void) | null = null;
 
   constructor(
-    private readonly el: HTMLElement,
-    private readonly property: 'borderRadius',
+    private readonly onValue: (value: number) => void,
+    private readonly onSettle?: (value: number) => void,
   ) {}
 
   get value(): number | null {
     return this.#value;
   }
 
-  /** Moves to `target` px with `spec`, or instantly when `spec` is null. */
+  /** True while a spring is running. */
+  get isAnimating(): boolean {
+    return this.#step !== null;
+  }
+
+  /** Starts at `value` without animating or notifying (the rendered state already shows it). */
+  snap(value: number): void {
+    this.stop();
+    this.#value = value;
+  }
+
+  /** Moves to `target` with `spec`, or instantly when `spec` is null. */
   to(target: number, spec: SpringSpec | null): void {
     const now = performance.now();
     let velocity = 0;
@@ -58,8 +69,9 @@ export class LengthSpring {
       velocity = this.#generator.velocity?.(elapsed) ?? 0;
     }
     this.stop();
-    if (this.#value === null || spec === null || this.#value === target) {
+    if (this.#value === null || spec === null || (this.#value === target && velocity === 0)) {
       this.#set(target);
+      this.onSettle?.(target);
       return;
     }
     const generator = spring({
@@ -74,7 +86,10 @@ export class LengthSpring {
     const step = () => {
       const { value, done } = generator.next(performance.now() - this.#startedAt);
       this.#set(done ? target : value);
-      if (done) this.stop();
+      if (done) {
+        this.stop();
+        this.onSettle?.(target);
+      }
     };
     this.#step = step;
     frame.update(step, true);
@@ -88,6 +103,15 @@ export class LengthSpring {
 
   #set(value: number): void {
     this.#value = value;
-    this.el.style[this.property] = `${String(value)}px`;
+    this.onValue(value);
+  }
+}
+
+/** A {@link ValueSpring} that writes one CSS length property (px) of an element. */
+export class LengthSpring extends ValueSpring {
+  constructor(el: HTMLElement, property: 'borderRadius') {
+    super((value) => {
+      el.style[property] = `${String(value)}px`;
+    });
   }
 }
