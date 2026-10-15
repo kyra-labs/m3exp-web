@@ -45,7 +45,18 @@ test('has no axe violations with the overflow menus open (element, React)', asyn
   for (const id of ['el-overflow', 'react-overflow']) {
     const trigger = page.getByTestId(`${id}-box`).locator('.m3e-button-group__overflow');
     await trigger.click();
-    await expect(page.locator('.m3e-menu:popover-open')).toBeVisible();
+    const menu = page.locator('.m3e-menu:popover-open');
+    await expect(menu).toBeVisible();
+    // Scan once the open springs have settled (mid-fade colors fail contrast).
+    await expect
+      .poll(() =>
+        menu.evaluate((el) =>
+          ['--_m3e-menu-scale', '--_m3e-menu-opacity'].map((n) =>
+            (el as HTMLElement).style.getPropertyValue(n),
+          ),
+        ),
+      )
+      .toEqual(['1', '1']);
     const results = await new AxeBuilder({ page }).withTags(AXE_TAGS).analyze();
     expect(results.violations).toEqual([]);
     await page.keyboard.press('Escape');
