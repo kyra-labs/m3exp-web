@@ -100,6 +100,17 @@
     "limit": "4 KB"
   },
   {
+    "name": "m3e-css: FAB menu (incl. FAB + extended FAB)",
+    "path": "packages/m3e-css/dist/fab-menu.css",
+    "rolldown": false,
+    "limit": "4 KB"
+  },
+  {
+    "name": "m3e-elements: <m3e-fab-menu> entry (bundles m3e-motion springs)",
+    "path": "packages/m3e-elements/dist/fab-menu/index.js",
+    "limit": "8 KB"
+  },
+  {
     "name": "m3e-elements: ripple entry (plain-HTML press ripple, delegated on document)",
     "path": "packages/m3e-elements/dist/ripple/index.js",
     "limit": "1 KB"
@@ -161,6 +172,13 @@
     "name": "m3e-react: { ExtendedFab } only (incl. react-aria press/focus/hover + motion springs)",
     "path": "packages/m3e-react/dist/index.js",
     "import": "{ ExtendedFab }",
+    "ignore": ["react", "react-dom"],
+    "limit": "16 KB"
+  },
+  {
+    "name": "m3e-react: { FabMenu } only (incl. react-aria press/focus/hover/outside + motion springs)",
+    "path": "packages/m3e-react/dist/index.js",
+    "import": "{ FabMenu }",
     "ignore": ["react", "react-dom"],
     "limit": "16 KB"
   },

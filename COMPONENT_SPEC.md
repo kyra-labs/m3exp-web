@@ -148,20 +148,31 @@
 - **Sources:** FloatingActionButton.kt, Fab*Tokens.kt, ExtendedFab*Tokens.kt, Shapes.kt (ShapeDefaults), FloatingActionButtonSamples.kt; m3.material.io FAB and Extended FAB pages (color styles, scroll behavior).
 
 ## 6. FAB menu
-- **Purpose:** a FAB that opens related actions (`TODO(verify)` item-count guidance on m3.material.io).
-- **Anatomy:** toggle FAB (morphs to close), menu items (pill buttons icon + label), container.
-- **Tokens:** `TODO(verify)` FabMenuBaselineTokens.kt: item height, spacing, toggle container sizes.
-- **Motion:** toggle container shrinks and corners morph to circle, icon rotates/crossfades to close (fastSpatial). Items stagger in on defaultSpatial. Interruptible.
-- **Behavior:** Esc and outside click close; focus moves to first item.
-- **Keyboard/ARIA:** toggle `aria-expanded aria-controls`; `role="menu"` with `menuitem`s; arrow keys.
-- **Layers:** elements + react (springs); css static.
-- **API:** `<FabMenu open onOpenChange icon items=[{icon,label,onPress}] />`; `<m3e-fab-menu open>` event `open-change`.
+- **Purpose:** a FAB that opens 2–6 closely related actions (verified, m3.material.io FAB menu › Guidelines, content JSON `2026-10-13_06-10-19/f00af5db-…json`: "FAB menus can contain 2–6 items"; don't use one with a single item, with an extended FAB, or next to a floating toolbar / navigation rail). React warns in development outside 2–6.
+- **Anatomy:** toggle FAB that becomes the 56dp close button, menu items (pill: icon + label), the menu column. Color sets (m3.material.io › Color): primary (default), secondary, tertiary; the close button takes the role / on-role, the items the container role / on-container role (Compose's default is the primary set).
+- **Tokens (verified, generated):** `FabMenuBaselineTokens.kt@19991f2c` plus the `FloatingActionButtonMenu.kt` literals Compose renders (`components/fab-menu-defaults.css`; SOURCES register #24).
+
+  | | value | source |
+  |---|---|---|
+  | close button | 56 × 56, corner full | CloseButtonContainerHeight/Width (`FabFinalSize`); radius `FabFinalSize.div(2)` = 28 (L732) |
+  | close icon | 20 | CloseButtonIconSize |
+  | toggle at rest | FAB size: 56 / 80 / 96, radius 16 / 20 / 28 (literals L716, L722, L728), icon 24 / 28 / 36 (L729, upstream TODO over FabLargeTokens.IconSize) | `ToggleFloatingActionButtonDefaults.containerSize*/containerCornerRadius*/iconSize*` |
+  | item | height 56, min width 56, leading = trailing 24, icon 24, icon–label 8, label titleMedium (L408), corner full | ListItem* tokens |
+  | spacing | items 4 apart; close button 8 below the items; 16 under the close button (L742); 16 horizontal padding (L738) | ListItemBetweenSpace, CloseButtonBetweenSpace |
+  | elevation | close button: FabPrimaryContainerTokens.ContainerElevation (Level3, constant); items: none (Compose's Surface has shadowElevation 0; the token file's ListItemContainerElevation Level3 is not applied) | L735–736, L350 |
+
+  Placement (m3.material.io › Specs): the close button keeps the FAB's top end corner, so opened from a medium / large FAB it sits 40 / 56dp above the bottom; Compose aligns the shrinking container `Alignment.TopEnd` in a FAB-sized box (L517–518).
+- **Motion (verified; supersedes the earlier "rotates/crossfades … defaultSpatial" note):** checked progress on **fastSpatial** (L456–461) drives container size `lerp(FAB size, 56, p)`, corner radius `lerp(16/20/28, 28, p)`, container color `lerp(primaryContainer, primary, p)` and icon color `lerp(onPrimaryContainer, onPrimary, p)` (Color lerp mixes in Oklab and clamps p, ui-graphics `Color.kt@19991f2c` L546–569; Dp lerps follow the overshoot) and icon size `lerp(FAB icon, 20, p)`. The icon does not rotate: the sample swaps Add for Close at p > 0.5 (`FloatingActionButtonMenuSamples.kt` L171–180). Items: an Int stagger 0 ↔ item count on **slowEffects** with visibility threshold 1 (L202–262); item i (top = 0) shows while i ≥ count − value, so items appear bottom-up and leave top-first; each item then springs its width (`full width × p`, anchored at the alignment edge and clipped; **fastSpatial**, L342) and alpha (**fastEffects**, L343). Every spring is an Animatable retargeted from its current value and velocity: interruptible.
+- **Behavior:** opening from the toggle moves focus to the top item (as the spec required; m3.material.io and Compose instead leave focus on the close button — see known gaps); Escape, a press outside, or activating an item closes the menu and restores focus to the toggle; while open, focus stays in the menu (Tab / Shift+Tab cycle between the items and the close button).
+- **Keyboard/ARIA:** toggle `aria-expanded aria-controls aria-haspopup="menu"` and an `aria-label` describing the menu; the item column is `role="menu"` labelled by the toggle with `menuitem`s (tabindex −1, focus managed); ArrowUp/Down (wrapping), Home/End; from the toggle ArrowDown/Tab → top item, ArrowUp/Shift+Tab → bottom item. DOM order is toggle then items (m3.material.io › Initial focus: close button, then top item down).
+- **Layers:** css static (open/closed states; without JS the toggle morphs on the fast-spatial `linear()` curve and items fade together); elements + react (springs, stagger, focus, light dismiss).
+- **API:** CSS `.m3e-fab-menu(--open|--size-medium|--size-large|--secondary|--tertiary|--align-start|--align-center)` > `.m3e-fab.m3e-fab-menu__toggle` (closed icon, close icon) + `.m3e-fab-menu__items[role=menu]` > `.m3e-fab-menu__item[role=menuitem]` (`.m3e-icon`, `.m3e-fab-menu__label`). React `<FabMenu items={[{ key?, icon, label, onPress }]} open defaultOpen onOpenChange icon closeIcon size color align aria-label />`, `fabMenuClassName()`. Element `<m3e-fab-menu open label icon close-icon size color align>` with `<m3e-fab-menu-item icon value>Label</m3e-fab-menu-item>` children; events `open-change` (`detail.open`) and `action` on the item (`detail.value`).
 - **Acceptance:**
   - [ ] Opening reverses mid-flight without a jump (velocity preserved).
   - [ ] Focus trapped among items while open.
   - [ ] Esc restores focus to toggle.
   - [ ] Plus CAC.
-- **Sources:** FloatingActionButtonMenu.kt; 1.5.0 release notes.
+- **Sources:** FloatingActionButtonMenu.kt (vendored), FabMenuBaselineTokens.kt, FloatingActionButtonMenuSamples.kt, ui-graphics Color.kt (lerp); m3.material.io FAB menu (overview, specs, guidelines, accessibility). The 1.5.0 release notes add nothing beyond the API.
 
 ## 7. Loading indicator
 - **Purpose:** short waits (under 5 s); replaces most indeterminate circular progress uses.

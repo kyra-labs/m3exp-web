@@ -453,3 +453,30 @@ button.docs-tile {
   inset-block-end: var(--m3e-sys-space-200);
   inset-inline-end: var(--m3e-sys-space-200);
 }
+
+/* FAB menu demos: frames the menus open upward in, anchored at the bottom end corner. */
+.docs-fab-menu-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--m3e-sys-space-300);
+  align-items: flex-end;
+  margin-block: var(--m3e-sys-space-300);
+}
+
+.docs-fab-menu-frame {
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-end;
+  inline-size: calc(var(--m3e-sys-space-900) * 3.5);
+  min-block-size: calc(var(--m3e-sys-space-900) * 4.5);
+  border: var(--m3e-comp-divider-thickness) solid var(--m3e-sys-color-outline-variant);
+  border-radius: var(--m3e-sys-shape-corner-large);
+}
+
+.docs-fab-menu-frame--start {
+  justify-content: flex-start;
+}
+
+.docs-fab-menu-frame--tall {
+  min-block-size: calc(var(--m3e-sys-space-900) * 5.5);
+}

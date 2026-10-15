@@ -538,3 +538,80 @@ describe('FloatingActionButtonDefaults and extended FAB literals (M5 FAB)', () =
     );
   });
 });
+
+describe('FloatingActionButtonMenu / ToggleFloatingActionButton literals (M5 FAB menu)', () => {
+  const decl = declarations(output.get('components/fab-menu-defaults.css')!);
+  const menu = inputs.material3Sources['FloatingActionButtonMenu.kt']!.replace(/\r\n/g, '\n');
+
+  it.each([
+    ['toggle-initial-corner-radius', /FabInitialCornerRadius\n\s*get\(\) = (\d+)\.dp/],
+    ['toggle-medium-initial-corner-radius', /FabMediumInitialCornerRadius\n\s*get\(\) = (\d+)\.dp/],
+    ['toggle-large-initial-corner-radius', /FabLargeInitialCornerRadius\n\s*get\(\) = (\d+)\.dp/],
+    ['toggle-large-initial-icon-size', /FabLargeInitialIconSize = (\d+)\.dp/],
+    ['padding-horizontal', /FabMenuPaddingHorizontal\n\s*get\(\) = (\d+)\.dp/],
+    ['button-padding-bottom', /FabMenuButtonPaddingBottom\n\s*get\(\) = (\d+)\.dp/],
+  ] as const)('%s', (name, pattern) => {
+    const value = pattern.exec(menu)?.[1];
+    expect(value).toBeDefined();
+    expect(decl.get(`--m3e-comp-fab-menu-defaults-${name}`)).toBe(`${value!}px`);
+  });
+
+  it('the checked toggle is a circle of the close button size', () => {
+    expect(menu).toContain('private val FabFinalCornerRadius = FabFinalSize.div(2)');
+    expect(menu).toMatch(
+      /FabFinalSize\n\s*get\(\) = FabMenuBaselineTokens\.CloseButtonContainerHeight/,
+    );
+    const height = /CloseButtonContainerHeight[^\n]*\n\s*get\(\) = ([\d.]+)\.dp/.exec(
+      source('FabMenuBaselineTokens.kt'),
+    )![1]!;
+    expect(decl.get('--m3e-comp-fab-menu-defaults-toggle-final-corner-radius')).toBe(
+      `${String(Number(height) / 2)}px`,
+    );
+  });
+
+  it('colors, label style and springs', () => {
+    expect(decl.get('--m3e-comp-fab-menu-defaults-toggle-container-color')).toBe(
+      'var(--m3e-sys-color-primary-container)',
+    );
+    expect(decl.get('--m3e-comp-fab-menu-defaults-toggle-checked-container-color')).toBe(
+      'var(--m3e-sys-color-primary)',
+    );
+    expect(decl.get('--m3e-comp-fab-menu-defaults-toggle-icon-color')).toBe(
+      'var(--m3e-sys-color-on-primary-container)',
+    );
+    expect(decl.get('--m3e-comp-fab-menu-defaults-toggle-checked-icon-color')).toBe(
+      'var(--m3e-sys-color-on-primary)',
+    );
+    expect(decl.get('--m3e-comp-fab-menu-defaults-item-label-size')).toBe(
+      'var(--m3e-sys-typescale-title-medium-size)',
+    );
+    for (const [name, token, pattern] of [
+      [
+        'toggle-progress',
+        'fast-spatial',
+        /animationSpec = MotionSchemeKeyTokens\.FastSpatial\.value\(\),\n\s*\)\n\s*ToggleFloatingActionButton\(/,
+      ],
+      [
+        'item-width',
+        'fast-spatial',
+        /widthSpring: FiniteAnimationSpec<Float> = MotionSchemeKeyTokens\.FastSpatial/,
+      ],
+      [
+        'item-opacity',
+        'fast-effects',
+        /alphaSpring: FiniteAnimationSpec<Float> = MotionSchemeKeyTokens\.FastEffects/,
+      ],
+      [
+        'stagger',
+        'slow-effects',
+        /staggerAnimSpec: FiniteAnimationSpec<Int> = MotionSchemeKeyTokens\.SlowEffects/,
+      ],
+    ] as const) {
+      expect(menu).toMatch(pattern);
+      expect(decl.get(`--m3e-comp-fab-menu-defaults-${name}-stiffness`)).toBe(
+        `var(--m3e-sys-motion-spring-${token}-stiffness)`,
+      );
+    }
+    expect(decl.get('--m3e-comp-fab-menu-defaults-stagger-visibility-threshold')).toBe('1');
+  });
+});

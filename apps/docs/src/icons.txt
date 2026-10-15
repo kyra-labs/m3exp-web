@@ -1,2 +1,2 @@
 # Icons used by the docs site. The build runs `m3e-icons subset` on this list (D5).
-home, search, menu, arrow_back, favorite, settings, star, check_circle, delete, add
+home, search, menu, arrow_back, favorite, settings, star, check_circle, delete, add, share, close, mail, chat, link, edit

@@ -2,6 +2,9 @@
 // (bit-exact ports), FloatSpringSpec helpers, damping conversion, the CSS linear() sampler, and the
 // top app bar scroll state (TopAppBarState) shared by m3e-elements and m3e-react.
 export { type LinearEasing, type LinearEasingOptions, springToLinear } from './linear.js';
+export { SpringAnimatable } from './animatable.js';
+export { animatedInt, fabMenuItemVisible } from './fab-menu.js';
+export { menuNavigationTarget } from './menu-navigation.js';
 export {
   type IndeterminateFrame,
   type LoadingIndicatorTiming,

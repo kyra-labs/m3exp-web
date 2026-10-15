@@ -10,3 +10,4 @@ export * from './top-app-bar/index.js';
 export * from './assist-chip/index.js';
 export * from './loading-indicator/index.js';
 export * from './fab/index.js';
+export * from './fab-menu/index.js';
