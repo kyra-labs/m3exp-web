@@ -62,6 +62,7 @@
     "./tokens.css": "./dist/generated/tokens.css",
     "./components/*.css": "./dist/generated/components/*.css",
     "./fonts.css": "./fonts/fonts.css",
+    "./fonts-rond.css": "./fonts/fonts-rond.css",
     "./fonts-full.css": "./fonts/fonts-full.css",
     "./material-symbols.css": "./fonts/material-symbols.css",
     "./material-symbols-*.css": "./fonts/material-symbols-*.css",

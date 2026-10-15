@@ -115,6 +115,27 @@
   margin: 0;
 }
 
+/* Typography page: font profile table and the ROND demo, which uses the latin chunk of
+   fonts-rond.css under a docs-only family (typography.astro) so other text keeps fonts.css. */
+.docs-table {
+  border-collapse: collapse;
+}
+
+.docs-table th,
+.docs-table td {
+  padding: var(--m3e-sys-space-100) var(--m3e-sys-space-200);
+  border-block-end: var(--m3e-comp-divider-thickness) solid var(--m3e-sys-color-outline-variant);
+  text-align: start;
+}
+
+.docs-rond {
+  font-family: 'M3E Docs ROND', var(--m3e-sys-typescale-display-medium-font);
+  font-size: var(--m3e-sys-typescale-display-medium-size);
+  font-weight: var(--m3e-sys-typescale-display-medium-emphasized-weight);
+  line-height: var(--m3e-sys-typescale-display-medium-line-height);
+  letter-spacing: var(--m3e-sys-typescale-display-medium-tracking);
+}
+
 .docs-icons {
   display: flex;
   flex-wrap: wrap;

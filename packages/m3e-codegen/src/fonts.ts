@@ -29,17 +29,26 @@ const CSS2_USER_AGENT =
   'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36';
 
 /**
- * Output profiles (owner decision, M2 fonts PR): the default keeps the axes the typescale uses
- * (wght; opsz via `font-optical-sizing: auto`) and instances the rest at their defaults
- * (~135 KB latin vs ~1 MB); the full profile keeps every axis.
+ * Output profiles (D11, D15): the default keeps the axes the typescale uses (wght; opsz via
+ * `font-optical-sizing: auto`) and instances the rest at their defaults (~139 KiB latin vs
+ * ~1 MiB); the opt-in ROND profile is a drop-in replacement for the default that also keeps
+ * roundness (~205 KiB latin), set only via `font-variation-settings: "ROND" n`; the full profile
+ * keeps every axis.
  */
-const PROFILES = [
+export const PROFILES = [
   {
     css: 'fonts.css',
     prefix: SLUG,
     pin: ['wdth', 'ROND', 'slnt'],
     description:
       'Default profile: wght + opsz variable; wdth, ROND and slnt fixed at their defaults.',
+  },
+  {
+    css: 'fonts-rond.css',
+    prefix: `${SLUG}-rond`,
+    pin: ['wdth', 'slnt'],
+    description:
+      'ROND profile (D15): wght + opsz + ROND variable; wdth and slnt fixed at their defaults.',
   },
   {
     css: 'fonts-full.css',

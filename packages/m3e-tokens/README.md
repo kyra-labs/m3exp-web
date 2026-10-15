@@ -56,8 +56,34 @@ The CLI flags are `--secondary`, `--tertiary`, `--neutral`, `--neutral-variant` 
 With spec 2025 (the `tonalSpot`, `neutral`, `vibrant` and `expressive` variants) the outline and
 surface-variant roles come from the neutral palette, so `neutralVariant` has no effect there.
 
+## Font profiles
+
+Import exactly one Google Sans Flex profile. Each registers the same `"Google Sans Flex"` family,
+so the others are drop-in replacements for `fonts.css`, imported instead of it, not beside it.
+
+| Entry               | Variable axes                | Latin chunk | All chunks |
+| ------------------- | ---------------------------- | ----------- | ---------- |
+| `./fonts.css`       | wght, opsz (default)         | 138.8 KiB   | 328.5 KiB  |
+| `./fonts-rond.css`  | wght, opsz, ROND             | 205.2 KiB   | 468.1 KiB  |
+| `./fonts-full.css`  | wght, opsz, ROND, wdth, slnt | 1020.8 KiB  | 2026.8 KiB |
+
+Axes a profile drops are fixed at their defaults (wdth 100, ROND 0, slnt 0), so every profile
+renders the typescale identically. Browsers download only the chunks a page's text needs.
+`fonts-rond.css` adds roundness (0–100, default 0), which CSS can set only through
+`font-variation-settings`; that property replaces any inherited value rather than merging with it,
+so repeat other axes you set in the same declaration:
+
+```css
+@import '@kyralabs/m3e-tokens/fonts-rond.css'; /* instead of fonts.css */
+
+.playful {
+  font-variation-settings: 'ROND' 100;
+}
+```
+
+The typescale tokens do not use ROND, wdth or slnt (no Material source specifies values).
+
 Other entries: `./components/<name>.css` (component tokens), `./material-symbols.css` (Rounded;
-`-outlined` and `-sharp` too), `./fonts-full.css` (every Google Sans Flex axis), and JS token
-objects from `.` and `./components`.
+`-outlined` and `-sharp` too), and JS token objects from `.` and `./components`.
 
 Apache-2.0; see `LICENSE` and `NOTICE`. The bundled fonts carry their own licenses in `fonts/`.

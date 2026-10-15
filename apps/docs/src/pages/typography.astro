@@ -1,13 +1,52 @@
 ---
 import { typescale } from '@kyralabs/m3exp-web/tokens';
+import fontManifest from '@kyralabs/m3e-tokens/fonts/google-sans-flex.manifest.json';
+import rondCss from '@kyralabs/m3e-tokens/fonts/fonts-rond.css?raw';
+import rondLatinUrl from '@kyralabs/m3e-tokens/fonts/google-sans-flex-rond-latin.woff2?url';
 import Base from '../layouts/Base.astro';
 
 const kebab = (s: string) => s.replace(/[A-Z]/g, (c) => `-${c.toLowerCase()}`);
 const roles = Object.entries(typescale).map(([name, style]) => ({ name, css: kebab(name), style }));
 const v = (role: string, field: string) => `var(--m3e-sys-typescale-${role}-${field})`;
+
+// Font profiles (D11, D15): sizes come from the generated manifest, in KiB like
+// tools/report-fonts.js.
+const kib = (bytes: number) => `${(bytes / 1024).toFixed(1)} KiB`;
+const profileAxes: Record<string, string> = {
+  'fonts.css': 'wght, opsz',
+  'fonts-rond.css': 'wght, opsz, ROND',
+  'fonts-full.css': 'wght, opsz, ROND, wdth, slnt',
+};
+const profileNotes: Record<string, string> = {
+  'fonts.css': 'Default; the umbrella CSS imports it.',
+  'fonts-rond.css': 'Opt-in roundness (D15).',
+  'fonts-full.css': 'Every axis, for width and slant.',
+};
+const profiles = Object.entries(fontManifest.chunks).map(([css, chunks]) => {
+  const all = Object.values(chunks);
+  return {
+    css,
+    axes: profileAxes[css] ?? '',
+    note: profileNotes[css] ?? '',
+    latin: kib(chunks.latin.bytes),
+    total: kib(all.reduce((n, c) => n + c.bytes, 0)),
+  };
+});
+
+// Live ROND demo without loading the profile site-wide: the generated latin face of
+// fonts-rond.css, renamed to a docs-only family, so "Google Sans Flex" on this and every other
+// page keeps resolving to the default profile.
+const DEMO_FAMILY = 'M3E Docs ROND';
+const latinFace = /\/\* latin \*\/\s*(@font-face \{[^}]*\})/.exec(rondCss)?.[1];
+if (!latinFace) throw new Error('fonts-rond.css has no latin face');
+const demoFace = latinFace
+  .replace('font-family: "Google Sans Flex";', `font-family: "${DEMO_FAMILY}";`)
+  .replace(/url\("[^"]+"\)/, `url("${rondLatinUrl}")`);
+const rondSamples = [0, 100];
 ---
 
 <Base title="Typography">
+  <style is:inline slot="head" set:html={demoFace} />
   <h1>Typography</h1>
   <p>
     The 30 type styles from <code>TypeScaleTokens</code> (Compose Material3 1.5.0-beta01) set in
@@ -38,4 +77,81 @@ const v = (role: string, field: string) => `var(--m3e-sys-typescale-${role}-${fi
       ))
     }
   </ul>
+
+  <section aria-labelledby="profiles-heading">
+    <h2 id="profiles-heading">Font profiles</h2>
+    <p>
+      <code>@kyralabs/m3e-tokens</code> ships Google Sans Flex in three profiles (D11, D15). Each
+      registers the same <code>"Google Sans Flex"</code> family, so import exactly one: the others
+      replace <code>fonts.css</code>, they do not add to it. Axes a profile drops are fixed at their
+      defaults (wdth 100, ROND 0, slnt 0), so every profile renders the type scale above
+      identically. Browsers download only the chunks a page's text needs.
+    </p>
+    <table class="docs-table">
+      <thead>
+        <tr>
+          <th scope="col">Entry</th>
+          <th scope="col">Variable axes</th>
+          <th scope="col">Latin chunk</th>
+          <th scope="col">All chunks</th>
+          <th scope="col">Use</th>
+        </tr>
+      </thead>
+      <tbody>
+        {
+          profiles.map(({ css, axes, note, latin, total }) => (
+            <tr>
+              <th scope="row">
+                <code>{css}</code>
+              </th>
+              <td>{axes}</td>
+              <td>{latin}</td>
+              <td>{total}</td>
+              <td>{note}</td>
+            </tr>
+          ))
+        }
+      </tbody>
+    </table>
+  </section>
+
+  <section aria-labelledby="rond-heading">
+    <h2 id="rond-heading">Roundness (ROND)</h2>
+    <p>
+      To round the letterforms, import <code>fonts-rond.css</code> instead of <code>fonts.css</code> (with
+      the umbrella package, import the layers' CSS yourself in place of its bundled stylesheet), then
+      set the axis. ROND runs from 0 (the default) to 100. It has no CSS property of its own, so it
+      is set with <code>font-variation-settings</code>, which replaces any inherited value instead of
+      merging with it: repeat every other axis you set in the same declaration.
+    </p>
+    <pre class="docs-code"><code>{`@import '@kyralabs/m3e-tokens/fonts-rond.css'; /* instead of fonts.css */
+@import '@kyralabs/m3e-tokens/tokens.css';
+@import '@kyralabs/m3e-tokens/theme.css';
+@import '@kyralabs/m3e-css/index.css';
+
+.playful {
+  font-variation-settings: 'ROND' 100;
+}`}</code></pre>
+    <p>
+      The type scale tokens do not set ROND, wdth or slnt: no Material source specifies values for
+      them, so emphasized styles change weight only. The samples below use the latin chunk of the
+      ROND profile under a docs-only family name, so the rest of this site keeps the default
+      profile.
+    </p>
+    <ul class="docs-specimen">
+      {
+        rondSamples.map((rond) => (
+          <li>
+            <p
+              class="docs-specimen__sample docs-rond"
+              style={{ fontVariationSettings: `'ROND' ${String(rond)}` }}
+            >
+              Roundness {rond}
+            </p>
+            <code>font-variation-settings: 'ROND' {rond}</code>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
 </Base>
