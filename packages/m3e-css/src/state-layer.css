@@ -38,7 +38,8 @@
     .m3e-assist-chip,
     .m3e-fab,
     .m3e-extended-fab,
-    .m3e-navigation-item__state
+    .m3e-navigation-item__state,
+    .m3e-menu__item
   ) {
     position: relative;
     isolation: isolate;
@@ -52,7 +53,8 @@
     .m3e-assist-chip,
     .m3e-fab,
     .m3e-extended-fab,
-    .m3e-navigation-item__state
+    .m3e-navigation-item__state,
+    .m3e-menu__item
   )::before {
     --_m3e-state-layer-opacity: 0;
 
@@ -98,7 +100,8 @@
         .m3e-card--interactive,
         .m3e-assist-chip,
         .m3e-fab,
-        .m3e-extended-fab
+        .m3e-extended-fab,
+        .m3e-menu__item
       ):hover::before {
       --_m3e-state-layer-opacity: var(--m3e-sys-state-hover-state-layer-opacity);
     }
@@ -111,7 +114,8 @@
       .m3e-card--interactive,
       .m3e-assist-chip,
       .m3e-fab,
-      .m3e-extended-fab
+      .m3e-extended-fab,
+      .m3e-menu__item
     ):focus-visible::before {
     --_m3e-state-layer-opacity: var(--m3e-sys-state-focus-state-layer-opacity);
   }
@@ -123,7 +127,8 @@
       .m3e-card--interactive,
       .m3e-assist-chip,
       .m3e-fab,
-      .m3e-extended-fab
+      .m3e-extended-fab,
+      .m3e-menu__item
     )[data-dragged]::before {
     --_m3e-state-layer-opacity: var(--m3e-sys-state-dragged-state-layer-opacity);
   }
@@ -135,7 +140,8 @@
       .m3e-card--interactive,
       .m3e-assist-chip,
       .m3e-fab,
-      .m3e-extended-fab
+      .m3e-extended-fab,
+      .m3e-menu__item
     ):active::before,
   :where(
       .m3e-state-layer,
@@ -145,7 +151,8 @@
       .m3e-assist-chip,
       .m3e-fab,
       .m3e-extended-fab,
-      .m3e-navigation-item__state
+      .m3e-navigation-item__state,
+      .m3e-menu__item
     )[data-pressed]::before {
     opacity: var(--m3e-sys-state-pressed-state-layer-opacity);
   }
@@ -157,7 +164,8 @@
       .m3e-card--interactive,
       .m3e-assist-chip,
       .m3e-fab,
-      .m3e-extended-fab
+      .m3e-extended-fab,
+      .m3e-menu__item
     ):is(:disabled, [aria-disabled='true'])::before {
     display: none;
   }
@@ -192,7 +200,8 @@
       .m3e-assist-chip,
       .m3e-fab,
       .m3e-extended-fab,
-      .m3e-navigation-item__state
+      .m3e-navigation-item__state,
+      .m3e-menu__item
     )[data-ripple][data-pressed]::before {
     --_m3e-ripple-opacity: calc(
       var(--_m3e-state-layer-opacity) + var(--m3e-sys-state-pressed-state-layer-opacity) -
@@ -228,7 +237,8 @@
       .m3e-assist-chip,
       .m3e-fab,
       .m3e-extended-fab,
-      .m3e-navigation-item__state
+      .m3e-navigation-item__state,
+      .m3e-menu__item
     )::before {
       display: none;
     }

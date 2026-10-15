@@ -26,7 +26,15 @@ export const MATERIAL3_SOURCES = [
   'LoadingIndicator.kt',
   'FloatingActionButton.kt',
   'Shapes.kt',
+  'Menu.kt',
+  'MenuDefaults.kt',
+  'internal/MenuPosition.kt',
 ] as const;
+
+/** Android `actual`s the generator reads (DropdownMenu's popup margins, AndroidMenu.android.kt). */
+export const MATERIAL3_ANDROID_PATH =
+  'compose/material3/material3/src/androidMain/kotlin/androidx/compose/material3';
+export const MATERIAL3_ANDROID_SOURCES = ['AndroidMenu.android.kt'] as const;
 
 /** Compose spring physics ported by m3e-motion (and compiled as-is by its JVM reference harness). */
 export const ANIMATION_CORE_PATH =

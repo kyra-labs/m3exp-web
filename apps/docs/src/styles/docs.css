@@ -453,3 +453,33 @@ button.docs-tile {
   inset-block-end: var(--m3e-sys-space-200);
   inset-inline-end: var(--m3e-sys-space-200);
 }
+
+/* Menus page: static menus side by side, triggers in a row. */
+.docs-menus {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--m3e-sys-space-400);
+  align-items: flex-start;
+}
+
+.docs-menu-demos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--m3e-sys-space-200);
+  align-items: center;
+  margin-block: var(--m3e-sys-space-300);
+}
+
+.docs-menu-log {
+  flex-basis: 100%;
+  margin: 0;
+}
+
+/* The CSS-only menu: anchor positioning ties the popover to its button. */
+.docs-css-anchor {
+  anchor-name: --docs-css-menu;
+}
+
+.docs-css-menu {
+  position-anchor: --docs-css-menu;
+}

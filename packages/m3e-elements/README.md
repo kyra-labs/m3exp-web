@@ -25,6 +25,32 @@ Each `@kyralabs/m3e-elements/<element>.js` entry registers one element; `.` regi
 them, and `./base.js` exports the `M3eElement` base class without registering anything.
 Registration is skipped outside the browser.
 
+## Menus
+
+```js
+import '@kyralabs/m3e-elements/menu.js';
+```
+
+```html
+<button id="more" class="m3e-icon-button m3e-icon-button--standard" aria-label="More">
+  <span class="m3e-icon" aria-hidden="true">more_vert</span>
+</button>
+<m3e-menu anchor="more" variant="vibrant">
+  <m3e-menu-item value="edit" icon="edit" trailing-text="⌘E">Edit</m3e-menu-item>
+  <m3e-menu-group label="View" divider>
+    <m3e-menu-item type="checkbox" value="grid" checked-icon="check" checked>Grid</m3e-menu-item>
+  </m3e-menu-group>
+</m3e-menu>
+```
+
+`<m3e-menu>` renders the `.m3e-menu` popover from its `<m3e-menu-item>` / `<m3e-menu-group>`
+children, wires its `anchor` (a click toggles it; Enter, Space and the arrow keys open it), places
+it like Compose's `DropdownMenuPositionProvider` and springs it open and closed. It emits `action`
+(on the item, `detail: { value, checked }`) and `open-change`. `variant`: `standard` (default),
+`vibrant`, `baseline`. Items: `type="checkbox" | "radio"`, `checked`, `disabled`, `icon`,
+`checked-icon`, `supporting-text`, `trailing-icon`, `trailing-text`, `submenu="<menu id>"`. The
+`menu-popup.js` entry exports `MenuPopup` (placement and springs only) for other components.
+
 ## Ripple for plain HTML
 
 m3e-css draws hover, focus and pressed overlays without JS; the press ripple needs a little.

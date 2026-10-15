@@ -36,10 +36,14 @@ export function readGeneratorInputs(root: string, pin: SourcePin): GenerateOptio
     colorSchemeKt: vendorFile(vendor('androidx-material3-sources'), 'ColorScheme.kt', commit)
       .content,
     material3Sources: Object.fromEntries(
-      vendorFile(vendor('androidx-material3-sources'), 'ColorScheme.kt', commit).files.map((f) => [
-        f.name,
-        f.content,
-      ]),
+      [
+        ...vendorFile(vendor('androidx-material3-sources'), 'ColorScheme.kt', commit).files,
+        ...vendorFile(
+          vendor('androidx-material3-android-sources'),
+          'AndroidMenu.android.kt',
+          commit,
+        ).files,
+      ].map((f) => [f.name, f.content]),
     ),
     easingKt: vendorFile(vendor('androidx-animation-easing'), 'Easing.kt', commit).content,
     graphicsLayerScopeKt: vendorFile(vendor('androidx-ui-sources'), 'GraphicsLayerScope.kt', commit)
