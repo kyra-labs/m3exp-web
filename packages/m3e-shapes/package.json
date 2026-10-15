@@ -1,6 +1,6 @@
 {
   "name": "@kyralabs/m3e-shapes",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "TypeScript port of AndroidX graphics-shapes and MaterialShapes (internal-first).",
   "keywords": [
     "material-design",
