@@ -92,9 +92,10 @@ const classes = (s: (typeof statics)[number]) =>
     <p>
       <code>&lt;m3e-fab-menu&gt;</code> renders the same classes from its{' '}
       <code>&lt;m3e-fab-menu-item&gt;</code> children and fires <code>open-change</code> and{' '}
-      <code>action</code>. Opening moves focus to the top item; arrow keys, Home and End move between
-      items, Tab cycles between the items and the close button, and Escape or a press outside closes the
-      menu.
+      <code>action</code>. Opening leaves focus on the close button, as Compose and m3.material.io do;
+      ArrowDown or Tab moves to the top item, ArrowUp or Shift+Tab to the bottom one. Arrow keys, Home
+      and End move between items, Tab cycles between the items and the close button, and Escape or a
+      press outside closes the menu.
     </p>
     <div class="docs-fab-menu-row">
       <div class="docs-fab-menu-frame">

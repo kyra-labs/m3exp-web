@@ -331,8 +331,10 @@ function FabMenuItemButton({ item, index, itemRefs, onAction }: FabMenuItemButto
  * `ToggleFloatingActionButton` and `FloatingActionButtonMenuItem`s): a toggle FAB that turns into
  * the close button and opens a `role="menu"` of items, on the m3e-css `.m3e-fab-menu` classes.
  *
- * Opening from the toggle moves focus to the top item; ArrowUp/Down (wrapping) and Home/End move
- * between items; Tab and Shift+Tab cycle between the items and the toggle while open; Escape, a
+ * Opening leaves focus on the toggle, now the close button (Compose FloatingActionButtonMenu.kt
+ * L138–152, m3.material.io FAB menu › Initial focus): ArrowDown or Tab moves to the top item,
+ * ArrowUp or Shift+Tab to the bottom one; among the items ArrowUp/Down (wrapping) and Home/End move,
+ * and Tab / Shift+Tab return to the toggle, so focus stays in the menu while it is open. Escape, a
  * press outside or activating an item closes the menu and returns focus to the toggle. Motion
  * follows Compose's springs and keeps velocity when interrupted.
  */
@@ -366,16 +368,9 @@ export const FabMenu = /* @__PURE__ */ forwardRef(function FabMenu(
   const rootRef = useObjectRef(forwardedRef);
   const toggleRef = useRef<HTMLButtonElement | null>(null);
   const itemRefs = useRef<(HTMLButtonElement | null)[]>([]);
-  const focusFirst = useRef(false);
   const toggleId = useId();
   const menuId = useId();
   useFabMenuMotion(rootRef, itemRefs, state.isOpen, items.length);
-
-  // Opened from the toggle: focus moves to the top item.
-  useLayoutEffect(() => {
-    if (state.isOpen && focusFirst.current) itemRefs.current[0]?.focus();
-    focusFirst.current = false;
-  }, [state.isOpen]);
 
   const close = (focusToggle: boolean) => {
     state.close();
@@ -394,7 +389,10 @@ export const FabMenu = /* @__PURE__ */ forwardRef(function FabMenu(
   const toggleProps = useFabButton(
     {
       onPress: () => {
-        focusFirst.current = !state.isOpen;
+        // Focus stays on the toggle (m3.material.io › Initial focus); Safari does not focus a
+        // pressed button, so keys would not reach the menu otherwise.
+        const toggle = toggleRef.current;
+        if (toggle && document.activeElement !== toggle) toggle.focus({ preventScroll: true });
         state.toggle();
       },
     },

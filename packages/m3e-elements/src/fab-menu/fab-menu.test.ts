@@ -113,7 +113,7 @@ describe('<m3e-fab-menu>', () => {
     );
   });
 
-  it('the toggle opens it, fires open-change and moves focus to the top item', async () => {
+  it('the toggle opens it, fires open-change and keeps focus on the toggle (close button)', async () => {
     const { host, root, toggle, items } = await mount();
     const changes: boolean[] = [];
     host.addEventListener('open-change', (e) => {
@@ -126,7 +126,9 @@ describe('<m3e-fab-menu>', () => {
     expect(root.classList.contains('m3e-fab-menu--open')).toBe(true);
     expect(toggle.getAttribute('aria-expanded')).toBe('true');
     expect(changes).toEqual([true]);
-    expect(document.activeElement).toBe(items[0]);
+    // m3.material.io › Initial focus / Compose: focus stays on the close button.
+    expect(document.activeElement).toBe(toggle);
+    expect(items).toHaveLength(3);
   });
 
   it('springs the progress and staggers the items in from the bottom, then clears the styles', async () => {
@@ -198,6 +200,13 @@ describe('<m3e-fab-menu>', () => {
     await flush();
     const key = (target: Element, k: string, shiftKey = false) =>
       target.dispatchEvent(new KeyboardEvent('keydown', { key: k, shiftKey, bubbles: true }));
+    expect(document.activeElement).toBe(toggle);
+    key(toggle, 'ArrowUp');
+    expect(document.activeElement).toBe(items[2]);
+    key(items[2]!, 'Tab');
+    expect(document.activeElement).toBe(toggle);
+    key(toggle, 'ArrowDown');
+    expect(document.activeElement).toBe(items[0]);
     key(items[0]!, 'ArrowDown');
     expect(document.activeElement).toBe(items[1]);
     key(items[1]!, 'End');

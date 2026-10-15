@@ -61,7 +61,7 @@ describe('<FabMenu>', () => {
     );
   });
 
-  it('the toggle opens it (uncontrolled), calls onOpenChange and focuses the top item', async () => {
+  it('the toggle opens it (uncontrolled), calls onOpenChange and keeps focus on the toggle', async () => {
     const onOpenChange = vi.fn();
     const container = await renderReact(
       <FabMenu aria-label="Share" items={ITEMS} onOpenChange={onOpenChange} />,
@@ -71,7 +71,9 @@ describe('<FabMenu>', () => {
     expect(onOpenChange).toHaveBeenCalledWith(true);
     expect(root.classList.contains('m3e-fab-menu--open')).toBe(true);
     expect(toggle.getAttribute('aria-expanded')).toBe('true');
-    expect(document.activeElement).toBe(items[0]);
+    // m3.material.io › Initial focus / Compose: focus stays on the close button.
+    expect(document.activeElement).toBe(toggle);
+    expect(items).toHaveLength(3);
   });
 
   it('controlled: follows `open`; keys move, Tab cycles, Escape closes and refocuses', async () => {
@@ -82,6 +84,13 @@ describe('<FabMenu>', () => {
     const { root, toggle, items } = parts(await renderReact(<Controlled />));
     await press(toggle);
     expect(root.classList.contains('m3e-fab-menu--open')).toBe(true);
+    expect(document.activeElement).toBe(toggle);
+    await key(toggle, 'ArrowUp');
+    expect(document.activeElement).toBe(items[2]);
+    await key(items[2]!, 'Tab');
+    expect(document.activeElement).toBe(toggle);
+    await key(toggle, 'ArrowDown');
+    expect(document.activeElement).toBe(items[0]);
     await key(items[0]!, 'ArrowDown');
     expect(document.activeElement).toBe(items[1]);
     await key(items[1]!, 'End');

@@ -110,10 +110,12 @@ interface ItemRecord {
  *   spring; the items stagger in from the bottom on a slow-effects Int spring, each springing its
  *   width (fast spatial) and alpha (fast effects). Every spring is interruptible and keeps its
  *   velocity, like Compose's Animatable; spatial springs jump under reduced motion.
- * - Focus and keys: opening from the toggle moves focus to the top item. ArrowUp/Down (wrapping),
- *   Home/End move between items; Tab and Shift+Tab cycle between the items and the toggle (focus
- *   stays in the menu while it is open); Escape, an outside press or activating an item closes it
- *   and returns focus to the toggle.
+ * - Focus and keys (Compose FloatingActionButtonMenu.kt L138–152, m3.material.io FAB menu ›
+ *   Initial focus): opening leaves focus on the toggle, now the close button. From it, ArrowDown or
+ *   Tab moves to the top item and ArrowUp or Shift+Tab to the bottom one; among the items
+ *   ArrowUp/Down (wrapping) and Home/End move; Tab and Shift+Tab from an item go back to the toggle,
+ *   so focus stays in the menu while it is open. Escape, an outside press or activating an item
+ *   closes it and returns focus to the toggle.
  * - Events: `open-change` (`detail: { open }`) when the user opens or closes it; `action` on the
  *   activated `<m3e-fab-menu-item>`.
  */
@@ -144,7 +146,6 @@ export class M3eFabMenu extends M3eElement {
   #progress = new SpringAnimatable(0);
   #stagger = new SpringAnimatable(0, 1);
   #shown: boolean | null = null;
-  #focusOnOpen = false;
   #frame = 0;
 
   /** The rendered `.m3e-fab-menu` root. */
@@ -187,14 +188,11 @@ export class M3eFabMenu extends M3eElement {
       return;
     }
     this.#animate(open);
-    if (open && this.#focusOnOpen) this.#order[0]?.el.focus();
-    this.#focusOnOpen = false;
   }
 
   /** Opens or closes as the user did it: fires `open-change`. */
   #setOpen(open: boolean, focusToggle = false): void {
     if (Boolean(this.open) === open) return;
-    this.#focusOnOpen = open;
     this.open = open;
     if (!open && focusToggle) this.#parts?.toggle.focus();
     this.emit('open-change', { open });
@@ -260,6 +258,9 @@ export class M3eFabMenu extends M3eElement {
     menu.id = uid();
     attachRipple(toggle, new AbortController().signal);
     toggle.addEventListener('click', () => {
+      // Focus stays on the toggle (m3.material.io › Initial focus); Safari does not focus a
+      // clicked button, so keys would not reach the menu otherwise.
+      if (this.ownerDocument.activeElement !== toggle) toggle.focus({ preventScroll: true });
       this.#setOpen(!this.open);
     });
     toggle.addEventListener('keydown', (e) => {

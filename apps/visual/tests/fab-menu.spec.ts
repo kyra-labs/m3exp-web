@@ -209,7 +209,15 @@ for (const layer of ['react', 'element'] as const) {
     await expect(toggle).toHaveAttribute('aria-expanded', 'true');
     const controls = await toggle.getAttribute('aria-controls');
     await expect(menu.locator(`[id="${controls!}"]`)).toHaveAttribute('role', 'menu');
-    // Focus moves to the top item; arrows wrap; Home/End.
+    // Focus stays on the close button (m3.material.io › Initial focus; Compose L138–152); ArrowDown
+    // enters the menu at the top item, ArrowUp at the bottom one.
+    await expect(toggle).toBeFocused();
+    await page.keyboard.press('ArrowUp');
+    await expect(items.last()).toBeFocused();
+    await page.keyboard.press('Tab');
+    await expect(toggle).toBeFocused();
+    await page.keyboard.press('ArrowDown');
+    // Among the items: arrows wrap; Home/End.
     await expect(items.first()).toBeFocused();
     await page.keyboard.press('ArrowDown');
     await expect(items.nth(1)).toBeFocused();
@@ -231,9 +239,10 @@ for (const layer of ['react', 'element'] as const) {
     await page.keyboard.press('Escape');
     await expect(toggle).toHaveAttribute('aria-expanded', 'false');
     await expect(toggle).toBeFocused();
-    // An outside press closes it too.
+    // A pointer open also leaves focus on the toggle; an outside press closes it.
     await toggle.click();
     await expect(toggle).toHaveAttribute('aria-expanded', 'true');
+    await expect(toggle).toBeFocused();
     await page.locator('h1').click();
     await expect(toggle).toHaveAttribute('aria-expanded', 'false');
     await settled(menu);
