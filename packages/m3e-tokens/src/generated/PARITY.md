@@ -4,7 +4,7 @@
 > Source: compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/tokens @ 19991f2c0858aadfcb442ce02b2c8e4743c96898  
 > Values: Copyright (C) The Android Open Source Project, Apache License 2.0 (see NOTICE).  
 
-Emitted: 371 system and 2616 component variables from 110 component token objects.
+Emitted: 371 system and 2636 component variables from 111 component token objects.
 
 ## Not emitted here
 
@@ -2124,6 +2124,31 @@ Emitted: 371 system and 2616 component variables from 110 component token object
 | `MenuTokens.ListItemSelectedLabelTextColor` | `ColorSchemeKeyTokens.OnSecondaryContainer` | MenuTokens.kt:37 | `--m3e-comp-menu-list-item-label-text-color-selected` | `var(--m3e-sys-color-on-secondary-container)` |  |
 | `MenuTokens.ListItemSelectedLeadingTrailingIconColor` | `ColorSchemeKeyTokens.OnSecondaryContainer` | MenuTokens.kt:40 | `--m3e-comp-menu-list-item-leading-trailing-icon-color-selected` | `var(--m3e-sys-color-on-secondary-container)` |  |
 | `MenuTokens.MenuListItemLeadingIconColor` | `ColorSchemeKeyTokens.OnSecondaryContainer` | MenuTokens.kt:43 | `--m3e-comp-menu-menu-list-item-leading-icon-color` | `var(--m3e-sys-color-on-secondary-container)` |  |
+
+## menu-defaults
+
+| Source token | Source value | Line | CSS variable | Emitted | Note |
+|---|---|---|---|---|---|
+| `Menu.kt.MenuVerticalMargin` | `48.dp` | compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/Menu.kt@19991f2c0858aadfcb442ce02b2c8e4743c96898 L2325 | `--m3e-comp-menu-vertical-margin` | `48px` | DropdownMenuPositionProvider.verticalMargin: distance kept from the window top/bottom |
+| `Menu.kt.MenuHorizontalMargin` | `8.dp` | compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/Menu.kt@19991f2c0858aadfcb442ce02b2c8e4743c96898 L2373 | `--m3e-comp-menu-horizontal-margin` | `8px` | DropdownMenuPositionProvider.horizontalMargin default (DropdownMenuPopup) |
+| `DropdownMenu (Android actual).DropdownMenuPositionProvider(horizontalMargin)` | `0` | compose/material3/material3/src/androidMain/kotlin/androidx/compose/material3/AndroidMenu.android.kt@19991f2c0858aadfcb442ce02b2c8e4743c96898 L65 | `--m3e-comp-menu-baseline-horizontal-margin` | `0` | DropdownMenu passes 0 (px) instead of MenuHorizontalMargin |
+| `Menu.kt.DropdownMenuVerticalPadding` | `8.dp` | compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/Menu.kt@19991f2c0858aadfcb442ce02b2c8e4743c96898 L2387 | `--m3e-comp-menu-baseline-vertical-padding` | `8px` | DropdownMenuContent column padding (vertical) |
+| `Menu.kt.MenuListItemContainerHeight` | `48.dp` | compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/Menu.kt@19991f2c0858aadfcb442ce02b2c8e4743c96898 L2375 | `--m3e-comp-menu-baseline-item-height` | `48px` | min height of the non-expressive DropdownMenuItem |
+| `Menu.kt.DropdownMenuItemHorizontalPadding` | `12.dp` | compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/Menu.kt@19991f2c0858aadfcb442ce02b2c8e4743c96898 L2377 | `--m3e-comp-menu-item-horizontal-padding` | `12px` | content padding (start/end) of every item; label-to-icon space in the non-expressive item |
+| `MenuDefaults.SelectableItemVerticalPadding` | `12.dp` | compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/MenuDefaults.kt@19991f2c0858aadfcb442ce02b2c8e4743c96898 L863 | `--m3e-comp-menu-item-vertical-padding` | `12px` | DropdownMenuSelectableItemContentPadding (top/bottom) |
+| `Menu.kt.DropdownMenuSelectableItemPadding` | `4.dp` | compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/Menu.kt@19991f2c0858aadfcb442ce02b2c8e4743c96898 L2381 | `--m3e-comp-menu-item-outer-padding-horizontal` | `4px` | outside the item surface (expressive items) |
+| `Menu.kt.DropdownMenuSelectableItemWithSupportTexPadding (vertical)` | `2.dp` | compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/Menu.kt@19991f2c0858aadfcb442ce02b2c8e4743c96898 L2383 | `--m3e-comp-menu-item-outer-padding-vertical-supporting` | `2px` | outside the item surface when it has supporting text |
+| `MenuDefaults.itemHorizontalArrangement (spacing)` | `8.dp` | compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/MenuDefaults.kt@19991f2c0858aadfcb442ce02b2c8e4743c96898 L855 | `--m3e-comp-menu-item-icon-label-space` | `8px` | MenuArrangement spacing; touch sizing (precision-pointer sizing is an opt-in flag) |
+| `Menu.kt.DropdownMenuItemDefaultMinWidth` | `112.dp` | compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/Menu.kt@19991f2c0858aadfcb442ce02b2c8e4743c96898 L2389 | `--m3e-comp-menu-item-min-width` | `112px` |  |
+| `Menu.kt.DropdownMenuItemDefaultMaxWidth` | `280.dp` | compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/Menu.kt@19991f2c0858aadfcb442ce02b2c8e4743c96898 L2391 | `--m3e-comp-menu-item-max-width` | `280px` |  |
+| `Menu.kt.DropdownMenuGroupVerticalPadding` | `2.dp` | compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/Menu.kt@19991f2c0858aadfcb442ce02b2c8e4743c96898 L2379 | `--m3e-comp-menu-group-vertical-padding` | `2px` | MenuDefaults.DropdownMenuGroupContentPadding (vertical) |
+| `Menu.kt.DropdownMenuGroupDefaultMinHeight` | `32.dp` | compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/Menu.kt@19991f2c0858aadfcb442ce02b2c8e4743c96898 L2394 | `--m3e-comp-menu-group-label-min-height` | `32px` | MenuDefaults.DropdownMenuGroupLabel |
+| `MenuDefaults.DropdownMenuGroupLabelHorizontalPadding (start)` | `12.dp` | compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/MenuDefaults.kt@19991f2c0858aadfcb442ce02b2c8e4743c96898 L187 | `--m3e-comp-menu-group-label-padding-start` | `12px` |  |
+| `MenuDefaults.DropdownMenuGroupLabelHorizontalPadding (end)` | `4.dp` | compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/MenuDefaults.kt@19991f2c0858aadfcb442ce02b2c8e4743c96898 L187 | `--m3e-comp-menu-group-label-padding-end` | `4px` |  |
+| `MenuDefaults.HorizontalDividerPadding (horizontal)` | `12.dp` | compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/MenuDefaults.kt@19991f2c0858aadfcb442ce02b2c8e4743c96898 L180 | `--m3e-comp-menu-divider-padding-horizontal` | `12px` |  |
+| `MenuDefaults.HorizontalDividerPadding (vertical)` | `2.dp` | compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/MenuDefaults.kt@19991f2c0858aadfcb442ce02b2c8e4743c96898 L180 | `--m3e-comp-menu-divider-padding-vertical` | `2px` |  |
+| `Menu.kt.ClosedScaleTarget` | `0.8f` | compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/Menu.kt@19991f2c0858aadfcb442ce02b2c8e4743c96898 L2403 | `--m3e-comp-menu-closed-scale` | `0.8` | open/close scale (fast spatial spring); ExpandedScaleTarget = 1 |
+| `Menu.kt.ClosedAlphaTarget` | `0f` | compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/Menu.kt@19991f2c0858aadfcb442ce02b2c8e4743c96898 L2405 | `--m3e-comp-menu-closed-opacity` | `0` | open/close alpha (fast effects spring); ExpandedAlphaTarget = 1 |
 
 ## navigation-bar
 

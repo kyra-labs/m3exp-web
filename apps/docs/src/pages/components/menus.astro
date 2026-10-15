@@ -1,0 +1,353 @@
+---
+import MenusPlayground from '../../islands/MenusPlayground.tsx';
+import Base from '../../layouts/Base.astro';
+
+interface StaticItem {
+  label: string;
+  icon?: string;
+  checkedIcon?: string;
+  supporting?: string;
+  trailing?: string;
+  trailingIcon?: string;
+  role?: 'menuitemcheckbox' | 'menuitemradio';
+  checked?: boolean;
+  disabled?: boolean;
+}
+
+const plain: StaticItem[] = [
+  { label: 'Edit', icon: 'edit', trailing: '⌘E' },
+  { label: 'Share', icon: 'share', supporting: 'Send a copy' },
+  { label: 'Settings', icon: 'settings', trailingIcon: 'arrow_right' },
+  { label: 'Delete', icon: 'delete', disabled: true },
+];
+const checkable: StaticItem[] = [
+  { label: 'Bold', icon: 'format_bold', checkedIcon: 'check', role: 'menuitemcheckbox', checked: true },
+  { label: 'Italic', icon: 'format_italic', checkedIcon: 'check', role: 'menuitemcheckbox' },
+  { label: 'Underline', checkedIcon: 'check', role: 'menuitemcheckbox', checked: true },
+  { label: 'Strikethrough', checkedIcon: 'check', role: 'menuitemcheckbox', checked: true, disabled: true },
+];
+const radios: StaticItem[] = [
+  { label: 'Left', icon: 'format_align_left', role: 'menuitemradio', checked: true },
+  { label: 'Center', icon: 'format_align_center', role: 'menuitemradio' },
+  { label: 'Right', icon: 'format_align_right', role: 'menuitemradio', supporting: 'Ragged left' },
+];
+const leadingOf = (item: StaticItem) =>
+  item.checked && item.checkedIcon ? item.checkedIcon : (item.icon ?? item.checkedIcon);
+---
+
+<Base title="Menus">
+  <link rel="stylesheet" href="/icons/docs-icons.css" slot="head" />
+  <h1>Menus</h1>
+  <p>
+    Menus (COMPONENT_SPEC §21, Compose <code>DropdownMenuPopup</code> + <code>DropdownMenuGroup</code> and the baseline <code>DropdownMenu</code>). The expressive vertical menu comes in <strong>standard</strong> and <strong>vibrant</strong> colors; groups separated by gaps make it <strong>segmented</strong>. Items can be actions, checkable (<code>menuitemcheckbox</code>) or selectable (<code>menuitemradio</code>). The <code>&lt;m3e-menu&gt;</code> element (m3e-elements) and <code>&lt;Menu&gt;</code> (m3e-react) add positioning (Compose's <code>DropdownMenuPositionProvider</code>: below the trigger, flipped above when there is no room), the open scale + fade on the fast spatial / fast effects springs, light dismiss, the APG menu keyboard model, typeahead and submenus.
+  </p>
+
+  <section aria-labelledby="static-heading">
+    <h2 id="static-heading">Variants (static, CSS only)</h2>
+    <p>Without <code>popover</code> the m3e-css contract renders inline.</p>
+    <div class="docs-menus" data-testid="static">
+      <div class="m3e-menu" role="menu" aria-label="Standard" tabindex="-1" data-testid="standard">
+        {
+          plain.map((item, i) => (
+            <div
+              class="m3e-menu__item"
+              role="menuitem"
+              tabindex="-1"
+              aria-disabled={item.disabled ? 'true' : undefined}
+              aria-labelledby={`std-${String(i)}`}
+            >
+              {item.icon && (
+                <span class="m3e-menu__item-leading">
+                  <span class="m3e-icon" aria-hidden="true">
+                    {item.icon}
+                  </span>
+                </span>
+              )}
+              <span class="m3e-menu__item-text">
+                <span class="m3e-menu__item-label" id={`std-${String(i)}`}>
+                  {item.label}
+                </span>
+                {item.supporting && <span class="m3e-menu__item-supporting">{item.supporting}</span>}
+              </span>
+              {(item.trailing ?? item.trailingIcon) && (
+                <span class="m3e-menu__item-trailing">
+                  {item.trailing ?? (
+                    <span class="m3e-icon" aria-hidden="true">
+                      {item.trailingIcon}
+                    </span>
+                  )}
+                </span>
+              )}
+            </div>
+          ))
+        }
+      </div>
+
+      <div
+        class="m3e-menu m3e-menu--vibrant"
+        role="menu"
+        aria-label="Vibrant"
+        tabindex="-1"
+        data-testid="vibrant"
+      >
+        {
+          radios.map((item, i) => (
+            <div
+              class="m3e-menu__item"
+              role={item.role ?? 'menuitem'}
+              aria-checked={item.checked ? 'true' : 'false'}
+              tabindex="-1"
+              aria-labelledby={`vib-${String(i)}`}
+            >
+              <span class="m3e-menu__item-leading">
+                <span class="m3e-icon" aria-hidden="true">
+                  {leadingOf(item)}
+                </span>
+              </span>
+              <span class="m3e-menu__item-text">
+                <span class="m3e-menu__item-label" id={`vib-${String(i)}`}>
+                  {item.label}
+                </span>
+                {item.supporting && <span class="m3e-menu__item-supporting">{item.supporting}</span>}
+              </span>
+            </div>
+          ))
+        }
+      </div>
+
+      <div class="m3e-menu" role="menu" aria-label="Segmented" tabindex="-1" data-testid="segmented">
+        <div class="m3e-menu__group" role="group" aria-labelledby="seg-text">
+          <div class="m3e-menu__label" id="seg-text" role="presentation">Text</div>
+          <div class="m3e-menu__divider" role="separator"></div>
+          {
+            checkable.map((item, i) => (
+              <div
+                class="m3e-menu__item"
+                role={item.role ?? 'menuitem'}
+                aria-checked={item.checked ? 'true' : 'false'}
+                aria-disabled={item.disabled ? 'true' : undefined}
+                tabindex="-1"
+                aria-labelledby={`seg-${String(i)}`}
+              >
+                <span
+                  class:list={[
+                    'm3e-menu__item-leading',
+                    !item.icon && item.checkedIcon && 'm3e-menu__item-leading--toggle',
+                  ]}
+                >
+                  <span class="m3e-icon" aria-hidden="true">
+                    {leadingOf(item)}
+                  </span>
+                </span>
+                <span class="m3e-menu__item-text">
+                  <span class="m3e-menu__item-label" id={`seg-${String(i)}`}>
+                    {item.label}
+                  </span>
+                </span>
+              </div>
+            ))
+          }
+        </div>
+        <div class="m3e-menu__group" role="group" aria-label="Navigation">
+          <div class="m3e-menu__item" role="menuitem" tabindex="-1" aria-labelledby="seg-home">
+            <span class="m3e-menu__item-leading">
+              <span class="m3e-icon" aria-hidden="true">home</span>
+            </span>
+            <span class="m3e-menu__item-text">
+              <span class="m3e-menu__item-label" id="seg-home">Home</span>
+            </span>
+          </div>
+          <div class="m3e-menu__item" role="menuitem" tabindex="-1" aria-labelledby="seg-more">
+            <span class="m3e-menu__item-leading">
+              <span class="m3e-icon" aria-hidden="true">info</span>
+            </span>
+            <span class="m3e-menu__item-text">
+              <span class="m3e-menu__item-label" id="seg-more">More options</span>
+              <span class="m3e-menu__item-supporting">Opens menu</span>
+            </span>
+            <span class="m3e-menu__item-trailing">
+              <span class="m3e-icon" aria-hidden="true">arrow_right</span>
+            </span>
+          </div>
+        </div>
+        <div class="m3e-menu__group" role="group" aria-label="Danger">
+          <div class="m3e-menu__item" role="menuitem" tabindex="-1" aria-labelledby="seg-del">
+            <span class="m3e-menu__item-leading">
+              <span class="m3e-icon" aria-hidden="true">delete</span>
+            </span>
+            <span class="m3e-menu__item-text">
+              <span class="m3e-menu__item-label" id="seg-del">Delete</span>
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div
+        class="m3e-menu m3e-menu--baseline"
+        role="menu"
+        aria-label="Baseline"
+        tabindex="-1"
+        data-testid="baseline"
+      >
+        <div class="m3e-menu__group" role="group" aria-label="Edit">
+          <div class="m3e-menu__item" role="menuitem" tabindex="-1" aria-labelledby="base-edit">
+            <span class="m3e-menu__item-leading">
+              <span class="m3e-icon" aria-hidden="true">edit</span>
+            </span>
+            <span class="m3e-menu__item-text">
+              <span class="m3e-menu__item-label" id="base-edit">Edit</span>
+            </span>
+          </div>
+          <div class="m3e-menu__item" role="menuitem" tabindex="-1" aria-labelledby="base-settings">
+            <span class="m3e-menu__item-leading">
+              <span class="m3e-icon" aria-hidden="true">settings</span>
+            </span>
+            <span class="m3e-menu__item-text">
+              <span class="m3e-menu__item-label" id="base-settings">Settings</span>
+            </span>
+          </div>
+        </div>
+        <div class="m3e-menu__group" role="group" aria-label="Feedback">
+          <div class="m3e-menu__item" role="menuitem" tabindex="-1" aria-labelledby="base-mail">
+            <span class="m3e-menu__item-leading">
+              <span class="m3e-icon" aria-hidden="true">mail</span>
+            </span>
+            <span class="m3e-menu__item-text">
+              <span class="m3e-menu__item-label" id="base-mail">Send feedback</span>
+            </span>
+            <span class="m3e-menu__item-trailing">F11</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section aria-labelledby="elements-heading">
+    <h2 id="elements-heading">Custom element</h2>
+    <p>
+      An <code>&lt;m3e-menu anchor="…"&gt;</code> with <code>&lt;m3e-menu-item&gt;</code> and <code>&lt;m3e-menu-group&gt;</code> children. Events: <code>action</code> on the item, with a detail of <code>&#123; value, checked &#125;</code>, and <code>open-change</code> on the menu.
+    </p>
+    <div class="docs-menu-demos" data-testid="elements">
+      <button
+        type="button"
+        id="el-more"
+        class="m3e-icon-button m3e-icon-button--standard"
+        aria-label="More"
+      >
+        <span class="m3e-icon" aria-hidden="true">more_vert</span>
+      </button>
+      <m3e-menu anchor="el-more" data-testid="el-menu">
+        <m3e-menu-item value="cut" icon="content_cut" trailing-text="⌘X">Cut</m3e-menu-item>
+        <m3e-menu-item value="copy" icon="content_copy" trailing-text="⌘C">Copy</m3e-menu-item>
+        <m3e-menu-item value="paste" icon="content_paste" trailing-text="⌘V" disabled
+          >Paste</m3e-menu-item
+        >
+        <m3e-menu-item
+          value="align"
+          icon="format_align_left"
+          trailing-icon="arrow_right"
+          submenu="el-align">Align</m3e-menu-item
+        >
+        <m3e-menu-item value="share" icon="share" supporting-text="Send a copy">Share</m3e-menu-item>
+      </m3e-menu>
+      <m3e-menu id="el-align" label="Align">
+        <m3e-menu-item value="align-left" icon="format_align_left">Left</m3e-menu-item>
+        <m3e-menu-item value="align-center" icon="format_align_center">Center</m3e-menu-item>
+        <m3e-menu-item value="align-right" icon="format_align_right">Right</m3e-menu-item>
+      </m3e-menu>
+
+      <button type="button" id="el-style" class="m3e-button m3e-button--tonal">Style</button>
+      <m3e-menu anchor="el-style" data-testid="el-style-menu">
+        <m3e-menu-group label="Text" divider>
+          <m3e-menu-item type="checkbox" value="bold" icon="format_bold" checked-icon="check" checked
+            >Bold</m3e-menu-item
+          >
+          <m3e-menu-item type="checkbox" value="italic" icon="format_italic" checked-icon="check"
+            >Italic</m3e-menu-item
+          >
+          <m3e-menu-item type="checkbox" value="underline" checked-icon="check"
+            >Underline</m3e-menu-item
+          >
+        </m3e-menu-group>
+        <m3e-menu-group aria-label="Alignment">
+          <m3e-menu-item type="radio" value="left" icon="format_align_left" checked
+            >Left</m3e-menu-item
+          >
+          <m3e-menu-item type="radio" value="center" icon="format_align_center"
+            >Center</m3e-menu-item
+          >
+        </m3e-menu-group>
+      </m3e-menu>
+
+      <button type="button" id="el-vibrant" class="m3e-button m3e-button--outlined">Vibrant</button>
+      <m3e-menu anchor="el-vibrant" variant="vibrant" data-testid="el-vibrant-menu">
+        <m3e-menu-item value="mail" icon="mail">Mail</m3e-menu-item>
+        <m3e-menu-item value="share" icon="share">Share</m3e-menu-item>
+        <m3e-menu-item value="delete" icon="delete">Delete</m3e-menu-item>
+      </m3e-menu>
+
+      <button type="button" id="el-baseline" class="m3e-button m3e-button--text">Baseline</button>
+      <m3e-menu anchor="el-baseline" variant="baseline" data-testid="el-baseline-menu">
+        <m3e-menu-item value="edit" icon="edit">Edit</m3e-menu-item>
+        <m3e-menu-item value="settings" icon="settings">Settings</m3e-menu-item>
+        <m3e-menu-item value="feedback" icon="mail" trailing-text="F11">Send feedback</m3e-menu-item>
+      </m3e-menu>
+
+      <p class="docs-menu-log">Last action: <output id="el-log">none</output></p>
+    </div>
+
+    <div dir="rtl" class="docs-menu-demos" data-testid="rtl">
+      <button type="button" id="el-rtl" class="m3e-button m3e-button--tonal">قائمة</button>
+      <m3e-menu anchor="el-rtl" data-testid="el-rtl-menu">
+        <m3e-menu-item value="edit" icon="edit" trailing-text="E">تعديل</m3e-menu-item>
+        <m3e-menu-item value="share" icon="share">مشاركة</m3e-menu-item>
+      </m3e-menu>
+    </div>
+  </section>
+
+  <section aria-labelledby="react-heading">
+    <h2 id="react-heading">React</h2>
+    <p>
+      A <code>&lt;MenuTrigger&gt;</code> around a button and a <code>&lt;Menu&gt;</code> of <code>&lt;MenuItem&gt;</code> / <code>&lt;MenuSection&gt;</code> elements. The <code>selectionMode</code> prop makes items checkable (<code>multiple</code>) or selectable (<code>single</code>), and <code>&lt;MenuItem submenu=&#123;&lt;Menu&gt;…&lt;/Menu&gt;&#125;&gt;</code> nests a menu.
+    </p>
+    <MenusPlayground client:only="react" />
+  </section>
+
+  <section aria-labelledby="css-heading">
+    <h2 id="css-heading">CSS only</h2>
+    <p>
+      A <code>popover</code> with <code>popovertarget</code> opens without JavaScript, positioned by CSS anchor positioning where supported and animated on the springs' <code>linear()</code> curves. It has no menu keyboard model: use the element or React layer for that.
+    </p>
+    <div class="docs-menu-demos">
+      <button
+        type="button"
+        class="m3e-button m3e-button--outlined docs-css-anchor"
+        popovertarget="css-menu"
+        data-testid="css-trigger">Open (CSS only)</button
+      >
+      <div class="m3e-menu docs-css-menu" popover id="css-menu" role="menu" aria-label="CSS only">
+        <div class="m3e-menu__item" role="menuitem" tabindex="0" aria-labelledby="css-a">
+          <span class="m3e-menu__item-text">
+            <span class="m3e-menu__item-label" id="css-a">First</span>
+          </span>
+        </div>
+        <div class="m3e-menu__item" role="menuitem" tabindex="0" aria-labelledby="css-b">
+          <span class="m3e-menu__item-text">
+            <span class="m3e-menu__item-label" id="css-b">Second</span>
+          </span>
+        </div>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<script>
+  import '@kyralabs/m3exp-web/elements';
+
+  const log = document.getElementById('el-log')!;
+  document.querySelector('[data-testid="elements"]')!.addEventListener('action', (e) => {
+    const { value, checked } = (e as CustomEvent<{ value: string; checked: boolean | null }>)
+      .detail;
+    log.textContent = checked === null ? value : `${value}: ${String(checked)}`;
+  });
+</script>

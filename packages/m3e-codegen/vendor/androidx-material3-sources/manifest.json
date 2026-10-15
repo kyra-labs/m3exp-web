@@ -14,9 +14,13 @@
     "ToggleButton.kt": "176a1adf0656d8c9fb51d0b34207b2775ee1e31c20a5d68915a9fc6ee318ebbe",
     "WideNavigationRail.kt": "d29cabe67bcdda8fb746c21fbba28d860d430c9632184f89fd8fc5251b04a6b9",
     "Elevation.kt": "304e9d0d7749bf1a7a2646acd7f05a7d6f5c52fe0118fd8bbfd37fbd03d08f2f",
-    "LoadingIndicator.kt": "5b369a09cf80401620e49387116dad4d49dd785eb086bd917a1d1f52142ce8b9"
+    "LoadingIndicator.kt": "5b369a09cf80401620e49387116dad4d49dd785eb086bd917a1d1f52142ce8b9",
+    "Menu.kt": "f6fe29552c15e79a2a102d65fc450bb60c34816cbda0580e98c8539588ce2938",
+    "MenuDefaults.kt": "dfc6c3c97ca24d7427acb9fe922f2aa0d4529f95a5f4007fc19bbd071f127852",
+    "MenuPosition.kt": "c2f77f3d5da46fd9c82c7fa06a1a52c87ae12bcfddd0a462cd4e66211516a33f"
   },
   "upstream": {
-    "Elevation.kt": "internal/Elevation.kt"
+    "Elevation.kt": "internal/Elevation.kt",
+    "MenuPosition.kt": "internal/MenuPosition.kt"
   }
 }

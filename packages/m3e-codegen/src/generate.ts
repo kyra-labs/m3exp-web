@@ -18,9 +18,11 @@ import { extractChipDefaults } from './chip-defaults.js';
 import { extractElevationMotion } from './elevation-motion.js';
 import { extractCenteredPadding, extractNavigationDefaults } from './navigation-defaults.js';
 import { extractLoadingIndicatorMotion } from './loading-indicator-motion.js';
+import { extractMenuDefaults } from './menu-defaults.js';
 import {
   ANIMATION_CORE_PATH as ANIMATION_CORE_DIR,
   MATERIAL3_PATH as MATERIAL3_DIR,
+  MATERIAL3_ANDROID_PATH as MATERIAL3_ANDROID_DIR,
 } from './vendor.js';
 import { boxShadow, parseElevationShadows } from './elevation.js';
 import { type Expr, type Member, type TokenFile, parseTokenFile } from './kotlin.js';
@@ -841,6 +843,29 @@ export function generate({
     ]),
   });
 
+  // Menu layout literals and open/close targets (Menu.kt, MenuDefaults.kt; see menu-defaults.ts).
+  const menuDefaults = extractMenuDefaults(material3Sources);
+  components.set('menu-defaults', {
+    object: 'MenuDefaults',
+    tokens: menuDefaults.map((d) => {
+      const dir = d.file === 'AndroidMenu.android.kt' ? MATERIAL3_ANDROID_DIR : MATERIAL3_DIR;
+      const e: Emitted = {
+        name: d.name,
+        value: d.value,
+        object: d.owner,
+        member: d.member,
+        raw: d.raw,
+        line: d.line,
+        cite: `${dir}/${d.file}@${commit} L${String(d.line)}`,
+      };
+      if (d.note !== undefined) e.note = d.note;
+      return e;
+    }),
+    js: Object.fromEntries(
+      menuDefaults.map((d) => [camel(d.name.replace(/^--m3e-comp-/, '').split('-')), d.number]),
+    ),
+  });
+
   for (const [name, c] of [...components].sort(([a], [b]) => a.localeCompare(b))) {
     out.set(
       `components/${name}.css`,
@@ -886,7 +911,14 @@ export function generate({
                       [],
                       `${MATERIAL3_DIR}/{NavigationBar,NavigationRail,ShortNavigationBar,WideNavigationRail}.kt`,
                     )
-                  : cssFile(`Component tokens: ${c.object}.`, c.tokens),
+                  : name === 'menu-defaults'
+                    ? cssFile(
+                        'Compose menu values that are not in Menu*Tokens (lines: PARITY.md).',
+                        c.tokens,
+                        [],
+                        `${MATERIAL3_DIR}/{Menu,MenuDefaults}.kt + ${MATERIAL3_ANDROID_DIR}/AndroidMenu.android.kt`,
+                      )
+                    : cssFile(`Component tokens: ${c.object}.`, c.tokens),
     );
   }
 

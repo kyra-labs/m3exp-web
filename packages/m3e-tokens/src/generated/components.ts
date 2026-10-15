@@ -1563,6 +1563,30 @@ export const menuTokens = {
   menuListItemLeadingIconColor: "var(--m3e-sys-color-on-secondary-container)"
 } as const;
 
+/** MenuDefaults */
+export const menuDefaults = {
+  menuVerticalMargin: 48,
+  menuHorizontalMargin: 8,
+  menuBaselineHorizontalMargin: 0,
+  menuBaselineVerticalPadding: 8,
+  menuBaselineItemHeight: 48,
+  menuItemHorizontalPadding: 12,
+  menuItemVerticalPadding: 12,
+  menuItemOuterPaddingHorizontal: 4,
+  menuItemOuterPaddingVerticalSupporting: 2,
+  menuItemIconLabelSpace: 8,
+  menuItemMinWidth: 112,
+  menuItemMaxWidth: 280,
+  menuGroupVerticalPadding: 2,
+  menuGroupLabelMinHeight: 32,
+  menuGroupLabelPaddingStart: 12,
+  menuGroupLabelPaddingEnd: 4,
+  menuDividerPaddingHorizontal: 12,
+  menuDividerPaddingVertical: 2,
+  menuClosedScale: 0.8,
+  menuClosedOpacity: 0
+} as const;
+
 /** NavigationBarTokens */
 export const navigationBarTokens = {
   containerColor: "var(--m3e-sys-color-surface-container)",
