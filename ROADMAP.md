@@ -47,8 +47,8 @@ Each milestone ships when its Definition of Done (DoD) is met **and** the owner 
 ## M10 — Pickers
 - Date picker, Time picker (dial/input/scroll).
 
-## M11 — 1.0 hardening
-- Docs completeness, API freeze, bundle audit, a11y audit, TODO(verify) register at zero, deprecation notices documented with 2.0 removal plan, `1.0.0` via Changesets.
+## M11 — Hardening
+- Docs completeness, API review, bundle audit, a11y audit, TODO(verify) register at zero, deprecation notices documented with 2.0 removal plan. No version gate: 1.0.0 shipped after M4 (D16), and breaking changes wait for 2.0.
 
 ## Per-component DoD (all milestones)
 - css + elements/react as specified.
