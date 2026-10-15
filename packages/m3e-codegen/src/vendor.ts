@@ -29,7 +29,14 @@ export const MATERIAL3_SOURCES = [
   'Menu.kt',
   'MenuDefaults.kt',
   'internal/MenuPosition.kt',
+  'SplitButton.kt',
+  'HorizontalCenterOptically.kt',
 ] as const;
+
+/** Material3 samples the generator reads (values the Compose catalog renders, e.g. icon rotation). */
+export const MATERIAL3_SAMPLES_PATH =
+  'compose/material3/material3/samples/src/main/java/androidx/compose/material3/samples';
+export const MATERIAL3_SAMPLE_SOURCES = ['SplitButtonSamples.kt'] as const;
 
 /** Android `actual`s the generator reads (DropdownMenu's popup margins, AndroidMenu.android.kt). */
 export const MATERIAL3_ANDROID_PATH =
@@ -42,6 +49,12 @@ export const ANIMATION_CORE_PATH =
 export const ANIMATION_CORE_SOURCES = ['SpringSimulation.kt', 'SpringEstimation.kt'] as const;
 /** Easing constants (FastOutSlowInEasing…), vendored apart so the spring harness stays minimal. */
 export const ANIMATION_CORE_EASING_SOURCES = ['Easing.kt'] as const;
+/** `animate*AsState` defaults: `spring()` and the `Spring` constants it defaults to. */
+export const ANIMATION_CORE_SPEC_SOURCES = [
+  'AnimateAsState.kt',
+  'AnimationSpec.kt',
+  'VectorizedAnimationSpec.kt',
+] as const;
 
 /** MaterialShapes and its helpers, ported by m3e-shapes (also compiled by its JVM harness). */
 export const MATERIAL3_SHAPE_SOURCES = ['MaterialShapes.kt', 'internal/ShapeUtil.kt'] as const;

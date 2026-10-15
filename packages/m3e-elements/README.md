@@ -51,6 +51,30 @@ it like Compose's `DropdownMenuPositionProvider` and springs it open and closed.
 `checked-icon`, `supporting-text`, `trailing-icon`, `trailing-text`, `submenu="<menu id>"`. The
 `menu-popup.js` entry exports `MenuPopup` (placement and springs only) for other components.
 
+## Split button
+
+```js
+import '@kyralabs/m3e-elements/menu.js';
+import '@kyralabs/m3e-elements/split-button.js';
+```
+
+```html
+<m3e-split-button label="Send" icon="mail" menu-label="More send options" variant="tonal">
+  <m3e-menu>
+    <m3e-menu-item value="schedule">Schedule send</m3e-menu-item>
+    <m3e-menu-item value="draft">Save draft</m3e-menu-item>
+  </m3e-menu>
+</m3e-split-button>
+```
+
+`<m3e-split-button>` renders the `.m3e-split-button` contract (a leading and a trailing
+`.m3e-button`; load m3e-css `button.css` and `split-button.css`) and makes the trailing button the
+anchor of its `<m3e-menu>` child (or the menu whose id `menu` names), which then handles the press,
+the keys, Escape and `aria-expanded`. While the menu is open the trailing button's inner corners
+spring to full and its icon turns 180°. `variant`: `filled` (default), `tonal`, `elevated`,
+`outlined`; `size`: `xs`, `s` (default), `m`, `l`, `xl`; `trailing-icon` (default
+`keyboard_arrow_down`); `disabled`. It emits `press` when the leading button is activated.
+
 ## Ripple for plain HTML
 
 m3e-css draws hover, focus and pressed overlays without JS; the press ripple needs a little.
