@@ -71,10 +71,44 @@ test.describe('primitives', () => {
     await expect(demo).toHaveScreenshot('primitives-auto-ripple-pressed.png');
     await page.mouse.up();
     await expect(button).not.toHaveAttribute('data-pressed', '');
-    // data-ripple goes with the press, so the hover overlay keeps its flat shape.
-    await expect(button).not.toHaveAttribute('data-ripple', '');
-    const image = await button.evaluate((el) => getComputedStyle(el, '::before').backgroundImage);
-    expect(image).toBe('none');
+    // data-ripple stays, as on attachRipple and m3e-react hosts; m3e-css keeps hover flat on it.
+    await expect(button).toHaveAttribute('data-ripple', '');
+    const hover = await page.evaluate(() =>
+      Number.parseFloat(
+        getComputedStyle(document.documentElement).getPropertyValue(
+          '--m3e-sys-state-hover-state-layer-opacity',
+        ),
+      ),
+    );
+    const before = (prop: 'backgroundImage' | 'opacity') =>
+      button.evaluate((el, p) => getComputedStyle(el, '::before')[p], prop);
+    expect(await before('backgroundImage')).toBe('none');
+    await expect.poll(async () => Number.parseFloat(await before('opacity'))).toBeCloseTo(hover, 2);
+  });
+
+  test('plain HTML: attachAutoRipple keeps handling a button on a quick re-press', async ({
+    page,
+  }) => {
+    const button = page.locator('#auto-ripple-demo .m3e-button');
+    await button.scrollIntoViewIfNeeded();
+    const box = (await button.boundingBox())!;
+    const ripple = () =>
+      button.evaluate((el) => ({
+        x: Number.parseFloat(el.style.getPropertyValue('--_m3e-ripple-x')),
+        image: getComputedStyle(el, '::before').backgroundImage,
+      }));
+    await page.mouse.move(box.x + box.width * 0.25, box.y + box.height / 2);
+    await page.mouse.down();
+    await page.mouse.up();
+    await page.mouse.move(box.x + box.width * 0.75, box.y + box.height / 2);
+    await page.mouse.down();
+    await expect(button).toHaveAttribute('data-pressed', '');
+    const second = await ripple();
+    expect(Math.abs(second.x - box.width * 0.75)).toBeLessThanOrEqual(1);
+    expect(second.image).toContain('radial-gradient');
+    await page.mouse.up();
+    await expect(button).not.toHaveAttribute('data-pressed', '');
+    await expect(button).toHaveAttribute('data-ripple', '');
   });
 
   test('plain HTML: a card action press ripples the card', async ({ page }) => {
@@ -88,6 +122,7 @@ test.describe('primitives', () => {
     await expect(action).not.toHaveAttribute('data-pressed', '');
     await page.mouse.up();
     await expect(card).not.toHaveAttribute('data-pressed', '');
+    await expect(card).toHaveAttribute('data-ripple', '');
   });
 
   test('a mouse click never shows the focus ring', async ({ page }) => {
