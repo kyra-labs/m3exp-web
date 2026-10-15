@@ -593,3 +593,39 @@ describe('menu literals (M5 Menus)', () => {
     expect(decl.get('--m3e-comp-menu-baseline-horizontal-margin')).toBe('0');
   });
 });
+
+describe('button group literals (M5 Button group)', () => {
+  const decl = declarations(output.get('components/button-group-defaults.css')!);
+  const kt = inputs.material3Sources['ButtonGroup.kt']!.replace(/\r\n/g, '\n');
+
+  it('ExpandedRatio, the width spring and the release wait come from ButtonGroup.kt', () => {
+    expect(kt).toContain('public val ExpandedRatio: Float = 0.15f');
+    expect(decl.get('--m3e-comp-button-group-expanded-ratio')).toBe('0.15');
+    expect(kt).toContain(
+      'val defaultAnimationSpec = MotionSchemeKeyTokens.FastSpatial.value<Float>()',
+    );
+    expect(decl.get('--m3e-comp-button-group-width-spring-stiffness')).toBe(
+      'var(--m3e-sys-motion-spring-fast-spatial-stiffness)',
+    );
+    expect(kt).toContain('waitUntil { pressedAnimatable.value > 0.75f }');
+    expect(decl.get('--m3e-comp-button-group-release-threshold')).toBe('0.75');
+    expect(kt).toContain('private const val MAX_WAIT_TIME_MILLIS = 1_000L');
+    expect(decl.get('--m3e-comp-button-group-release-max-wait')).toBe('1000ms');
+  });
+
+  it('per-size values from the m3.material.io token DB (XS between-space 18)', () => {
+    expect(decl.get('--m3e-comp-button-group-x-small-between-space')).toBe('18px');
+    for (const size of ['medium', 'large', 'x-large']) {
+      expect(decl.get(`--m3e-comp-button-group-${size}-between-space`)).toBe(
+        'var(--m3e-sys-space-100)',
+      );
+    }
+    expect(decl.get('--m3e-comp-connected-button-group-x-large-inner-corner-corner-size')).toBe(
+      'var(--m3e-sys-shape-corner-value-large-increased)',
+    );
+    // Small comes from the Compose token files, which the token DB's small set matches.
+    expect(decl.has('--m3e-comp-button-group-small-between-space')).toBe(false);
+    const small = declarations(output.get('components/button-group-small.css')!);
+    expect(small.get('--m3e-comp-button-group-small-between-space')).toBe('12px');
+  });
+});

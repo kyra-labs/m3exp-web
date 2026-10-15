@@ -1,0 +1,179 @@
+---
+import ButtonGroupPlayground from '../../islands/ButtonGroupPlayground.tsx';
+import Base from '../../layouts/Base.astro';
+
+const sizes = [
+  { size: 'xs', label: 'Extra small' },
+  { size: 's', label: 'Small' },
+  { size: 'm', label: 'Medium' },
+  { size: 'l', label: 'Large' },
+  { size: 'xl', label: 'Extra large' },
+] as const;
+const views = ['Day', 'Week', 'Month'];
+const shapes = ['round', 'square'] as const;
+---
+
+<Base title="Button group">
+  <link rel="stylesheet" href="/icons/docs-icons.css" slot="head" />
+  <h1>Button group</h1>
+  <p>
+    Button groups (COMPONENT_SPEC §3, Compose <code>ButtonGroup</code> and <code>ButtonGroupDefaults</code>). In a <strong>standard</strong> group a pressed button grows by <code>ExpandedRatio</code> (15&nbsp;%) and its neighbors give up the same width, so the group keeps its size; the width moves on the fast spatial spring and keeps its velocity when a press is interrupted. A <strong>connected</strong> group is a segmented row (it replaces the segmented button): 2dp apart, round outer corners, small inner corners that tighten when pressed and turn round when selected. Selection can be single (<code>radiogroup</code>), multiple (<code>aria-pressed</code>) or none. Trailing items of a standard group can collapse into an overflow menu.
+  </p>
+
+  <section aria-labelledby="standard-heading">
+    <h2 id="standard-heading">Standard (static, CSS only)</h2>
+    <p>
+      Spacing per size: 18 / 12 / 8 / 8 / 8 dp (XS–XL, m3.material.io token DB; Compose uses the small value for every size). Without JavaScript the press morphs the shape only.
+    </p>
+    <div class="docs-button-groups" data-testid="standard">
+      {
+        sizes.map(({ size, label }) => (
+          <div
+            class:list={['m3e-button-group', 'm3e-button-group--standard', `m3e-button-group--size-${size}`]}
+            role="group"
+            aria-label={`${label} standard group`}
+            data-testid={`standard-${size}`}
+          >
+            {['Back', 'Play', 'Next'].map((text, i) => (
+              <button
+                type="button"
+                class:list={[
+                  'm3e-button',
+                  i === 1 ? 'm3e-button--filled' : 'm3e-button--tonal',
+                  `m3e-button--size-${size}`,
+                  'm3e-button--round',
+                  'm3e-button-group__item',
+                ]}
+              >
+                {text}
+              </button>
+            ))}
+          </div>
+        ))
+      }
+    </div>
+  </section>
+
+  <section aria-labelledby="connected-heading">
+    <h2 id="connected-heading">Connected (static, CSS only)</h2>
+    <p>
+      Inner corners per size: 8 / 8 / 8 / 16 / 20 dp, pressed 4 / 4 / 4 / 12 / 16 dp, selected round. Square groups keep the inner corner size on the outside too. Connected groups span their container with equal-width buttons.
+    </p>
+    <div class="docs-button-groups docs-button-groups--connected" data-testid="connected">
+      {
+        shapes.flatMap((shape) =>
+          sizes.map(({ size, label }) => (
+            <div
+              class:list={['m3e-button-group', 'm3e-button-group--connected', `m3e-button-group--size-${size}`]}
+              role="radiogroup"
+              aria-label={`${label} ${shape} connected group`}
+              data-testid={`connected-${shape}-${size}`}
+            >
+              {views.map((text, i) => (
+                <button
+                  type="button"
+                  role="radio"
+                  aria-checked={i === 1 ? 'true' : 'false'}
+                  tabindex={i === 1 ? '0' : '-1'}
+                  class:list={[
+                    'm3e-button',
+                    'm3e-button--filled',
+                    `m3e-button--size-${size}`,
+                    `m3e-button--${shape}`,
+                    'm3e-button-group__item',
+                  ]}
+                >
+                  {text}
+                </button>
+              ))}
+            </div>
+          )),
+        )
+      }
+    </div>
+  </section>
+
+  <section aria-labelledby="elements-heading">
+    <h2 id="elements-heading">Custom element</h2>
+    <p>
+      <code>&lt;m3e-button-group variant size shape button-variant selection-mode overflow label&gt;</code> with <code>&lt;m3e-button-group-item value icon selected disabled label&gt;</code> children. Events: <code>change</code> on the group (<code>&#123; value, selected, values &#125;</code>) and <code>action</code> on the item (<code>&#123; value &#125;</code>). Arrow keys, Home and End move focus.
+    </p>
+    <div class="docs-button-group-demos" data-testid="elements">
+      <m3e-button-group label="Playback" button-variant="tonal" data-testid="el-standard">
+        <m3e-button-group-item value="previous" icon="skip_previous">Previous</m3e-button-group-item>
+        <m3e-button-group-item value="play" icon="play_arrow" variant="filled">Play</m3e-button-group-item>
+        <m3e-button-group-item value="next" icon="skip_next">Next</m3e-button-group-item>
+      </m3e-button-group>
+
+      <m3e-button-group
+        variant="connected"
+        selection-mode="single"
+        selection-required
+        label="Place"
+        data-testid="el-connected"
+      >
+        <m3e-button-group-item value="work" icon="work" selected>Work</m3e-button-group-item>
+        <m3e-button-group-item value="restaurant" icon="restaurant">Restaurant</m3e-button-group-item>
+        <m3e-button-group-item value="coffee" icon="coffee">Coffee</m3e-button-group-item>
+      </m3e-button-group>
+
+      <m3e-button-group
+        selection-mode="multiple"
+        button-variant="outlined"
+        size="xs"
+        label="Text style"
+        data-testid="el-multiple"
+      >
+        <m3e-button-group-item value="bold" icon="format_bold" selected>Bold</m3e-button-group-item>
+        <m3e-button-group-item value="italic" icon="format_italic">Italic</m3e-button-group-item>
+        <m3e-button-group-item value="underline" icon="format_underlined"
+          >Underline</m3e-button-group-item
+        >
+      </m3e-button-group>
+
+      <div class="docs-button-group-resizable" data-testid="el-overflow-box">
+        <m3e-button-group overflow label="Edit" data-testid="el-overflow">
+          <m3e-button-group-item value="cut" icon="content_cut">Cut</m3e-button-group-item>
+          <m3e-button-group-item value="copy" icon="content_copy">Copy</m3e-button-group-item>
+          <m3e-button-group-item value="paste" icon="content_paste">Paste</m3e-button-group-item>
+          <m3e-button-group-item value="share" icon="share">Share</m3e-button-group-item>
+          <m3e-button-group-item value="delete" icon="delete">Delete</m3e-button-group-item>
+        </m3e-button-group>
+      </div>
+
+      <p class="docs-button-group-log">Last event: <output id="el-log">none</output></p>
+    </div>
+
+    <div dir="rtl" class="docs-button-group-demos" data-testid="rtl">
+      <m3e-button-group label="عرض" variant="connected" selection-mode="single" data-testid="el-rtl">
+        <m3e-button-group-item value="day" selected>يوم</m3e-button-group-item>
+        <m3e-button-group-item value="week">أسبوع</m3e-button-group-item>
+        <m3e-button-group-item value="month">شهر</m3e-button-group-item>
+      </m3e-button-group>
+    </div>
+  </section>
+
+  <section aria-labelledby="react-heading">
+    <h2 id="react-heading">React</h2>
+    <p>
+      <code>&lt;ButtonGroup variant size shape buttonVariant selectionMode selectedKeys onSelectionChange onAction overflow&gt;</code> with <code>&lt;ButtonGroupItem id icon variant isDisabled onPress&gt;</code> children. The buttons are React Aria (<code>useButton</code>, or <code>useToggleButtonGroupItem</code> when selectable); the motion, roving focus and overflow measurement are the same code the element runs.
+    </p>
+    <ButtonGroupPlayground client:only="react" />
+  </section>
+</Base>
+
+<script>
+  import '@kyralabs/m3exp-web/elements';
+
+  const log = document.getElementById('el-log')!;
+  const box = document.querySelector('[data-testid="elements"]')!;
+  box.addEventListener('change', (e) => {
+    if (!(e instanceof CustomEvent)) return;
+    const { values } = (e as CustomEvent<{ values: string[] }>).detail;
+    log.textContent = `change: ${values.join(', ') || 'none'}`;
+  });
+  box.addEventListener('action', (e) => {
+    if (!(e instanceof CustomEvent)) return;
+    log.textContent = `action: ${(e as CustomEvent<{ value: string }>).detail.value}`;
+  });
+</script>

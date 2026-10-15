@@ -11,3 +11,4 @@ export * from './assist-chip/index.js';
 export * from './loading-indicator/index.js';
 export * from './fab/index.js';
 export * from './menu/index.js';
+export * from './button-group/index.js';

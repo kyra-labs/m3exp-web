@@ -44,3 +44,8 @@ export {
   withHeight,
   withHeightOffset,
 } from './app-bar-scroll.js';
+export {
+  type ButtonGroupItemSize,
+  buttonGroupVisibleCount,
+  buttonGroupWidths,
+} from './button-group.js';

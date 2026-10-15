@@ -14,6 +14,7 @@ export const TOKENS_PATH = `${MATERIAL3_PATH}/tokens`;
 export const MATERIAL3_SOURCES = [
   'ColorScheme.kt',
   'Button.kt',
+  'ButtonGroup.kt',
   'Chip.kt',
   'ToggleButton.kt',
   'InteractiveComponentSize.kt',

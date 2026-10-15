@@ -1,0 +1,247 @@
+/*
+ * Button group, standard and connected (COMPONENT_SPEC §3). Static layout here; the width
+ * redistribution on press, interruptible shape springs and overflow measurement are JavaScript
+ * (m3e-elements `<m3e-button-group>` and m3e-react `<ButtonGroup>`, both through m3e-elements'
+ * ButtonGroupLayout).
+ *
+ *   <div class="m3e-button-group m3e-button-group--size-s" role="group" aria-label="Text">
+ *     <button class="m3e-button m3e-button--filled m3e-button--size-s m3e-button--round
+ *       m3e-button-group__item" type="button">Bold</button>
+ *     …
+ *   </div>
+ *   <div class="m3e-button-group m3e-button-group--connected" role="radiogroup" aria-label="View">
+ *     <button class="m3e-button … m3e-button-group__item" role="radio" aria-checked="true">Day</button>
+ *     …
+ *   </div>
+ *
+ * Variants: --standard (default) --connected. Sizes: --size-xs --size-s (default) --size-m
+ * --size-l --size-xl; give the items the matching .m3e-button--size-*. --overflow makes the group
+ * span its container so trailing items can collapse into the menu of the
+ * .m3e-button-group__overflow icon button (hidden items carry `hidden`).
+ *
+ * Sources (compose/material3 @ 19991f2c, ButtonGroup.kt; m3.material.io Button groups):
+ * - Standard spacing: ButtonGroupDefaults.HorizontalArrangement = ButtonGroupSmallTokens.BetweenSpace
+ *   (12dp, Compose uses it for every size); XS 18, M/L/XL 8 from the m3.material.io token DB
+ *   (button-group-defaults.css), "to ensure a minimum accessible target size of 48dp".
+ * - Items keep their intrinsic width and the group hugs them (ButtonGroupMeasurePolicy measures
+ *   maxIntrinsicWidth), top-aligned (verticalAlignment = Alignment.Top). Labels never wrap
+ *   (clickableItem: maxLines 1, softWrap false).
+ * - Connected: ButtonGroupDefaults.ConnectedSpaceBetween (2dp) and the connected leading / middle /
+ *   trailing ToggleButtonShapes: outer corners round (CornerFull; square groups keep the inner
+ *   corner size there, m3.material.io Measurements), inner corners InnerCornerCornerSize, pressed
+ *   inner corners PressedInnerCornerCornerSize, checked = CornerFull (connectedButtonCheckedShape);
+ *   pressed wins over checked (ToggleButton.kt shapeByInteraction). Per-size corners from the
+ *   token DB. The shape morphs on the fast spatial spring (ToggleButton.kt L176).
+ * - Connected groups span the width of their container with equal-width items (m3.material.io
+ *   Button groups › Guidelines › Container); items never shrink below their content or the button
+ *   minimum width. Compose has no connected layout of its own (its samples use a FlowRow).
+ */
+@import '@kyralabs/m3e-tokens/components/button-group-small.css';
+@import '@kyralabs/m3e-tokens/components/connected-button-group-small.css';
+@import '@kyralabs/m3e-tokens/components/button-group-defaults.css';
+
+/* Registered so the resolved corners are lengths (the JS springs read them as their targets). */
+@property --_m3e-button-group-start {
+  syntax: '<length-percentage>';
+  inherits: false;
+  initial-value: 0%;
+}
+
+@property --_m3e-button-group-end {
+  syntax: '<length-percentage>';
+  inherits: false;
+  initial-value: 0%;
+}
+
+@layer m3e.components {
+  .m3e-button-group {
+    --_m3e-button-group-space: var(--m3e-comp-button-group-small-between-space);
+
+    display: inline-flex;
+    gap: var(--_m3e-button-group-space);
+    align-items: flex-start;
+    max-inline-size: 100%;
+    vertical-align: middle;
+  }
+
+  .m3e-button-group--size-xs {
+    --_m3e-button-group-space: var(--m3e-comp-button-group-x-small-between-space);
+  }
+
+  .m3e-button-group--size-m {
+    --_m3e-button-group-space: var(--m3e-comp-button-group-medium-between-space);
+  }
+
+  .m3e-button-group--size-l {
+    --_m3e-button-group-space: var(--m3e-comp-button-group-large-between-space);
+  }
+
+  .m3e-button-group--size-xl {
+    --_m3e-button-group-space: var(--m3e-comp-button-group-x-large-between-space);
+  }
+
+  /* Spans the container, so its width is the space available to the items. */
+  .m3e-button-group--overflow {
+    display: flex;
+  }
+
+  .m3e-button-group > :is(.m3e-button-group__item, .m3e-button-group__overflow) {
+    flex: none;
+    white-space: nowrap;
+  }
+
+  .m3e-button-group > :is(.m3e-button-group__item, .m3e-button-group__overflow)[hidden] {
+    display: none;
+  }
+
+  /* Selected items show filled icons (the Compose samples swap to Icons.Filled; COMPONENT_SPEC §0). */
+  .m3e-button-group__item:is([aria-pressed='true'], [aria-checked='true']) > .m3e-icon {
+    --m3e-comp-icon-fill: var(--m3e-ref-typeface-icon-filled);
+  }
+
+  /* --- Connected ----------------------------------------------------------------------------- */
+  .m3e-button-group--connected {
+    --_m3e-button-group-space: var(--m3e-comp-connected-button-group-small-between-space);
+    --_m3e-button-group-inner: var(
+      --m3e-comp-connected-button-group-small-inner-corner-corner-size
+    );
+    --_m3e-button-group-inner-pressed: var(
+      --m3e-comp-connected-button-group-small-inner-corner-corner-size-pressed
+    );
+    --_m3e-button-group-selected-percent: var(
+      --m3e-comp-connected-button-group-small-inner-corner-corner-size-percent-selected
+    );
+
+    display: grid;
+    grid-auto-columns: 1fr;
+    grid-auto-flow: column;
+  }
+
+  .m3e-button-group--connected.m3e-button-group--size-xs {
+    --_m3e-button-group-space: var(--m3e-comp-connected-button-group-x-small-between-space);
+    --_m3e-button-group-inner: var(
+      --m3e-comp-connected-button-group-x-small-inner-corner-corner-size
+    );
+    --_m3e-button-group-inner-pressed: var(
+      --m3e-comp-connected-button-group-x-small-inner-corner-corner-size-pressed
+    );
+    --_m3e-button-group-selected-percent: var(
+      --m3e-comp-connected-button-group-x-small-inner-corner-corner-size-percent-selected
+    );
+  }
+
+  .m3e-button-group--connected.m3e-button-group--size-m {
+    --_m3e-button-group-space: var(--m3e-comp-connected-button-group-medium-between-space);
+    --_m3e-button-group-inner: var(
+      --m3e-comp-connected-button-group-medium-inner-corner-corner-size
+    );
+    --_m3e-button-group-inner-pressed: var(
+      --m3e-comp-connected-button-group-medium-inner-corner-corner-size-pressed
+    );
+    --_m3e-button-group-selected-percent: var(
+      --m3e-comp-connected-button-group-medium-inner-corner-corner-size-percent-selected
+    );
+  }
+
+  .m3e-button-group--connected.m3e-button-group--size-l {
+    --_m3e-button-group-space: var(--m3e-comp-connected-button-group-large-between-space);
+    --_m3e-button-group-inner: var(
+      --m3e-comp-connected-button-group-large-inner-corner-corner-size
+    );
+    --_m3e-button-group-inner-pressed: var(
+      --m3e-comp-connected-button-group-large-inner-corner-corner-size-pressed
+    );
+    --_m3e-button-group-selected-percent: var(
+      --m3e-comp-connected-button-group-large-inner-corner-corner-size-percent-selected
+    );
+  }
+
+  .m3e-button-group--connected.m3e-button-group--size-xl {
+    --_m3e-button-group-space: var(--m3e-comp-connected-button-group-x-large-between-space);
+    --_m3e-button-group-inner: var(
+      --m3e-comp-connected-button-group-x-large-inner-corner-corner-size
+    );
+    --_m3e-button-group-inner-pressed: var(
+      --m3e-comp-connected-button-group-x-large-inner-corner-corner-size-pressed
+    );
+    --_m3e-button-group-selected-percent: var(
+      --m3e-comp-connected-button-group-x-large-inner-corner-corner-size-percent-selected
+    );
+  }
+
+  .m3e-button-group--connected > .m3e-button-group__item {
+    /* Outer corners: round (CornerFull = half the height), or the inner corner size when square. */
+    --_m3e-button-group-outer: var(--_m3e-button-round);
+    --_m3e-button-group-start-rest: var(--_m3e-button-group-inner);
+    --_m3e-button-group-end-rest: var(--_m3e-button-group-inner);
+    --_m3e-button-group-start-pressed: var(--_m3e-button-group-inner-pressed);
+    --_m3e-button-group-end-pressed: var(--_m3e-button-group-inner-pressed);
+    --_m3e-button-group-selected: calc(
+      var(--_m3e-button-height) * var(--_m3e-button-group-selected-percent) / 100
+    );
+    --_m3e-button-group-start: var(--_m3e-button-group-start-rest);
+    --_m3e-button-group-end: var(--_m3e-button-group-end-rest);
+
+    border-start-start-radius: var(--_m3e-button-group-start);
+    border-start-end-radius: var(--_m3e-button-group-end);
+    border-end-end-radius: var(--_m3e-button-group-end);
+    border-end-start-radius: var(--_m3e-button-group-start);
+    transition:
+      --_m3e-button-group-start var(--m3e-sys-motion-spring-fast-spatial-duration)
+        var(--m3e-sys-motion-spring-fast-spatial-easing),
+      --_m3e-button-group-end var(--m3e-sys-motion-spring-fast-spatial-duration)
+        var(--m3e-sys-motion-spring-fast-spatial-easing),
+      background-color var(--m3e-sys-motion-spring-fast-effects-duration)
+        var(--m3e-sys-motion-spring-fast-effects-easing),
+      color var(--m3e-sys-motion-spring-fast-effects-duration)
+        var(--m3e-sys-motion-spring-fast-effects-easing),
+      box-shadow var(--_m3e-button-shadow-duration) var(--_m3e-button-shadow-easing);
+  }
+
+  .m3e-button-group--connected > .m3e-button-group__item.m3e-button--square {
+    --_m3e-button-group-outer: var(--_m3e-button-group-inner);
+  }
+
+  .m3e-button-group--connected
+    > .m3e-button-group__item:nth-child(1 of .m3e-button-group__item:not([hidden])) {
+    --_m3e-button-group-start-rest: var(--_m3e-button-group-outer);
+    --_m3e-button-group-start-pressed: var(--_m3e-button-group-outer);
+  }
+
+  .m3e-button-group--connected
+    > .m3e-button-group__item:nth-last-child(1 of .m3e-button-group__item:not([hidden])) {
+    --_m3e-button-group-end-rest: var(--_m3e-button-group-outer);
+    --_m3e-button-group-end-pressed: var(--_m3e-button-group-outer);
+  }
+
+  /* Checked: CornerFull. */
+  .m3e-button-group--connected
+    > .m3e-button-group__item:is([aria-pressed='true'], [aria-checked='true']) {
+    --_m3e-button-group-start: var(--_m3e-button-group-selected);
+    --_m3e-button-group-end: var(--_m3e-button-group-selected);
+  }
+
+  /* Pressed wins over checked. */
+  .m3e-button-group--connected
+    > .m3e-button-group__item:is(:active, [data-pressed]):not(:disabled, [aria-disabled='true']) {
+    --_m3e-button-group-start: var(--_m3e-button-group-start-pressed);
+    --_m3e-button-group-end: var(--_m3e-button-group-end-pressed);
+  }
+
+  /* The ring spans the 2dp gap; keep it above the neighbors. */
+  .m3e-button-group--connected > .m3e-button-group__item:focus-visible {
+    z-index: 1;
+  }
+
+  /* JavaScript springs the corners (inline style); CSS keeps the color transitions. */
+  .m3e-button-group--connected > .m3e-button-group__item[data-spring] {
+    transition-property: background-color, color, box-shadow;
+  }
+}
+
+@layer m3e.base {
+  /* <m3e-button-group> renders the contract inside itself; its item children are data. */
+  :where(m3e-button-group) {
+    display: contents;
+  }
+}
