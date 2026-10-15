@@ -112,6 +112,12 @@
     "limit": "4 KB"
   },
   {
+    "name": "m3e-css: button group",
+    "path": "packages/m3e-css/dist/button-group.css",
+    "rolldown": false,
+    "limit": "4 KB"
+  },
+  {
     "name": "m3e-elements: <m3e-fab-menu> entry (bundles m3e-motion springs)",
     "path": "packages/m3e-elements/dist/fab-menu/index.js",
     "limit": "8 KB"
@@ -157,6 +163,17 @@
     "name": "m3e-elements: menu-popup entry (MenuPopup, used by m3e-react <Menu>)",
     "path": "packages/m3e-elements/dist/menu-popup/index.js",
     "limit": "4 KB"
+  },
+  {
+    "name": "m3e-elements: <m3e-button-group> entry (bundles ButtonGroupLayout + m3e-motion; the <m3e-menu> entry is imported lazily on the first overflow and measured on its own)",
+    "path": "packages/m3e-elements/dist/button-group/index.js",
+    "ignore": ["@kyralabs/m3e-elements"],
+    "limit": "8 KB"
+  },
+  {
+    "name": "m3e-elements: button-group-layout entry (ButtonGroupLayout, used by m3e-react <ButtonGroup>)",
+    "path": "packages/m3e-elements/dist/button-group-layout/index.js",
+    "limit": "5 KB"
   },
   {
     "name": "m3e-elements: <m3e-split-button> entry (m3e-motion springs; the <m3e-menu> it opens is its own entry)",
@@ -217,6 +234,13 @@
     "limit": "34 KB"
   },
   {
+    "name": "m3e-react: { ButtonGroup, ButtonGroupItem } only (incl. react-aria buttons + menu hooks, ButtonGroupLayout)",
+    "path": "packages/m3e-react/dist/index.js",
+    "import": "{ ButtonGroup, ButtonGroupItem }",
+    "ignore": ["react", "react-dom"],
+    "limit": "40 KB"
+  },
+  {
     "name": "m3e-react: { SplitButton, Menu, MenuItem } only (incl. react-aria button + menu hooks, MenuPopup, motion springs)",
     "path": "packages/m3e-react/dist/index.js",
     "import": "{ SplitButton, Menu, MenuItem }",
@@ -231,10 +255,10 @@
     "limit": "1 KB"
   },
   {
-    "name": "m3exp-web (root): { Icon } (the root entry registers every custom element by design, ~18 kB with <m3e-menu> and <m3e-split-button>; a leaked React component adds ~10 kB of react-aria. Raise with m3e-elements (all), max 31 KB)",
+    "name": "m3exp-web (root): { Icon } (the root entry registers every custom element by design, ~21.5 kB with <m3e-menu>, <m3e-split-button> and <m3e-button-group>; a leaked React component adds ~10 kB of react-aria. Raise with m3e-elements (all), max 31 KB)",
     "path": "packages/m3exp-web/dist/index.js",
     "import": "{ Icon }",
     "ignore": ["react", "react-dom"],
-    "limit": "22 KB"
+    "limit": "24 KB"
   }
 ]

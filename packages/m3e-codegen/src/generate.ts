@@ -14,6 +14,7 @@ import { themeCss } from '@kyralabs/m3e-tokens/theme-css';
 import { type BaselineColor, baselineColors } from './color.js';
 import { extractAppBarDefaults } from './app-bar-defaults.js';
 import { extractButtonDefaults } from './button-defaults.js';
+import { checkSmallAgainstCompose, extractButtonGroupDefaults } from './button-group-defaults.js';
 import { extractChipDefaults } from './chip-defaults.js';
 import { extractElevationMotion } from './elevation-motion.js';
 import { extractFabDefaults } from './fab-defaults.js';
@@ -949,6 +950,42 @@ export function generate({
     ),
   });
 
+  // ButtonGroupDefaults values Compose renders + the per-size m3.material.io values it lacks
+  // (see button-group-defaults.ts).
+  const buttonGroupDefaults = extractButtonGroupDefaults(material3Sources);
+  checkSmallAgainstCompose(
+    Object.fromEntries(
+      ['button-group-small', 'connected-button-group-small'].flatMap((n) =>
+        (components.get(n)?.tokens ?? []).map((t) => [t.name, t.value]),
+      ),
+    ),
+    Object.fromEntries(
+      sys.filter((t) => t.value.endsWith('px')).map((t) => [t.name, Number.parseFloat(t.value)]),
+    ),
+  );
+  components.set('button-group-defaults', {
+    object: 'ButtonGroupDefaults',
+    tokens: buttonGroupDefaults.map((d) => {
+      const e: Emitted = {
+        name: d.name,
+        value: d.value,
+        object: d.owner,
+        member: d.member,
+        raw: d.raw,
+        line: d.line ?? 0,
+        cite:
+          d.file === undefined
+            ? (d.cite ?? '')
+            : `${MATERIAL3_DIR}/${d.file}@${commit} L${String(d.line)}`,
+      };
+      if (d.note !== undefined) e.note = d.note;
+      return e;
+    }),
+    js: Object.fromEntries(
+      buttonGroupDefaults.map((d) => [camel(d.name.replace(/^--m3e-comp-/, '').split('-')), d.js]),
+    ),
+  });
+
   for (const [name, c] of [...components].sort(([a], [b]) => a.localeCompare(b))) {
     out.set(
       `components/${name}.css`,
@@ -1008,27 +1045,34 @@ export function generate({
                           [],
                           `${MATERIAL3_DIR}/{NavigationBar,NavigationRail,ShortNavigationBar,WideNavigationRail}.kt`,
                         )
-                      : name === 'menu-defaults'
+                      : name === 'button-group-defaults'
                         ? cssFile(
-                            'Compose menu values that are not in Menu*Tokens (lines: PARITY.md).',
+                            'Compose ButtonGroupDefaults values that are not in ButtonGroup*Tokens, plus the per-size m3.material.io token DB values Compose lacks (lines: PARITY.md).',
                             c.tokens,
                             [],
-                            `${MATERIAL3_DIR}/{Menu,MenuDefaults}.kt + ${MATERIAL3_ANDROID_DIR}/AndroidMenu.android.kt`,
+                            `${MATERIAL3_DIR}/ButtonGroup.kt + m3.material.io token DB md.comp.button-group`,
                           )
-                        : name === 'split-button-defaults'
+                        : name === 'menu-defaults'
                           ? cssFile(
-                              'Compose split button values that are not in SplitButton*Tokens (lines: PARITY.md).',
+                              'Compose menu values that are not in Menu*Tokens (lines: PARITY.md).',
                               c.tokens,
-                              [
-                                '@media (prefers-reduced-motion: reduce) {',
-                                '  :root {',
-                                ...SPLIT_BUTTON_REDUCED_MOTION.map((l) => `    ${l}`),
-                                '  }',
-                                '}',
-                              ],
-                              `${MATERIAL3_DIR}/{SplitButton,HorizontalCenterOptically}.kt + ${MATERIAL3_SAMPLES_DIR}/SplitButtonSamples.kt + ${ANIMATION_CORE_DIR}/{AnimateAsState,AnimationSpec,VectorizedAnimationSpec}.kt`,
+                              [],
+                              `${MATERIAL3_DIR}/{Menu,MenuDefaults}.kt + ${MATERIAL3_ANDROID_DIR}/AndroidMenu.android.kt`,
                             )
-                          : cssFile(`Component tokens: ${c.object}.`, c.tokens),
+                          : name === 'split-button-defaults'
+                            ? cssFile(
+                                'Compose split button values that are not in SplitButton*Tokens (lines: PARITY.md).',
+                                c.tokens,
+                                [
+                                  '@media (prefers-reduced-motion: reduce) {',
+                                  '  :root {',
+                                  ...SPLIT_BUTTON_REDUCED_MOTION.map((l) => `    ${l}`),
+                                  '  }',
+                                  '}',
+                                ],
+                                `${MATERIAL3_DIR}/{SplitButton,HorizontalCenterOptically}.kt + ${MATERIAL3_SAMPLES_DIR}/SplitButtonSamples.kt + ${ANIMATION_CORE_DIR}/{AnimateAsState,AnimationSpec,VectorizedAnimationSpec}.kt`,
+                              )
+                            : cssFile(`Component tokens: ${c.object}.`, c.tokens),
     );
   }
 

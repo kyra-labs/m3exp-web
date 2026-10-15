@@ -10,4 +10,6 @@ export default defineConfig({
   dts: { ...baseOptions.dts, resolve: ['@kyralabs/m3e-motion', '@kyralabs/m3e-shapes'] },
   entry: ['src/index.ts', 'src/*/index.ts'],
   splitting: true,
+  // <m3e-button-group> imports the menu entry lazily (its first overflow); keep it a package import.
+  external: ['@kyralabs/m3e-elements/menu.js'],
 });

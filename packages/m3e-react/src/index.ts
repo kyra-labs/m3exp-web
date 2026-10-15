@@ -12,4 +12,5 @@ export * from './loading-indicator/index.js';
 export * from './fab/index.js';
 export * from './fab-menu/index.js';
 export * from './menu/index.js';
+export * from './button-group/index.js';
 export * from './split-button/index.js';

@@ -510,3 +510,37 @@ button.docs-tile {
 .docs-css-menu {
   position-anchor: --docs-css-menu;
 }
+
+/* Button group page: groups stacked, demos in a column, a container narrow enough to overflow. */
+.docs-button-groups {
+  display: flex;
+  flex-direction: column;
+  gap: var(--m3e-sys-space-300);
+  align-items: flex-start;
+}
+
+.docs-button-groups--connected {
+  align-items: stretch;
+  max-inline-size: 480px;
+}
+
+.docs-button-group-demos {
+  display: flex;
+  flex-direction: column;
+  gap: var(--m3e-sys-space-300);
+  align-items: flex-start;
+  margin-block: var(--m3e-sys-space-300);
+}
+
+.docs-button-group-connected {
+  align-self: stretch;
+  max-inline-size: 480px;
+}
+
+.docs-button-group-resizable {
+  inline-size: min(100%, 440px);
+}
+
+.docs-button-group-log {
+  margin: 0;
+}
