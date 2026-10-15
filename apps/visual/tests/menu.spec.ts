@@ -212,27 +212,25 @@ test('the menu flips above its trigger when there is no room below', async ({ pa
 });
 
 test('opens with scale + fade on the fast spatial / fast effects springs', async ({ page }) => {
-  const writes = await page.evaluate(async () => {
-    const menu = document.querySelector<HTMLElement>('[data-testid="el-menu"] .m3e-menu')!;
-    const seen: [string, string][] = [];
-    const observer = new MutationObserver(() => {
-      seen.push([
-        menu.style.getPropertyValue('--_m3e-menu-scale'),
-        menu.style.getPropertyValue('--_m3e-menu-opacity'),
-      ]);
-    });
-    observer.observe(menu, { attributes: true, attributeFilter: ['style'] });
-    document.getElementById('el-more')!.click();
-    // Until both springs rest (frame timing varies by browser and machine load).
-    const start = performance.now();
-    while (performance.now() - start < 10_000) {
-      const at = seen.at(-1);
-      if (at?.[0] === '1' && at[1] === '1') break;
-      await new Promise((r) => setTimeout(r, 50));
-    }
-    observer.disconnect();
-    return seen.filter(([s]) => s !== '');
+  // A fake clock drives requestAnimationFrame, so every 16 ms frame is sampled whatever the
+  // machine load (headless WebKit can skip frames on a busy runner).
+  await page.clock.install({ time: new Date('2026-01-01T00:00:00Z') });
+  await page.reload();
+  await expect(page.locator('#el-more')).toBeVisible();
+  await page.clock.pauseAt(new Date('2026-01-01T00:01:00Z'));
+  const read = () =>
+    popup(page, 'el-menu').evaluate((el) => [
+      el.style.getPropertyValue('--_m3e-menu-scale'),
+      el.style.getPropertyValue('--_m3e-menu-opacity'),
+    ]);
+  await page.locator('#el-more').evaluate((el) => {
+    (el as HTMLElement).click();
   });
+  const writes = [await read()];
+  for (let i = 0; i < 60 && writes.at(-1)!.join() !== '1,1'; i++) {
+    await page.clock.runFor(16);
+    writes.push(await read());
+  }
   const closedScale = await px(page, '--m3e-comp-menu-closed-scale');
   expect(writes[0]!.map(Number)).toEqual([
     closedScale,
@@ -240,10 +238,9 @@ test('opens with scale + fade on the fast spatial / fast effects springs', async
   ]);
   expect(writes.at(-1)).toEqual(['1', '1']);
   const scales = writes.map(([s]) => Number(s));
-  // Frames in flight (how many depends on the browser's frame timing); the expressive fast
-  // spatial spring (ζ 0.6) overshoots 1 before settling, so in-flight values pass 1.
-  expect(scales.some((s) => s !== closedScale && s !== 1)).toBe(true);
-  expect(scales.every((s) => s >= closedScale)).toBe(true);
+  // In flight between the targets; the expressive fast spatial spring (ζ 0.6) overshoots 1.
+  expect(scales.some((s) => s > closedScale && s < 1)).toBe(true);
+  expect(Math.max(...scales)).toBeGreaterThan(1);
 });
 
 test.describe('reduced motion', () => {
