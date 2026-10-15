@@ -101,20 +101,36 @@
 
 ## 4. Split button
 - **Purpose:** primary action plus a menu of related actions. Sizes XS–XL.
-- **Variants:** elevated, filled, tonal, outlined.
+- **Variants:** elevated, filled, tonal, outlined (`SplitButtonDefaults.ElevatedLeadingButton` … `OutlinedTrailingButton`: the Button colors, elevations and outline).
 - **Anatomy:** leading button, trailing menu button, gap, menu.
-- **Tokens:** `TODO(verify)` SplitButton*Tokens.kt: inner gap, inner corner radius per size, trailing icon rotation.
-- **Motion:** trailing icon rotates 180° and inner corners morph to full on fastSpatial (m3.material.io: trailing button "spins and changes shape when activated").
-- **Behavior:** trailing button toggles the menu and reflects open state.
-- **Keyboard/ARIA:** two buttons; trailing `aria-haspopup="menu" aria-expanded aria-label`; Down arrow opens.
-- **Layers:** css + elements (menu) + react.
-- **API:** `<SplitButton variant size onPress menu={<Menu>…</Menu>} menuLabel />`; `.m3e-split-button`.
+- **Tokens (verified, generated):** `SplitButton{XSmall,Small,Medium,Large,XLarge}Tokens.kt@19991f2c` plus the `SplitButtonDefaults` values Compose renders (`components/split-button-defaults.css`; SOURCES register #22).
+
+  | | XS | S | M | L | XL |
+  |---|---|---|---|---|---|
+  | height | 32 | 40 | 56 | 96 | 136 |
+  | inner corner (rest) | 4 | 4 | 4 | 8 | 12 |
+  | inner corner (pressed) | 8 | 12 | 12 | 20 | 20 |
+  | leading padding start / end | 12 / 10 | 16 / 12 | 24 / 24 | 48 / 48 | 64 / 64 |
+  | trailing padding start / end | 13 / 13 | 13 / 13 | 15 / 15 | 29 / 29 | 43 / 43 |
+  | trailing icon | 22 | 22 | 26 | 38 | 50 |
+  | trailing width (padding + icon, ≥ 48) | 48 | 48 | 56 | 96 | 136 |
+
+  - Spacing 2dp at every size (`SplitButtonDefaults.Spacing` = the small BetweenSpace). Minimum width 48dp for both buttons (`LeadingButtonMinWidth`). Outer corners full (`OuterCornerSize` = `ShapeDefaults.CornerFull`). Leading icon size, icon–label space and label style follow the button of the same size (`ButtonDefaults.iconSizeFor` / `iconSpacingFor` / `textStyleFor`, as the samples pass them); content padding is horizontal only.
+  - Checked (menu open) trailing button: `TrailingCheckedShape = CircleShape` (inner corners full; the tokens' `TrailingInnerSelectedCornerCornerSizePercent` 50) and an outline in the content color at `StateTokens.PressedStateLayerOpacity` (0.1). Pressed wins over checked (`shapeByInteraction`).
+  - The trailing content is centered optically: shifted toward the end by `CenterOpticallyCoefficient` (0.11) × (start corners − end corners) (`HorizontalCenterOptically.kt`), 0 when checked.
+  - Compose renders no hover morph: the `InnerHoveredCornerCornerSize` tokens are unused, here too.
+- **Motion:** inner corners (rest → pressed → checked) on the **default effects** spring (`SplitButton.kt` L697, L777, L889: every `LeadingButton` / `TrailingButton`; supersedes the earlier fastSpatial note). The trailing icon turns 180° when checked on `animateFloatAsState`'s default `spring()` (damping 1, stiffness 1500; `SplitButtonSamples.kt`, the Compose catalog; `AnimateAsState.kt` → `AnimationSpec.kt` → `Spring.StiffnessMedium` / `DampingRatioNoBouncy`). Both interruptible with their velocity kept. Reduced motion: the rotation (spatial) jumps; the corner morph uses the fast effects spring, as buttons do. (m3.material.io: the trailing button "spins and changes shape when activated".)
+- **Behavior:** the trailing button toggles the menu and reflects open state (`aria-expanded`, checked shape and icon).
+- **Keyboard/ARIA:** two buttons; trailing `aria-haspopup="true"` (equivalent to `"menu"` in WAI-ARIA 1.2; what the APG menu button and React Aria's `useMenuTrigger` use, as Menus §21 does) `aria-expanded aria-label`; Down arrow opens on the first item (Up on the last, Enter/Space on the first); Esc closes and returns focus to the trailing button.
+- **Layers:** css + elements (`<m3e-split-button>` anchors an `<m3e-menu>`) + react.
+- **API:** CSS `.m3e-split-button` > `.m3e-button.m3e-button--<variant>.m3e-button--size-<size>.m3e-split-button__leading` / `__trailing` (load `button.css` too). Element `<m3e-split-button label icon trailing-icon menu-label variant size disabled menu>` with an `<m3e-menu>` child (or `menu="<id>"`); event `press` (leading). React `<SplitButton variant size icon onPress menu={<Menu>…</Menu>} menuLabel trailingIcon isOpen defaultOpen onOpenChange menuPosition isDisabled />`.
 - **Acceptance:**
   - [ ] Trailing icon rotates when open.
   - [ ] `aria-expanded` syncs.
   - [ ] Esc closes and returns focus to the trailing button.
   - [ ] Plus CAC.
-- **Sources:** m3.material.io/components/split-button/overview; SplitButtonLayout; Material Web labs split button (2.5.0).
+- **Fidelity:** the menu is placed from the trailing button (the Compose sample anchors its `DropdownMenu` to the box around the whole layout, so it lines up with the leading button); springs keep their velocity on every retarget (Compose's `AnimatedShapeState` only on a reversal); XS/S reach 48dp with the button's `::after` target instead of reserving layout space (`minimumInteractiveComponentSize`); the samples' trailing tooltip waits for Tooltips (§33).
+- **Sources:** SplitButton.kt, SplitButton*Tokens.kt, HorizontalCenterOptically.kt, internal/AnimatedShape.kt, SplitButtonSamples.kt; m3.material.io/components/split-button/overview; Material Web labs split button (2.5.0, secondary).
 
 ## 5. FAB and extended FAB
 - **Variants:** FAB baseline 56, medium 80, large 96; small 40 **@deprecated (D4)**. Extended FAB small/medium/large. Six color styles (m3.material.io FAB › Specs › Color styles): primary container (default), secondary container, tertiary container, primary, secondary, tertiary. Primary/secondary container read `FabPrimaryContainerTokens` / `FabSecondaryContainerTokens`; the pin has no tertiary or "vibrant" FAB token objects, so the others pair each role with its on-role as Compose's `contentColorFor` does (`ColorScheme.kt` L1096–1105). Surface FABs are no longer recommended (m3.material.io) and not shipped.

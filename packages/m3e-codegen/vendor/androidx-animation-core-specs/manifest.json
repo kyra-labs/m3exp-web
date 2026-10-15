@@ -1,0 +1,10 @@
+{
+  "repo": "https://android.googlesource.com/platform/frameworks/support",
+  "commit": "19991f2c0858aadfcb442ce02b2c8e4743c96898",
+  "path": "compose/animation/animation-core/src/commonMain/kotlin/androidx/compose/animation/core",
+  "files": {
+    "AnimateAsState.kt": "86dfadb3140e95cb5efc47ec5235885aac603d18b8290253b0f14778d40e8acc",
+    "AnimationSpec.kt": "62d3f0ca78b6620e8b220990036a9da083c7bd959f5a54945c60e449379a8884",
+    "VectorizedAnimationSpec.kt": "2a3857a7620fcb108972c8886d18a1620fc54247216db6070750c2755c8c9cf9"
+  }
+}

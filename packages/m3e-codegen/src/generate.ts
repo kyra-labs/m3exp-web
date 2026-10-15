@@ -22,9 +22,14 @@ import { extractCenteredPadding, extractNavigationDefaults } from './navigation-
 import { extractLoadingIndicatorMotion } from './loading-indicator-motion.js';
 import { extractMenuDefaults } from './menu-defaults.js';
 import {
+  SPLIT_BUTTON_REDUCED_MOTION,
+  extractSplitButtonDefaults,
+} from './split-button-defaults.js';
+import {
   ANIMATION_CORE_PATH as ANIMATION_CORE_DIR,
   MATERIAL3_PATH as MATERIAL3_DIR,
   MATERIAL3_ANDROID_PATH as MATERIAL3_ANDROID_DIR,
+  MATERIAL3_SAMPLES_PATH as MATERIAL3_SAMPLES_DIR,
 } from './vendor.js';
 import { boxShadow, parseElevationShadows } from './elevation.js';
 import { type Expr, type Member, type TokenFile, parseTokenFile } from './kotlin.js';
@@ -912,6 +917,38 @@ export function generate({
     ),
   });
 
+  // SplitButtonDefaults values, optical centering and the samples' icon rotation (see
+  // split-button-defaults.ts).
+  const splitButtonDefaults = extractSplitButtonDefaults(
+    material3Sources,
+    Object.fromEntries(files.map((f) => [f.name, f.content])),
+  );
+  const splitButtonDir = (file: string) =>
+    file === 'SplitButtonSamples.kt'
+      ? MATERIAL3_SAMPLES_DIR
+      : /^(AnimateAsState|AnimationSpec|VectorizedAnimationSpec)\.kt$/.test(file)
+        ? ANIMATION_CORE_DIR
+        : MATERIAL3_DIR;
+  components.set('split-button-defaults', {
+    object: 'SplitButtonDefaults',
+    tokens: splitButtonDefaults.map((d) => {
+      const e: Emitted = {
+        name: d.name,
+        value: d.value,
+        object: d.owner,
+        member: d.member,
+        raw: d.raw,
+        line: d.line,
+        cite: `${splitButtonDir(d.file)}/${d.file}@${commit} L${String(d.line)}`,
+      };
+      if (d.note !== undefined) e.note = d.note;
+      return e;
+    }),
+    js: Object.fromEntries(
+      splitButtonDefaults.map((d) => [camel(d.name.replace(/^--m3e-comp-/, '').split('-')), d.js]),
+    ),
+  });
+
   for (const [name, c] of [...components].sort(([a], [b]) => a.localeCompare(b))) {
     out.set(
       `components/${name}.css`,
@@ -978,7 +1015,20 @@ export function generate({
                             [],
                             `${MATERIAL3_DIR}/{Menu,MenuDefaults}.kt + ${MATERIAL3_ANDROID_DIR}/AndroidMenu.android.kt`,
                           )
-                        : cssFile(`Component tokens: ${c.object}.`, c.tokens),
+                        : name === 'split-button-defaults'
+                          ? cssFile(
+                              'Compose split button values that are not in SplitButton*Tokens (lines: PARITY.md).',
+                              c.tokens,
+                              [
+                                '@media (prefers-reduced-motion: reduce) {',
+                                '  :root {',
+                                ...SPLIT_BUTTON_REDUCED_MOTION.map((l) => `    ${l}`),
+                                '  }',
+                                '}',
+                              ],
+                              `${MATERIAL3_DIR}/{SplitButton,HorizontalCenterOptically}.kt + ${MATERIAL3_SAMPLES_DIR}/SplitButtonSamples.kt + ${ANIMATION_CORE_DIR}/{AnimateAsState,AnimationSpec,VectorizedAnimationSpec}.kt`,
+                            )
+                          : cssFile(`Component tokens: ${c.object}.`, c.tokens),
     );
   }
 

@@ -1,2 +1,2 @@
 # Icons used by the docs site. The build runs `m3e-icons subset` on this list (D5).
-home, search, menu, arrow_back, favorite, settings, star, check_circle, delete, add, more_vert, edit, share, check, content_cut, content_copy, content_paste, format_bold, format_italic, format_underlined, format_align_left, format_align_center, format_align_right, arrow_right, mail, info, close, chat, link
+home, search, menu, arrow_back, favorite, settings, star, check_circle, delete, add, more_vert, edit, share, check, content_cut, content_copy, content_paste, format_bold, format_italic, format_underlined, format_align_left, format_align_center, format_align_right, arrow_right, mail, info, keyboard_arrow_down, close, chat, link

@@ -2604,6 +2604,22 @@ export const snackbarTokens = {
   twoLinesContainerHeight: 68
 } as const;
 
+/** SplitButtonDefaults */
+export const splitButtonDefaults = {
+  splitButtonSpacing: 2,
+  splitButtonLeadingButtonMinWidth: 48,
+  splitButtonTrailingButtonMinWidth: 48,
+  splitButtonTrailingButtonStateLayerOpacityChecked: "var(--m3e-sys-state-pressed-state-layer-opacity)",
+  splitButtonShapeDuration: "var(--m3e-sys-motion-spring-default-effects-duration)",
+  splitButtonShapeEasing: "var(--m3e-sys-motion-spring-default-effects-easing)",
+  splitButtonCenterOpticallyCoefficient: 0.11,
+  splitButtonTrailingIconRotationChecked: 180,
+  splitButtonTrailingIconRotationDampingRatio: 1,
+  splitButtonTrailingIconRotationStiffness: 1500,
+  splitButtonTrailingIconRotationDuration: 319,
+  splitButtonTrailingIconRotationEasing: "linear(0, 0.0007 0.31%, 0.0028 0.63%, 0.0062 0.94%, 0.0165 1.57%, 0.0232 1.88%, 0.0391 2.51%, 0.0582 3.13%, 0.0797 3.76%, 0.1157 4.7%, 0.1548 5.64%, 0.196 6.58%, 0.3236 9.4%, 0.3791 10.66%, 0.4327 11.91%, 0.4836 13.17%, 0.5432 14.73%, 0.5872 15.99%, 0.6281 17.24%, 0.6657 18.5%, 0.7002 19.75%, 0.739 21.32%, 0.7735 22.88%, 0.804 24.45%, 0.8307 26.02%, 0.8584 27.9%, 0.8782 29.47%, 0.8987 31.35%, 0.9158 33.23%, 0.9324 35.42%, 0.9459 37.62%, 0.9567 39.81%, 0.9666 42.32%, 0.9743 44.83%, 0.9809 47.65%, 0.9863 50.78%, 0.9935 57.68%, 0.9975 66.46%, 0.9993 78.37%, 1)"
+} as const;
+
 /** SplitButtonLargeTokens */
 export const splitButtonLargeTokens = {
   betweenSpace: 2,

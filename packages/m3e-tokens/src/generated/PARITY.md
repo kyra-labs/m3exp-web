@@ -4,7 +4,7 @@
 > Source: compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/tokens @ 19991f2c0858aadfcb442ce02b2c8e4743c96898  
 > Values: Copyright (C) The Android Open Source Project, Apache License 2.0 (see NOTICE).  
 
-Emitted: 371 system and 2694 component variables from 113 component token objects.
+Emitted: 371 system and 2706 component variables from 114 component token objects.
 
 ## Not emitted here
 
@@ -3159,6 +3159,23 @@ Emitted: 371 system and 2694 component variables from 113 component token object
 | `SnackbarTokens.SupportingTextFont` | `TypographyKeyTokens.BodyMedium` | SnackbarTokens.kt:66 | `--m3e-comp-snackbar-supporting-text-tracking` | `var(--m3e-sys-typescale-body-medium-tracking)` |  |
 | `SnackbarTokens.SingleLineContainerHeight` | `48.0.dp` | SnackbarTokens.kt:69 | `--m3e-comp-snackbar-single-line-container-height` | `48px` |  |
 | `SnackbarTokens.TwoLinesContainerHeight` | `68.0.dp` | SnackbarTokens.kt:72 | `--m3e-comp-snackbar-two-lines-container-height` | `68px` |  |
+
+## split-button-defaults
+
+| Source token | Source value | Line | CSS variable | Emitted | Note |
+|---|---|---|---|---|---|
+| `SplitButtonDefaults.Spacing` | `SplitButtonSmallTokens.BetweenSpace = 2.0.dp` | compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/SplitButton.kt@19991f2c0858aadfcb442ce02b2c8e4743c96898 L212 | `--m3e-comp-split-button-spacing` | `2px` | SplitButtonLayout's default spacing at every size (SplitButtonSmallTokens.kt L26) |
+| `SplitButtonDefaults.LeadingButtonMinWidth` | `48.dp` | compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/SplitButton.kt@19991f2c0858aadfcb442ce02b2c8e4743c96898 L397 | `--m3e-comp-split-button-leading-button-min-width` | `48px` |  |
+| `SplitButtonDefaults.TrailingButtonMinWidth` | `LeadingButtonMinWidth = 48.dp` | compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/SplitButton.kt@19991f2c0858aadfcb442ce02b2c8e4743c96898 L418 | `--m3e-comp-split-button-trailing-button-min-width` | `48px` |  |
+| `SplitButtonDefaults.TrailingButtonStateLayerAlpha` | `StateTokens.PressedStateLayerOpacity` | compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/SplitButton.kt@19991f2c0858aadfcb442ce02b2c8e4743c96898 L421 | `--m3e-comp-split-button-trailing-button-state-layer-opacity-checked` | `var(--m3e-sys-state-pressed-state-layer-opacity)` | the checked trailing button draws its outline in the content color at this alpha |
+| `SplitButtonDefaults.LeadingButton / TrailingButton.defaultAnimationSpec` | `MotionSchemeKeyTokens.DefaultEffects` | compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/SplitButton.kt@19991f2c0858aadfcb442ce02b2c8e4743c96898 L697 | `--m3e-comp-split-button-shape-duration` | `var(--m3e-sys-motion-spring-default-effects-duration)` | inner corner morph (rest, pressed, checked) of both buttons; 3 uses |
+| `SplitButtonDefaults.LeadingButton / TrailingButton.defaultAnimationSpec` | `MotionSchemeKeyTokens.DefaultEffects` | compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/SplitButton.kt@19991f2c0858aadfcb442ce02b2c8e4743c96898 L697 | `--m3e-comp-split-button-shape-easing` | `var(--m3e-sys-motion-spring-default-effects-easing)` | inner corner morph (rest, pressed, checked) of both buttons; 3 uses |
+| `HorizontalCenterOptically.kt.CenterOpticallyCoefficient` | `0.11f` | compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/HorizontalCenterOptically.kt@19991f2c0858aadfcb442ce02b2c8e4743c96898 L93 | `--m3e-comp-split-button-center-optically-coefficient` | `0.11` | trailing content offset = coefficient × (start corners − end corners), toward the end |
+| `FilledSplitButtonSample (and every split button sample).rotation targetValue` | `if (checked) 180f else 0f` | compose/material3/material3/samples/src/main/java/androidx/compose/material3/samples/SplitButtonSamples.kt@19991f2c0858aadfcb442ce02b2c8e4743c96898 L116 | `--m3e-comp-split-button-trailing-icon-rotation-checked` | `180deg` | graphicsLayer rotationZ of the trailing icon; 11 samples |
+| `Spring.DampingRatioNoBouncy` | `Spring.DampingRatioNoBouncy = 1f` | compose/animation/animation-core/src/commonMain/kotlin/androidx/compose/animation/core/VectorizedAnimationSpec.kt@19991f2c0858aadfcb442ce02b2c8e4743c96898 L839 | `--m3e-comp-split-button-trailing-icon-rotation-damping-ratio` | `1` | animateFloatAsState default: defaultAnimation = spring() (AnimateAsState.kt L39); spring() defaults (AnimationSpec.kt L835) |
+| `Spring.StiffnessMedium` | `Spring.StiffnessMedium = 1500f` | compose/animation/animation-core/src/commonMain/kotlin/androidx/compose/animation/core/VectorizedAnimationSpec.kt@19991f2c0858aadfcb442ce02b2c8e4743c96898 L801 | `--m3e-comp-split-button-trailing-icon-rotation-stiffness` | `1500` | animateFloatAsState default: defaultAnimation = spring() (AnimateAsState.kt L39); spring() defaults (AnimationSpec.kt L835) |
+| `AnimateAsState.kt.DefaultFloatVisibilityThreshold` | `ζ=1, k=1500, threshold 0.01° of 180°` | compose/animation/animation-core/src/commonMain/kotlin/androidx/compose/animation/core/AnimateAsState.kt@19991f2c0858aadfcb442ce02b2c8e4743c96898 L41 | `--m3e-comp-split-button-trailing-icon-rotation-duration` | `319ms` | springToLinear() (m3e-motion) duration estimate; 0ms with prefers-reduced-motion (spatial) |
+| `AnimateAsState.kt.DefaultFloatVisibilityThreshold` | `ζ=1, k=1500` | compose/animation/animation-core/src/commonMain/kotlin/androidx/compose/animation/core/AnimateAsState.kt@19991f2c0858aadfcb442ce02b2c8e4743c96898 L41 | `--m3e-comp-split-button-trailing-icon-rotation-easing` | `linear(0, 0.0007 0.31%, 0.0028 0.63%, 0.0062 0.94%, 0.0165 1.57%, 0.0232 1.88%, 0.0391 2.51%, 0.0582 3.13%, 0.0797 3.76%, 0.1157 4.7%, 0.1548 5.64%, 0.196 6.58%, 0.3236 9.4%, 0.3791 10.66%, 0.4327 11.91%, 0.4836 13.17%, 0.5432 14.73%, 0.5872 15.99%, 0.6281 17.24%, 0.6657 18.5%, 0.7002 19.75%, 0.739 21.32%, 0.7735 22.88%, 0.804 24.45%, 0.8307 26.02%, 0.8584 27.9%, 0.8782 29.47%, 0.8987 31.35%, 0.9158 33.23%, 0.9324 35.42%, 0.9459 37.62%, 0.9567 39.81%, 0.9666 42.32%, 0.9743 44.83%, 0.9809 47.65%, 0.9863 50.78%, 0.9935 57.68%, 0.9975 66.46%, 0.9993 78.37%, 1)` | springToLinear() (m3e-motion), 40 stops, max error 0.0006 |
 
 ## split-button-large
 

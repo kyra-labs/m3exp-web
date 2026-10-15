@@ -117,6 +117,12 @@
     "limit": "8 KB"
   },
   {
+    "name": "m3e-css: split button (with button.css)",
+    "path": ["packages/m3e-css/dist/button.css", "packages/m3e-css/dist/split-button.css"],
+    "rolldown": false,
+    "limit": "6 KB"
+  },
+  {
     "name": "m3e-elements: ripple entry (plain-HTML press ripple, delegated on document)",
     "path": "packages/m3e-elements/dist/ripple/index.js",
     "limit": "1 KB"
@@ -151,6 +157,11 @@
     "name": "m3e-elements: menu-popup entry (MenuPopup, used by m3e-react <Menu>)",
     "path": "packages/m3e-elements/dist/menu-popup/index.js",
     "limit": "4 KB"
+  },
+  {
+    "name": "m3e-elements: <m3e-split-button> entry (m3e-motion springs; the <m3e-menu> it opens is its own entry)",
+    "path": "packages/m3e-elements/dist/split-button/index.js",
+    "limit": "8 KB"
   },
   {
     "name": "m3e-shapes (all presets + Morph)",
@@ -206,6 +217,13 @@
     "limit": "34 KB"
   },
   {
+    "name": "m3e-react: { SplitButton, Menu, MenuItem } only (incl. react-aria button + menu hooks, MenuPopup, motion springs)",
+    "path": "packages/m3e-react/dist/index.js",
+    "import": "{ SplitButton, Menu, MenuItem }",
+    "ignore": ["react", "react-dom"],
+    "limit": "38 KB"
+  },
+  {
     "name": "m3exp-web/react: { Icon } only",
     "path": "packages/m3exp-web/dist/react.js",
     "import": "{ Icon }",
@@ -213,10 +231,10 @@
     "limit": "1 KB"
   },
   {
-    "name": "m3exp-web (root): { Icon } (the root entry registers every custom element by design, ~17 kB with <m3e-menu>; a leaked React component adds ~10 kB of react-aria. Raise with m3e-elements (all), max 31 KB)",
+    "name": "m3exp-web (root): { Icon } (the root entry registers every custom element by design, ~18 kB with <m3e-menu> and <m3e-split-button>; a leaked React component adds ~10 kB of react-aria. Raise with m3e-elements (all), max 31 KB)",
     "path": "packages/m3exp-web/dist/index.js",
     "import": "{ Icon }",
     "ignore": ["react", "react-dom"],
-    "limit": "20 KB"
+    "limit": "22 KB"
   }
 ]

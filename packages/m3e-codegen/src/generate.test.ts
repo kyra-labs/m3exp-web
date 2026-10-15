@@ -670,3 +670,70 @@ describe('menu literals (M5 Menus)', () => {
     expect(decl.get('--m3e-comp-menu-baseline-horizontal-margin')).toBe('0');
   });
 });
+
+describe('split button literals (M5 Split button)', () => {
+  const css = output.get('components/split-button-defaults.css')!;
+  const decl = declarations(css.slice(0, css.indexOf('@media')));
+  const kt = (name: string) => inputs.material3Sources[name]!.replace(/\r\n/g, '\n');
+
+  it('SplitButtonDefaults: spacing, minimum widths, checked alpha, shape spring', () => {
+    expect(kt('SplitButton.kt')).toContain(
+      'public val Spacing: Dp = SplitButtonSmallTokens.BetweenSpace',
+    );
+    expect(source('SplitButtonSmallTokens.kt')).toMatch(
+      /BetweenSpace: [\w.]+\r?\n\s*get\(\) = 2\.0\.dp/,
+    );
+    expect(decl.get('--m3e-comp-split-button-spacing')).toBe('2px');
+    expect(kt('SplitButton.kt')).toContain('private val LeadingButtonMinWidth = 48.dp');
+    expect(kt('SplitButton.kt')).toContain(
+      'private val TrailingButtonMinWidth = LeadingButtonMinWidth',
+    );
+    expect(decl.get('--m3e-comp-split-button-leading-button-min-width')).toBe('48px');
+    expect(decl.get('--m3e-comp-split-button-trailing-button-min-width')).toBe('48px');
+    expect(decl.get('--m3e-comp-split-button-trailing-button-state-layer-opacity-checked')).toBe(
+      'var(--m3e-sys-state-pressed-state-layer-opacity)',
+    );
+    // Every LeadingButton / TrailingButton morphs on DefaultEffects (not fast spatial).
+    const specs = kt('SplitButton.kt').match(/MotionSchemeKeyTokens\.\w+\.value<Float>\(\)/g);
+    expect(new Set(specs)).toEqual(
+      new Set(['MotionSchemeKeyTokens.DefaultEffects.value<Float>()']),
+    );
+    expect(decl.get('--m3e-comp-split-button-shape-easing')).toBe(
+      'var(--m3e-sys-motion-spring-default-effects-easing)',
+    );
+    expect(kt('HorizontalCenterOptically.kt')).toContain(
+      'internal const val CenterOpticallyCoefficient = 0.11f',
+    );
+    expect(decl.get('--m3e-comp-split-button-center-optically-coefficient')).toBe('0.11');
+  });
+
+  it('the checked trailing shape (CircleShape) is the tokens’ 50% selected inner corner', () => {
+    expect(kt('SplitButton.kt')).toContain('private val TrailingCheckedShape = CircleShape');
+    for (const size of ['XSmall', 'Small', 'Medium', 'Large', 'XLarge']) {
+      expect(source(`SplitButton${size}Tokens.kt`), size).toContain(
+        'const val TrailingInnerSelectedCornerCornerSizePercent = 50.0f',
+      );
+    }
+  });
+
+  it('icon rotation: 180° on animateFloatAsState’s default spring (ζ 1, k 1500)', () => {
+    expect(kt('SplitButtonSamples.kt')).toContain('targetValue = if (checked) 180f else 0f');
+    expect(decl.get('--m3e-comp-split-button-trailing-icon-rotation-checked')).toBe('180deg');
+    expect(kt('AnimateAsState.kt')).toContain('private val defaultAnimation = spring<Float>()');
+    expect(kt('VectorizedAnimationSpec.kt')).toContain(
+      'public const val StiffnessMedium: Float = 1500f',
+    );
+    expect(kt('VectorizedAnimationSpec.kt')).toContain(
+      'public const val DampingRatioNoBouncy: Float = 1f',
+    );
+    expect(decl.get('--m3e-comp-split-button-trailing-icon-rotation-damping-ratio')).toBe('1');
+    expect(decl.get('--m3e-comp-split-button-trailing-icon-rotation-stiffness')).toBe('1500');
+    expect(decl.get('--m3e-comp-split-button-trailing-icon-rotation-easing')).toMatch(
+      /^linear\(0, /,
+    );
+    // Spatial: jumps with reduced motion.
+    expect(css.slice(css.indexOf('@media'))).toContain(
+      '--m3e-comp-split-button-trailing-icon-rotation-duration: 0ms;',
+    );
+  });
+});

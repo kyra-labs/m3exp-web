@@ -17,6 +17,7 @@ import {
   ANIMATION_CORE_PATH,
   ANIMATION_CORE_SOURCES,
   ANIMATION_CORE_EASING_SOURCES,
+  ANIMATION_CORE_SPEC_SOURCES,
   GRAPHICS_SHAPES_ARTIFACT,
   GRAPHICS_SHAPES_SOURCE_SETS,
   MATERIAL3_SHAPE_SOURCES,
@@ -30,6 +31,8 @@ import {
   MATERIAL3_SOURCES,
   MATERIAL3_ANDROID_PATH,
   MATERIAL3_ANDROID_SOURCES,
+  MATERIAL3_SAMPLES_PATH,
+  MATERIAL3_SAMPLE_SOURCES,
   fetchMavenSources,
   fetchNpmFiles,
   fetchTokens,
@@ -45,6 +48,8 @@ const androidSourcesDir = join(
 );
 const animationDir = join(root, 'packages/m3e-codegen/vendor/androidx-animation-core');
 const easingDir = join(root, 'packages/m3e-codegen/vendor/androidx-animation-easing');
+const animationSpecsDir = join(root, 'packages/m3e-codegen/vendor/androidx-animation-core-specs');
+const samplesDir = join(root, 'packages/m3e-codegen/vendor/androidx-material3-samples');
 const uiSourcesDir = join(root, 'packages/m3e-codegen/vendor/androidx-ui-sources');
 const materialWebDir = join(root, 'packages/m3e-codegen/vendor/material-web');
 const shapesVendor = (name: string) => join(root, 'packages/m3e-codegen/vendor', name);
@@ -170,6 +175,14 @@ async function main(command: string | undefined, flags: readonly string[]): Prom
     );
     await fetchVendor(repo, commit, ANIMATION_CORE_PATH, animationDir, ANIMATION_CORE_SOURCES);
     await fetchVendor(repo, commit, ANIMATION_CORE_PATH, easingDir, ANIMATION_CORE_EASING_SOURCES);
+    await fetchVendor(
+      repo,
+      commit,
+      ANIMATION_CORE_PATH,
+      animationSpecsDir,
+      ANIMATION_CORE_SPEC_SOURCES,
+    );
+    await fetchVendor(repo, commit, MATERIAL3_SAMPLES_PATH, samplesDir, MATERIAL3_SAMPLE_SOURCES);
     await fetchVendor(repo, commit, UI_PATH, uiSourcesDir, UI_SOURCES);
     await fetchNpmFiles(
       MATERIAL_WEB_PACKAGE,
