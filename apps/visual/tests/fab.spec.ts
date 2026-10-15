@@ -139,23 +139,36 @@ test.describe('width spring (frames driven by the Playwright clock)', () => {
     await expect(page.getByTestId('react-extended').locator('button')).toHaveCount(3);
   });
 
-  const toggle = (page: Page) =>
-    page.evaluate(() => {
-      document.querySelector<HTMLElement>('[data-testid="react-extended-toggle"]')!.click();
-    });
-
-  /** Toggles, then steps `frames` 16ms frames (toggling again before frame `reverseAt`). */
-  async function trace(page: Page, fab: Locator, frames: number, reverseAt?: number) {
+  /**
+   * Toggles the React extended FABs, then records the medium one's width once per 16ms frame for
+   * `frames` frames, toggling again after `reverseAt` frames. The recorder runs in the page's own
+   * requestAnimationFrame (after the spring's write), so one runFor() replays the whole trace.
+   */
+  async function trace(page: Page, frames: number, reverseAt = -1) {
     // Freeze time (install() lets it flow): from here on only runFor() advances it.
     await page.clock.pauseAt((await page.evaluate(() => Date.now())) + 100);
-    await toggle(page);
-    const widths: number[] = [];
-    for (let i = 0; i < frames; i++) {
-      if (i === reverseAt) await toggle(page);
-      await page.clock.runFor(16);
-      widths.push(await width(fab));
-    }
-    return widths;
+    await page.evaluate(
+      ([n, reverse]) => {
+        const fab = document.querySelector('[data-testid="react-extended"] [data-size="medium"]')!;
+        const toggle = () => {
+          document.querySelector<HTMLElement>('[data-testid="react-extended-toggle"]')!.click();
+        };
+        const out: number[] = [];
+        (window as unknown as { fabTrace: number[] }).fabTrace = out;
+        const frame = () => {
+          out.push(fab.getBoundingClientRect().width);
+          if (out.length === reverse) toggle();
+          if (out.length < n) requestAnimationFrame(frame);
+        };
+        toggle();
+        // After React has flushed the toggle and the spring has asked for its frame, so the
+        // recorder reads each frame after the spring writes it.
+        queueMicrotask(() => requestAnimationFrame(frame));
+      },
+      [frames, reverseAt] as const,
+    );
+    await page.clock.runFor(16 * frames + 100);
+    return page.evaluate(() => (window as unknown as { fabTrace: number[] }).fabTrace);
   }
 
   test('React extended FAB collapses and expands with a width spring', async ({ page }) => {
@@ -163,7 +176,7 @@ test.describe('width spring (frames driven by the Playwright clock)', () => {
     await fab.scrollIntoViewIfNeeded();
     const height = await token(page, '--m3e-comp-extended-fab-medium-container-height');
     const open = await width(fab);
-    const closing = await trace(page, fab, 60);
+    const closing = await trace(page, 60);
     await expect(fab).toHaveClass(/m3e-extended-fab--collapsed/);
     // A spring passes through many intermediate widths; a jump would show one.
     expect(new Set(closing.slice(0, 15).map(Math.round)).size).toBeGreaterThanOrEqual(5);
@@ -175,7 +188,7 @@ test.describe('width spring (frames driven by the Playwright clock)', () => {
     expect(
       await fab.evaluate((el) => (el as HTMLElement).style.getPropertyValue('inline-size')),
     ).toBe('');
-    const opening = await trace(page, fab, 60);
+    const opening = await trace(page, 60);
     await expect(fab).not.toHaveClass(/m3e-extended-fab--collapsed/);
     expect(new Set(opening.slice(0, 15).map(Math.round)).size).toBeGreaterThanOrEqual(5);
     expect(opening.at(-1)!).toBeCloseTo(open, 0);
@@ -188,7 +201,7 @@ test.describe('width spring (frames driven by the Playwright clock)', () => {
     const height = await token(page, '--m3e-comp-extended-fab-medium-container-height');
     const range = open - height;
     // Collapse, then expand again before frame 4 (mid-flight).
-    const widths = await trace(page, fab, 60, 4);
+    const widths = await trace(page, 60, 4);
     const last = widths[3]!;
     expect(last, 'reversed mid-flight').toBeLessThan(open - range * 0.1);
     expect(last, 'reversed mid-flight').toBeGreaterThan(height + range * 0.1);
