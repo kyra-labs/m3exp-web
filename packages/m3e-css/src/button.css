@@ -9,7 +9,8 @@
  *
  * Variants: --filled (default) --tonal --elevated --outlined --text. Sizes: --size-xs --size-s
  * (default) --size-m --size-l --size-xl. Shapes: --round (default) --square. A button with
- * aria-pressed is a toggle: aria-pressed="true" is selected.
+ * aria-pressed is a toggle: aria-pressed="true" is selected (aria-checked likewise, for the
+ * radio buttons of a single-select button group).
  *
  * Sources (compose/material3 @ 19991f2c):
  * - Sizes, shapes, icon size/spacing, outline width: Button{XSmall,Small,Medium,Large,XLarge}Tokens.
@@ -318,7 +319,7 @@
   }
 
   /* --- Toggle buttons (ToggleButton.kt) ---------------------------------------------------- */
-  .m3e-button[aria-pressed] {
+  .m3e-button:is([aria-pressed], [aria-checked]) {
     --_m3e-button-shape-duration: var(--m3e-sys-motion-spring-fast-spatial-duration);
     --_m3e-button-shape-easing: var(--m3e-sys-motion-spring-fast-spatial-easing);
     --_m3e-button-shape-pressed: var(--_m3e-button-shape-toggle-pressed);
@@ -326,23 +327,23 @@
     --_m3e-button-content: var(--m3e-comp-filled-button-label-text-color-unselected);
   }
 
-  .m3e-button[aria-pressed='true'] {
+  .m3e-button:is([aria-pressed='true'], [aria-checked='true']) {
     --_m3e-button-shape: var(--_m3e-button-shape-selected);
     --_m3e-button-container: var(--m3e-comp-filled-button-container-color-selected);
     --_m3e-button-content: var(--m3e-comp-filled-button-label-text-color-selected);
   }
 
-  .m3e-button--elevated[aria-pressed] {
+  .m3e-button--elevated:is([aria-pressed], [aria-checked]) {
     --_m3e-button-container: var(--m3e-comp-elevated-button-container-color-unselected);
     --_m3e-button-content: var(--m3e-comp-elevated-button-label-text-color-unselected);
   }
 
-  .m3e-button--elevated[aria-pressed='true'] {
+  .m3e-button--elevated:is([aria-pressed='true'], [aria-checked='true']) {
     --_m3e-button-container: var(--m3e-comp-elevated-button-container-color-selected);
     --_m3e-button-content: var(--m3e-comp-elevated-button-label-text-color-selected);
   }
 
-  .m3e-button--tonal[aria-pressed] {
+  .m3e-button--tonal:is([aria-pressed], [aria-checked]) {
     --_m3e-button-container: var(--m3e-comp-tonal-button-container-color-unselected);
     --_m3e-button-content: var(--m3e-comp-tonal-button-label-text-color-unselected);
     --_m3e-button-container-disabled: var(--m3e-comp-tonal-button-container-color-disabled);
@@ -355,12 +356,12 @@
     );
   }
 
-  .m3e-button--tonal[aria-pressed='true'] {
+  .m3e-button--tonal:is([aria-pressed='true'], [aria-checked='true']) {
     --_m3e-button-container: var(--m3e-comp-tonal-button-container-color-selected);
     --_m3e-button-content: var(--m3e-comp-tonal-button-label-text-color-selected);
   }
 
-  .m3e-button--outlined[aria-pressed] {
+  .m3e-button--outlined:is([aria-pressed], [aria-checked]) {
     --_m3e-button-container: transparent;
     --_m3e-button-content: var(--m3e-comp-outlined-button-label-text-color-unselected);
     --_m3e-button-container-disabled: var(--m3e-comp-outlined-button-outline-color-disabled);
@@ -370,7 +371,7 @@
   }
 
   /* OutlinedToggleButtonDefaults.border: no border when checked. */
-  .m3e-button--outlined[aria-pressed='true'] {
+  .m3e-button--outlined:is([aria-pressed='true'], [aria-checked='true']) {
     --_m3e-button-outline: none;
     --_m3e-button-container: var(--m3e-comp-outlined-button-container-color-selected);
     --_m3e-button-content: var(--m3e-comp-outlined-button-label-text-color-selected);
@@ -427,7 +428,7 @@
       border: var(--_m3e-button-outline-width) solid ButtonText;
     }
 
-    .m3e-button[aria-pressed='true'] {
+    .m3e-button:is([aria-pressed='true'], [aria-checked='true']) {
       border-color: Highlight;
       outline: var(--_m3e-button-outline-width) solid Highlight;
     }

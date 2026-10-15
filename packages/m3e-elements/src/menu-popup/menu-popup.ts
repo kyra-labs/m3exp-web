@@ -1,11 +1,8 @@
-import {
-  type MenuAnchorPosition,
-  type SpringSpec,
-  menuPosition,
-  springDurationMillis,
-  springValue,
-  springVelocity,
-} from '@kyralabs/m3e-motion';
+import { type MenuAnchorPosition, menuPosition } from '@kyralabs/m3e-motion';
+import { Spring, readSpring } from '../base/spring.js';
+
+// Re-exported for the split button (and anything else that imported them from here).
+export { Spring, readSpring };
 
 export type { MenuAnchorPosition };
 
@@ -29,66 +26,6 @@ const OPACITY_SPRING = 'fast-effects';
 
 const readNumber = (style: CSSStyleDeclaration, name: string) =>
   Number.parseFloat(style.getPropertyValue(name));
-
-/**
- * The motion-scheme spring `token` resolved on `el` (`--m3e-sys-motion-spring-<token>-*`), or null
- * when its duration resolves to 0ms (reduced motion snaps spatial springs).
- */
-export function readSpring(style: CSSStyleDeclaration, token: string): SpringSpec | null {
-  if (readNumber(style, `--m3e-sys-motion-spring-${token}-duration`) === 0) return null;
-  const dampingRatio = readNumber(style, `--m3e-sys-motion-spring-${token}-damping-ratio`);
-  const stiffness = readNumber(style, `--m3e-sys-motion-spring-${token}-stiffness`);
-  return Number.isFinite(dampingRatio) && Number.isFinite(stiffness)
-    ? { dampingRatio, stiffness }
-    : null;
-}
-
-/** One interruptible Compose spring: a new target starts from the current value and velocity. */
-export class Spring {
-  value: number;
-  #from: number;
-  #to: number;
-  #velocity = 0;
-  #start = 0;
-  #duration = 0;
-  #spec: SpringSpec | null = null;
-
-  constructor(value: number) {
-    this.value = value;
-    this.#from = value;
-    this.#to = value;
-  }
-
-  /** Retargets at `now` (ms). */
-  to(target: number, spec: SpringSpec | null, now: number): void {
-    const elapsed = Math.max(0, Math.round(now - this.#start));
-    const velocity =
-      this.#spec === null || elapsed >= this.#duration
-        ? 0
-        : springVelocity(this.#spec, elapsed, this.#from, this.#to, this.#velocity);
-    this.#from = this.value;
-    this.#to = target;
-    this.#spec = spec;
-    this.#velocity = velocity;
-    this.#start = now;
-    this.#duration =
-      spec === null || this.value === target
-        ? 0
-        : springDurationMillis(spec, this.value, target, velocity);
-    if (this.#duration === 0) this.value = target;
-  }
-
-  /** Advances to `now`; returns true while still moving. */
-  step(now: number): boolean {
-    const elapsed = Math.max(0, Math.round(now - this.#start));
-    if (this.#spec === null || elapsed >= this.#duration) {
-      this.value = this.#to;
-      return false;
-    }
-    this.value = springValue(this.#spec, elapsed, this.#from, this.#to, this.#velocity);
-    return true;
-  }
-}
 
 /** Open popups, for light dismiss across a menu and its submenus. */
 const openPopups = new Set<MenuPopup>();

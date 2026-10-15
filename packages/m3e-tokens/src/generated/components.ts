@@ -245,6 +245,36 @@ export const buttonDefaults = {
   minimumInteractiveComponentSize: 48
 } as const;
 
+/** ButtonGroupDefaults */
+export const buttonGroupDefaults = {
+  buttonGroupExpandedRatio: 0.15,
+  buttonGroupWidthSpringDampingRatio: "var(--m3e-sys-motion-spring-fast-spatial-damping-ratio)",
+  buttonGroupWidthSpringStiffness: "var(--m3e-sys-motion-spring-fast-spatial-stiffness)",
+  buttonGroupWidthSpringDuration: "var(--m3e-sys-motion-spring-fast-spatial-duration)",
+  buttonGroupReleaseThreshold: 0.75,
+  buttonGroupReleaseMaxWait: 1000,
+  buttonGroupXSmallBetweenSpace: 18,
+  connectedButtonGroupXSmallBetweenSpace: "var(--m3e-sys-space-25)",
+  connectedButtonGroupXSmallInnerCornerCornerSize: "var(--m3e-sys-shape-corner-value-small)",
+  connectedButtonGroupXSmallInnerCornerCornerSizePressed: "var(--m3e-sys-shape-corner-value-extra-small)",
+  connectedButtonGroupXSmallInnerCornerCornerSizePercentSelected: 50,
+  buttonGroupMediumBetweenSpace: "var(--m3e-sys-space-100)",
+  connectedButtonGroupMediumBetweenSpace: "var(--m3e-sys-space-25)",
+  connectedButtonGroupMediumInnerCornerCornerSize: "var(--m3e-sys-shape-corner-value-small)",
+  connectedButtonGroupMediumInnerCornerCornerSizePressed: "var(--m3e-sys-shape-corner-value-extra-small)",
+  connectedButtonGroupMediumInnerCornerCornerSizePercentSelected: 50,
+  buttonGroupLargeBetweenSpace: "var(--m3e-sys-space-100)",
+  connectedButtonGroupLargeBetweenSpace: "var(--m3e-sys-space-25)",
+  connectedButtonGroupLargeInnerCornerCornerSize: "var(--m3e-sys-shape-corner-value-large)",
+  connectedButtonGroupLargeInnerCornerCornerSizePressed: "var(--m3e-sys-shape-corner-value-medium)",
+  connectedButtonGroupLargeInnerCornerCornerSizePercentSelected: 50,
+  buttonGroupXLargeBetweenSpace: "var(--m3e-sys-space-100)",
+  connectedButtonGroupXLargeBetweenSpace: "var(--m3e-sys-space-25)",
+  connectedButtonGroupXLargeInnerCornerCornerSize: "var(--m3e-sys-shape-corner-value-large-increased)",
+  connectedButtonGroupXLargeInnerCornerCornerSizePressed: "var(--m3e-sys-shape-corner-value-large)",
+  connectedButtonGroupXLargeInnerCornerCornerSizePercentSelected: 50
+} as const;
+
 /** ButtonGroupSmallTokens */
 export const buttonGroupSmallTokens = {
   betweenSpace: 12,
