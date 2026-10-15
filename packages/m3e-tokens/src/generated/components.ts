@@ -866,6 +866,44 @@ export const fabMenuBaselineTokens = {
   listItemTrailingSpace: 24
 } as const;
 
+/** FloatingActionButtonMenuDefaults */
+export const floatingActionButtonMenuDefaults = {
+  fabMenuDefaultsToggleInitialCornerRadius: 16,
+  fabMenuDefaultsToggleMediumInitialCornerRadius: 20,
+  fabMenuDefaultsToggleLargeInitialCornerRadius: 28,
+  fabMenuDefaultsToggleLargeInitialIconSize: 36,
+  fabMenuDefaultsToggleFinalCornerRadius: 28,
+  fabMenuDefaultsPaddingHorizontal: 16,
+  fabMenuDefaultsButtonPaddingBottom: 16,
+  fabMenuDefaultsToggleContainerColor: "var(--m3e-sys-color-primary-container)",
+  fabMenuDefaultsToggleCheckedContainerColor: "var(--m3e-sys-color-primary)",
+  fabMenuDefaultsToggleIconColor: "var(--m3e-sys-color-on-primary-container)",
+  fabMenuDefaultsToggleCheckedIconColor: "var(--m3e-sys-color-on-primary)",
+  fabMenuDefaultsItemContainerColor: "var(--m3e-sys-color-primary-container)",
+  fabMenuDefaultsItemLabelFont: "var(--m3e-sys-typescale-title-medium-font)",
+  fabMenuDefaultsItemLabelWeight: "var(--m3e-sys-typescale-title-medium-weight)",
+  fabMenuDefaultsItemLabelSize: "var(--m3e-sys-typescale-title-medium-size)",
+  fabMenuDefaultsItemLabelLineHeight: "var(--m3e-sys-typescale-title-medium-line-height)",
+  fabMenuDefaultsItemLabelTracking: "var(--m3e-sys-typescale-title-medium-tracking)",
+  fabMenuDefaultsToggleProgressDuration: "var(--m3e-sys-motion-spring-fast-spatial-duration)",
+  fabMenuDefaultsToggleProgressEasing: "var(--m3e-sys-motion-spring-fast-spatial-easing)",
+  fabMenuDefaultsToggleProgressDampingRatio: "var(--m3e-sys-motion-spring-fast-spatial-damping-ratio)",
+  fabMenuDefaultsToggleProgressStiffness: "var(--m3e-sys-motion-spring-fast-spatial-stiffness)",
+  fabMenuDefaultsItemWidthDuration: "var(--m3e-sys-motion-spring-fast-spatial-duration)",
+  fabMenuDefaultsItemWidthEasing: "var(--m3e-sys-motion-spring-fast-spatial-easing)",
+  fabMenuDefaultsItemWidthDampingRatio: "var(--m3e-sys-motion-spring-fast-spatial-damping-ratio)",
+  fabMenuDefaultsItemWidthStiffness: "var(--m3e-sys-motion-spring-fast-spatial-stiffness)",
+  fabMenuDefaultsItemOpacityDuration: "var(--m3e-sys-motion-spring-fast-effects-duration)",
+  fabMenuDefaultsItemOpacityEasing: "var(--m3e-sys-motion-spring-fast-effects-easing)",
+  fabMenuDefaultsItemOpacityDampingRatio: "var(--m3e-sys-motion-spring-fast-effects-damping-ratio)",
+  fabMenuDefaultsItemOpacityStiffness: "var(--m3e-sys-motion-spring-fast-effects-stiffness)",
+  fabMenuDefaultsStaggerDuration: "var(--m3e-sys-motion-spring-slow-effects-duration)",
+  fabMenuDefaultsStaggerEasing: "var(--m3e-sys-motion-spring-slow-effects-easing)",
+  fabMenuDefaultsStaggerDampingRatio: "var(--m3e-sys-motion-spring-slow-effects-damping-ratio)",
+  fabMenuDefaultsStaggerStiffness: "var(--m3e-sys-motion-spring-slow-effects-stiffness)",
+  fabMenuDefaultsStaggerVisibilityThreshold: 1
+} as const;
+
 /** FabPrimaryContainerTokens */
 export const fabPrimaryContainerTokens = {
   containerColor: "var(--m3e-sys-color-primary-container)",

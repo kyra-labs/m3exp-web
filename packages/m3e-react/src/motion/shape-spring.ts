@@ -4,6 +4,11 @@ import { cancelFrame, frame, spring } from 'motion';
 export interface SpringSpec {
   dampingRatio: number;
   stiffness: number;
+  /**
+   * Compose's visibility threshold, when not the Float default: the spring rests once within it
+   * of the target (e.g. 1 for an Int animation).
+   */
+  visibilityThreshold?: number;
 }
 
 const readNumber = (style: CSSStyleDeclaration, name: string): number =>
@@ -16,14 +21,18 @@ const readNumber = (style: CSSStyleDeclaration, name: string): number =>
  * for spatial springs): the caller should jump to the target.
  */
 export function readSpring(el: Element, token: string): SpringSpec | null {
-  const style = getComputedStyle(el);
-  if (
-    Number.parseFloat(style.getPropertyValue(`--m3e-sys-motion-spring-${token}-duration`)) === 0
-  ) {
-    return null;
-  }
-  const dampingRatio = readNumber(style, `--m3e-sys-motion-spring-${token}-damping-ratio`);
-  const stiffness = readNumber(style, `--m3e-sys-motion-spring-${token}-stiffness`);
+  return readSpringVars(getComputedStyle(el), `--m3e-sys-motion-spring-${token}`);
+}
+
+/**
+ * Reads a spring from `<prefix>-duration`, `-damping-ratio` and `-stiffness` custom properties,
+ * e.g. a component's generated spring (`--m3e-comp-fab-menu-defaults-toggle-progress`), which
+ * references the motion-scheme token Compose uses. Null when the duration resolves to 0ms.
+ */
+export function readSpringVars(style: CSSStyleDeclaration, prefix: string): SpringSpec | null {
+  if (Number.parseFloat(style.getPropertyValue(`${prefix}-duration`)) === 0) return null;
+  const dampingRatio = readNumber(style, `${prefix}-damping-ratio`);
+  const stiffness = readNumber(style, `${prefix}-stiffness`);
   return Number.isFinite(dampingRatio) && Number.isFinite(stiffness)
     ? { dampingRatio, stiffness }
     : null;
@@ -80,6 +89,10 @@ export class ValueSpring {
       stiffness: spec.stiffness,
       // Motion's mass defaults to 1, as in Compose's SpringSimulation.
       damping: 2 * spec.dampingRatio * Math.sqrt(spec.stiffness),
+      // A custom threshold ends the spring as soon as it is that close (Compose's estimate).
+      ...(spec.visibilityThreshold === undefined
+        ? {}
+        : { restDelta: spec.visibilityThreshold, restSpeed: Number.POSITIVE_INFINITY }),
     });
     this.#generator = generator;
     this.#startedAt = now;

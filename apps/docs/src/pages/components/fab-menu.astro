@@ -1,0 +1,144 @@
+---
+import FabMenuPlayground from '../../islands/FabMenuPlayground.tsx';
+import Base from '../../layouts/Base.astro';
+
+const items = [
+  { icon: 'mail', label: 'Email' },
+  { icon: 'chat', label: 'Message' },
+  { icon: 'link', label: 'Copy link' },
+];
+
+/** Static (CSS-only) examples: open state per size and color set, plus a closed one. */
+const statics = [
+  { id: 'closed', open: false, size: 'baseline', color: 'primary', align: 'end', label: 'Share (closed)' },
+  { id: 'primary', open: true, size: 'baseline', color: 'primary', align: 'end', label: 'Share (primary)' },
+  { id: 'secondary', open: true, size: 'medium', color: 'secondary', align: 'end', label: 'Share (secondary, medium FAB)' },
+  { id: 'tertiary', open: true, size: 'large', color: 'tertiary', align: 'end', label: 'Share (tertiary, large FAB)' },
+  { id: 'start', open: true, size: 'baseline', color: 'primary', align: 'start', label: 'Share (start aligned)' },
+] as const;
+
+const classes = (s: (typeof statics)[number]) =>
+  [
+    'm3e-fab-menu',
+    s.open && 'm3e-fab-menu--open',
+    s.size !== 'baseline' && `m3e-fab-menu--size-${s.size}`,
+    s.color !== 'primary' && `m3e-fab-menu--${s.color}`,
+    s.align !== 'end' && `m3e-fab-menu--align-${s.align}`,
+  ]
+    .filter(Boolean)
+    .join(' ');
+---
+
+<Base title="FAB menu">
+  <link rel="stylesheet" href="/icons/docs-icons.css" slot="head" />
+  <h1>FAB menu</h1>
+  <p>
+    A FAB that opens 2–6 related actions (COMPONENT_SPEC §6; Compose{' '}
+    <code>FloatingActionButtonMenu</code>, <code>ToggleFloatingActionButton</code> and{' '}
+    <code>FloatingActionButtonMenuItem</code>). The FAB turns into the menu's 56dp close button: it
+    shrinks into its top end corner, its corners round to a circle, its colors move to the color set's
+    role and its icon swaps to close at half progress. The items stagger in from the bottom, each
+    growing its width from the trailing edge. Give the toggle an <code>aria-label</code> that describes
+    the menu.
+  </p>
+
+  <section aria-labelledby="css-heading">
+    <h2 id="css-heading">CSS only</h2>
+    <p>
+      Plain HTML with m3e-css classes, shown in their static states. Toggling{' '}
+      <code>m3e-fab-menu--open</code> without JavaScript morphs the toggle on the fast spatial curve and
+      fades the items in together; the springs, the stagger, focus handling and light dismiss come from{' '}
+      <code>&lt;m3e-fab-menu&gt;</code> or React.
+    </p>
+    <div class="docs-fab-menu-row" data-testid="statics">
+      {
+        statics.map((s) => (
+          <div class:list={['docs-fab-menu-frame', s.align === 'start' && 'docs-fab-menu-frame--start']}>
+            <div class={classes(s)} data-testid={`static-${s.id}`}>
+              <button
+                type="button"
+                class="m3e-fab m3e-fab-menu__toggle"
+                aria-label={s.label}
+                aria-expanded={s.open ? 'true' : 'false'}
+                aria-haspopup="menu"
+                aria-controls={`static-menu-${s.id}`}
+              >
+                <span class="m3e-icon" aria-hidden="true">
+                  share
+                </span>
+                <span class="m3e-icon" aria-hidden="true">
+                  close
+                </span>
+              </button>
+              <div class="m3e-fab-menu__items" id={`static-menu-${s.id}`} role="menu" aria-label={s.label}>
+                {items.map((item) => (
+                  <button type="button" class="m3e-fab-menu__item" role="menuitem" tabindex="-1">
+                    <span class="m3e-icon" aria-hidden="true">
+                      {item.icon}
+                    </span>
+                    <span class="m3e-fab-menu__label">{item.label}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+        ))
+      }
+    </div>
+  </section>
+
+  <section aria-labelledby="element-heading">
+    <h2 id="element-heading">Element</h2>
+    <p>
+      <code>&lt;m3e-fab-menu&gt;</code> renders the same classes from its{' '}
+      <code>&lt;m3e-fab-menu-item&gt;</code> children and fires <code>open-change</code> and{' '}
+      <code>action</code>. Opening leaves focus on the close button, as Compose and m3.material.io do;
+      ArrowDown or Tab moves to the top item, ArrowUp or Shift+Tab to the bottom one. Arrow keys, Home
+      and End move between items, Tab cycles between the items and the close button, and Escape or a
+      press outside closes the menu.
+    </p>
+    <div class="docs-fab-menu-row">
+      <div class="docs-fab-menu-frame">
+        <m3e-fab-menu label="Share" icon="share" data-testid="element-menu">
+          {
+            items.map((item) => (
+              <m3e-fab-menu-item icon={item.icon} value={item.label.toLowerCase()}>
+                {item.label}
+              </m3e-fab-menu-item>
+            ))
+          }
+        </m3e-fab-menu>
+      </div>
+    </div>
+    <p aria-live="polite" id="element-action">Nothing chosen yet.</p>
+  </section>
+
+  <section aria-labelledby="react-heading">
+    <h2 id="react-heading">React</h2>
+    <p>
+      <code>&lt;FabMenu&gt;</code> opening from a medium FAB. Press the FAB twice quickly: the toggle and
+      the items reverse from their current speed.
+    </p>
+    <FabMenuPlayground client:only="react" />
+  </section>
+
+  <section aria-labelledby="sources-heading">
+    <h2 id="sources-heading">Sources</h2>
+    <p>
+      androidx Compose Material3 1.5.0-beta01 (<code>19991f2c</code>):{' '}
+      <code>FloatingActionButtonMenu.kt</code> (vendored), <code>FabMenuBaselineTokens.kt</code> and the
+      literals and springs it uses in <code>components/fab-menu-defaults.css</code>;{' '}
+      <code>FloatingActionButtonMenuSamples.kt</code> for the Add → Close icon swap. m3.material.io FAB
+      menu (2–6 items, color sets, focus order, placement).
+    </p>
+  </section>
+</Base>
+
+<script>
+  import '@kyralabs/m3exp-web/elements';
+
+  const live = document.querySelector('#element-action')!;
+  document.querySelector('[data-testid="element-menu"]')!.addEventListener('action', (e) => {
+    live.textContent = `Chose ${String((e as CustomEvent<{ value: string }>).detail.value)}.`;
+  });
+</script>

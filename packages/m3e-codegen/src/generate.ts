@@ -18,6 +18,7 @@ import { checkSmallAgainstCompose, extractButtonGroupDefaults } from './button-g
 import { extractChipDefaults } from './chip-defaults.js';
 import { extractElevationMotion } from './elevation-motion.js';
 import { extractFabDefaults } from './fab-defaults.js';
+import { extractFabMenuDefaults } from './fab-menu-defaults.js';
 import { extractCenteredPadding, extractNavigationDefaults } from './navigation-defaults.js';
 import { extractLoadingIndicatorMotion } from './loading-indicator-motion.js';
 import { extractMenuDefaults } from './menu-defaults.js';
@@ -872,6 +873,28 @@ export function generate({
     ),
   });
 
+  // FloatingActionButtonMenu / ToggleFloatingActionButton values (see fab-menu-defaults.ts).
+  const fabMenuDefaults = extractFabMenuDefaults(material3Sources, files);
+  components.set('fab-menu-defaults', {
+    object: 'FloatingActionButtonMenuDefaults',
+    tokens: fabMenuDefaults.map((d) => {
+      const e: Emitted = {
+        name: d.name,
+        value: d.value,
+        object: d.owner,
+        member: d.member,
+        raw: d.raw,
+        line: d.line,
+        cite: `${MATERIAL3_DIR}/${d.file}@${commit} L${String(d.line)}`,
+      };
+      if (d.note !== undefined) e.note = d.note;
+      return e;
+    }),
+    js: Object.fromEntries(
+      fabMenuDefaults.map((d) => [camel(d.name.replace(/^--m3e-comp-/, '').split('-')), d.js]),
+    ),
+  });
+
   // Menu layout literals and open/close targets (Menu.kt, MenuDefaults.kt; see menu-defaults.ts).
   const menuDefaults = extractMenuDefaults(material3Sources);
   components.set('menu-defaults', {
@@ -1008,41 +1031,48 @@ export function generate({
                       [],
                       `${MATERIAL3_DIR}/{FloatingActionButton,Shapes}.kt`,
                     )
-                  : name === 'navigation-defaults'
+                  : name === 'fab-menu-defaults'
                     ? cssFile(
-                        'Compose navigation bar / rail layout values that are not in Navigation*Tokens (lines: PARITY.md).',
+                        'Compose FloatingActionButtonMenu / ToggleFloatingActionButton values that are not in FabMenuBaselineTokens (lines: PARITY.md).',
                         c.tokens,
                         [],
-                        `${MATERIAL3_DIR}/{NavigationBar,NavigationRail,ShortNavigationBar,WideNavigationRail}.kt`,
+                        `${MATERIAL3_DIR}/FloatingActionButtonMenu.kt`,
                       )
-                    : name === 'button-group-defaults'
+                    : name === 'navigation-defaults'
                       ? cssFile(
-                          'Compose ButtonGroupDefaults values that are not in ButtonGroup*Tokens, plus the per-size m3.material.io token DB values Compose lacks (lines: PARITY.md).',
+                          'Compose navigation bar / rail layout values that are not in Navigation*Tokens (lines: PARITY.md).',
                           c.tokens,
                           [],
-                          `${MATERIAL3_DIR}/ButtonGroup.kt + m3.material.io token DB md.comp.button-group`,
+                          `${MATERIAL3_DIR}/{NavigationBar,NavigationRail,ShortNavigationBar,WideNavigationRail}.kt`,
                         )
-                      : name === 'menu-defaults'
+                      : name === 'button-group-defaults'
                         ? cssFile(
-                            'Compose menu values that are not in Menu*Tokens (lines: PARITY.md).',
+                            'Compose ButtonGroupDefaults values that are not in ButtonGroup*Tokens, plus the per-size m3.material.io token DB values Compose lacks (lines: PARITY.md).',
                             c.tokens,
                             [],
-                            `${MATERIAL3_DIR}/{Menu,MenuDefaults}.kt + ${MATERIAL3_ANDROID_DIR}/AndroidMenu.android.kt`,
+                            `${MATERIAL3_DIR}/ButtonGroup.kt + m3.material.io token DB md.comp.button-group`,
                           )
-                        : name === 'split-button-defaults'
+                        : name === 'menu-defaults'
                           ? cssFile(
-                              'Compose split button values that are not in SplitButton*Tokens (lines: PARITY.md).',
+                              'Compose menu values that are not in Menu*Tokens (lines: PARITY.md).',
                               c.tokens,
-                              [
-                                '@media (prefers-reduced-motion: reduce) {',
-                                '  :root {',
-                                ...SPLIT_BUTTON_REDUCED_MOTION.map((l) => `    ${l}`),
-                                '  }',
-                                '}',
-                              ],
-                              `${MATERIAL3_DIR}/{SplitButton,HorizontalCenterOptically}.kt + ${MATERIAL3_SAMPLES_DIR}/SplitButtonSamples.kt + ${ANIMATION_CORE_DIR}/{AnimateAsState,AnimationSpec,VectorizedAnimationSpec}.kt`,
+                              [],
+                              `${MATERIAL3_DIR}/{Menu,MenuDefaults}.kt + ${MATERIAL3_ANDROID_DIR}/AndroidMenu.android.kt`,
                             )
-                          : cssFile(`Component tokens: ${c.object}.`, c.tokens),
+                          : name === 'split-button-defaults'
+                            ? cssFile(
+                                'Compose split button values that are not in SplitButton*Tokens (lines: PARITY.md).',
+                                c.tokens,
+                                [
+                                  '@media (prefers-reduced-motion: reduce) {',
+                                  '  :root {',
+                                  ...SPLIT_BUTTON_REDUCED_MOTION.map((l) => `    ${l}`),
+                                  '  }',
+                                  '}',
+                                ],
+                                `${MATERIAL3_DIR}/{SplitButton,HorizontalCenterOptically}.kt + ${MATERIAL3_SAMPLES_DIR}/SplitButtonSamples.kt + ${ANIMATION_CORE_DIR}/{AnimateAsState,AnimationSpec,VectorizedAnimationSpec}.kt`,
+                              )
+                            : cssFile(`Component tokens: ${c.object}.`, c.tokens),
     );
   }
 

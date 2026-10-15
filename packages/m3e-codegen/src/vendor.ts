@@ -26,6 +26,7 @@ export const MATERIAL3_SOURCES = [
   'AppBar.kt',
   'LoadingIndicator.kt',
   'FloatingActionButton.kt',
+  'FloatingActionButtonMenu.kt',
   'Shapes.kt',
   'Menu.kt',
   'MenuDefaults.kt',

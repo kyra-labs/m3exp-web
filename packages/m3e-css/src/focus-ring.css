@@ -15,7 +15,8 @@
     .m3e-icon-button,
     .m3e-assist-chip,
     .m3e-fab,
-    .m3e-extended-fab
+    .m3e-extended-fab,
+    .m3e-fab-menu__item
   ):focus-visible {
     outline: var(--m3e-sys-state-focus-indicator-thickness) solid var(--m3e-sys-color-secondary);
     outline-offset: var(--m3e-sys-state-focus-indicator-outer-offset);
@@ -53,7 +54,8 @@
       .m3e-icon-button,
       .m3e-assist-chip,
       .m3e-fab,
-      .m3e-extended-fab
+      .m3e-extended-fab,
+      .m3e-fab-menu__item
     ):focus:not(:focus-visible) {
     outline: none;
   }
@@ -65,7 +67,8 @@
       .m3e-icon-button,
       .m3e-assist-chip,
       .m3e-fab,
-      .m3e-extended-fab
+      .m3e-extended-fab,
+      .m3e-fab-menu__item
     ):focus-visible,
     :where(.m3e-card--interactive):has(.m3e-card__action:focus-visible),
     :where(.m3e-navigation-item:focus-visible .m3e-navigation-item__state),

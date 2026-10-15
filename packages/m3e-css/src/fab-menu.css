@@ -1,0 +1,324 @@
+/*
+ * FAB menu (COMPONENT_SPEC §6): a toggle FAB that turns into the menu's close button, and the
+ * menu items above it. Static layout and the open/closed states; without JavaScript the toggle
+ * morphs on the fast spatial curve and the items fade in together. <m3e-fab-menu> and m3e-react
+ * <FabMenu> add Compose's interruptible springs (velocity kept), the item stagger, focus handling
+ * and light dismiss on the same classes.
+ *
+ *   <div class="m3e-fab-menu m3e-fab-menu--open">
+ *     <button class="m3e-fab m3e-fab-menu__toggle" aria-label="Toggle menu" aria-expanded="true"
+ *             aria-haspopup="menu" aria-controls="share-menu">
+ *       <span class="m3e-icon" aria-hidden="true">add</span>
+ *       <span class="m3e-icon" aria-hidden="true">close</span>
+ *     </button>
+ *     <div class="m3e-fab-menu__items" id="share-menu" role="menu" aria-label="Share">
+ *       <button class="m3e-fab-menu__item" role="menuitem" tabindex="-1">
+ *         <span class="m3e-icon" aria-hidden="true">mail</span>
+ *         <span class="m3e-fab-menu__label">Email</span>
+ *       </button>
+ *     </div>
+ *   </div>
+ *
+ * The toggle comes first in the DOM (focus order close button → top item → … as m3.material.io
+ * FAB menu › Accessibility › Initial focus and the Compose sample's traversalIndex), and is drawn
+ * at the bottom (column-reverse). Its first child is the closed icon, its last the close icon.
+ * Modifiers: --open; toggle (FAB) size --size-medium --size-large (baseline default); color set
+ * --secondary --tertiary (primary default); item alignment --align-start --align-center (end
+ * default, Compose Alignment.End).
+ *
+ * Sources (compose/material3 FloatingActionButtonMenu.kt @ 19991f2c, generated values in
+ * fab-menu-defaults.css, lines in PARITY.md):
+ * - Toggle (ToggleFloatingActionButton, L445-575): a box of the FAB's size holds the container,
+ *   aligned to its top end (contentAlignment = Alignment.TopEnd). With checked progress p (fast
+ *   spatial spring, L460): size = lerp(FAB size, CloseButtonContainerHeight 56dp, p), corner radius =
+ *   lerp(16/20/28dp, 28dp, p), container color = lerp(primaryContainer, primary, p), icon color =
+ *   lerp(onPrimaryContainer, onPrimary, p), icon size = lerp(FAB icon size, CloseButtonIconSize, p)
+ *   (ToggleFloatingActionButtonDefaults, L578-656). Dp lerps extrapolate with the spring's
+ *   overshoot; Color lerp mixes in Oklab and clamps p (ui-graphics Color.kt@19991f2c L546-569).
+ *   The sample (FloatingActionButtonMenuSamples.kt L171-180) swaps Add for Close at p > 0.5.
+ *   Shadow: FabPrimaryContainerTokens.ContainerElevation (Level3, L735), constant (no hover change).
+ * - Layout (FloatingActionButtonMenu, L116-192; item column L195-308): 16dp horizontal padding
+ *   (L738), 16dp under the toggle (L742), items CloseButtonBetweenSpace above it and
+ *   ListItemBetweenSpace apart, aligned by horizontalAlignment. Closed (no item visible), the item
+ *   column takes no space (L292).
+ * - Items (FloatingActionButtonMenuItem, L331-414): a pill Surface (ListItemContainerShape) in
+ *   primaryContainer / onPrimaryContainer, ListItemContainerHeight tall and at least as wide,
+ *   leading/trailing ListItemLeadingSpace/TrailingSpace, ListItemIconLabelSpace between a
+ *   ListItemIconSize icon and a titleMedium label. No shadow: Compose's Surface has
+ *   shadowElevation 0 (the token file's ListItemContainerElevation Level3 is not applied).
+ * - Color sets (m3.material.io FAB menu › Specs › Color; content JSON f00af5db-…): primary,
+ *   secondary, tertiary; the close button takes the role, the items its container role.
+ * - Touch targets: the close button is ≥ 56dp (overshoot ≥ 52dp) and items 56dp tall, above the
+ *   48dp minimum, so no ::after target is needed.
+ */
+@import '@kyralabs/m3e-tokens/components/fab-menu-baseline.css';
+@import '@kyralabs/m3e-tokens/components/fab-menu-defaults.css';
+@import './fab.css';
+
+/* Checked progress of the toggle: 0 closed, 1 open (overshoots on the spring). */
+@property --_m3e-fab-menu-progress {
+  syntax: '<number>';
+  inherits: true;
+  initial-value: 0;
+}
+
+@layer m3e.components {
+  .m3e-fab-menu {
+    --_m3e-fab-menu-progress: 0;
+
+    /* Toggle size: baseline FAB (FabInitialSize / FabInitialCornerRadius / FabInitialIconSize). */
+    --_m3e-fab-menu-initial-size: var(--m3e-comp-fab-baseline-container-height);
+    --_m3e-fab-menu-initial-radius: var(--m3e-comp-fab-menu-defaults-toggle-initial-corner-radius);
+    --_m3e-fab-menu-initial-icon-size: var(--m3e-comp-fab-baseline-icon-size);
+
+    /* Color set: primary (ToggleFloatingActionButtonDefaults, FloatingActionButtonMenuItem). */
+    --_m3e-fab-menu-toggle-container: var(--m3e-comp-fab-menu-defaults-toggle-container-color);
+    --_m3e-fab-menu-toggle-checked-container: var(
+      --m3e-comp-fab-menu-defaults-toggle-checked-container-color
+    );
+    --_m3e-fab-menu-toggle-icon: var(--m3e-comp-fab-menu-defaults-toggle-icon-color);
+    --_m3e-fab-menu-toggle-checked-icon: var(
+      --m3e-comp-fab-menu-defaults-toggle-checked-icon-color
+    );
+    --_m3e-fab-menu-item-container: var(--m3e-comp-fab-menu-defaults-item-container-color);
+    --_m3e-fab-menu-item-content: var(--m3e-sys-color-on-primary-container);
+    --_m3e-fab-menu-align: end;
+
+    display: inline-flex;
+    flex-direction: column-reverse;
+    align-items: var(--_m3e-fab-menu-align);
+    gap: var(--m3e-comp-fab-menu-baseline-close-button-between-space);
+    box-sizing: border-box;
+    padding-inline: var(--m3e-comp-fab-menu-defaults-padding-horizontal);
+    padding-block-end: var(--m3e-comp-fab-menu-defaults-button-padding-bottom);
+
+    /* The padding and the gaps pass presses through, like Compose's non-clickable layout. */
+    pointer-events: none;
+    transition: --_m3e-fab-menu-progress var(--m3e-comp-fab-menu-defaults-toggle-progress-duration)
+      var(--m3e-comp-fab-menu-defaults-toggle-progress-easing);
+  }
+
+  .m3e-fab-menu--open {
+    --_m3e-fab-menu-progress: 1;
+  }
+
+  .m3e-fab-menu--size-medium {
+    --_m3e-fab-menu-initial-size: var(--m3e-comp-fab-medium-container-height);
+    --_m3e-fab-menu-initial-radius: var(
+      --m3e-comp-fab-menu-defaults-toggle-medium-initial-corner-radius
+    );
+    --_m3e-fab-menu-initial-icon-size: var(--m3e-comp-fab-medium-icon-size);
+  }
+
+  .m3e-fab-menu--size-large {
+    --_m3e-fab-menu-initial-size: var(--m3e-comp-fab-large-container-height);
+    --_m3e-fab-menu-initial-radius: var(
+      --m3e-comp-fab-menu-defaults-toggle-large-initial-corner-radius
+    );
+    --_m3e-fab-menu-initial-icon-size: var(
+      --m3e-comp-fab-menu-defaults-toggle-large-initial-icon-size
+    );
+  }
+
+  .m3e-fab-menu--secondary {
+    --_m3e-fab-menu-toggle-container: var(--m3e-sys-color-secondary-container);
+    --_m3e-fab-menu-toggle-checked-container: var(--m3e-sys-color-secondary);
+    --_m3e-fab-menu-toggle-icon: var(--m3e-sys-color-on-secondary-container);
+    --_m3e-fab-menu-toggle-checked-icon: var(--m3e-sys-color-on-secondary);
+    --_m3e-fab-menu-item-container: var(--m3e-sys-color-secondary-container);
+    --_m3e-fab-menu-item-content: var(--m3e-sys-color-on-secondary-container);
+  }
+
+  .m3e-fab-menu--tertiary {
+    --_m3e-fab-menu-toggle-container: var(--m3e-sys-color-tertiary-container);
+    --_m3e-fab-menu-toggle-checked-container: var(--m3e-sys-color-tertiary);
+    --_m3e-fab-menu-toggle-icon: var(--m3e-sys-color-on-tertiary-container);
+    --_m3e-fab-menu-toggle-checked-icon: var(--m3e-sys-color-on-tertiary);
+    --_m3e-fab-menu-item-container: var(--m3e-sys-color-tertiary-container);
+    --_m3e-fab-menu-item-content: var(--m3e-sys-color-on-tertiary-container);
+  }
+
+  .m3e-fab-menu--align-start {
+    --_m3e-fab-menu-align: start;
+  }
+
+  .m3e-fab-menu--align-center {
+    --_m3e-fab-menu-align: center;
+  }
+
+  /* --- Toggle: a FAB (fab.css) whose size, shape, colors and icon follow the progress ------- */
+  .m3e-fab-menu__toggle {
+    --_m3e-fab-menu-clamped: clamp(0, var(--_m3e-fab-menu-progress), 1);
+    --_m3e-fab-height: calc(
+      var(--_m3e-fab-menu-initial-size) +
+        (
+          var(--m3e-comp-fab-menu-baseline-close-button-container-height) -
+            var(--_m3e-fab-menu-initial-size)
+        ) *
+        var(--_m3e-fab-menu-progress)
+    );
+    --_m3e-fab-width: calc(
+      var(--_m3e-fab-menu-initial-size) +
+        (
+          var(--m3e-comp-fab-menu-baseline-close-button-container-width) -
+            var(--_m3e-fab-menu-initial-size)
+        ) *
+        var(--_m3e-fab-menu-progress)
+    );
+    --_m3e-fab-shape: calc(
+      var(--_m3e-fab-menu-initial-radius) +
+        (
+          var(--m3e-comp-fab-menu-defaults-toggle-final-corner-radius) -
+            var(--_m3e-fab-menu-initial-radius)
+        ) *
+        var(--_m3e-fab-menu-progress)
+    );
+    --_m3e-fab-icon-size: calc(
+      var(--_m3e-fab-menu-initial-icon-size) +
+        (
+          var(--m3e-comp-fab-menu-baseline-close-button-icon-size) -
+            var(--_m3e-fab-menu-initial-icon-size)
+        ) *
+        var(--_m3e-fab-menu-progress)
+    );
+    --_m3e-fab-container: color-mix(
+      in oklab,
+      var(--_m3e-fab-menu-toggle-container),
+      var(--_m3e-fab-menu-toggle-checked-container) calc(var(--_m3e-fab-menu-clamped) * 100%)
+    );
+    --_m3e-fab-content: color-mix(
+      in oklab,
+      var(--_m3e-fab-menu-toggle-icon),
+      var(--_m3e-fab-menu-toggle-checked-icon) calc(var(--_m3e-fab-menu-clamped) * 100%)
+    );
+
+    /* Compose's toggle keeps FabShadowElevation in every state. */
+    --_m3e-fab-shadow-hovered: var(--_m3e-fab-shadow);
+    --_m3e-fab-shadow-focused: var(--_m3e-fab-shadow);
+    --_m3e-fab-shadow-pressed: var(--_m3e-fab-shadow);
+
+    display: inline-grid;
+    place-items: center;
+    flex-shrink: 0;
+    inline-size: var(--_m3e-fab-width);
+    block-size: var(--_m3e-fab-height);
+
+    /* The FAB-sized box keeps its place; the container shrinks into its top end corner. */
+    margin-inline-start: calc(var(--_m3e-fab-menu-initial-size) - var(--_m3e-fab-width));
+    margin-block-end: calc(var(--_m3e-fab-menu-initial-size) - var(--_m3e-fab-height));
+    pointer-events: auto;
+  }
+
+  /* Both icons share the cell; the close icon replaces the other at half progress. */
+  .m3e-fab-menu__toggle > * {
+    grid-area: 1 / 1;
+    opacity: calc(1 - round(nearest, var(--_m3e-fab-menu-clamped), 1));
+  }
+
+  .m3e-fab-menu__toggle > :last-child:not(:first-child) {
+    opacity: round(nearest, var(--_m3e-fab-menu-clamped), 1);
+  }
+
+  /* --- Items -------------------------------------------------------------------------------- */
+  .m3e-fab-menu__items {
+    display: flex;
+    flex-direction: column;
+    align-items: var(--_m3e-fab-menu-align);
+    gap: var(--m3e-comp-fab-menu-baseline-list-item-between-space);
+    opacity: 1;
+    transition:
+      opacity var(--m3e-comp-fab-menu-defaults-item-opacity-duration)
+        var(--m3e-comp-fab-menu-defaults-item-opacity-easing),
+      display var(--m3e-comp-fab-menu-defaults-item-opacity-duration) allow-discrete;
+  }
+
+  @starting-style {
+    .m3e-fab-menu--open > .m3e-fab-menu__items {
+      opacity: 0;
+    }
+  }
+
+  /* Closed: no item column (m3e-elements / m3e-react keep it while the items spring out). */
+  .m3e-fab-menu:not(.m3e-fab-menu--open, [data-closing]) > .m3e-fab-menu__items {
+    display: none;
+    opacity: 0;
+  }
+
+  .m3e-fab-menu__item {
+    --m3e-comp-state-layer-color: var(--_m3e-fab-menu-item-content);
+
+    display: inline-flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    gap: var(--m3e-comp-fab-menu-baseline-list-item-icon-label-space);
+    box-sizing: border-box;
+    min-inline-size: var(--m3e-comp-fab-menu-baseline-list-item-container-height);
+    block-size: var(--m3e-comp-fab-menu-baseline-list-item-container-height);
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    border: none;
+    border-radius: var(--m3e-comp-fab-menu-baseline-list-item-container-shape);
+    background-color: var(--_m3e-fab-menu-item-container);
+    color: var(--_m3e-fab-menu-item-content);
+    font-family: var(--m3e-comp-fab-menu-defaults-item-label-font);
+    font-size: var(--m3e-comp-fab-menu-defaults-item-label-size);
+    font-weight: var(--m3e-comp-fab-menu-defaults-item-label-weight);
+    line-height: var(--m3e-comp-fab-menu-defaults-item-label-line-height);
+    letter-spacing: var(--m3e-comp-fab-menu-defaults-item-label-tracking);
+    text-decoration: none;
+    white-space: nowrap;
+    cursor: pointer;
+    user-select: none;
+    pointer-events: auto;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* Paddings belong to the row, so a narrowing item clips them with the content. */
+  .m3e-fab-menu__item > * {
+    flex-shrink: 0;
+  }
+
+  .m3e-fab-menu__item > :first-child {
+    margin-inline-start: var(--m3e-comp-fab-menu-baseline-list-item-leading-space);
+  }
+
+  .m3e-fab-menu__item > :last-child {
+    margin-inline-end: var(--m3e-comp-fab-menu-baseline-list-item-trailing-space);
+  }
+
+  .m3e-fab-menu__item > .m3e-icon {
+    --m3e-comp-icon-size: var(--m3e-comp-fab-menu-baseline-list-item-icon-size);
+  }
+
+  /* .m3e-icon is direction: ltr (ligatures), so in RTL its own inline end faces the item's start. */
+  .m3e-fab-menu__item:dir(rtl) > .m3e-icon:first-child {
+    margin-inline: 0 var(--m3e-comp-fab-menu-baseline-list-item-leading-space);
+  }
+
+  /* While an item springs its width, its full row stays anchored at the alignment edge. */
+  .m3e-fab-menu__item[data-animating] {
+    justify-content: var(--_m3e-fab-menu-align);
+    min-inline-size: 0;
+  }
+
+  /* m3e-elements / m3e-react drive the progress and the items with springs (inline styles). */
+  .m3e-fab-menu[data-spring],
+  .m3e-fab-menu[data-spring] > .m3e-fab-menu__items {
+    transition: none;
+  }
+
+  @media (forced-colors: active) {
+    .m3e-fab-menu__item {
+      border: thin solid ButtonText;
+    }
+  }
+}
+
+@layer m3e.base {
+  /* <m3e-fab-menu> renders the contract inside itself; its <m3e-fab-menu-item>s are data. */
+  :where(m3e-fab-menu) {
+    display: contents;
+  }
+}

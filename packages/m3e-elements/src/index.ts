@@ -2,6 +2,7 @@ export * from './base/index.js';
 export * from './icon/index.js';
 export * from './top-app-bar/index.js';
 export * from './loading-indicator/index.js';
+export * from './fab-menu/index.js';
 export * from './menu/index.js';
 export * from './menu-popup/index.js';
 export * from './button-group-layout/index.js';
