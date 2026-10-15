@@ -99,7 +99,7 @@ Rules:
 - **Build-time:** CLI `m3e-theme --seed "#6750A4" --variant expressive --out theme.css` emits `:root` + `[data-theme="dark"]` + `@media (prefers-color-scheme)` blocks.
 - **Runtime (CSR):** `createTheme(options)` returns `{ cssText, tokens }`. `<ThemeProvider>` (React) and `<m3e-theme>` (element) set the CSS vars on a subtree. Nesting is allowed.
 - **Image seed:** `seedFromImage(img)` uses the MCU quantizer + score.
-- **Fonts:** `m3e-tokens/fonts.css` registers `@font-face` for Google Sans Flex and `m3e-tokens/material-symbols.css` for Material Symbols, both from the package. Consumers may override `--m3e-ref-typeface-brand` / `--m3e-ref-typeface-plain`.
+- **Fonts:** `m3e-tokens/fonts.css` registers `@font-face` for Google Sans Flex and `m3e-tokens/material-symbols.css` for Material Symbols, both from the package. `fonts-rond.css` (adds the ROND axis, D15) and `fonts-full.css` (every axis, D11) replace `fonts.css` when imported instead of it. Consumers may override `--m3e-ref-typeface-brand` / `--m3e-ref-typeface-plain`.
 
 ## 10. Icons (D5)
 - `@kyralabs/m3e-tokens` bundles the Material Symbols variable font (Rounded by default as a project brand choice, D12 — no M3 source names a default style; Outlined/Sharp available as separate entries: `material-symbols-outlined.css`, `material-symbols-sharp.css`).

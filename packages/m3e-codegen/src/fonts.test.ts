@@ -6,7 +6,7 @@ import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import * as fontkit from 'fontkit';
 import { describe, expect, it } from 'vitest';
-import { FALLBACK_FAMILY, FAMILY, expandUnicodeRange, parseCss2 } from './fonts.js';
+import { FALLBACK_FAMILY, FAMILY, PROFILES, expandUnicodeRange, parseCss2 } from './fonts.js';
 import { readPin } from './pin.js';
 
 const root = fileURLToPath(new URL('../../../', import.meta.url));
@@ -85,7 +85,12 @@ describe('built fonts', () => {
     expect(woff2.sort()).toEqual(listed.map((c) => c.file).sort());
   });
 
-  it.each(['fonts.css', 'fonts-full.css'])('%s references only shipped files', (css) => {
+  it('ships the default, ROND (D15) and full profiles', () => {
+    expect(PROFILES.map((p) => p.css)).toEqual(['fonts.css', 'fonts-rond.css', 'fonts-full.css']);
+    expect(Object.keys(output.chunks)).toEqual(PROFILES.map((p) => p.css));
+  });
+
+  it.each(PROFILES.map((p) => p.css))('%s references only shipped files', (css) => {
     const text = readFileSync(join(fontsDir, css), 'utf8');
     const urls = [...text.matchAll(/url\("\.\/([^"]+)"\)/g)].map((m) => m[1]!);
     expect(urls.sort()).toEqual(
@@ -98,10 +103,11 @@ describe('built fonts', () => {
     expect(text).toMatch(/size-adjust: [\d.]+%;/);
   });
 
-  it('default profile keeps wght + opsz; full profile keeps every axis', () => {
+  it('default profile keeps wght + opsz; ROND profile adds ROND; full profile keeps every axis', () => {
     const axes = (file: string) =>
       Object.keys((fontkit.openSync(join(fontsDir, file)) as fontkit.Font).variationAxes).sort();
     expect(axes(output.chunks['fonts.css']!['latin']!.file)).toEqual(['opsz', 'wght']);
+    expect(axes(output.chunks['fonts-rond.css']!['latin']!.file)).toEqual(['ROND', 'opsz', 'wght']);
     expect(axes(output.chunks['fonts-full.css']!['latin']!.file)).toEqual([
       'ROND',
       'opsz',
@@ -111,11 +117,29 @@ describe('built fonts', () => {
     ]);
   });
 
-  it('default profile declares the instanced descriptors', () => {
-    const css = readFileSync(join(fontsDir, 'fonts.css'), 'utf8');
+  it.each(['fonts.css', 'fonts-rond.css'])('%s declares the instanced descriptors', (file) => {
+    const css = readFileSync(join(fontsDir, file), 'utf8');
     expect(css).toContain('font-style: normal;');
     expect(css).toContain('font-stretch: 100%;');
     expect(css).not.toContain('oblique');
+  });
+
+  it('ROND profile keeps the full ROND range with the default at 0 (D15)', () => {
+    const font = fontkit.openSync(
+      join(fontsDir, output.chunks['fonts-rond.css']!['latin']!.file),
+    ) as fontkit.Font;
+    expect(font.variationAxes['ROND']).toMatchObject({ min: 0, default: 0, max: 100 });
+  });
+
+  it('ROND profile is a drop-in for the default: same faces, only the chunk files differ (D15)', () => {
+    const faces = (file: string) =>
+      readFileSync(join(fontsDir, file), 'utf8')
+        .replace(/^ \* (Default|ROND) profile.*$/m, '')
+        .replace(/google-sans-flex-rond-/g, 'google-sans-flex-');
+    expect(faces('fonts-rond.css')).toBe(faces('fonts.css'));
+    const codepoints = (css: string) =>
+      Object.fromEntries(Object.entries(output.chunks[css]!).map(([k, c]) => [k, c.codepoints]));
+    expect(codepoints('fonts-rond.css')).toEqual(codepoints('fonts.css'));
   });
 
   it('latin chunk covers Basic Latin', () => {

@@ -116,6 +116,68 @@
         "sha256": "64b8c974bfbb8e0465b814b56b2a68e2cab91c8b24f76a9f6ee34bf1290a5b84"
       }
     },
+    "fonts-rond.css": {
+      "canadian-aboriginal": {
+        "file": "google-sans-flex-rond-canadian-aboriginal.woff2",
+        "codepoints": 6,
+        "bytes": 4700,
+        "sha256": "892da8d731e2f5da5d44ef3a955440416a2bdac6819fe8b57caff1a969b0b346"
+      },
+      "cherokee": {
+        "file": "google-sans-flex-rond-cherokee.woff2",
+        "codepoints": 7,
+        "bytes": 5392,
+        "sha256": "730cd45a1a2c6bc16a6e5d11cfec03665a6f220ca6102b51631ab5fa3585a154"
+      },
+      "math": {
+        "file": "google-sans-flex-rond-math.woff2",
+        "codepoints": 33,
+        "bytes": 25712,
+        "sha256": "ca7c90aba7d7f887fcc160c8e9a4d52ad608778c2d3696de1764466f989094ea"
+      },
+      "nushu": {
+        "file": "google-sans-flex-rond-nushu.woff2",
+        "codepoints": 1,
+        "bytes": 30616,
+        "sha256": "a49b339bb64256297f7d225a3b66e2dc7951072b37d102e0652fea01b64584bc"
+      },
+      "symbols": {
+        "file": "google-sans-flex-rond-symbols.woff2",
+        "codepoints": 24,
+        "bytes": 47848,
+        "sha256": "c33f8cc87ecd5ea5e324eb75cfe0bb0f702248440a629c4fb4e1b291fedb0be3"
+      },
+      "syriac": {
+        "file": "google-sans-flex-rond-syriac.woff2",
+        "codepoints": 7,
+        "bytes": 4444,
+        "sha256": "3ad123ac2689161dd655040a0143a42bfc4e45eeb818327b551bbf73d26d5b80"
+      },
+      "tifinagh": {
+        "file": "google-sans-flex-rond-tifinagh.woff2",
+        "codepoints": 10,
+        "bytes": 6828,
+        "sha256": "b8bd8ea003e87cb403df174200a150f7b909a0f87e122bbba285cfe01f97f6b5"
+      },
+      "vietnamese": {
+        "file": "google-sans-flex-rond-vietnamese.woff2",
+        "codepoints": 110,
+        "bytes": 40512,
+        "sha256": "f8c8eafc892f9ee08d9fcd870a46ffbb02760b33003558358b355a03c3730802"
+      },
+      "latin-ext": {
+        "file": "google-sans-flex-rond-latin-ext.woff2",
+        "codepoints": 154,
+        "bytes": 103132,
+        "sha256": "ddde7a67bc5fbe6ca79ce9f4b45d68b46be153b3d939fab7f122fc8357f30ba9"
+      },
+      "latin": {
+        "file": "google-sans-flex-rond-latin.woff2",
+        "codepoints": 228,
+        "bytes": 210124,
+        "sha256": "673d4c3b468d3d889113109369d6948aa99a7ce4879d0dfca8cb29e9d81ec22d"
+      }
+    },
     "fonts-full.css": {
       "canadian-aboriginal": {
         "file": "google-sans-flex-full-canadian-aboriginal.woff2",

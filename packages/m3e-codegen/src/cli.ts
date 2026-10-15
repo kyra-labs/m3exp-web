@@ -48,9 +48,12 @@ const fontOutDir = join(root, 'packages/m3e-tokens/fonts');
 const cacheDir = join(root, 'node_modules/.cache/m3e-codegen');
 const iconVendorDir = join(root, 'packages/m3e-codegen/vendor/material-symbols');
 
-/** Files in packages/m3e-tokens/fonts produced by `fonts` (Material Symbols files belong to `icons`). */
+/**
+ * Files in packages/m3e-tokens/fonts produced by `fonts`: chunks, manifest, licenses and every
+ * profile stylesheet (`fonts.css`, `fonts-<profile>.css`). Material Symbols files belong to `icons`.
+ */
 const ownsGoogleSansFlex = (path: string) =>
-  /^(google-sans-flex[\w.-]*|fonts(-full)?\.css|(LICENSE|TRADEMARKS)-google-sans-flex\.\w+)$/.test(
+  /^(google-sans-flex[\w.-]*|fonts(-[a-z]+)?\.css|(LICENSE|TRADEMARKS)-google-sans-flex\.\w+)$/.test(
     path,
   );
 
