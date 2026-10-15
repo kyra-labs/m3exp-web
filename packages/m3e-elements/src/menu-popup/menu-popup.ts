@@ -1,6 +1,9 @@
 import { type MenuAnchorPosition, menuPosition } from '@kyralabs/m3e-motion';
 import { Spring, readSpring } from '../base/spring.js';
 
+// Re-exported for the split button (and anything else that imported them from here).
+export { Spring, readSpring };
+
 export type { MenuAnchorPosition };
 
 export interface MenuPopupOptions {
