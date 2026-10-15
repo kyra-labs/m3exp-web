@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { attachRipple } from '../base/ripple.js';
 import { attachAutoRipple } from './ripple.js';
 
@@ -51,13 +51,30 @@ describe('attachAutoRipple', () => {
       '<button class="m3e-button"><span class="m3e-button__label">Go</span></button>',
     );
     box(button, 10, 20, 100, 40);
+    expect(ripple(button)).toMatchObject({ ripple: false, pressed: false });
     down(button.querySelector('span')!, 30, 30);
     expect(ripple(button)).toEqual({ ripple: true, pressed: true, x: '20px', y: '10px' });
     expect(button.style.getPropertyValue('--_m3e-ripple-radius')).toBe(
       `${String(Math.round(Math.hypot(80, 30) * 100) / 100)}px`,
     );
     up(button);
-    expect(ripple(button)).toMatchObject({ ripple: false, pressed: false });
+    // data-ripple stays, like attachRipple and m3e-react: m3e-css keeps hover and focus flat.
+    expect(ripple(button)).toMatchObject({ ripple: true, pressed: false });
+  });
+
+  it('keeps handling its own hosts: a second press ripples from the new point', () => {
+    const button = mount('<button class="m3e-button"></button>');
+    box(button, 0, 0, 100, 40);
+    down(button, 10, 10);
+    up(button);
+    down(button, 70, 30, 2);
+    expect(ripple(button)).toEqual({ ripple: true, pressed: true, x: '70px', y: '30px' });
+    up(button, 2);
+    expect(ripple(button)).toMatchObject({ ripple: true, pressed: false });
+    key(button, 'keydown', 'Enter');
+    expect(ripple(button)).toEqual({ ripple: true, pressed: true, x: '50px', y: '20px' });
+    key(button, 'keyup', 'Enter');
+    expect(ripple(button)).toMatchObject({ ripple: true, pressed: false });
   });
 
   it.each(['m3e-icon-button', 'm3e-assist-chip', 'm3e-state-layer'])('ripples .%s', (cls) => {
@@ -86,7 +103,9 @@ describe('attachAutoRipple', () => {
     expect(ripple(card)).toEqual({ ripple: true, pressed: true, x: '50px', y: '20px' });
     expect(action.hasAttribute('data-pressed')).toBe(false);
     up(action);
-    expect(ripple(card)).toMatchObject({ ripple: false, pressed: false });
+    expect(ripple(card)).toMatchObject({ ripple: true, pressed: false });
+    down(action, 20, 30, 2);
+    expect(ripple(card)).toEqual({ ripple: true, pressed: true, x: '10px', y: '10px' });
   });
 
   it('draws a navigation item press on its indicator pill', () => {
@@ -116,25 +135,77 @@ describe('attachAutoRipple', () => {
     expect(ripple(card)).toMatchObject({ ripple: false, pressed: false });
   });
 
-  it('skips hosts m3e-react drives (data-ripple rendered up front)', () => {
-    const button = mount('<button class="m3e-button" data-ripple=""></button>');
-    box(button, 0, 0, 100, 40);
-    down(button, 10, 10);
-    expect(ripple(button)).toMatchObject({ ripple: true, pressed: false, x: '' });
-    up(button);
-    expect(button.hasAttribute('data-ripple')).toBe(true);
+  it('skips hosts m3e-react drives (data-ripple rendered up front), on every press', () => {
+    document.body.innerHTML =
+      '<button class="m3e-button" data-ripple=""></button><button class="m3e-button"></button>';
+    const [react, plain] = document.body.querySelectorAll<HTMLElement>('button');
+    box(react!, 0, 0, 100, 40);
+    box(plain!, 0, 0, 100, 40);
+    for (const id of [1, 2]) {
+      down(plain!, 10, 10, id);
+      up(plain!, id);
+      down(react!, 10, 10, id);
+      expect(ripple(react!)).toMatchObject({ ripple: true, pressed: false, x: '' });
+      up(react!, id);
+    }
+    expect(ripple(plain!)).toMatchObject({ ripple: true, pressed: false, x: '10px' });
+    controller.abort();
+    // Abort only resets hosts it owns.
+    expect(react!.hasAttribute('data-ripple')).toBe(true);
+    expect(plain!.hasAttribute('data-ripple')).toBe(false);
   });
 
-  it('skips hosts with attachRipple (no second press, data-ripple left alone)', () => {
+  it('skips hosts with attachRipple (one press each, data-ripple left alone)', () => {
     const button = mount('<button class="m3e-button"></button>');
     box(button, 0, 0, 100, 40);
     const own = new AbortController();
     attachRipple(button, own.signal);
-    down(button, 10, 10);
-    expect(ripple(button)).toMatchObject({ ripple: true, pressed: true, x: '10px' });
-    up(button);
-    expect(ripple(button)).toMatchObject({ ripple: true, pressed: false });
+    const set = vi.spyOn(button, 'setAttribute');
+    for (const id of [1, 2]) {
+      down(button, 10, 10, id);
+      expect(ripple(button)).toMatchObject({ ripple: true, pressed: true, x: '10px' });
+      up(button, id);
+      expect(ripple(button)).toMatchObject({ ripple: true, pressed: false });
+    }
+    // attachRipple's two presses and nothing from the auto ripple.
+    expect(set.mock.calls.filter(([name]) => name.startsWith('data-'))).toEqual([
+      ['data-pressed', ''],
+      ['data-pressed', ''],
+    ]);
+    controller.abort();
+    expect(button.hasAttribute('data-ripple')).toBe(true);
     own.abort();
+  });
+
+  it('does not double-handle hosts another attachAutoRipple owns', () => {
+    const root = mount('<div><button class="m3e-button"></button></div>');
+    const button = root.querySelector('button')!;
+    box(button, 0, 0, 100, 40);
+    const scoped = new AbortController();
+    attachAutoRipple(root, scoped.signal);
+    const set = vi.spyOn(button, 'setAttribute');
+    for (const id of [1, 2]) {
+      down(button, 10, 10, id);
+      up(button, id);
+    }
+    // The document-level call (capture on document runs first) adopts it; the scoped one skips.
+    expect(set.mock.calls.filter(([name]) => name === 'data-pressed')).toHaveLength(2);
+    scoped.abort();
+    expect(button.hasAttribute('data-ripple')).toBe(true);
+  });
+
+  it('resets owned hosts found disconnected and adopts them again when re-inserted', () => {
+    const button = mount('<button class="m3e-button"></button>');
+    box(button, 0, 0, 100, 40);
+    down(button, 10, 10);
+    up(button);
+    button.remove();
+    const other = mount('<button class="m3e-icon-button"></button>');
+    down(other, 0, 0, 2);
+    expect(ripple(button)).toEqual({ ripple: false, pressed: false, x: '', y: '' });
+    document.body.append(button);
+    down(button, 20, 20, 3);
+    expect(ripple(button)).toEqual({ ripple: true, pressed: true, x: '20px', y: '20px' });
   });
 
   it('ends the press when the pointer leaves the trigger', () => {
@@ -148,7 +219,7 @@ describe('attachAutoRipple', () => {
     button.dispatchEvent(
       new PointerEvent('pointerout', { bubbles: true, pointerId: 1, relatedTarget: document.body }),
     );
-    expect(ripple(button)).toMatchObject({ ripple: false, pressed: false });
+    expect(ripple(button)).toMatchObject({ ripple: true, pressed: false });
   });
 
   it('presses from the center on Enter and Space; links only on Enter', () => {
@@ -157,7 +228,7 @@ describe('attachAutoRipple', () => {
     key(button, 'keydown', ' ');
     expect(ripple(button)).toEqual({ ripple: true, pressed: true, x: '50px', y: '20px' });
     key(button, 'keyup', ' ');
-    expect(ripple(button)).toMatchObject({ ripple: false, pressed: false });
+    expect(ripple(button)).toMatchObject({ ripple: true, pressed: false });
 
     const link = mount('<a class="m3e-button" href="#"></a>');
     box(link, 0, 0, 100, 40);
@@ -169,13 +240,22 @@ describe('attachAutoRipple', () => {
     expect(link.hasAttribute('data-pressed')).toBe(false);
   });
 
-  it('cleans up on abort: releases an active press and stops listening', () => {
-    const button = mount('<button class="m3e-button"></button>');
-    down(button);
+  it('cleans up on abort: resets every owned host and stops listening', () => {
+    document.body.innerHTML =
+      '<button class="m3e-button"></button><button class="m3e-icon-button"></button>';
+    const [pressed, released] = document.body.querySelectorAll<HTMLElement>('button');
+    box(pressed!, 0, 0, 100, 40);
+    box(released!, 0, 0, 40, 40);
+    down(released!, 5, 5, 2);
+    up(released!, 2);
+    down(pressed!, 10, 10);
     controller.abort();
-    expect(ripple(button)).toMatchObject({ ripple: false, pressed: false });
-    down(button, 0, 0, 2);
-    expect(button.hasAttribute('data-pressed')).toBe(false);
+    for (const host of [pressed!, released!]) {
+      expect(ripple(host)).toEqual({ ripple: false, pressed: false, x: '', y: '' });
+      expect(host.style.getPropertyValue('--_m3e-ripple-radius')).toBe('');
+    }
+    down(pressed!, 0, 0, 3);
+    expect(ripple(pressed!)).toMatchObject({ ripple: false, pressed: false });
   });
 
   it('scopes to a root element', () => {
