@@ -615,3 +615,58 @@ describe('FloatingActionButtonMenu / ToggleFloatingActionButton literals (M5 FAB
     expect(decl.get('--m3e-comp-fab-menu-defaults-stagger-visibility-threshold')).toBe('1');
   });
 });
+
+describe('menu literals (M5 Menus)', () => {
+  const decl = declarations(output.get('components/menu-defaults.css')!);
+  const kt = (name: string) => inputs.material3Sources[name]!.replace(/\r\n/g, '\n');
+  const getter = (name: string) =>
+    new RegExp(`val ${name}\\n\\s*get\\(\\) = (\\d+)\\.dp`).exec(kt('Menu.kt'))?.[1];
+
+  it('layout values come from Menu.kt getters', () => {
+    for (const [cssVar, member] of [
+      ['--m3e-comp-menu-vertical-margin', 'MenuVerticalMargin'],
+      ['--m3e-comp-menu-horizontal-margin', 'MenuHorizontalMargin'],
+      ['--m3e-comp-menu-baseline-vertical-padding', 'DropdownMenuVerticalPadding'],
+      ['--m3e-comp-menu-baseline-item-height', 'MenuListItemContainerHeight'],
+      ['--m3e-comp-menu-item-horizontal-padding', 'DropdownMenuItemHorizontalPadding'],
+      ['--m3e-comp-menu-item-min-width', 'DropdownMenuItemDefaultMinWidth'],
+      ['--m3e-comp-menu-item-max-width', 'DropdownMenuItemDefaultMaxWidth'],
+      ['--m3e-comp-menu-group-vertical-padding', 'DropdownMenuGroupVerticalPadding'],
+      ['--m3e-comp-menu-group-label-min-height', 'DropdownMenuGroupDefaultMinHeight'],
+    ] as const) {
+      const value = getter(member);
+      expect(value, member).toBeDefined();
+      expect(decl.get(cssVar), member).toBe(`${value!}px`);
+    }
+  });
+
+  it('item, label and divider paddings come from Menu.kt and MenuDefaults.kt', () => {
+    expect(kt('Menu.kt')).toContain(
+      'private val DropdownMenuSelectableItemPadding = PaddingValues(horizontal = 4.dp)',
+    );
+    expect(decl.get('--m3e-comp-menu-item-outer-padding-horizontal')).toBe('4px');
+    expect(decl.get('--m3e-comp-menu-item-outer-padding-vertical-supporting')).toBe('2px');
+    expect(kt('MenuDefaults.kt')).toContain('private val SelectableItemVerticalPadding = 12.dp');
+    expect(decl.get('--m3e-comp-menu-item-vertical-padding')).toBe('12px');
+    expect(kt('MenuDefaults.kt')).toMatch(
+      /HorizontalDividerPadding: PaddingValues =\s*PaddingValues\(horizontal = 12\.dp, vertical = 2\.dp\)/,
+    );
+    expect(decl.get('--m3e-comp-menu-divider-padding-horizontal')).toBe('12px');
+    expect(decl.get('--m3e-comp-menu-divider-padding-vertical')).toBe('2px');
+    expect(decl.get('--m3e-comp-menu-group-label-padding-start')).toBe('12px');
+    expect(decl.get('--m3e-comp-menu-group-label-padding-end')).toBe('4px');
+    // Touch sizing: the precision-pointer branch (12dp) is opt-in.
+    expect(kt('MenuDefaults.kt')).toContain(
+      'val spacing = if (shouldUsePrecisionPointerComponentSizing.value) 12.dp else 8.dp',
+    );
+    expect(decl.get('--m3e-comp-menu-item-icon-label-space')).toBe('8px');
+  });
+
+  it('open/close targets and the baseline DropdownMenu margin', () => {
+    expect(kt('Menu.kt')).toContain('internal const val ClosedScaleTarget = 0.8f');
+    expect(decl.get('--m3e-comp-menu-closed-scale')).toBe('0.8');
+    expect(decl.get('--m3e-comp-menu-closed-opacity')).toBe('0');
+    expect(kt('AndroidMenu.android.kt')).toMatch(/horizontalMargin = 0,/);
+    expect(decl.get('--m3e-comp-menu-baseline-horizontal-margin')).toBe('0');
+  });
+});

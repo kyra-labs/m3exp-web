@@ -38,6 +38,16 @@
     outline-offset: var(--m3e-sys-state-focus-indicator-inner-offset);
   }
 
+  /* Menu items sit edge to edge in their group: the ring is drawn inward. */
+  :where(.m3e-menu__item):focus-visible {
+    outline: var(--m3e-sys-state-focus-indicator-thickness) solid var(--m3e-sys-color-secondary);
+    outline-offset: var(--m3e-sys-state-focus-indicator-inner-offset);
+  }
+
+  :where(.m3e-menu__item):focus:not(:focus-visible) {
+    outline: none;
+  }
+
   :where(
       .m3e-focus-ring,
       .m3e-button,
@@ -61,7 +71,8 @@
       .m3e-fab-menu__item
     ):focus-visible,
     :where(.m3e-card--interactive):has(.m3e-card__action:focus-visible),
-    :where(.m3e-navigation-item:focus-visible .m3e-navigation-item__state) {
+    :where(.m3e-navigation-item:focus-visible .m3e-navigation-item__state),
+    :where(.m3e-menu__item):focus-visible {
       outline-color: Highlight;
     }
   }

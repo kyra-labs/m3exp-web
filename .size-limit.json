@@ -94,6 +94,12 @@
     "limit": "4 KB"
   },
   {
+    "name": "m3e-css: menu",
+    "path": "packages/m3e-css/dist/menu.css",
+    "rolldown": false,
+    "limit": "4 KB"
+  },
+  {
     "name": "m3e-css: FAB + extended FAB",
     "path": "packages/m3e-css/dist/fab.css",
     "rolldown": false,
@@ -135,6 +141,16 @@
     "name": "m3e-elements: <m3e-icon> entry",
     "path": "packages/m3e-elements/dist/icon/index.js",
     "limit": "8 KB"
+  },
+  {
+    "name": "m3e-elements: <m3e-menu> entry (bundles MenuPopup + m3e-motion springs and placement)",
+    "path": "packages/m3e-elements/dist/menu/index.js",
+    "limit": "8 KB"
+  },
+  {
+    "name": "m3e-elements: menu-popup entry (MenuPopup, used by m3e-react <Menu>)",
+    "path": "packages/m3e-elements/dist/menu-popup/index.js",
+    "limit": "4 KB"
   },
   {
     "name": "m3e-shapes (all presets + Morph)",
@@ -183,6 +199,13 @@
     "limit": "16 KB"
   },
   {
+    "name": "m3e-react: { Menu, MenuItem, MenuSection, MenuTrigger } only (incl. react-aria menu hooks + MenuPopup)",
+    "path": "packages/m3e-react/dist/index.js",
+    "import": "{ Menu, MenuItem, MenuSection, MenuTrigger }",
+    "ignore": ["react", "react-dom"],
+    "limit": "34 KB"
+  },
+  {
     "name": "m3exp-web/react: { Icon } only",
     "path": "packages/m3exp-web/dist/react.js",
     "import": "{ Icon }",
@@ -190,10 +213,10 @@
     "limit": "1 KB"
   },
   {
-    "name": "m3exp-web (root): { Icon } (the root entry registers every custom element by design, ~12 kB; a leaked React component adds ~10 kB of react-aria. Raise with m3e-elements (all), max 31 KB)",
+    "name": "m3exp-web (root): { Icon } (the root entry registers every custom element by design, ~17 kB with <m3e-menu>; a leaked React component adds ~10 kB of react-aria. Raise with m3e-elements (all), max 31 KB)",
     "path": "packages/m3exp-web/dist/index.js",
     "import": "{ Icon }",
     "ignore": ["react", "react-dom"],
-    "limit": "16 KB"
+    "limit": "20 KB"
   }
 ]

@@ -59,7 +59,7 @@ const classes = (s: (typeof statics)[number]) =>
                 type="button"
                 class="m3e-fab m3e-fab-menu__toggle"
                 aria-label={s.label}
-                aria-expanded={String(s.open)}
+                aria-expanded={s.open ? 'true' : 'false'}
                 aria-haspopup="menu"
                 aria-controls={`static-menu-${s.id}`}
               >

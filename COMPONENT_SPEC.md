@@ -331,10 +331,12 @@
   - [ ] Plus CAC.
 
 ## 21. Menus (standard, vibrant, segmented; selectable/checkable items)
-- **Tokens:** `TODO(verify)` menu tokens.
-- **Motion:** open scale+fade on fastSpatial/fastEffects.
-- **ARIA:** APG menu; typeahead; submenus.
+- **Tokens (verified, generated):** `{Menu,StandardMenu,VibrantMenu,SegmentedMenu}Tokens.kt@19991f2c` plus the `Menu.kt` / `MenuDefaults.kt` literals Compose renders (`components/menu-defaults.css`; SOURCES register #38). Expressive item: 44dp min height (SegmentedMenuTokens.Item), 12dp padding, 8dp icon–label space, 4dp outside the item surface, 112–280dp wide, 20dp icons; leading/middle/trailing item shapes medium+extra-small / extra-small, selected medium; groups: standalone large, leading/trailing large+small, middle small, inactive (hovered, then left) small; 2dp group gap; standard = StandardMenuTokens (selected tertiary-container), vibrant = VibrantMenuTokens (selected tertiary). Baseline (`DropdownMenu`): MenuTokens surface, 8dp vertical padding, 48dp items.
+- **Motion:** open scale (from ClosedScaleTarget 0.8) on fastSpatial and alpha on fastEffects around the transform origin facing the anchor, interruptible (`Menu.kt` DropdownMenuPopupContent); item selection: container color on fastEffects, shape on fastSpatial; group hover shape on fastSpatial; checked-only leading icon expands/fades.
+- **Placement:** Compose `DropdownMenuPositionProvider`: below the anchor, then above, then centered on its top, then against the nearer window edge, 48dp from the window top/bottom and 8dp (baseline 0) from its sides; submenus at the anchor item's end.
+- **ARIA:** APG menu; typeahead; submenus. Checkable items `menuitemcheckbox`, selectable `menuitemradio` (Compose Role.Checkbox / Role.RadioButton), `aria-checked`.
 - **Layers:** elements (positioning, focus, light dismiss via popover) + react (`useMenu`) + css.
+- **API:** CSS `.m3e-menu[--vibrant|--baseline]` > (`.m3e-menu__group` > `.m3e-menu__label`, `.m3e-menu__divider`) `.m3e-menu__item` (`__item-leading[--toggle]`, `__item-text` > `__item-label` / `__item-supporting`, `__item-trailing`). Element `<m3e-menu anchor variant position label open>` with `<m3e-menu-item value type checked disabled icon checked-icon supporting-text trailing-icon trailing-text submenu>` and `<m3e-menu-group label divider>`; events `action`, `open-change`. React `<MenuTrigger isOpen defaultOpen onOpenChange position>` + `<Menu variant selectionMode selectedKeys onSelectionChange onAction disabledKeys position>` + `<MenuItem id icon checkedIcon supportingText trailingIcon trailingText isDisabled submenu>` + `<MenuSection title divider>`.
 - **Acceptance:**
   - [ ] Typeahead selects matching items.
   - [ ] Checkable items toggle `aria-checked`.
