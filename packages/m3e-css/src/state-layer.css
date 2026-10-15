@@ -36,6 +36,8 @@
     .m3e-icon-button,
     .m3e-card--interactive,
     .m3e-assist-chip,
+    .m3e-fab,
+    .m3e-extended-fab,
     .m3e-navigation-item__state
   ) {
     position: relative;
@@ -48,6 +50,8 @@
     .m3e-icon-button,
     .m3e-card--interactive,
     .m3e-assist-chip,
+    .m3e-fab,
+    .m3e-extended-fab,
     .m3e-navigation-item__state
   )::before {
     --_m3e-state-layer-opacity: 0;
@@ -92,7 +96,9 @@
         .m3e-button,
         .m3e-icon-button,
         .m3e-card--interactive,
-        .m3e-assist-chip
+        .m3e-assist-chip,
+        .m3e-fab,
+        .m3e-extended-fab
       ):hover::before {
       --_m3e-state-layer-opacity: var(--m3e-sys-state-hover-state-layer-opacity);
     }
@@ -103,7 +109,9 @@
       .m3e-button,
       .m3e-icon-button,
       .m3e-card--interactive,
-      .m3e-assist-chip
+      .m3e-assist-chip,
+      .m3e-fab,
+      .m3e-extended-fab
     ):focus-visible::before {
     --_m3e-state-layer-opacity: var(--m3e-sys-state-focus-state-layer-opacity);
   }
@@ -113,7 +121,9 @@
       .m3e-button,
       .m3e-icon-button,
       .m3e-card--interactive,
-      .m3e-assist-chip
+      .m3e-assist-chip,
+      .m3e-fab,
+      .m3e-extended-fab
     )[data-dragged]::before {
     --_m3e-state-layer-opacity: var(--m3e-sys-state-dragged-state-layer-opacity);
   }
@@ -123,7 +133,9 @@
       .m3e-button,
       .m3e-icon-button,
       .m3e-card--interactive,
-      .m3e-assist-chip
+      .m3e-assist-chip,
+      .m3e-fab,
+      .m3e-extended-fab
     ):active::before,
   :where(
       .m3e-state-layer,
@@ -131,6 +143,8 @@
       .m3e-icon-button,
       .m3e-card--interactive,
       .m3e-assist-chip,
+      .m3e-fab,
+      .m3e-extended-fab,
       .m3e-navigation-item__state
     )[data-pressed]::before {
     opacity: var(--m3e-sys-state-pressed-state-layer-opacity);
@@ -141,7 +155,9 @@
       .m3e-button,
       .m3e-icon-button,
       .m3e-card--interactive,
-      .m3e-assist-chip
+      .m3e-assist-chip,
+      .m3e-fab,
+      .m3e-extended-fab
     ):is(:disabled, [aria-disabled='true'])::before {
     display: none;
   }
@@ -174,6 +190,8 @@
       .m3e-icon-button,
       .m3e-card--interactive,
       .m3e-assist-chip,
+      .m3e-fab,
+      .m3e-extended-fab,
       .m3e-navigation-item__state
     )[data-ripple][data-pressed]::before {
     --_m3e-ripple-opacity: calc(
@@ -208,6 +226,8 @@
       .m3e-icon-button,
       .m3e-card--interactive,
       .m3e-assist-chip,
+      .m3e-fab,
+      .m3e-extended-fab,
       .m3e-navigation-item__state
     )::before {
       display: none;

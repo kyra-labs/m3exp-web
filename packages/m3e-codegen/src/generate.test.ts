@@ -486,3 +486,55 @@ describe('TopAppBar layout literals (M4 Top app bar)', () => {
     );
   });
 });
+
+describe('FloatingActionButtonDefaults and extended FAB literals (M5 FAB)', () => {
+  const decl = declarations(output.get('components/fab-defaults.css')!);
+  const fab = inputs.material3Sources['FloatingActionButton.kt']!.replace(/\r\n/g, '\n');
+  const shapes = inputs.material3Sources['Shapes.kt']!.replace(/\r\n/g, '\n');
+
+  it.each([
+    ['--m3e-comp-fab-defaults-large-icon-size', /LargeIconSize: Dp = (\d+)\.dp/],
+    [
+      '--m3e-comp-fab-defaults-medium-extended-icon-padding',
+      /MediumExtendedFabIconPadding\n\s*get\(\) = (\d+)\.dp/,
+    ],
+    [
+      '--m3e-comp-fab-defaults-large-extended-icon-padding',
+      /LargeExtendedFabIconPadding\n\s*get\(\) = (\d+)\.dp/,
+    ],
+  ] as const)('%s', (name, pattern) => {
+    const value = pattern.exec(fab)?.[1];
+    expect(value).toBeDefined();
+    expect(decl.get(name)).toBe(`${value!}px`);
+  });
+
+  it('medium shapes resolve ShapeDefaults.LargeIncreased through Shapes.kt', () => {
+    expect(fab).toContain('get() = ShapeDefaults.LargeIncreased // TODO: update to use token');
+    expect(shapes).toContain(
+      'public val LargeIncreased: CornerBasedShape = ShapeTokens.CornerLargeIncreased',
+    );
+    for (const name of ['medium-shape', 'medium-extended-shape']) {
+      expect(decl.get(`--m3e-comp-fab-defaults-${name}`)).toBe(
+        'var(--m3e-sys-shape-corner-large-increased)',
+      );
+    }
+  });
+
+  it('extended FAB label styles and springs', () => {
+    expect(fab).toContain(
+      'private val SmallExtendedFabTextStyle = TypographyKeyTokens.TitleMedium',
+    );
+    expect(decl.get('--m3e-comp-fab-defaults-small-extended-label-size')).toBe(
+      'var(--m3e-sys-typescale-title-medium-size)',
+    );
+    expect(decl.get('--m3e-comp-fab-defaults-large-extended-label-font')).toBe(
+      'var(--m3e-sys-typescale-headline-small-font)',
+    );
+    expect(fab).toContain(
+      'val sizeAnimationSpec = MotionSchemeKeyTokens.FastSpatial.value<Float>()',
+    );
+    expect(decl.get('--m3e-comp-fab-defaults-extended-width-duration')).toBe(
+      'var(--m3e-sys-motion-spring-fast-spatial-duration)',
+    );
+  });
+});

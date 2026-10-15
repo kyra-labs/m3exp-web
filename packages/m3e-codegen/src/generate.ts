@@ -16,6 +16,7 @@ import { extractAppBarDefaults } from './app-bar-defaults.js';
 import { extractButtonDefaults } from './button-defaults.js';
 import { extractChipDefaults } from './chip-defaults.js';
 import { extractElevationMotion } from './elevation-motion.js';
+import { extractFabDefaults } from './fab-defaults.js';
 import { extractCenteredPadding, extractNavigationDefaults } from './navigation-defaults.js';
 import { extractLoadingIndicatorMotion } from './loading-indicator-motion.js';
 import {
@@ -841,6 +842,28 @@ export function generate({
     ]),
   });
 
+  // FloatingActionButtonDefaults literals and expressive extended FAB values (see fab-defaults.ts).
+  const fabDefaults = extractFabDefaults(material3Sources);
+  components.set('fab-defaults', {
+    object: 'FloatingActionButtonDefaults',
+    tokens: fabDefaults.map((d) => {
+      const e: Emitted = {
+        name: d.name,
+        value: d.value,
+        object: d.owner,
+        member: d.member,
+        raw: d.raw,
+        line: d.line,
+        cite: `${MATERIAL3_DIR}/${d.file}@${commit} L${String(d.line)}`,
+      };
+      if (d.note !== undefined) e.note = d.note;
+      return e;
+    }),
+    js: Object.fromEntries(
+      fabDefaults.map((d) => [camel(d.name.replace(/^--m3e-comp-/, '').split('-')), d.js]),
+    ),
+  });
+
   for (const [name, c] of [...components].sort(([a], [b]) => a.localeCompare(b))) {
     out.set(
       `components/${name}.css`,
@@ -879,14 +902,21 @@ export function generate({
                     [],
                     `${MATERIAL3_DIR}/{Button,ToggleButton,InteractiveComponentSize}.kt`,
                   )
-                : name === 'navigation-defaults'
+                : name === 'fab-defaults'
                   ? cssFile(
-                      'Compose navigation bar / rail layout values that are not in Navigation*Tokens (lines: PARITY.md).',
+                      'Compose FloatingActionButtonDefaults / extended FAB values that are not in Fab*Tokens (lines: PARITY.md).',
                       c.tokens,
                       [],
-                      `${MATERIAL3_DIR}/{NavigationBar,NavigationRail,ShortNavigationBar,WideNavigationRail}.kt`,
+                      `${MATERIAL3_DIR}/{FloatingActionButton,Shapes}.kt`,
                     )
-                  : cssFile(`Component tokens: ${c.object}.`, c.tokens),
+                  : name === 'navigation-defaults'
+                    ? cssFile(
+                        'Compose navigation bar / rail layout values that are not in Navigation*Tokens (lines: PARITY.md).',
+                        c.tokens,
+                        [],
+                        `${MATERIAL3_DIR}/{NavigationBar,NavigationRail,ShortNavigationBar,WideNavigationRail}.kt`,
+                      )
+                    : cssFile(`Component tokens: ${c.object}.`, c.tokens),
     );
   }
 
