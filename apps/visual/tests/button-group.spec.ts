@@ -21,19 +21,6 @@ const items = (scope: Locator) => scope.locator('.m3e-button-group__item');
 const widths = (scope: Locator) =>
   items(scope).evaluateAll((els) => els.map((el) => el.getBoundingClientRect().width));
 const sum = (a: readonly number[]) => a.reduce((s, v) => s + v, 0);
-/** Polls until the item widths stop changing (springs at rest). */
-const steadyWidths = async (scope: Locator) => {
-  let last: number[] = [];
-  await expect
-    .poll(async () => {
-      const now = await widths(scope);
-      const same = now.every((w, i) => Math.abs(w - (last[i] ?? -1)) < 0.01);
-      last = now;
-      return same;
-    })
-    .toBe(true);
-  return last;
-};
 const AXE_TAGS = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa', 'best-practice'];
 const SIZES = [
   ['xs', 'x-small'],
@@ -146,9 +133,13 @@ test('connected: pressing tightens the inner corners only; selection morphs them
 test('pressed item grows by ExpandedRatio, neighbors shrink, total width constant', async ({
   page,
 }) => {
+  // The Playwright clock drives the frames (WebKit may hold rAF while the mouse is down).
+  await page.clock.install();
+  await page.reload();
+  await expect(page.getByTestId('react-standard').locator('button')).toHaveCount(3);
   for (const id of ['el-standard', 'react-standard']) {
     const group = page.getByTestId(id);
-    const rest = await steadyWidths(group);
+    const rest = await widths(group);
     const [, play] = await items(group).all();
     const limits = await items(group).evaluateAll((els) =>
       els.map((el) => Number.parseFloat(getComputedStyle(el).paddingInlineEnd)),
@@ -159,14 +150,16 @@ test('pressed item grows by ExpandedRatio, neighbors shrink, total width constan
     const b = await box(play!);
     await page.mouse.move(b.x + b.width / 2, b.y + b.height / 2);
     await page.mouse.down();
-    const pressed = await steadyWidths(group);
+    await page.clock.runFor(1500);
+    const pressed = await widths(group);
     const growth = Math.min((ratio * rest[1]!) / 2, limits[0]!, limits[2]!);
     expect(pressed[1]!, id).toBeCloseTo(rest[1]! + 2 * growth, 1);
     expect(pressed[0]!, id).toBeCloseTo(rest[0]! - growth, 1);
     expect(pressed[2]!, id).toBeCloseTo(rest[2]! - growth, 1);
     expect(sum(pressed), id).toBeCloseTo(sum(rest), 1);
     await page.mouse.up();
-    const after = await steadyWidths(group);
+    await page.clock.runFor(2000);
+    const after = await widths(group);
     after.forEach((w, i) => {
       expect(w, id).toBeCloseTo(rest[i]!, 1);
     });
