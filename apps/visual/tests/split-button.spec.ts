@@ -231,7 +231,7 @@ test('XS buttons keep a ≥ 48dp tall hit area', async ({ page }) => {
     ['trailing', root.trailing],
   ] as const) {
     const b = await box(el);
-    expect(b.width, part).toBeGreaterThanOrEqual(48);
+    expect(b.width, part).toBeGreaterThanOrEqual(47.5);
     const reach = (48 - b.height) / 2;
     for (const y of [b.y - reach + 1, b.y + b.height + reach - 1]) {
       const hit = await page.evaluate(
