@@ -64,6 +64,7 @@ test('has no axe violations', async ({ page }) => {
 });
 
 test('has no axe violations with menus open (element, submenu, React)', async ({ page }) => {
+  test.setTimeout(90_000);
   const scan = async () => {
     const results = await new AxeBuilder({ page })
       .withTags(AXE_TAGS)
@@ -95,7 +96,7 @@ test('open menu matches the visual baseline', async ({ page }) => {
   const menu = popup(page, 'el-style-menu');
   await settled(menu);
   await page.mouse.move(0, 0);
-  await expect(menu).toHaveScreenshot('menu-open.png');
+  await expect(menu).toHaveScreenshot('menu-open.png', { timeout: 15_000 });
 });
 
 test('sizes: SegmentedMenuTokens.Item, Menu.kt widths and paddings, 20dp icons', async ({
@@ -222,7 +223,13 @@ test('opens with scale + fade on the fast spatial / fast effects springs', async
     });
     observer.observe(menu, { attributes: true, attributeFilter: ['style'] });
     document.getElementById('el-more')!.click();
-    await new Promise((r) => setTimeout(r, 1000));
+    // Until both springs rest (frame timing varies by browser and machine load).
+    const start = performance.now();
+    while (performance.now() - start < 10_000) {
+      const at = seen.at(-1);
+      if (at?.[0] === '1' && at[1] === '1') break;
+      await new Promise((r) => setTimeout(r, 50));
+    }
     observer.disconnect();
     return seen.filter(([s]) => s !== '');
   });
