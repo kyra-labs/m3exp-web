@@ -92,6 +92,8 @@ export class ValueSpring {
       }
     };
     this.#step = step;
+    // Hold the current value until the first frame (the styles behind it may already show the target).
+    this.#set(this.#value);
     frame.update(step, true);
   }
 

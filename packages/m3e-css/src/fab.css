@@ -171,6 +171,7 @@
     --_m3e-extended-fab-label-opacity: 1;
 
     display: inline-grid;
+    flex-shrink: 0; /* a flex parent must not squeeze the label (Compose measures the full row) */
     grid-template-columns: auto var(--_m3e-extended-fab-label-track);
     grid-auto-flow: column;
     justify-content: start;
@@ -188,11 +189,12 @@
         var(--m3e-comp-fab-defaults-extended-width-easing);
   }
 
-  /* The icon-label space belongs to the label, so it collapses with it (Spacer in the fading Row). */
+  /* The icon-label space belongs to the label, so it collapses with it (Spacer in the fading Row):
+     a text indent is content, clipped with the label, where padding would keep its width. */
   .m3e-extended-fab__label {
     min-inline-size: 0;
     overflow: hidden;
-    padding-inline-start: var(--_m3e-extended-fab-icon-space);
+    text-indent: var(--_m3e-extended-fab-icon-space);
     opacity: var(--_m3e-extended-fab-label-opacity);
     transition: opacity var(--m3e-comp-fab-defaults-extended-label-opacity-duration)
       var(--m3e-comp-fab-defaults-extended-label-opacity-easing);
@@ -200,7 +202,7 @@
 
   /* Text-only extended FAB (no icon). */
   .m3e-extended-fab__label:first-child {
-    padding-inline-start: 0;
+    text-indent: 0;
   }
 
   .m3e-extended-fab--size-medium {

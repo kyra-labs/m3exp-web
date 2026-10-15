@@ -1,0 +1,155 @@
+---
+import FabPlayground from '../../islands/FabPlayground.tsx';
+import Base from '../../layouts/Base.astro';
+
+const sizes = ['baseline', 'medium', 'large'] as const;
+const extendedSizes = ['small', 'medium', 'large'] as const;
+const colors = [
+  'primary-container',
+  'secondary-container',
+  'tertiary-container',
+  'primary',
+  'secondary',
+  'tertiary',
+] as const;
+---
+
+<Base title="FAB">
+  <link rel="stylesheet" href="/icons/docs-icons.css" slot="head" />
+  <h1>FAB and extended FAB</h1>
+  <p>
+    Floating action buttons and extended FABs (COMPONENT_SPEC §5; Compose{' '}
+    <code>FloatingActionButton</code>, <code>Medium</code>/<code>LargeFloatingActionButton</code>{' '}
+    and <code>Small</code>/<code>Medium</code>/<code>LargeExtendedFloatingActionButton</code>). The
+    grids are plain HTML with m3e-css classes. An icon-only FAB needs an <code>aria-label</code>; an
+    extended FAB is named by its label, also when collapsed.
+  </p>
+
+  <section aria-labelledby="sizes-heading">
+    <h2 id="sizes-heading">FAB sizes</h2>
+    <div class="docs-button-row" data-testid="sizes">
+      {
+        sizes.map((size) => (
+          <button
+            type="button"
+            class={`m3e-fab m3e-fab--size-${size}`}
+            data-size={size}
+            aria-label={`Create (${size})`}
+          >
+            <span class="m3e-icon" aria-hidden="true">
+              add
+            </span>
+          </button>
+        ))
+      }
+    </div>
+  </section>
+
+  <section aria-labelledby="colors-heading">
+    <h2 id="colors-heading">Color styles</h2>
+    <p>
+      Primary container is the default. M3 Expressive adds primary, secondary and tertiary
+      (m3.material.io FAB › Specs › Color styles).
+    </p>
+    <div class="docs-button-row" data-testid="colors">
+      {
+        colors.map((color) => (
+          <button type="button" class={`m3e-fab m3e-fab--${color}`} data-color={color} aria-label={`Edit (${color})`}>
+            <span class="m3e-icon" aria-hidden="true">
+              favorite
+            </span>
+          </button>
+        ))
+      }
+    </div>
+    <div class="docs-button-row" data-testid="extended-colors">
+      {
+        colors.map((color) => (
+          <button type="button" class={`m3e-extended-fab m3e-extended-fab--${color}`} data-color={color}>
+            <span class="m3e-icon" aria-hidden="true">
+              favorite
+            </span>
+            <span class="m3e-extended-fab__label">{color}</span>
+          </button>
+        ))
+      }
+    </div>
+  </section>
+
+  <section aria-labelledby="extended-heading">
+    <h2 id="extended-heading">Extended FAB</h2>
+    <div class="docs-button-row" data-testid="extended-sizes">
+      {
+        extendedSizes.map((size) => (
+          <button type="button" class={`m3e-extended-fab m3e-extended-fab--size-${size}`} data-size={size}>
+            <span class="m3e-icon" aria-hidden="true">
+              add
+            </span>
+            <span class="m3e-extended-fab__label">Create {size}</span>
+          </button>
+        ))
+      }
+    </div>
+    <p>
+      <code>m3e-extended-fab--collapsed</code> shows the icon only, at FAB size. Without JavaScript the
+      label track eases 0fr ↔ 1fr on the fast spatial curve.
+    </p>
+    <div class="docs-button-row" data-testid="extended-collapsed">
+      {
+        extendedSizes.map((size) => (
+          <button
+            type="button"
+            class={`m3e-extended-fab m3e-extended-fab--size-${size} m3e-extended-fab--collapsed`}
+            data-size={size}
+          >
+            <span class="m3e-icon" aria-hidden="true">
+              add
+            </span>
+            <span class="m3e-extended-fab__label">Create {size}</span>
+          </button>
+        ))
+      }
+    </div>
+    <div class="docs-button-row" data-testid="extended-text">
+      <button type="button" class="m3e-extended-fab">
+        <span class="m3e-extended-fab__label">Save draft</span>
+      </button>
+    </div>
+  </section>
+
+  <section aria-labelledby="react-heading">
+    <h2 id="react-heading">React</h2>
+    <p>
+      <code>&lt;Fab&gt;</code> and <code>&lt;ExtendedFab&gt;</code>. Toggle twice quickly: the width
+      spring reverses from its current speed. In the list, the extended FAB collapses as you scroll down
+      and expands when you scroll up (<code>useExtendedFabScroll</code>).
+    </p>
+    <FabPlayground client:only="react" />
+  </section>
+
+  <section aria-labelledby="small-heading" data-deprecated>
+    <h2 id="small-heading">Small FAB (deprecated)</h2>
+    <p class="docs-deprecated" role="note">
+      Deprecated (DECISIONS D4): m3.material.io no longer recommends the small FAB. It ships until 2.0
+      for migration and gets no new features; use the baseline FAB. <code>&lt;Fab size="small"&gt;</code>{' '}
+      warns once in development.
+    </p>
+    <div class="docs-button-row" data-testid="small">
+      <button type="button" class="m3e-fab m3e-fab--size-small" aria-label="Create (small)">
+        <span class="m3e-icon" aria-hidden="true">
+          add
+        </span>
+      </button>
+    </div>
+  </section>
+
+  <section aria-labelledby="sources-heading">
+    <h2 id="sources-heading">Sources</h2>
+    <p>
+      androidx Compose Material3 1.5.0-beta01 (<code>19991f2c</code>):{' '}
+      <code>FloatingActionButton.kt</code>, <code>Fab*Tokens.kt</code>, <code>ExtendedFab*Tokens.kt</code>{' '}
+      and the <code>FloatingActionButtonDefaults</code> values in <code>components/fab-defaults.css</code>;
+      m3.material.io FAB and Extended FAB pages for the color styles and scroll behavior.
+    </p>
+  </section>
+</Base>
