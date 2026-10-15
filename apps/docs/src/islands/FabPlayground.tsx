@@ -75,6 +75,7 @@ export default function FabPlayground() {
         <ExtendedFab
           icon={<Icon name="add" />}
           label="Compose"
+          className="docs-fab-anchor"
           color="tertiary-container"
           expanded={scrollExpanded}
           data-testid="scroll-fab"

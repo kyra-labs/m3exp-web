@@ -448,7 +448,7 @@ button.docs-tile {
   max-inline-size: none;
 }
 
-.docs-fab-frame > .m3e-extended-fab {
+.docs-fab-anchor {
   position: absolute;
   inset-block-end: var(--m3e-sys-space-200);
   inset-inline-end: var(--m3e-sys-space-200);
