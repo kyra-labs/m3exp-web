@@ -116,7 +116,9 @@ export function extractSplitButtonDefaults(
     'TrailingButtonMinWidth',
   );
   if (trailingMin.value !== 'LeadingButtonMinWidth') {
-    throw new Error(`${SPLIT}: TrailingButtonMinWidth = ${trailingMin.value}, expected LeadingButtonMinWidth`);
+    throw new Error(
+      `${SPLIT}: TrailingButtonMinWidth = ${trailingMin.value}, expected LeadingButtonMinWidth`,
+    );
   }
   out.push({
     ...trailingMin,
@@ -145,9 +147,7 @@ export function extractSplitButtonDefaults(
   // The press / checked shape morph: every LeadingButton / TrailingButton uses this spec.
   const text = normalize(sources, SPLIT);
   const specs = [
-    ...text.matchAll(
-      /val defaultAnimationSpec = MotionSchemeKeyTokens\.(\w+)\.value<Float>\(\)/g,
-    ),
+    ...text.matchAll(/val defaultAnimationSpec = MotionSchemeKeyTokens\.(\w+)\.value<Float>\(\)/g),
   ].map((m) => m[1]);
   if (specs.length === 0 || new Set(specs).size !== 1) {
     throw new Error(`${SPLIT}: expected one shape animation spec, found ${specs.join(', ')}`);
@@ -188,12 +188,15 @@ export function extractSplitButtonDefaults(
 
   // --- Trailing icon rotation (SplitButtonSamples.kt → animateFloatAsState defaults) -------
   const samples = normalize(sources, SAMPLES);
-  const calls = [
-    ...samples.matchAll(/animateFloatAsState\(\n([\s\S]*?)\n\s*\)/g),
-  ].map((m) => m[1]!);
-  const expectedCall = /^\s*targetValue = if \(checked\) (\d+)f else 0f,\n\s*label = "Trailing Icon Rotation",$/;
+  const calls = [...samples.matchAll(/animateFloatAsState\(\n([\s\S]*?)\n\s*\)/g)].map(
+    (m) => m[1]!,
+  );
+  const expectedCall =
+    /^\s*targetValue = if \(checked\) (\d+)f else 0f,\n\s*label = "Trailing Icon Rotation",$/;
   if (calls.length === 0 || calls.some((c) => !expectedCall.test(c))) {
-    throw new Error(`${SAMPLES}: a trailing icon rotation no longer uses animateFloatAsState defaults`);
+    throw new Error(
+      `${SAMPLES}: a trailing icon rotation no longer uses animateFloatAsState defaults`,
+    );
   }
   const rotation = at(
     SAMPLES,
@@ -239,7 +242,12 @@ export function extractSplitButtonDefaults(
     specText.slice(specText.indexOf('public fun <T> spring(')),
   )![1]!;
   const constant = (name: string) =>
-    at(VECTORIZED, new RegExp(`public const val ${name}: Float = ([\\d_.]+)f`, 'd'), 'Spring', name);
+    at(
+      VECTORIZED,
+      new RegExp(`public const val ${name}: Float = ([\\d_.]+)f`, 'd'),
+      'Spring',
+      name,
+    );
   const damping = constant(springDefaults.value);
   const stiffness = constant(stiffnessName);
   const spec = {
