@@ -146,7 +146,8 @@ test.describe('width spring (frames driven by the Playwright clock)', () => {
    */
   async function trace(page: Page, frames: number, reverseAt = -1) {
     // Freeze time (install() lets it flow): from here on only runFor() advances it.
-    await page.clock.pauseAt((await page.evaluate(() => Date.now())) + 100);
+    // (The margin keeps the target in the future on a slow runner.)
+    await page.clock.pauseAt((await page.evaluate(() => Date.now())) + 10_000);
     await page.evaluate(
       ([n, reverse]) => {
         const fab = document.querySelector('[data-testid="react-extended"] [data-size="medium"]')!;
