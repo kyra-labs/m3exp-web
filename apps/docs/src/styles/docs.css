@@ -544,3 +544,22 @@ button.docs-tile {
 .docs-button-group-log {
   margin: 0;
 }
+
+/* Progress indicators page: linear indicators stacked, circular ones in a row. */
+.docs-progress-column {
+  display: flex;
+  flex-direction: column;
+  gap: var(--m3e-sys-space-300);
+  align-items: flex-start;
+  padding: var(--m3e-sys-space-100);
+  margin: var(--m3e-sys-space-300) 0;
+}
+
+.docs-progress-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--m3e-sys-space-300);
+  align-items: center;
+  padding: var(--m3e-sys-space-100);
+  margin: var(--m3e-sys-space-300) 0;
+}
