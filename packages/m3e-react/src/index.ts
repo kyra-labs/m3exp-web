@@ -16,3 +16,4 @@ export * from './button-group/index.js';
 export * from './split-button/index.js';
 export * from './floating-toolbar/index.js';
 export * from './docked-toolbar/index.js';
+export * from './progress/index.js';

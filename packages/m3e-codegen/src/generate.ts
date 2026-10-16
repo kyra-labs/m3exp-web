@@ -28,6 +28,11 @@ import { extractCenteredPadding, extractNavigationDefaults } from './navigation-
 import { extractLoadingIndicatorMotion } from './loading-indicator-motion.js';
 import { extractMenuDefaults } from './menu-defaults.js';
 import {
+  PROGRESS_INDICATOR_REDUCED_MOTION,
+  extractProgressIndicatorDefaults,
+  progressIndicatorKeyframes,
+} from './progress-indicator-defaults.js';
+import {
   SPLIT_BUTTON_REDUCED_MOTION,
   extractSplitButtonDefaults,
 } from './split-button-defaults.js';
@@ -1012,6 +1017,46 @@ export function generate({
     ),
   });
 
+  // Progress indicator values Compose renders that are not in *ProgressIndicatorTokens, plus the
+  // indeterminate keyframes for CSS (see progress-indicator-defaults.ts).
+  const progressIndicator = extractProgressIndicatorDefaults(
+    material3Sources,
+    Object.fromEntries(files.map((f) => [f.name, f.content])),
+  );
+  const progressDir = (file: string) =>
+    file === 'ProgressIndicatorSamples.kt'
+      ? MATERIAL3_SAMPLES_DIR
+      : file === 'VectorizedAnimationSpec.kt'
+        ? ANIMATION_CORE_DIR
+        : file.endsWith('WavyProgressModifiers.kt')
+          ? `${MATERIAL3_DIR}/internal`
+          : MATERIAL3_DIR;
+  components.set('progress-indicator-defaults', {
+    object: 'ProgressIndicatorDefaults',
+    tokens: progressIndicator.tokens.map((d) => {
+      const e: Emitted = {
+        name: d.name,
+        value: d.value,
+        object: d.owner,
+        member: d.member,
+        raw: d.raw,
+        line: d.line ?? 0,
+        cite:
+          d.file === undefined
+            ? (d.cite ?? '')
+            : `${progressDir(d.file)}/${d.file}@${commit} L${String(d.line)}`,
+      };
+      if (d.note !== undefined) e.note = d.note;
+      return e;
+    }),
+    js: Object.fromEntries(
+      progressIndicator.tokens.map((d) => [
+        camel(d.name.replace(/^--m3e-comp-/, '').split('-')),
+        d.js,
+      ]),
+    ),
+  });
+
   // ButtonGroupDefaults values Compose renders + the per-size m3.material.io values it lacks
   // (see button-group-defaults.ts).
   const buttonGroupDefaults = extractButtonGroupDefaults(material3Sources);
@@ -1140,7 +1185,21 @@ export function generate({
                                 ],
                                 `${MATERIAL3_DIR}/{SplitButton,HorizontalCenterOptically}.kt + ${MATERIAL3_SAMPLES_DIR}/SplitButtonSamples.kt + ${ANIMATION_CORE_DIR}/{AnimateAsState,AnimationSpec,VectorizedAnimationSpec}.kt`,
                               )
-                            : cssFile(`Component tokens: ${c.object}.`, c.tokens),
+                            : name === 'progress-indicator-defaults'
+                              ? cssFile(
+                                  'Compose progress indicator values that are not in *ProgressIndicatorTokens, and the indeterminate keyframes of the flat indicators (lines: PARITY.md).',
+                                  c.tokens,
+                                  [
+                                    '@media (prefers-reduced-motion: reduce) {',
+                                    '  :root {',
+                                    ...PROGRESS_INDICATOR_REDUCED_MOTION.map((l) => `    ${l}`),
+                                    '  }',
+                                    '}',
+                                    ...progressIndicatorKeyframes(progressIndicator.timing),
+                                  ],
+                                  `${MATERIAL3_DIR}/{ProgressIndicator,WavyProgressIndicator,internal/LinearWavyProgressModifiers,internal/CircularWavyProgressModifiers}.kt + ${MATERIAL3_SAMPLES_DIR}/ProgressIndicatorSamples.kt + m3.material.io token DB md.comp.progress-indicator`,
+                                )
+                              : cssFile(`Component tokens: ${c.object}.`, c.tokens),
     );
   }
   out.set(

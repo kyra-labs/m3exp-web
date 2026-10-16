@@ -13,5 +13,8 @@ export * from './floating-toolbar-layout/index.js';
 export * from './floating-toolbar/index.js';
 export * from './docked-toolbar-layout/index.js';
 export * from './docked-toolbar/index.js';
+export * from './progress-indicator/index.js';
+export * from './linear-progress/index.js';
+export * from './circular-progress/index.js';
 // Not `export *` from './ripple/index.js': that entry enables the ripple document-wide on import.
 export { attachAutoRipple } from './ripple/ripple.js';

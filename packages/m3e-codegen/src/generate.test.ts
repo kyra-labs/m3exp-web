@@ -1033,3 +1033,94 @@ describe('split button literals (M5 Split button)', () => {
     );
   });
 });
+
+describe('progress indicator literals (M6 Progress indicators)', () => {
+  const css = output.get('components/progress-indicator-defaults.css')!;
+  const decl = declarations(css.slice(0, css.indexOf('@media')));
+  const kt = (name: string) => inputs.material3Sources[name]!.replace(/\r\n/g, '\n');
+  const get = (name: string) => decl.get(`--m3e-comp-progress-indicator-defaults-${name}`);
+
+  it('layout: 240dp linear width, 6dp stop trailing space, no indeterminate circular track', () => {
+    expect(kt('ProgressIndicator.kt')).toMatch(
+      /internal val LinearIndicatorWidth\n\s*get\(\) = 240\.dp/,
+    );
+    expect(kt('WavyProgressIndicator.kt')).toContain(
+      'public val LinearContainerWidth: Dp = 240.dp',
+    );
+    expect(get('linear-width')).toBe('240px');
+    expect(kt('ProgressIndicator.kt')).toMatch(
+      /internal val StopIndicatorTrailingSpace\n\s*get\(\) = 6\.dp/,
+    );
+    expect(get('linear-stop-trailing-space-max')).toBe('6px');
+    expect(get('circular-indeterminate-track-color')).toBe('transparent');
+  });
+
+  it('progress spring: ProgressAnimationSpec (ζ 1, k 50, threshold 1/1000), used by every sample', () => {
+    expect(kt('ProgressIndicator.kt')).toMatch(
+      /dampingRatio = Spring\.DampingRatioNoBouncy,\n\s*stiffness = Spring\.StiffnessVeryLow,/,
+    );
+    expect(kt('ProgressIndicator.kt')).toContain('visibilityThreshold = 1 / 1000f,');
+    expect(get('progress-damping-ratio')).toBe('1');
+    expect(get('progress-stiffness')).toBe('50');
+    expect(get('progress-visibility-threshold')).toBe('0.001');
+    expect(get('progress-easing')).toMatch(/^linear\(0, .*, 1\)$/);
+    expect(Number.parseFloat(get('progress-duration')!)).toBeGreaterThan(1000);
+    const samples = kt('ProgressIndicatorSamples.kt');
+    expect(
+      samples.match(/animationSpec = ProgressIndicatorDefaults\.ProgressAnimationSpec/g),
+    ).toHaveLength(8);
+    expect(samples).not.toContain('WavyProgressIndicatorDefaults.ProgressAnimationSpec');
+  });
+
+  it('wave: amplitude ramp 0.1 / 0.95, tweens on DurationLong2, one wavelength per second', () => {
+    expect(kt('WavyProgressIndicator.kt')).toContain(
+      'if (progress <= 0.1f || progress >= 0.95f) {',
+    );
+    expect(get('amplitude-min-progress')).toBe('0.1');
+    expect(get('amplitude-max-progress')).toBe('0.95');
+    expect(get('amplitude-increase-duration')).toBe('var(--m3e-sys-motion-duration-long2)');
+    expect(get('amplitude-increase-easing')).toBe('var(--m3e-sys-motion-easing-standard)');
+    expect(get('amplitude-decrease-easing')).toBe(
+      'var(--m3e-sys-motion-easing-emphasized-accelerate)',
+    );
+    expect(kt('WavyProgressIndicator.kt').match(/waveSpeed: Dp = wavelength/g)).toHaveLength(4);
+    expect(get('wave-travel-duration')).toBe('1000ms');
+    expect(get('wave-min-travel-duration')).toBe('50ms');
+  });
+
+  it('indeterminate choreography: linear 1750ms cycle, circular 6000ms cycle', () => {
+    expect(get('linear-indeterminate-duration')).toBe('1750ms');
+    expect(get('linear-first-tail-delay')).toBe('250ms');
+    expect(get('linear-second-head-delay')).toBe('650ms');
+    expect(get('linear-second-tail-duration')).toBe('850ms');
+    expect(get('circular-indeterminate-duration')).toBe('6000ms');
+    expect(get('circular-rotation')).toBe('1080deg');
+    expect(get('circular-additional-rotation')).toBe('360deg');
+    expect(get('circular-min-progress')).toBe('0.1');
+    expect(get('circular-max-progress')).toBe('0.87');
+    // The 90° steps move linearly: their intervals start at keyframes without `using`.
+    expect(css).toContain('5% { --_m3e-progress-additional-rotation: 90deg; }');
+    expect(css).toContain('57.1429% { --_m3e-progress-first-head: 1; }');
+    expect(css).toContain(
+      '50% { --_m3e-progress-sweep: 0.87; animation-timing-function: cubic-bezier(0.2, 0, 0, 1); }',
+    );
+  });
+
+  it('thick configuration: the samples agree with the m3.material.io token DB', () => {
+    const samples = kt('ProgressIndicatorSamples.kt');
+    expect(samples).toContain('modifier = Modifier.height(14.dp),');
+    expect(samples).toContain('modifier = Modifier.size(52.dp),');
+    expect(get('thick-thickness')).toBe('8px');
+    expect(get('linear-thick-wavy-height')).toBe('14px');
+    expect(get('circular-thick-size')).toBe('52px');
+    expect(get('linear-thick-height')).toBe('8px');
+  });
+
+  it('reduced motion snaps the progress spring and the amplitude tweens', () => {
+    const reduced = declarations(css.slice(css.indexOf('@media'), css.indexOf('@keyframes')));
+    expect(reduced.get('--m3e-comp-progress-indicator-defaults-progress-duration')).toBe('0ms');
+    expect(reduced.get('--m3e-comp-progress-indicator-defaults-amplitude-increase-duration')).toBe(
+      '0ms',
+    );
+  });
+});

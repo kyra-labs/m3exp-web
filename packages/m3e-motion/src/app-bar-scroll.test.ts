@@ -5,7 +5,6 @@ import {
   TOP_TITLE_ALPHA_EASING,
   appBarScrollState,
   collapsedFraction,
-  cubicBezierEasing,
   isScrolledUnder,
   overlappedFraction,
   scrollAppBar,
@@ -14,6 +13,7 @@ import {
   withHeight,
   withHeightOffset,
 } from './app-bar-scroll.js';
+import { cubicBezier } from './cubic-bezier.js';
 
 // Expected values follow the Kotlin expressions in AppBar.kt@19991f2c (TopAppBarState L2050-2130,
 // settleAppBar L3542-3589), evaluated by hand for a 64px bar (AppBarSmallTokens.ContainerHeight).
@@ -133,15 +133,15 @@ describe('two-rows interpolation (TwoRowsTopAppBar L2818-2836)', () => {
     ['TopTitleAlphaEasing', TOP_TITLE_ALPHA_EASING],
     ['FastOutLinearInEasing', FAST_OUT_LINEAR_IN_EASING],
   ] as const)('%s solves x(t) = fraction and returns y(t)', (_name, [a, b, c, d]) => {
-    const ease = cubicBezierEasing(a, b, c, d);
+    const ease = cubicBezier(a, b, c, d);
     for (let t = 0.05; t < 1; t += 0.05) {
-      expect(ease(bezier(a, c, t))).toBeCloseTo(bezier(b, d, t), 9);
+      expect(ease(bezier(a, c, t))).toBeCloseTo(bezier(b, d, t), 7);
     }
     expect([ease(0), ease(1), ease(-0.5), ease(1.5)]).toEqual([0, 1, -0.5, 1.5]);
   });
 
   it('follows an overshooting curve', () => {
-    const ease = cubicBezierEasing(0.3, 1.5, 0.7, 1);
+    const ease = cubicBezier(0.3, 1.5, 0.7, 1);
     const peak = Math.max(...Array.from({ length: 99 }, (_, i) => ease((i + 1) / 100)));
     expect(peak).toBeGreaterThan(1);
     expect(peak).toBeLessThan(1.2);

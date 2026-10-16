@@ -26,6 +26,18 @@ export {
   toShapeOutline,
 } from './material-shapes.js';
 export { type PathCommand, pathBounds, toSvgPathData, translatePath } from './path.js';
+export { PathMeasure } from './path-measure.js';
+export {
+  type CircularWavyInput,
+  type CircularWavyPaths,
+  CircularWavyPathCache,
+  type LinearWavyInput,
+  type LinearWavyPaths,
+  LinearWavyPathCache,
+  type ProgressStrokes,
+  circularWavyVertexCount,
+  linearWavyStopIndicator,
+} from './progress-indicator.js';
 export {
   type MorphPathOptions,
   type PathOptions,

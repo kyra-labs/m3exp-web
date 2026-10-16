@@ -33,3 +33,5 @@
 @import './button-group.css';
 @import './split-button.css';
 @import './docked-toolbar.css';
+@import './linear-progress.css';
+@import './circular-progress.css';

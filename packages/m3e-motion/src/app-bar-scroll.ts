@@ -19,11 +19,14 @@
 // TopAppBarState (L2050-2130), the pinned, enter-always and exit-until-collapsed scroll behaviors
 // (L3267-3303, L3400-3455, L3476-3536), the settle decision of settleAppBar (L3542-3589) and the
 // two-rows bar's collapsed-fraction interpolation (TwoRowsTopAppBar L2818-2836,
-// TopAppBarColors.containerColor L2229-2235, TopTitleAlphaEasing L3604; CubicBezierEasing from
-// Easing.kt L103-151), adapted to DOM scrolling. Compose receives nested scroll deltas and can
-// consume them; the web observes `scrollTop` after the browser scrolled, so every delta goes to
-// both the bar and the content, and momentum comes from the browser instead of
-// flingAnimationSpec. Offsets are in CSS px; y grows downward, so collapsing is negative.
+// TopAppBarColors.containerColor L2229-2235, TopTitleAlphaEasing L3604; FastOutLinearInEasing
+// from Easing.kt L66, solved by the shared cubic-bezier.ts), adapted to DOM scrolling. Compose
+// receives nested scroll deltas and can consume them; the web observes `scrollTop` after the
+// browser scrolled, so every delta goes to both the bar and the content, and momentum comes from
+// the browser instead of flingAnimationSpec. Offsets are in CSS px; y grows downward, so
+// collapsing is negative.
+
+import { cubicBezier } from './cubic-bezier.js';
 
 /** How the bar reacts to its scroll container (TopAppBarDefaults.*ScrollBehavior). */
 export type AppBarScrollBehavior = 'pinned' | 'enter-always' | 'exit-until-collapsed';
@@ -117,42 +120,13 @@ export function settleTarget(state: AppBarScrollState): number | null {
   return fraction < 0.5 ? 0 : state.heightOffsetLimit;
 }
 
-/**
- * A cubic Bézier easing through (0, 0), (a, b), (c, d), (1, 1), as CubicBezierEasing.transform
- * (Easing.kt L131-151): fractions outside ]0, 1[ pass through; otherwise x(t) = fraction is solved
- * for t and y(t) is returned. Compose solves t with ui-graphics findFirstCubicRoot in float32 and
- * clamps y to the curve's y range over [0, 1] against rounding; this bisects the monotonic x(t)
- * of an easing (0 ≤ a, c ≤ 1) in float64 for a t in [0, 1], so y(t) is on the curve already, and
- * agrees well within 1e-6.
- */
-export function cubicBezierEasing(
-  a: number,
-  b: number,
-  c: number,
-  d: number,
-): (fraction: number) => number {
-  const cubic = (p1: number, p2: number, t: number) =>
-    3 * p1 * (1 - t) * (1 - t) * t + 3 * p2 * (1 - t) * t * t + t * t * t;
-  return (fraction) => {
-    if (!(fraction > 0 && fraction < 1)) return fraction;
-    let lo = 0;
-    let hi = 1;
-    for (let i = 0; i < 52; i++) {
-      const mid = (lo + hi) / 2;
-      if (cubic(a, c, mid) < fraction) lo = mid;
-      else hi = mid;
-    }
-    return cubic(b, d, (lo + hi) / 2);
-  };
-}
-
 /** TopTitleAlphaEasing (AppBar.kt L3604): CubicBezierEasing(.8f, 0f, .8f, .15f). */
 export const TOP_TITLE_ALPHA_EASING = [0.8, 0, 0.8, 0.15] as const;
 /** FastOutLinearInEasing (Easing.kt L66): CubicBezierEasing(0.4f, 0.0f, 1.0f, 1.0f). */
 export const FAST_OUT_LINEAR_IN_EASING = [0.4, 0, 1, 1] as const;
 
-const topTitleAlpha = /* @__PURE__ */ cubicBezierEasing(...TOP_TITLE_ALPHA_EASING);
-const fastOutLinearIn = /* @__PURE__ */ cubicBezierEasing(...FAST_OUT_LINEAR_IN_EASING);
+const topTitleAlpha = /* @__PURE__ */ cubicBezier(...TOP_TITLE_ALPHA_EASING);
+const fastOutLinearIn = /* @__PURE__ */ cubicBezier(...FAST_OUT_LINEAR_IN_EASING);
 
 /** What a two-rows bar (medium / large flexible, TwoRowsTopAppBar) draws at a collapsed fraction. */
 export interface TwoRowsFrame {
