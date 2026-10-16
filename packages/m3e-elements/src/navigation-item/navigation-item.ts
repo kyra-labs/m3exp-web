@@ -117,9 +117,8 @@ export abstract class M3eNavigationContainer extends M3eElement {
     this.setAttribute('data-m3e-navigation', '');
     super.connectedCallback();
     this.#observer = new MutationObserver((records) => {
-      const nav = this.navElement;
       // Changes to the items (or the header content), not to what this element rendered.
-      if (records.some((r) => !nav?.contains(r.target))) this.requestUpdate();
+      if (records.some((r) => !this.isRendered(r.target))) this.requestUpdate();
     });
     this.#observer.observe(this, { childList: true, subtree: true, characterData: true });
   }
@@ -127,6 +126,17 @@ export abstract class M3eNavigationContainer extends M3eElement {
   override disconnectedCallback(): void {
     super.disconnectedCallback();
     this.#observer?.disconnect();
+  }
+
+  /** Whether `node` is inside what this element rendered (its mutations need no update). */
+  protected isRendered(node: Node): boolean {
+    return this.navElement?.contains(node) ?? false;
+  }
+
+  /** Drops every rendered item element (the next render creates new ones, e.g. another DOM). */
+  protected resetItemElements(): void {
+    for (const el of this.#rendered.values()) this.#ripples.get(el)?.abort();
+    this.#rendered.clear();
   }
 
   /** Light-DOM children that are not items (a rail's header content). */

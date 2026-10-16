@@ -228,24 +228,77 @@ export function paneScaffoldDirective(
   };
 }
 
-/** NavigationSuiteType values navigationSuiteType returns. */
+/**
+ * NavigationSuiteType (NavigationSuiteScaffold.kt L1068-1155) without the types of deprecated
+ * components (`NavigationBar`, `NavigationRail`: the legacy bar / rail, D4): which navigation
+ * component a navigation suite shows. `none` shows none.
+ */
 export type NavigationSuiteType =
-  'short-navigation-bar-compact' | 'short-navigation-bar-medium' | 'wide-navigation-rail-collapsed';
+  | 'short-navigation-bar-compact'
+  | 'short-navigation-bar-medium'
+  | 'wide-navigation-rail-collapsed'
+  | 'wide-navigation-rail-expanded'
+  | 'navigation-drawer'
+  | 'none';
+
+/** The suite types, in NavigationSuiteType's order. */
+export const NAVIGATION_SUITE_TYPES: readonly NavigationSuiteType[] = [
+  'short-navigation-bar-compact',
+  'short-navigation-bar-medium',
+  'wide-navigation-rail-collapsed',
+  'wide-navigation-rail-expanded',
+  'navigation-drawer',
+  'none',
+];
+
+/** Whether a type puts the navigation at the bottom (`NavigationSuiteType.isNavigationBar`). */
+export function isNavigationBarType(type: NavigationSuiteType): boolean {
+  return type === 'short-navigation-bar-compact' || type === 'short-navigation-bar-medium';
+}
+
+export interface NavigationSuiteTypeOptions extends WindowPostureOptions {
+  /**
+   * From this width class (or px lower bound, compared with the class's lower bound like
+   * `isWidthAtLeastBreakpoint`) on, windows that would get the collapsed rail get `expandedType`
+   * instead. Compose's default never expands (`undefined` / `null`); the navigation suite scaffold
+   * passes {@link NAVIGATION_SUITE_EXPANDED_FROM}. The bar rules (compact width, then tabletop or
+   * compact height) still come first, as in Compose's custom configuration sample.
+   */
+  expandedFrom?: WindowWidthSizeClass | number | null | undefined;
+  /** What the expanded suite shows: the expanded wide navigation rail (default) or a drawer. */
+  expandedType?: 'wide-navigation-rail-expanded' | 'navigation-drawer' | undefined;
+}
+
+/**
+ * The navigation suite scaffold's default `expandedFrom`: the expanded wide navigation rail at
+ * large and extra-large widths (m3.material.io guidance, owner decision 2026-10-17, COMPONENT_SPEC
+ * §16). Not a Compose default: Compose's navigationSuiteType never returns the expanded rail.
+ */
+export const NAVIGATION_SUITE_EXPANDED_FROM: WindowWidthSizeClass = 'large';
 
 /**
  * NavigationSuiteScaffoldDefaults.navigationSuiteType (L1167-1180): a short navigation bar at
  * compact width (compact arrangement), a short navigation bar with the medium (horizontal item)
  * arrangement on a tabletop posture or at compact height, otherwise a collapsed wide navigation
- * rail.
+ * rail. With `expandedFrom`, the collapsed rail becomes `expandedType` (default: the expanded wide
+ * navigation rail) from that width on.
  */
 export function navigationSuiteType(
   sizeClass: WindowSizeClass,
-  options: WindowPostureOptions = {},
+  options: NavigationSuiteTypeOptions = {},
 ): NavigationSuiteType {
   if (sizeClass.minWidth === WINDOW_WIDTH_BREAKPOINTS.compact)
     return 'short-navigation-bar-compact';
   if (options.isTabletop === true || sizeClass.minHeight === WINDOW_HEIGHT_BREAKPOINTS.compact) {
     return 'short-navigation-bar-medium';
+  }
+  const { expandedFrom } = options;
+  if (
+    expandedFrom !== undefined &&
+    expandedFrom !== null &&
+    isWidthAtLeastBreakpoint(sizeClass, expandedFrom)
+  ) {
+    return options.expandedType ?? 'wide-navigation-rail-expanded';
   }
   return 'wide-navigation-rail-collapsed';
 }

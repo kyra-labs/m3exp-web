@@ -48,4 +48,31 @@ element is measured. The classification helpers (`windowSizeClass`, `isWidthAtLe
 `paneScaffoldDirective`, `navigationSuiteType`, …) come from `@kyralabs/m3e-motion`, a dependency
 of this package, and are re-exported by `@kyralabs/m3e-elements` and `@kyralabs/m3exp-web`.
 
+## Navigation suite scaffold
+
+```tsx
+import { NavigationSuiteScaffold } from '@kyralabs/m3e-react';
+
+<NavigationSuiteScaffold
+  aria-label="Main"
+  items={[
+    { key: 'home', icon: 'home', label: 'Home', href: '/' },
+    { key: 'search', icon: 'search', label: 'Search', href: '/search' },
+  ]}
+  selectedKey={route}
+  onSelectionChange={navigate}
+  style={{ blockSize: '100dvh' }}
+>
+  <main>…</main>
+</NavigationSuiteScaffold>;
+```
+
+The navigation follows the viewport's window size class: a short navigation bar below 600px
+(horizontal items under 480px tall), a collapsed wide navigation rail from 600px, the expanded
+rail from 1200px (`expandedFrom`, default `'large'`; `null` keeps Compose's rule; `expandedType:
+'navigation-drawer'` for a drawer). `layoutType` fixes the type; `navigationSuiteType` replaces the
+rule with a function of the size class. `isNavigationHidden` runs Compose's show / hide spring;
+`primaryAction` (e.g. a `<Fab>`) floats above the bar or heads the rail / drawer. The selection,
+the item elements (bar ↔ rail) and keyboard focus survive a switch.
+
 Apache-2.0; see `LICENSE` and `NOTICE`.

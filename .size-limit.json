@@ -85,6 +85,12 @@
     "limit": "4 KB"
   },
   {
+    "name": "m3e-css: navigation suite (incl. the short navigation bar, wide navigation rail and navigation drawer it shows)",
+    "path": "packages/m3e-css/dist/navigation-suite.css",
+    "rolldown": false,
+    "limit": "5 KB"
+  },
+  {
     "name": "m3e-css: tabs (primary, secondary, scrollable, icon / leading icon tabs, indicator)",
     "path": "packages/m3e-css/dist/tabs.css",
     "rolldown": false,
@@ -315,6 +321,16 @@
     "limit": "6 KB"
   },
   {
+    "name": "m3e-elements: <m3e-navigation-suite> entry (navigation item contract, drawer item, observeWindowSizeClass, NavigationSuiteLayout + m3e-motion springs)",
+    "path": "packages/m3e-elements/dist/navigation-suite/index.js",
+    "limit": "8 KB"
+  },
+  {
+    "name": "m3e-elements: navigation-suite-layout entry (NavigationSuiteLayout, used by m3e-react <NavigationSuiteScaffold>)",
+    "path": "packages/m3e-elements/dist/navigation-suite-layout/index.js",
+    "limit": "4 KB"
+  },
+  {
     "name": "m3e-elements: <m3e-tabs> entry (<m3e-tab>, <m3e-tab-panel>, TabsLayout, m3e-motion TabIndicatorAnimation, RovingFocus, ripple)",
     "path": "packages/m3e-elements/dist/tabs/index.js",
     "limit": "8 KB"
@@ -459,6 +475,12 @@
     "limit": "20 KB"
   },
   {
+    "name": "m3e-react: { NavigationSuiteScaffold } only (incl. react-aria press, useWindowSizeClass, NavigationSuiteLayout from m3e-elements)",
+    "path": "packages/m3e-react/dist/index.js",
+    "import": "{ NavigationSuiteScaffold }",
+    "limit": "20 KB"
+  },
+  {
     "name": "m3e-react: { Tabs, TabPanel } only (incl. react-aria press + TabsLayout from m3e-elements)",
     "path": "packages/m3e-react/dist/index.js",
     "import": "{ Tabs, TabPanel }",
@@ -472,10 +494,10 @@
     "limit": "1 KB"
   },
   {
-    "name": "m3exp-web (root): { Icon } (the root entry registers every custom element by design, ~42.3 kB with <m3e-menu>, <m3e-split-button>, <m3e-button-group>, the toolbars, the progress indicators, <m3e-search>, the navigation bar / rails, <m3e-navigation-drawer>, the window size class observer and <m3e-tabs>; a leaked React component adds ~10 kB of react-aria. Raise with m3e-elements (all); D17)",
+    "name": "m3exp-web (root): { Icon } (the root entry registers every custom element by design, ~44.7 kB with <m3e-menu>, <m3e-split-button>, <m3e-button-group>, the toolbars, the progress indicators, <m3e-search>, the navigation bar / rails, <m3e-navigation-drawer>, <m3e-navigation-suite>, the window size class observer and <m3e-tabs>; a leaked React component adds ~10 kB of react-aria. Raise with m3e-elements (all); D17)",
     "path": "packages/m3exp-web/dist/index.js",
     "import": "{ Icon }",
     "ignore": ["react", "react-dom"],
-    "limit": "44 KB"
+    "limit": "46 KB"
   }
 ]

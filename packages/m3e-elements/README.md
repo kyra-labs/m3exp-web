@@ -311,6 +311,40 @@ move between items. Events: `selection-change`, `open-change` (`detail: { open }
 Escape, the scrim or a drag ask). The behavior lives in the `navigation-drawer-layout.js` entry
 (`NavigationDrawerLayout`), which m3e-react's `<NavigationDrawer>` uses too.
 
+## Navigation suite
+
+```js
+import '@kyralabs/m3e-elements/navigation-suite.js';
+```
+
+```html
+<m3e-navigation-suite label="Main" selected="home" style="block-size: 100dvh">
+  <m3e-navigation-item value="home" icon="home" href="/">Home</m3e-navigation-item>
+  <m3e-navigation-item value="search" icon="search" href="/search">Search</m3e-navigation-item>
+  <button slot="primary-action" class="m3e-fab" aria-label="Compose">
+    <span class="m3e-icon" aria-hidden="true">edit</span>
+  </button>
+  <main>…</main>
+</m3e-navigation-suite>
+```
+
+`<m3e-navigation-suite>` (Compose `NavigationSuiteScaffold`) renders the `.m3e-navigation-suite`
+contract (load `navigation-suite.css`): its `<m3e-navigation-item>` children as the navigation the
+viewport's window size class calls for — a short navigation bar below 600px (horizontal items when
+the window is under 480px tall), a collapsed wide navigation rail from 600px, the expanded rail
+from 1200px — and every other child in the content area (`slot="primary-action"`: above the bar,
+the rail's header, the drawer's first entry). Switching keeps the selection, the item elements
+(bar ↔ rail) and keyboard focus. `layout-type` fixes the type (`short-navigation-bar-compact`,
+`short-navigation-bar-medium`, `wide-navigation-rail-collapsed`, `wide-navigation-rail-expanded`,
+`navigation-drawer`, `none`); `expanded-from` (`large` default, a class or px bound, `none` for
+Compose's rule) and `expanded-type` (`navigation-drawer`) tune the default rule; the
+`navigationSuiteType` property replaces it with a function of the window size class. The read-only
+`type` is the type shown. `navigation-hidden` (or `hideNavigation()` / `showNavigation()` /
+`toggleNavigation()`) runs Compose's show / hide spring. Events: `selection-change`,
+`navigation-hidden-change`, `navigation-suite-type-change` (`detail: { type }`). The behavior lives
+in the `navigation-suite-layout.js` entry (`NavigationSuiteLayout`), which m3e-react's
+`<NavigationSuiteScaffold>` uses too.
+
 ## Tabs
 
 ```js

@@ -1,0 +1,184 @@
+---
+import NavItems, { type Item } from '../../components/NavItems.astro';
+import NavigationSuitePlayground from '../../islands/NavigationSuitePlayground.tsx';
+import Base from '../../layouts/Base.astro';
+
+// Destinations shared by the three examples (Compose's NavigationSuiteScaffoldSample uses three).
+const items: Item[] = [
+  { icon: 'home', label: 'Home', selected: true },
+  { icon: 'search', label: 'Search' },
+  { icon: 'mail', label: 'Mail' },
+  { icon: 'settings', label: 'Settings' },
+];
+---
+
+<Base title="Navigation suite">
+  <link rel="stylesheet" href="/icons/docs-icons.css" slot="head" />
+  <h1>Navigation suite</h1>
+  <p>
+    The navigation suite scaffold (COMPONENT_SPEC §16; Compose <code>NavigationSuiteScaffold</code>)
+    shows one set of destinations as the navigation component the window size class calls for, next
+    to or above the content, and switches as the window resizes. The selection, the item elements
+    (bar ↔ rail) and keyboard focus survive a switch. Resize the window from 360 to 1800px to see it.
+  </p>
+  <table class="docs-table">
+    <caption>Default navigation per window size class (the scaffold's rule)</caption>
+    <thead>
+      <tr><th scope="col">Window</th><th scope="col">Navigation</th><th scope="col">Source</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>compact width (&lt; 600px)</td>
+        <td>short navigation bar, items stacked</td>
+        <td>Compose <code>navigationSuiteType</code></td>
+      </tr>
+      <tr>
+        <td>600px and wider, under 480px tall (or tabletop)</td>
+        <td>short navigation bar, horizontal items</td>
+        <td>Compose <code>navigationSuiteType</code></td>
+      </tr>
+      <tr>
+        <td>medium, expanded (600–1199px)</td>
+        <td>collapsed wide navigation rail</td>
+        <td>Compose <code>navigationSuiteType</code></td>
+      </tr>
+      <tr>
+        <td>large, extra-large (≥ 1200px)</td>
+        <td>expanded wide navigation rail</td>
+        <td>m3.material.io (Compose keeps the collapsed rail); configurable</td>
+      </tr>
+    </tbody>
+  </table>
+  <p>
+    Override it with a fixed <code>layout-type</code> / <code>layoutType</code> (for example{' '}
+    <code>navigation-drawer</code>), <code>expanded-from</code> / <code>expandedFrom</code>{' '}
+    (<code>none</code> / <code>null</code>: Compose's own rule), <code>expanded-type</code> /{' '}
+    <code>expandedType</code> (a permanent drawer instead of the expanded rail), or a function of the
+    window size class (<code>navigationSuiteType</code>).
+  </p>
+
+  <section aria-labelledby="element-heading">
+    <h2 id="element-heading">Element</h2>
+    <p>
+      <code>&lt;m3e-navigation-suite label selected&gt;</code> with{' '}
+      <code>&lt;m3e-navigation-item&gt;</code> children; a child with{' '}
+      <code>slot="primary-action"</code> (here a FAB) floats above the bar and heads the rail; every
+      other child is the content. <code>hideNavigation()</code> / <code>showNavigation()</code> run
+      Compose's show / hide spring.
+    </p>
+    <div class="docs-suite-frame" data-testid="element-frame">
+      <m3e-navigation-suite label="Element example" selected="home" data-testid="element-suite">
+        <m3e-navigation-item value="home" icon="home">Home</m3e-navigation-item>
+        <m3e-navigation-item value="search" icon="search">Search</m3e-navigation-item>
+        <m3e-navigation-item value="mail" icon="mail" badge="3">Mail</m3e-navigation-item>
+        <m3e-navigation-item value="settings" icon="settings">Settings</m3e-navigation-item>
+        <button
+          type="button"
+          slot="primary-action"
+          class="m3e-fab"
+          aria-label="Compose"
+          data-testid="element-fab"
+        >
+          <span class="m3e-icon" aria-hidden="true">edit</span>
+        </button>
+        <div class="docs-suite-content">
+          <p>
+            Type: <output data-testid="element-type"></output>; selected:{' '}
+            <output data-testid="element-selected">home</output>
+          </p>
+          <button
+            type="button"
+            class="m3e-button m3e-button--tonal"
+            data-testid="element-toggle"
+            aria-pressed="false"
+          >
+            <span class="m3e-button__label">Hide navigation</span>
+          </button>
+        </div>
+      </m3e-navigation-suite>
+    </div>
+  </section>
+
+  <section aria-labelledby="react-heading">
+    <h2 id="react-heading">React</h2>
+    <p>
+      <code>&lt;NavigationSuiteScaffold items selectedKey onSelectionChange layoutType
+      navigationSuiteType expandedFrom expandedType isNavigationHidden primaryAction&gt;</code>{' '}
+      with the content as children. Pick a fixed type or keep the adaptive rule.
+    </p>
+    <NavigationSuitePlayground client:only="react" />
+  </section>
+
+  <section aria-labelledby="static-heading">
+    <h2 id="static-heading">No JavaScript</h2>
+    <p>
+      <code>.m3e-navigation-suite--adaptive</code> holds every navigation it may show (a bar, a
+      horizontal bar, a collapsed and an expanded rail) and media queries at the window size class
+      breakpoints pick the one the default rule picks.
+    </p>
+    <div class="docs-suite-frame" data-testid="static-frame">
+      <div class="m3e-navigation-suite m3e-navigation-suite--adaptive" data-testid="static-suite">
+        <nav class="m3e-short-navigation-bar" aria-label="Static example (bar)">
+          <NavItems items={items} prefix="sb" />
+        </nav>
+        <nav
+          class="m3e-short-navigation-bar m3e-short-navigation-bar--horizontal"
+          aria-label="Static example (horizontal bar)"
+        >
+          <NavItems items={items} prefix="sh" />
+        </nav>
+        <nav class="m3e-wide-navigation-rail" aria-label="Static example (rail)">
+          <NavItems items={items} prefix="sr" />
+        </nav>
+        <nav
+          class="m3e-wide-navigation-rail m3e-wide-navigation-rail--expanded"
+          aria-label="Static example (expanded rail)"
+        >
+          <NavItems items={items} prefix="se" />
+        </nav>
+        <div class="m3e-navigation-suite__content docs-suite-content">
+          <p>The visible navigation follows the window size; no script runs.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section aria-labelledby="sources-heading">
+    <h2 id="sources-heading">Sources</h2>
+    <p>
+      androidx Compose Material3 adaptive navigation suite at <code>19991f2c</code>:{' '}
+      <code>NavigationSuiteScaffold.kt</code> (scaffold, layout, state, defaults, the{' '}
+      <code>navigationSuiteType</code> rule) and <code>NavigationSuiteScaffoldSamples.kt</code>;
+      window-core <code>WindowSizeClass.kt</code> (breakpoints). m3.material.io navigation guidance
+      for the expanded rail at large widths.
+    </p>
+  </section>
+</Base>
+
+<script>
+  import '@kyralabs/m3exp-web/elements';
+
+  type SuiteHost = HTMLElement & {
+    type: string | null;
+    navigationHidden?: boolean;
+    toggleNavigation(): void;
+  };
+  const suite = document.querySelector<SuiteHost>('[data-testid="element-suite"]')!;
+  const typeOut = document.querySelector<HTMLOutputElement>('[data-testid="element-type"]')!;
+  const selectedOut = document.querySelector<HTMLOutputElement>('[data-testid="element-selected"]')!;
+  const toggle = document.querySelector<HTMLButtonElement>('[data-testid="element-toggle"]')!;
+  const showType = () => {
+    typeOut.value = suite.type ?? '';
+  };
+  void customElements.whenDefined('m3e-navigation-suite').then(() => {
+    queueMicrotask(showType);
+  });
+  suite.addEventListener('navigation-suite-type-change', showType);
+  suite.addEventListener('selection-change', (e) => {
+    selectedOut.value = (e as CustomEvent<{ value: string }>).detail.value;
+  });
+  toggle.addEventListener('click', () => {
+    suite.toggleNavigation();
+    toggle.setAttribute('aria-pressed', String(Boolean(suite.navigationHidden)));
+  });
+</script>

@@ -2060,6 +2060,18 @@ export const navigationRailVerticalItemTokens = {
   }
 } as const;
 
+/** NavigationSuiteScaffoldDefaults */
+export const navigationSuiteScaffoldDefaults = {
+  navigationSuiteScaffoldContainerColor: "var(--m3e-sys-color-background)",
+  navigationSuiteScaffoldContentColor: "var(--m3e-sys-color-on-background)",
+  navigationSuiteScaffoldPrimaryActionAlignment: "end",
+  navigationSuiteScaffoldPrimaryActionPadding: 16,
+  navigationSuiteScaffoldVisibilityDampingRatio: 0.9,
+  navigationSuiteScaffoldVisibilityStiffness: 700,
+  navigationSuiteScaffoldVisibilityDuration: 228,
+  navigationSuiteScaffoldVisibilityEasing: "linear(0, 0.0014 0.88%, 0.0053 1.75%, 0.0115 2.63%, 0.0246 3.95%, 0.0356 4.82%, 0.055 6.14%, 0.0696 7.02%, 0.0936 8.33%, 0.1382 10.53%, 0.1867 12.72%, 0.3826 21.05%, 0.4328 23.25%, 0.4716 25%, 0.5182 27.19%, 0.5624 29.39%, 0.6041 31.58%, 0.6355 33.33%, 0.6652 35.09%, 0.6931 36.84%, 0.7193 38.6%, 0.7439 40.35%, 0.7667 42.11%, 0.788 43.86%, 0.8078 45.61%, 0.8261 47.37%, 0.847 49.56%, 0.8694 52.19%, 0.886 54.39%, 0.9036 57.02%, 0.9189 59.65%, 0.9322 62.28%, 0.9454 65.35%, 0.9565 68.42%, 0.9657 71.49%, 0.9733 74.56%, 0.9803 78.07%, 0.9858 81.58%, 0.9941 89.47%, 1)"
+} as const;
+
 /** OutlinedAutocompleteTokens */
 export const outlinedAutocompleteTokens = {
   menuContainerColor: "var(--m3e-sys-color-surface-container)",

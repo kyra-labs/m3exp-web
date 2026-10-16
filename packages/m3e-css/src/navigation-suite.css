@@ -1,0 +1,222 @@
+/*
+ * Navigation suite scaffold (COMPONENT_SPEC §16; Compose NavigationSuiteScaffold /
+ * NavigationSuiteScaffoldLayout / NavigationSuite): one set of destinations shown as the
+ * navigation component for the window size, plus the content area.
+ *
+ *   <div class="m3e-navigation-suite m3e-navigation-suite--bar">        (ShortNavigationBar types)
+ *     <nav class="m3e-short-navigation-bar" aria-label="Main">…</nav>    (short-navigation-bar.css;
+ *                                                                          --horizontal: medium)
+ *     <div class="m3e-navigation-suite__primary-action">…FAB…</div>     (optional)
+ *     <div class="m3e-navigation-suite__content">…</div>
+ *   </div>
+ *
+ *   <div class="m3e-navigation-suite m3e-navigation-suite--rail">       (WideNavigationRail types)
+ *     <nav class="m3e-wide-navigation-rail" aria-label="Main">           (wide-navigation-rail.css;
+ *       <div class="m3e-wide-navigation-rail__header">…FAB…</div>          --expanded: expanded)
+ *       …
+ *     </nav>
+ *     <div class="m3e-navigation-suite__content">…</div>
+ *   </div>
+ *
+ *   <div class="m3e-navigation-suite m3e-navigation-suite--drawer">     (NavigationDrawer type)
+ *     <div class="m3e-navigation-drawer">                                (navigation-drawer.css)
+ *       <nav class="m3e-navigation-drawer__sheet" aria-label="Main">
+ *         <div class="m3e-navigation-suite__primary-action">…FAB…</div> (optional)
+ *         …
+ *       </nav>
+ *     </div>
+ *     <div class="m3e-navigation-suite__content">…</div>
+ *   </div>
+ *
+ * --none: the content alone. The bar sits at the bottom (block end), the rail and the drawer at
+ * the inline start (right in RTL), the content fills the rest and scrolls on its own. The suite
+ * fills its container's height (give it one, e.g. 100dvh for a whole page). With a bar, the
+ * primary action floats above it at the end (--primary-action-start / --primary-action-center
+ * move it); with a rail it is the rail's header, with a drawer the first entry of the sheet (both
+ * aligned with the item indicators).
+ *
+ * Sizing is the window's, as Compose's navigationSuiteType reads the window size class: the
+ * elements and React classify the viewport (m3e-elements observeWindowSizeClass, the same
+ * `min-width` queries as below) and render the matching contract. --adaptive is the no-JavaScript
+ * fallback: put every navigation it may need in the suite (a bar, a --horizontal bar, a rail, an
+ * --expanded rail or a drawer; one primary action wrapper for the bars) and the window size picks
+ * the one the scaffold's default rule picks: the bar below 600px wide, the --horizontal bar at
+ * 600px and wider when the window is under 480px tall, the collapsed rail from 600px, the
+ * expanded rail (or drawer) from 1200px. Media queries rather than container queries: the suite
+ * is the outermost frame of an app, and a container query could not restyle the suite element
+ * itself.
+ *
+ * Show / hide (NavigationSuiteScaffoldState): --navigation-hidden is the resting hidden state (the
+ * navigation is out of the layout, invisible and not focusable; a bar's primary action stays).
+ * m3e-elements' NavigationSuiteLayout (also run by m3e-react) animates it: per frame it writes only
+ *   --_m3e-ns-offset   how far the navigation is pushed out (px): its height (bar) or width
+ *                      (rail, drawer) − (size × progress).toInt(),
+ * plus [data-animating], measuring the navigation with a ResizeObserver (no layout reads).
+ *
+ * Sources (material3-adaptive-navigation-suite NavigationSuiteScaffold.kt @ 19991f2c; values in
+ * navigation-suite-defaults.css, lines in PARITY.md):
+ * - NavigationSuiteScaffold (L192-232): a Surface in NavigationSuiteScaffoldDefaults.containerColor
+ *   (background) / contentColor (onBackground) around NavigationSuiteScaffoldLayout.
+ * - NavigationSuiteScaffoldLayout (L377-482): bar types (isNavigationBar) place the content above
+ *   the navigation (content height = layout height − navigation height × progress) and the
+ *   navigation at layout height − height × progress; the primary action at
+ *   PrimaryActionContentPadding from the end (primaryActionContentAlignment) and above the bar.
+ *   Other types place the navigation at −width × (1 − progress) and the content beside it.
+ * - NavigationSuite (L569-673): ShortNavigationBarCompact / Medium → ShortNavigationBar (items
+ *   with the icon on top / at the start, NavigationSuiteItem L877-897); WideNavigationRailCollapsed
+ *   / Expanded → WideNavigationRail (header = the primary action; Expanded starts expanded);
+ *   NavigationDrawer → PermanentDrawerSheet (the primary action first).
+ */
+@import '@kyralabs/m3e-tokens/components/navigation-suite-defaults.css';
+@import './short-navigation-bar.css';
+@import './wide-navigation-rail.css';
+@import './navigation-drawer.css';
+
+@layer m3e.components {
+  .m3e-navigation-suite {
+    position: relative;
+    display: grid;
+    grid-template:
+      'navigation content' minmax(0, 1fr)
+      / auto minmax(0, 1fr);
+    box-sizing: border-box;
+    block-size: 100%;
+    overflow: clip;
+    background-color: var(--m3e-comp-navigation-suite-scaffold-container-color);
+    color: var(--m3e-comp-navigation-suite-scaffold-content-color);
+  }
+
+  .m3e-navigation-suite--bar {
+    grid-template:
+      'content' minmax(0, 1fr)
+      'navigation' auto
+      / minmax(0, 1fr);
+  }
+
+  .m3e-navigation-suite > :is(nav, .m3e-navigation-drawer) {
+    grid-area: navigation;
+  }
+
+  .m3e-navigation-suite__content {
+    grid-area: content;
+    box-sizing: border-box;
+    min-inline-size: 0;
+    min-block-size: 0;
+    overflow: auto;
+  }
+
+  /* With a bar: above it, over the content, PrimaryActionContentPadding from the edges. */
+  .m3e-navigation-suite > .m3e-navigation-suite__primary-action {
+    z-index: 1;
+    grid-area: content;
+    place-self: end var(--m3e-comp-navigation-suite-scaffold-primary-action-alignment);
+    margin: var(--m3e-comp-navigation-suite-scaffold-primary-action-padding);
+  }
+
+  .m3e-navigation-suite--primary-action-start > .m3e-navigation-suite__primary-action {
+    justify-self: start;
+  }
+
+  .m3e-navigation-suite--primary-action-center > .m3e-navigation-suite__primary-action {
+    justify-self: center;
+  }
+
+  /*
+   * With a rail or a drawer, aligned with the item indicators (WNRItemHorizontalPadding; the
+   * drawer's ItemPadding). Compose places the header unpadded and leaves the padding to the app.
+   */
+  .m3e-navigation-suite > .m3e-wide-navigation-rail > .m3e-wide-navigation-rail__header {
+    padding-inline-start: var(--m3e-comp-wide-navigation-rail-item-horizontal-padding);
+  }
+
+  .m3e-navigation-drawer__sheet > .m3e-navigation-suite__primary-action {
+    display: flex;
+    flex: none;
+    padding-inline: var(--m3e-comp-navigation-drawer-item-horizontal-padding);
+  }
+
+  /* --- Show / hide ---------------------------------------------------------------------------- */
+  .m3e-navigation-suite[data-animating] > :is(nav, .m3e-navigation-drawer) {
+    margin-inline-start: calc(-1 * var(--_m3e-ns-offset));
+  }
+
+  .m3e-navigation-suite--bar[data-animating] > nav {
+    margin-inline-start: 0;
+    margin-block-end: calc(-1 * var(--_m3e-ns-offset));
+  }
+
+  .m3e-navigation-suite--navigation-hidden:not([data-animating])
+    > :is(nav, .m3e-navigation-drawer) {
+    position: absolute;
+    inset-block: 0;
+    inset-inline: 0 auto;
+    visibility: hidden;
+  }
+
+  .m3e-navigation-suite--bar.m3e-navigation-suite--navigation-hidden:not([data-animating]) > nav {
+    inset-block-start: auto;
+    inset-inline-end: 0;
+  }
+
+  /* --- No JavaScript: the window size picks the navigation (see above) ------------------------- */
+  @media (width < 600px), (height < 480px) {
+    .m3e-navigation-suite--adaptive {
+      grid-template:
+        'content' minmax(0, 1fr)
+        'navigation' auto
+        / minmax(0, 1fr);
+    }
+  }
+
+  @media (width < 600px) {
+    .m3e-navigation-suite--adaptive
+      > :is(
+        .m3e-short-navigation-bar--horizontal,
+        .m3e-wide-navigation-rail,
+        .m3e-navigation-drawer
+      ) {
+      display: none;
+    }
+  }
+
+  @media (width >= 600px) and (height < 480px) {
+    .m3e-navigation-suite--adaptive
+      > :is(
+        .m3e-short-navigation-bar:not(.m3e-short-navigation-bar--horizontal),
+        .m3e-wide-navigation-rail,
+        .m3e-navigation-drawer
+      ) {
+      display: none;
+    }
+  }
+
+  @media (width >= 600px) and (width < 1200px) and (height >= 480px) {
+    .m3e-navigation-suite--adaptive
+      > :is(
+        .m3e-short-navigation-bar,
+        .m3e-wide-navigation-rail--expanded,
+        .m3e-navigation-drawer,
+        .m3e-navigation-suite__primary-action
+      ) {
+      display: none;
+    }
+  }
+
+  @media (width >= 1200px) and (height >= 480px) {
+    .m3e-navigation-suite--adaptive
+      > :is(
+        .m3e-short-navigation-bar,
+        .m3e-wide-navigation-rail:not(.m3e-wide-navigation-rail--expanded),
+        .m3e-navigation-suite__primary-action
+      ) {
+      display: none;
+    }
+  }
+}
+
+@layer m3e.base {
+  /* <m3e-navigation-suite> renders the contract inside itself (m3e-elements). */
+  :where(m3e-navigation-suite) {
+    display: contents;
+  }
+}

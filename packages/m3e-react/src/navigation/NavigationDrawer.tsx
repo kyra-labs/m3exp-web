@@ -27,6 +27,8 @@ export interface NavigationDrawerDestination {
   href?: string | undefined;
   /** Trailing badge text, e.g. an unread count (Compose `badge`). */
   badge?: string | undefined;
+  /** Not selectable (the link loses its `href`), as the navigation bar / rail items. */
+  isDisabled?: boolean | undefined;
   type?: undefined;
 }
 
@@ -74,17 +76,21 @@ export interface NavigationDrawerProps
 }
 
 interface DrawerItemProps {
-  item: NavigationDrawerDestination;
+  item: Omit<NavigationDrawerDestination, 'type'>;
   isSelected: boolean;
   onSelect: (key: string) => void;
 }
 
-/** The m3e-css `.m3e-navigation-drawer-item` contract; React Aria handles the press. */
-function NavigationDrawerItem({ item, isSelected, onSelect }: DrawerItemProps): ReactNode {
-  const { key, icon, label, href, badge } = item;
+/**
+ * The m3e-css `.m3e-navigation-drawer-item` contract; React Aria handles the press. Also the
+ * drawer type of `<NavigationSuiteScaffold>`.
+ */
+export function NavigationDrawerItem({ item, isSelected, onSelect }: DrawerItemProps): ReactNode {
+  const { key, icon, label, href, badge, isDisabled = false } = item;
   const ref = useObjectRef<HTMLAnchorElement | HTMLButtonElement>(null);
   const stateLayer = useStateLayer();
   const press = {
+    isDisabled,
     onPress: () => {
       // The release of a drag that closes the drawer is not a press (NavigationDrawerLayout).
       if (ref.current?.closest('[data-dragging]')) return;
@@ -119,7 +125,7 @@ function NavigationDrawerItem({ item, isSelected, onSelect }: DrawerItemProps): 
       <a
         {...mergeProps(link.linkProps, common)}
         ref={ref as RefObject<HTMLAnchorElement | null>}
-        href={href}
+        href={isDisabled ? undefined : href}
       >
         {content}
       </a>
@@ -127,7 +133,9 @@ function NavigationDrawerItem({ item, isSelected, onSelect }: DrawerItemProps): 
   }
   return (
     <button
-      {...mergeProps(button.buttonProps, common)}
+      {...mergeProps(button.buttonProps, common, {
+        'aria-disabled': isDisabled ? ('true' as const) : undefined,
+      })}
       ref={ref as RefObject<HTMLButtonElement | null>}
     >
       {content}

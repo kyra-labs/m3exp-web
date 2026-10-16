@@ -678,6 +678,48 @@ describe('tabs values (M7)', () => {
   });
 });
 
+describe('navigation suite scaffold values (M7)', () => {
+  const css = output.get('components/navigation-suite-defaults.css')!;
+  const decl = declarations(css.slice(0, css.indexOf('@media')));
+  const kt = inputs.material3Sources['NavigationSuiteScaffold.kt']!.replace(/\r\n/g, '\n');
+  const t = (name: string) => decl.get(`--m3e-comp-navigation-suite-scaffold-${name}`);
+
+  it('NavigationSuiteScaffoldDefaults: background / onBackground, primary action at the end', () => {
+    expect(kt).toMatch(
+      /public val containerColor: Color\n\s*@Composable get\(\) = MaterialTheme\.colorScheme\.background/,
+    );
+    expect(kt).toMatch(
+      /public val contentColor: Color\n\s*@Composable get\(\) = MaterialTheme\.colorScheme\.onBackground/,
+    );
+    expect(t('container-color')).toBe('var(--m3e-sys-color-background)');
+    expect(t('content-color')).toBe('var(--m3e-sys-color-on-background)');
+    expect(kt).toContain(
+      'public val primaryActionContentAlignment: Alignment.Horizontal = Alignment.End',
+    );
+    expect(t('primary-action-alignment')).toBe('end');
+    expect(kt).toMatch(/private val PrimaryActionContentPadding\n\s*get\(\) = 16\.dp/);
+    expect(t('primary-action-padding')).toBe('16px');
+  });
+
+  it('show / hide: spring(0.9, 700), not a motion scheme token; jumps under reduced motion', () => {
+    expect(kt).toContain('private const val SpringDefaultSpatialDamping = 0.9f');
+    expect(kt).toContain('private const val SpringDefaultSpatialStiffness = 700.0f');
+    expect(t('visibility-damping-ratio')).toBe('0.9');
+    expect(t('visibility-stiffness')).toBe('700');
+    expect(t('visibility-duration')).toMatch(/^\d+ms$/);
+    expect(t('visibility-easing')).toMatch(/^linear\(0, .*, 1\)$/);
+    expect(css.slice(css.indexOf('@media'))).toContain(
+      '--m3e-comp-navigation-suite-scaffold-visibility-duration: 0ms;',
+    );
+  });
+
+  it('PARITY.md cites the material3-adaptive-navigation-suite file', () => {
+    expect(output.get('PARITY.md')).toContain(
+      'material3-adaptive-navigation-suite/src/commonMain/kotlin/androidx/compose/material3/adaptive/navigationsuite/NavigationSuiteScaffold.kt@',
+    );
+  });
+});
+
 describe('TopAppBar layout literals (M4 Top app bar, M6 flexible / two-rows bars)', () => {
   const css = output.get('components/top-app-bar-defaults.css')!;
   const decl = declarations(css.slice(0, css.indexOf('@media')));

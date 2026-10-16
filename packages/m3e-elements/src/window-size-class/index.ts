@@ -7,7 +7,10 @@ export {
   observeWindowSizeClass,
 } from './window-size-class.js';
 export {
+  NAVIGATION_SUITE_EXPANDED_FROM,
+  NAVIGATION_SUITE_TYPES,
   type NavigationSuiteType,
+  type NavigationSuiteTypeOptions,
   type PaneScaffoldDirective,
   WINDOW_HEIGHT_BREAKPOINTS,
   WINDOW_WIDTH_BREAKPOINTS,
@@ -18,6 +21,7 @@ export {
   type WindowWidthSizeClass,
   isAtLeastBreakpoint,
   isHeightAtLeastBreakpoint,
+  isNavigationBarType,
   isWidthAtLeastBreakpoint,
   navigationSuiteType,
   paneScaffoldDirective,

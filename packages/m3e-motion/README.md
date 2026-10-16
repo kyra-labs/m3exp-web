@@ -34,8 +34,14 @@ const sizeClass = windowSizeClass({ width: 1280, height: 800 });
 // { widthClass: 'large', heightClass: 'medium', minWidth: 1200, minHeight: 480 }
 isWidthAtLeastBreakpoint(sizeClass, 'expanded'); // true
 paneScaffoldDirective(sizeClass).maxHorizontalPartitions; // 3 (calculatePaneScaffoldDirective)
-navigationSuiteType(sizeClass); // 'wide-navigation-rail-collapsed'
+navigationSuiteType(sizeClass); // 'wide-navigation-rail-collapsed' (Compose's default rule)
+navigationSuiteType(sizeClass, { expandedFrom: 'large' }); // 'wide-navigation-rail-expanded'
 ```
+
+`expandedFrom` (a width class or px bound) expands the collapsed rail from that width (the
+navigation suite scaffold's default is `NAVIGATION_SUITE_EXPANDED_FROM`, `'large'`), to the expanded
+rail or, with `expandedType: 'navigation-drawer'`, a drawer. `NavigationSuiteScaffoldAnimation`
+ports Compose's `NavigationSuiteScaffoldState` show / hide with its layout progress.
 
 `windowWidthSizeClass` / `windowHeightSizeClass` classify one axis; `{ largeAndExtraLargeWidth:
 false }` keeps Compose's V1 width set (every width from 840 is `expanded`).

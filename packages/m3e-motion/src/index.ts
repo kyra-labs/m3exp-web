@@ -101,7 +101,10 @@ export {
   buttonGroupWidths,
 } from './button-group.js';
 export {
+  NAVIGATION_SUITE_EXPANDED_FROM,
+  NAVIGATION_SUITE_TYPES,
   type NavigationSuiteType,
+  type NavigationSuiteTypeOptions,
   type PaneScaffoldDirective,
   WINDOW_HEIGHT_BREAKPOINTS,
   WINDOW_WIDTH_BREAKPOINTS,
@@ -112,6 +115,7 @@ export {
   type WindowWidthSizeClass,
   isAtLeastBreakpoint,
   isHeightAtLeastBreakpoint,
+  isNavigationBarType,
   isWidthAtLeastBreakpoint,
   navigationSuiteType,
   paneScaffoldDirective,
@@ -120,6 +124,11 @@ export {
   windowSizeClass,
   windowWidthSizeClass,
 } from './window-size-class.js';
+export {
+  type NavigationSuiteSample,
+  NavigationSuiteScaffoldAnimation,
+  navigationSuiteOffset,
+} from './navigation-suite.js';
 export {
   MODAL_RAIL_EXPANDED_PROGRESS,
   type WideNavigationRailAnimationOptions,
