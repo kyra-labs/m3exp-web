@@ -40,6 +40,13 @@ test.beforeEach(async ({ page }) => {
   await page.goto('/components/progress/');
   await page.evaluate(() => document.fonts.ready);
   await expect(page.getByTestId('react').getByRole('progressbar')).toHaveCount(5);
+  // Every element has rendered (and requested its first frame) before the clock moves, so all
+  // timelines start on the same frame.
+  await page.waitForFunction(() =>
+    [...document.querySelectorAll('m3e-linear-progress, m3e-circular-progress')].every(
+      (el) => el.firstElementChild?.hasAttribute('data-driven') === true,
+    ),
+  );
   // One frame so the wavy indicators draw.
   await page.clock.runFor(16);
 });
