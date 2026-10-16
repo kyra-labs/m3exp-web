@@ -24,6 +24,7 @@
  *   min(sweep, gap) after the progress and sweeps 360° − sweep − 2 × min(sweep, gap), where the gap
  *   angle is (gap + stroke) / (π × size) of a turn; near 100% that sweep turns negative and, as
  *   Skia draws negative sweeps, runs backwards from its start. A zero sweep draws nothing.
+ *   TODO(verify): both against a device capture (SOURCES register #64).
  *   Indeterminate: no track (circularIndeterminateTrackColor = Transparent), the arc starts at
  *   3 o'clock and the whole drawing turns by the global + additional rotation, its sweep animated
  *   (@keyframes m3e-progress-* in progress-indicator-defaults.css).
