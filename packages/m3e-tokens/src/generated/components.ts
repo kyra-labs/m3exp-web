@@ -1357,6 +1357,54 @@ export const floatingToolbarTokens = {
   vibrantContainerColor: "var(--m3e-sys-color-primary-container)"
 } as const;
 
+/** FloatingToolbarDefaults */
+export const floatingToolbarDefaults = {
+  floatingToolbarDefaultsContainerSize: 64,
+  floatingToolbarDefaultsContentPaddingStart: 8,
+  floatingToolbarDefaultsContentPaddingTop: 8,
+  floatingToolbarDefaultsContentPaddingEnd: 8,
+  floatingToolbarDefaultsContentPaddingBottom: 8,
+  floatingToolbarDefaultsItemSpacing: 0,
+  floatingToolbarDefaultsScreenOffset: 16,
+  floatingToolbarDefaultsExpandedElevation: "var(--m3e-sys-elevation-level0)",
+  floatingToolbarDefaultsExpandedShadow: "var(--m3e-sys-elevation-level0-shadow)",
+  floatingToolbarDefaultsCollapsedElevation: "var(--m3e-sys-elevation-level0)",
+  floatingToolbarDefaultsCollapsedShadow: "var(--m3e-sys-elevation-level0-shadow)",
+  floatingToolbarDefaultsExpandedElevationWithFab: "var(--m3e-sys-elevation-level1)",
+  floatingToolbarDefaultsExpandedShadowWithFab: "var(--m3e-sys-elevation-level1-shadow)",
+  floatingToolbarDefaultsCollapsedElevationWithFab: "var(--m3e-sys-elevation-level0)",
+  floatingToolbarDefaultsCollapsedShadowWithFab: "var(--m3e-sys-elevation-level0-shadow)",
+  floatingToolbarDefaultsToolbarToFabGap: 8,
+  floatingToolbarDefaultsFabSizeMin: 56,
+  floatingToolbarDefaultsFabSizeMax: 80,
+  floatingToolbarDefaultsFabShape: "var(--m3e-sys-shape-corner-large)",
+  floatingToolbarDefaultsFabElevation: "var(--m3e-sys-elevation-level2)",
+  floatingToolbarDefaultsFabShadow: "var(--m3e-sys-elevation-level2-shadow)",
+  floatingToolbarDefaultsFabElevationPressed: "var(--m3e-sys-elevation-level2)",
+  floatingToolbarDefaultsFabShadowPressed: "var(--m3e-sys-elevation-level2-shadow)",
+  floatingToolbarDefaultsFabElevationFocused: "var(--m3e-sys-elevation-level2)",
+  floatingToolbarDefaultsFabShadowFocused: "var(--m3e-sys-elevation-level2-shadow)",
+  floatingToolbarDefaultsFabElevationHovered: "var(--m3e-sys-elevation-level3)",
+  floatingToolbarDefaultsFabShadowHovered: "var(--m3e-sys-elevation-level3-shadow)",
+  floatingToolbarDefaultsStandardContainerColor: "var(--m3e-sys-color-surface-container)",
+  floatingToolbarDefaultsStandardContentColor: "var(--m3e-sys-color-on-surface)",
+  floatingToolbarDefaultsStandardFabContainerColor: "var(--m3e-sys-color-primary-container)",
+  floatingToolbarDefaultsStandardFabContentColor: "var(--m3e-sys-color-on-primary-container)",
+  floatingToolbarDefaultsVibrantContainerColor: "var(--m3e-sys-color-primary-container)",
+  floatingToolbarDefaultsVibrantContentColor: "var(--m3e-sys-color-on-primary-container)",
+  floatingToolbarDefaultsVibrantFabContainerColor: "var(--m3e-sys-color-tertiary-container)",
+  floatingToolbarDefaultsVibrantFabContentColor: "var(--m3e-sys-color-on-tertiary-container)",
+  floatingToolbarDefaultsAnimationDuration: "var(--m3e-sys-motion-spring-fast-spatial-duration)",
+  floatingToolbarDefaultsAnimationEasing: "var(--m3e-sys-motion-spring-fast-spatial-easing)",
+  floatingToolbarDefaultsAnimationDampingRatio: "var(--m3e-sys-motion-spring-fast-spatial-damping-ratio)",
+  floatingToolbarDefaultsAnimationStiffness: "var(--m3e-sys-motion-spring-fast-spatial-stiffness)",
+  floatingToolbarDefaultsSnapDuration: "var(--m3e-sys-motion-spring-default-effects-duration)",
+  floatingToolbarDefaultsSnapEasing: "var(--m3e-sys-motion-spring-default-effects-easing)",
+  floatingToolbarDefaultsSnapDampingRatio: "var(--m3e-sys-motion-spring-default-effects-damping-ratio)",
+  floatingToolbarDefaultsSnapStiffness: "var(--m3e-sys-motion-spring-default-effects-stiffness)",
+  floatingToolbarDefaultsScrollDistanceThreshold: 40
+} as const;
+
 /** InputChipTokens */
 export const inputChipTokens = {
   containerElevation: "var(--m3e-sys-elevation-level0)",

@@ -33,6 +33,7 @@ export const MATERIAL3_SOURCES = [
   'internal/MenuPosition.kt',
   'SplitButton.kt',
   'HorizontalCenterOptically.kt',
+  'FloatingToolbar.kt',
 ] as const;
 
 /** Material3 samples the generator reads (values the Compose catalog renders, e.g. icon rotation). */
