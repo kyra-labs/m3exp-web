@@ -39,7 +39,7 @@ export const MATERIAL3_SOURCES = [
 /** Material3 samples the generator reads (values the Compose catalog renders, e.g. icon rotation). */
 export const MATERIAL3_SAMPLES_PATH =
   'compose/material3/material3/samples/src/main/java/androidx/compose/material3/samples';
-export const MATERIAL3_SAMPLE_SOURCES = ['SplitButtonSamples.kt'] as const;
+export const MATERIAL3_SAMPLE_SOURCES = ['AppBarSamples.kt', 'SplitButtonSamples.kt'] as const;
 
 /** Android `actual`s the generator reads (DropdownMenu's popup margins, AndroidMenu.android.kt). */
 export const MATERIAL3_ANDROID_PATH =

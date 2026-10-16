@@ -3,6 +3,7 @@
   "commit": "19991f2c0858aadfcb442ce02b2c8e4743c96898",
   "path": "compose/material3/material3/samples/src/main/java/androidx/compose/material3/samples",
   "files": {
+    "AppBarSamples.kt": "b1654eee22e20d0bfdd5a62245f34dd46a7cfe71ad0d3287b20eca48677cad7f",
     "SplitButtonSamples.kt": "a31287ec1b415fd88bd99d46784935e6016c9254effe58c1125b7269a1d1811f"
   }
 }
