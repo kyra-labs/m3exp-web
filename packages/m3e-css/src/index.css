@@ -27,7 +27,9 @@
 @import './loading-indicator.css';
 @import './fab.css';
 @import './floating-toolbar.css'; /* before fab-menu.css: esbuild keeps the last @import of fab.css */
+@import './bottom-app-bar.css'; /* @deprecated (D4); also re-imports fab.css, so before fab-menu.css */
 @import './fab-menu.css';
 @import './menu.css';
 @import './button-group.css';
 @import './split-button.css';
+@import './docked-toolbar.css';

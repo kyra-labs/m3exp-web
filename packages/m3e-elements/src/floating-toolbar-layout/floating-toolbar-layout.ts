@@ -1,16 +1,11 @@
 import {
   type FloatingToolbarExitDirection,
-  type FloatingToolbarScrollState,
-  type SpringSpec,
   type ToolbarExpansionScroll,
   SpringAnimatable,
-  floatingToolbarScrollState,
-  scrollFloatingToolbar,
   scrollToolbarExpansion,
   toolbarExpansionScroll,
-  toolbarSettleTarget,
-  withToolbarOffsetLimit,
 } from '@kyralabs/m3e-motion';
+import { ExitOnScroll, observeScroll, readSpringTokens } from '../base/scroll.js';
 import { RovingFocus } from '../roving-focus/roving-focus.js';
 
 /**
@@ -36,23 +31,6 @@ export interface FloatingToolbarScrollOptions {
 
 const BLOCK = 'm3e-floating-toolbar';
 const TOKENS = '--m3e-comp-floating-toolbar-defaults';
-/**
- * Browsers without `scrollend` (older Safari) settle the toolbar once scrolling has been idle this
- * long. A scroll-detection heuristic, not a motion value (as the top app bar's).
- */
-const SCROLL_IDLE_MS = 100;
-
-/** `--m3e-comp-floating-toolbar-defaults-<name>-*`, or null when its duration resolves to 0. */
-function readSpring(style: CSSStyleDeclaration, name: string): SpringSpec | null {
-  const read = (part: string) =>
-    Number.parseFloat(style.getPropertyValue(`${TOKENS}-${name}-${part}`));
-  if (read('duration') === 0) return null;
-  const dampingRatio = read('damping-ratio');
-  const stiffness = read('stiffness');
-  return Number.isFinite(dampingRatio) && Number.isFinite(stiffness)
-    ? { dampingRatio, stiffness }
-    : null;
-}
 
 interface Slot {
   el: HTMLElement;
@@ -61,9 +39,9 @@ interface Slot {
 }
 
 interface Scroll {
-  behavior: FloatingToolbarLayoutScrollBehavior;
-  direction: FloatingToolbarExitDirection;
   abort: AbortController;
+  /** The exit-always behavior (null for `collapse`). */
+  exit: ExitOnScroll | null;
 }
 
 /**
@@ -83,11 +61,11 @@ interface Scroll {
  *   leading / trailing parts, or the toolbar beside a FAB, as soon as it collapses; focus inside
  *   moves to the FAB, else the first remaining item.
  * - **Roving focus** (RovingFocus): one tab stop, arrows along the orientation, Home / End.
- * - **Scroll** (`setScroll`): `exit-always` writes `data-exit-direction` and
- *   `--_m3e-floating-toolbar-offset` (0 to minus the distance off the offset parent / viewport), snaps a
- *   partly hidden toolbar on the snap spring (default effects; jumps under reduced motion) when
- *   scrolling ends, and takes it out of the tab order while it is off its place (Compose: an
- *   offscreen toolbar is not focusable). It does not hide while it holds focus (WCAG 2.4.11) and
+ * - **Scroll** (`setScroll`): `exit-always` (m3e-elements ExitOnScroll, shared with the docked
+ *   toolbar) writes `data-exit-direction` and `--_m3e-floating-toolbar-offset` (0 to minus the
+ *   distance off the offset parent / viewport), snaps a partly hidden toolbar on the snap spring
+ *   (default effects; jumps under reduced motion) when scrolling ends, and takes it out of the tab
+ *   order while it is off its place (Compose: an offscreen toolbar is not focusable). It does not hide while it holds focus (WCAG 2.4.11) and
  *   returns when focus moves into it. `collapse` reports the expanded state through
  *   `onExpandedChange` after `--m3e-comp-floating-toolbar-defaults-scroll-distance-threshold`.
  */
@@ -97,11 +75,9 @@ export class FloatingToolbarLayout {
   #options: FloatingToolbarLayoutOptions;
   #expanded: boolean | null = null;
   #progress = new SpringAnimatable(1);
-  #offset = new SpringAnimatable(0);
   #slots: Slot[] = [];
   #frame = 0;
   #scroll: Scroll | null = null;
-  #state: FloatingToolbarScrollState = floatingToolbarScrollState();
   #expansion: ToolbarExpansionScroll | null = null;
   #destroyed = false;
 
@@ -152,58 +128,36 @@ export class FloatingToolbarLayout {
     this.#detachScroll();
     if (behavior === null || this.#destroyed) return;
     const abort = new AbortController();
-    this.#scroll = { behavior, direction, abort };
     this.root.setAttribute('data-scroll-behavior', behavior);
-    if (behavior === 'exit-always') this.root.setAttribute('data-exit-direction', direction);
-    else
-      this.#expansion = toolbarExpansionScroll(
-        this.#expanded ?? true,
-        this.#threshold(),
-        this.#threshold(),
-      );
-
-    const scroller = target === window ? document.scrollingElement : (target as HTMLElement);
-    const scrollTop = () => {
-      if (!scroller) return 0;
-      const max = scroller.scrollHeight - scroller.clientHeight;
-      return Math.min(Math.max(scroller.scrollTop, 0), Math.max(max, 0));
-    };
-    let lastTop = scrollTop();
-    let idle = 0;
-    const hasScrollEnd = 'onscrollend' in window;
-    const settle = () => {
-      clearTimeout(idle);
-      if (behavior !== 'exit-always' || this.#offset.isRunning) return;
-      const to = toolbarSettleTarget(this.#state);
-      if (to !== null) this.#snapOffset(to);
-    };
-    const onScroll = () => {
-      const top = scrollTop();
-      const delta = lastTop - top;
-      lastTop = top;
-      if (behavior === 'collapse') this.#onCollapseScroll(delta);
-      else this.#onExitScroll(delta);
-      if (!hasScrollEnd) {
-        clearTimeout(idle);
-        idle = window.setTimeout(settle, SCROLL_IDLE_MS);
-      }
-    };
-    const { signal } = abort;
-    target.addEventListener('scroll', onScroll, { passive: true, signal });
-    target.addEventListener('scrollend', settle, { passive: true, signal });
     if (behavior === 'exit-always') {
-      // Focus moved into a hidden toolbar (a pointer or a script; the keyboard cannot tab in).
-      this.root.addEventListener(
-        'focusin',
-        () => {
-          if (this.#state.offset !== 0) this.#snapOffset(0);
+      this.root.setAttribute('data-exit-direction', direction);
+      const exit: ExitOnScroll = new ExitOnScroll(this.root, {
+        target,
+        distance: (): number => this.#exitDistance(direction, exit.offset),
+        spring: () => readSpringTokens(getComputedStyle(this.root), `${TOKENS}-snap`),
+        write: (offset) => {
+          this.#writeOffset(offset);
         },
-        { signal },
-      );
+      });
+      this.#scroll = { abort, exit };
+      return;
     }
-    signal.addEventListener('abort', () => {
-      clearTimeout(idle);
-    });
+    this.#scroll = { abort, exit: null };
+    this.#expansion = toolbarExpansionScroll(
+      this.#expanded ?? true,
+      this.#threshold(),
+      this.#threshold(),
+    );
+    observeScroll(
+      target,
+      {
+        onScroll: (delta) => {
+          this.#onCollapseScroll(delta);
+        },
+        onSettle: () => undefined,
+      },
+      abort.signal,
+    );
   }
 
   destroy(): void {
@@ -249,7 +203,7 @@ export class FloatingToolbarLayout {
         return { el, full: el[size] };
       });
     }
-    this.#progress.animateTo(expanded ? 1 : 0, readSpring(style, 'animation'), now);
+    this.#progress.animateTo(expanded ? 1 : 0, readSpringTokens(style, `${TOKENS}-animation`), now);
     this.#tick(now);
   }
 
@@ -257,7 +211,7 @@ export class FloatingToolbarLayout {
     return this.#vertical ? 'block-size' : 'inline-size';
   }
 
-  // --- Frame loop (expand/collapse progress and the exit-always snap) -------------------------
+  // --- Frame loop (expand/collapse progress) ---------------------------------------------------
 
   #tick(now: number): void {
     const root = this.root;
@@ -281,12 +235,8 @@ export class FloatingToolbarLayout {
       }
       this.#slots = [];
     }
-    if (this.#offset.isRunning) {
-      this.#state = { ...this.#state, offset: this.#offset.sample(now) };
-      this.#writeOffset();
-    }
     if (!root.getAttribute('style')) root.removeAttribute('style');
-    const running = animating || this.#offset.isRunning;
+    const running = animating;
     // Keep a pending frame rather than re-requesting it, so it stays first in its frame.
     if (running && this.#frame === 0) {
       this.#frame = requestAnimationFrame((t) => {
@@ -317,26 +267,11 @@ export class FloatingToolbarLayout {
     if (next !== null && next !== this.#expanded) this.#options.onExpandedChange?.(next);
   }
 
-  #onExitScroll(delta: number): void {
-    const active = this.root.ownerDocument.activeElement;
-    if (delta < 0 && active && this.root.contains(active)) {
-      // Keep a focused toolbar in place (WCAG 2.4.11 Focus Not Obscured).
-      this.#state = { ...this.#state, contentOffset: this.#state.contentOffset + delta };
-      return;
-    }
-    this.#offset.snapTo(this.#state.offset);
-    this.#state = scrollFloatingToolbar(
-      withToolbarOffsetLimit(this.#state, this.#exitDistance()),
-      delta,
-    );
-    this.#offset.snapTo(this.#state.offset);
-    this.#writeOffset();
-  }
-
-  /** How far the toolbar travels to leave its offset parent (or the viewport) in its direction. */
-  #exitDistance(): number {
-    const direction = this.#scroll?.direction ?? 'bottom';
-    const offset = this.#state.offset;
+  /**
+   * How far the toolbar travels to leave its offset parent (or the viewport) in its direction,
+   * measured without its current `offset`.
+   */
+  #exitDistance(direction: FloatingToolbarExitDirection, offset: number): number {
     const rtl = getComputedStyle(this.root).direction === 'rtl';
     const tx =
       direction === 'start'
@@ -372,21 +307,7 @@ export class FloatingToolbarLayout {
     }
   }
 
-  #snapOffset(to: number): void {
-    const style = getComputedStyle(this.root);
-    // A running snap retargets from its value and velocity; from rest it starts at the offset.
-    if (!this.#offset.isRunning) this.#offset.snapTo(this.#state.offset);
-    this.#offset.animateTo(to, readSpring(style, 'snap'), performance.now());
-    if (!this.#offset.isRunning) {
-      this.#state = { ...this.#state, offset: to };
-      this.#writeOffset();
-      return;
-    }
-    this.#tick(performance.now());
-  }
-
-  #writeOffset(): void {
-    const { offset } = this.#state;
+  #writeOffset(offset: number): void {
     if (offset === 0) this.root.style.removeProperty('--_m3e-floating-toolbar-offset');
     else this.root.style.setProperty('--_m3e-floating-toolbar-offset', `${String(offset)}px`);
     if (!this.root.getAttribute('style')) this.root.removeAttribute('style');
@@ -396,12 +317,11 @@ export class FloatingToolbarLayout {
   #detachScroll(): void {
     if (!this.#scroll) return;
     this.#scroll.abort.abort();
+    this.#scroll.exit?.destroy();
     this.#scroll = null;
     this.#expansion = null;
-    this.#offset.snapTo(0);
-    this.#state = floatingToolbarScrollState();
     this.root.removeAttribute('data-scroll-behavior');
     this.root.removeAttribute('data-exit-direction');
-    this.#writeOffset();
+    this.#writeOffset(0);
   }
 }

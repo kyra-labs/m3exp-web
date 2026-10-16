@@ -102,3 +102,25 @@ describe('collapse on scroll (floatingToolbarVerticalNestedScroll)', () => {
     expect(scrollToolbarExpansion(s, 40, 40, 40).change).toBe('expand');
   });
 });
+
+describe('BottomAppBarState / exitAlwaysScrollBehavior (AppBar.kt) reuse the same math', () => {
+  // A 64dp docked toolbar: heightOffsetLimit = -placeable.height (BottomAppBarLayout).
+  const bar = withToolbarOffsetLimit(floatingToolbarScrollState(), 64);
+
+  it('onPostScroll: heightOffset and contentOffset move by consumed.y, coerced to [-64, 0]', () => {
+    let s = scrollFloatingToolbar(bar, -20);
+    expect([s.offset, s.contentOffset]).toEqual([-20, -20]);
+    s = scrollFloatingToolbar(s, -80);
+    expect([s.offset, s.contentOffset]).toEqual([-64, -100]);
+    expect(toolbarCollapsedFraction(s)).toBe(1);
+    s = scrollFloatingToolbar(s, 30);
+    expect(s.offset).toBe(-34);
+  });
+
+  it('settleAppBarBottom: none within 1 % of either end, else shown below half, hidden from half', () => {
+    expect(toolbarSettleTarget(withToolbarOffset(bar, -0.5))).toBeNull();
+    expect(toolbarSettleTarget(withToolbarOffset(bar, -64))).toBeNull();
+    expect(toolbarSettleTarget(withToolbarOffset(bar, -31))).toBe(0);
+    expect(toolbarSettleTarget(withToolbarOffset(bar, -32))).toBe(-64);
+  });
+});

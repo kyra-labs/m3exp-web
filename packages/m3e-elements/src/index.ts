@@ -11,5 +11,7 @@ export * from './split-button/index.js';
 export * from './roving-focus/index.js';
 export * from './floating-toolbar-layout/index.js';
 export * from './floating-toolbar/index.js';
+export * from './docked-toolbar-layout/index.js';
+export * from './docked-toolbar/index.js';
 // Not `export *` from './ripple/index.js': that entry enables the ripple document-wide on import.
 export { attachAutoRipple } from './ripple/ripple.js';

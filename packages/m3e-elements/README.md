@@ -145,6 +145,31 @@ The `roving-focus.js` entry exports `RovingFocus`, the toolbar keyboard helper (
 arrows along the orientation mirrored in RTL, Home/End, no wrapping; `tabbable = false` takes the
 widget out of the tab order) for other composite widgets such as the docked toolbar.
 
+## Docked toolbar
+
+```js
+import '@kyralabs/m3e-elements/docked-toolbar.js';
+```
+
+```html
+<m3e-docked-toolbar label="Actions" arrangement="center" scroll-behavior="exit-always">
+  <button class="m3e-icon-button" aria-label="Back">…</button>
+  <button class="m3e-icon-button" aria-label="Add">…</button>
+  <button class="m3e-icon-button" aria-label="Edit">…</button>
+</m3e-docked-toolbar>
+```
+
+`<m3e-docked-toolbar>` (Compose `FlexibleBottomAppBar`) renders the `.m3e-docked-toolbar`
+contract (`role="toolbar"`) and moves its children into it. Attributes: `arrangement` (`spread`
+default, `center`, `space-around`, `space-evenly`), `color-style` (`standard` | `vibrant`),
+`label`, `scroll-behavior` (`exit-always` hides it on scroll down and brings it back on scroll up;
+a partly hidden bar snaps on the fast spatial spring when scrolling stops), `scroll-target` (the
+scrolling element's id). Roving focus and the scroll behavior come from the
+`docked-toolbar-layout.js` entry (`DockedToolbarLayout`), which m3e-react's `<DockedToolbar>` and
+deprecated `<BottomAppBar>` use too. Dock it yourself (`position: fixed` / `sticky` /
+`absolute`, `inset-block-end: 0`): the exit offset uses `translate`. The deprecated legacy bottom
+app bar (D4) has no element; use m3e-css `bottom-app-bar.css` or m3e-react `<BottomAppBar>`.
+
 ## Ripple for plain HTML
 
 m3e-css draws hover, focus and pressed overlays without JS; the press ripple needs a little.
