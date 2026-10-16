@@ -145,7 +145,10 @@ export class OffsetClock {
   #base = 0;
   #start = 0;
   #travel = Number.POSITIVE_INFINITY;
+  #started = false;
   running = false;
+  /** The first frame (ms): Compose starts the offset tween at attach, not at the first draw. */
+  origin = Number.POSITIVE_INFINITY;
 
   value(now: number): number {
     return this.running
@@ -157,7 +160,8 @@ export class OffsetClock {
   run(now: number, travel: number): void {
     if (this.running && travel === this.#travel) return;
     this.#base = Number.isFinite(travel) ? this.value(now) : 0;
-    this.#start = now;
+    this.#start = this.#started ? now : Math.min(now, this.origin);
+    this.#started = true;
     this.#travel = travel;
     this.running = Number.isFinite(travel);
   }
@@ -290,6 +294,7 @@ export abstract class ProgressIndicatorDriver {
     const tokens = this.tokens;
     if (!this.root.isConnected || tokens === null) return;
     if (this.startedAt < 0) this.startedAt = now;
+    this.offset.origin = Math.min(this.offset.origin, now);
     if (this.draw(now, tokens)) this.#frame = requestAnimationFrame(this.#step);
   };
 }
