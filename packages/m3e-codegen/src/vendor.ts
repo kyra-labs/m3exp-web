@@ -33,6 +33,7 @@ export const MATERIAL3_SOURCES = [
   'internal/MenuPosition.kt',
   'SplitButton.kt',
   'HorizontalCenterOptically.kt',
+  'FloatingToolbar.kt',
   'ProgressIndicator.kt',
   'WavyProgressIndicator.kt',
   'internal/LinearWavyProgressModifiers.kt',

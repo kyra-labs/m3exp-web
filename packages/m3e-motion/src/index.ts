@@ -6,6 +6,20 @@ export { type LinearEasing, type LinearEasingOptions, springToLinear } from './l
 export { SpringAnimatable } from './animatable.js';
 export { animatedInt, fabMenuItemVisible } from './fab-menu.js';
 export { menuNavigationTarget } from './menu-navigation.js';
+export { type ToolbarOrientation, toolbarNavigationTarget } from './toolbar-navigation.js';
+export {
+  type FloatingToolbarExitDirection,
+  type FloatingToolbarScrollState,
+  type ToolbarExpansionScroll,
+  floatingToolbarScrollState,
+  scrollFloatingToolbar,
+  scrollToolbarExpansion,
+  toolbarCollapsedFraction,
+  toolbarExpansionScroll,
+  toolbarSettleTarget,
+  withToolbarOffset,
+  withToolbarOffsetLimit,
+} from './floating-toolbar-scroll.js';
 export { type Easing, cubicBezier, parseCubicBezier } from './cubic-bezier.js';
 export {
   AmplitudeAnimation,

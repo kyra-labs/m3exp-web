@@ -616,6 +616,95 @@ describe('FloatingActionButtonMenu / ToggleFloatingActionButton literals (M5 FAB
   });
 });
 
+describe('FloatingToolbarDefaults values (M6 floating toolbar)', () => {
+  const css = output.get('components/floating-toolbar-defaults.css')!;
+  const decl = declarations(css.slice(0, css.indexOf('@media')));
+  const kt = inputs.material3Sources['FloatingToolbar.kt']!.replace(/\r\n/g, '\n');
+  const tokens = source('FloatingToolbarTokens.kt');
+  const tokenDp = (member: string) =>
+    new RegExp(
+      `val ${member}: androidx\\.compose\\.ui\\.unit\\.Dp\\n\\s*get\\(\\) = ([\\d.]+)\\.dp`,
+    ).exec(tokens)?.[1];
+  const v = (name: string) => decl.get(`--m3e-comp-floating-toolbar-defaults-${name}`);
+
+  it('sizes, paddings and offsets are FloatingToolbarTokens values (64 / 8 / 16dp)', () => {
+    const px = (member: string) => `${String(Number(tokenDp(member)))}px`;
+    expect(kt).toContain('public val ContainerSize: Dp = FloatingToolbarTokens.ContainerHeight');
+    expect(v('container-size')).toBe(px('ContainerHeight'));
+    expect(v('container-size')).toBe('64px');
+    for (const side of ['start', 'top'])
+      expect(v(`content-padding-${side}`)).toBe(px('ContainerLeadingSpace'));
+    for (const side of ['end', 'bottom'])
+      expect(v(`content-padding-${side}`)).toBe(px('ContainerTrailingSpace'));
+    expect(v('content-padding-start')).toBe('8px');
+    expect(kt).toContain(
+      'public val ScreenOffset: Dp = FloatingToolbarTokens.ContainerExternalPadding',
+    );
+    expect(v('screen-offset')).toBe(px('ContainerExternalPadding'));
+    expect(v('screen-offset')).toBe('16px');
+  });
+
+  it('items sit edge to edge: ContainerBetweenSpace is not rendered', () => {
+    expect(kt).not.toContain('ContainerBetweenSpace');
+    expect(kt).toContain('horizontalArrangement = Arrangement.Center,');
+    expect(kt).toContain('verticalArrangement = Arrangement.Center,');
+    expect(v('item-spacing')).toBe('0px');
+  });
+
+  it('elevations: level 0, and level 1 for the toolbar beside a FAB', () => {
+    expect(v('expanded-elevation')).toBe('var(--m3e-sys-elevation-level0)');
+    expect(v('collapsed-shadow')).toBe('var(--m3e-sys-elevation-level0-shadow)');
+    expect(kt).toMatch(/ContainerExpandedElevationWithFab: Dp =\n\s*ElevationTokens\.Level1/);
+    expect(v('expanded-shadow-with-fab')).toBe('var(--m3e-sys-elevation-level1-shadow)');
+    expect(v('collapsed-elevation-with-fab')).toBe('var(--m3e-sys-elevation-level0)');
+    expect(v('fab-shadow')).toBe('var(--m3e-sys-elevation-level2-shadow)');
+    expect(v('fab-shadow-hovered')).toBe('var(--m3e-sys-elevation-level3-shadow)');
+  });
+
+  it('FAB: 8dp gap, 56 → 80dp size range, baseline shape', () => {
+    expect(v('toolbar-to-fab-gap')).toBe(`${/ToolbarToFabGap = (\d+)\.dp/.exec(kt)![1]!}px`);
+    expect(kt).toContain(
+      'FabSizeRange = FabBaselineTokens.ContainerWidth..FabMediumTokens.ContainerWidth',
+    );
+    expect(v('fab-size-min')).toBe('56px');
+    expect(v('fab-size-max')).toBe('80px');
+    expect(source('FabBaselineTokens.kt')).toMatch(
+      /ContainerShape: ShapeToken\n\s*get\(\) = ShapeKeyTokens\.CornerLarge/,
+    );
+    expect(v('fab-shape')).toBe('var(--m3e-sys-shape-corner-large)');
+  });
+
+  it('color pairs (contentColorFor)', () => {
+    expect(v('standard-container-color')).toBe('var(--m3e-sys-color-surface-container)');
+    expect(v('vibrant-container-color')).toBe('var(--m3e-sys-color-primary-container)');
+    expect(v('standard-content-color')).toBe('var(--m3e-sys-color-on-surface)');
+    expect(v('standard-fab-container-color')).toBe('var(--m3e-sys-color-primary-container)');
+    expect(v('standard-fab-content-color')).toBe('var(--m3e-sys-color-on-primary-container)');
+    expect(v('vibrant-content-color')).toBe('var(--m3e-sys-color-on-primary-container)');
+    expect(v('vibrant-fab-container-color')).toBe('var(--m3e-sys-color-tertiary-container)');
+    expect(v('vibrant-fab-content-color')).toBe('var(--m3e-sys-color-on-tertiary-container)');
+  });
+
+  it('springs: fast spatial expand/collapse, default effects snap (0ms under reduced motion)', () => {
+    expect(kt).toMatch(
+      /animationSpec\(\): FiniteAnimationSpec<T> \{\n(?:\s*\/\/.*\n)*\s*return MotionSchemeKeyTokens\.FastSpatial/,
+    );
+    expect(v('animation-stiffness')).toBe('var(--m3e-sys-motion-spring-fast-spatial-stiffness)');
+    expect(kt).toContain(
+      'snapAnimationSpec: AnimationSpec<Float> = MotionSchemeKeyTokens.DefaultEffects.value()',
+    );
+    expect(v('snap-damping-ratio')).toBe(
+      'var(--m3e-sys-motion-spring-default-effects-damping-ratio)',
+    );
+    expect(css.slice(css.indexOf('@media'))).toContain(
+      '--m3e-comp-floating-toolbar-defaults-snap-duration: 0ms;',
+    );
+    expect(v('scroll-distance-threshold')).toBe(
+      `${/ScrollDistanceThreshold: Dp = (\d+)\.dp/.exec(kt)![1]!}px`,
+    );
+  });
+});
+
 describe('menu literals (M5 Menus)', () => {
   const decl = declarations(output.get('components/menu-defaults.css')!);
   const kt = (name: string) => inputs.material3Sources[name]!.replace(/\r\n/g, '\n');

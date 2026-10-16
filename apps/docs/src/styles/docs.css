@@ -545,6 +545,46 @@ button.docs-tile {
   margin: 0;
 }
 
+/* Floating toolbar page: static toolbars in frames, rows of live ones, scrolling demos with an
+   anchored toolbar (FloatingToolbarDefaults.ScreenOffset above the frame's bottom edge). */
+.docs-floating-toolbar-grid,
+.docs-floating-toolbar-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--m3e-sys-space-300);
+  align-items: center;
+  margin-block: var(--m3e-sys-space-300);
+}
+
+.docs-floating-toolbar-frame {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--m3e-sys-space-200);
+  border: var(--m3e-comp-divider-thickness) solid var(--m3e-sys-color-outline-variant);
+}
+
+.docs-floating-toolbar-scroll-frame {
+  position: relative;
+  overflow: hidden;
+  inline-size: min(100%, calc(var(--m3e-sys-space-900) * 5));
+  block-size: calc(var(--m3e-sys-space-900) * 4);
+  border: var(--m3e-comp-divider-thickness) solid var(--m3e-sys-color-outline-variant);
+}
+
+.docs-floating-toolbar-scroll {
+  overflow: auto;
+  block-size: 100%;
+}
+
+.docs-floating-toolbar-anchored {
+  position: absolute;
+  inset-block-end: var(--m3e-comp-floating-toolbar-defaults-screen-offset);
+  inset-inline: 0;
+  inline-size: fit-content;
+  margin-inline: auto;
+}
+
 /* Progress indicators page: linear indicators stacked, circular ones in a row. */
 .docs-progress-column {
   display: flex;

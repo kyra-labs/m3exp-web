@@ -248,18 +248,33 @@
 - **Sources:** ProgressIndicator.kt, WavyProgressIndicator.kt, internal/LinearWavyProgressModifiers.kt, internal/CircularWavyProgressModifiers.kt, ProgressIndicatorSamples.kt, *ProgressIndicatorTokens.kt, MotionTokens.kt (vendored); animation-core AnimationSpec.kt (keyframes `using`), VectorizedAnimationSpec.kt (Spring constants); m3.material.io Progress indicators (overview, specs, guidelines, accessibility; token DB thick values).
 
 ## 9. Floating toolbar (horizontal, vertical)
-- **Variants:** horizontal/vertical; standard/vibrant; with FAB; exit-on-scroll.
-- **Tokens:** container 64, shape full, padding 8, item gap 4, screen offset 16, Level1 with FAB (`TODO(verify)` FloatingToolbarTokens.kt). Items on 48 slots.
-- **Motion:** expand/collapse on `FloatingToolbarDefaults.animationSpec()` (`TODO(verify)`); scroll exit on defaultSpatial.
-- **Keyboard/ARIA:** `role="toolbar" aria-orientation`; one tab stop; arrows; Home/End.
-- **Layers:** css + elements/react.
-- **API:** `<FloatingToolbar orientation expanded colorStyle:'standard'|'vibrant' fab? scrollBehavior?:'exitAlways' />`.
+- **Variants:** horizontal/vertical; standard/vibrant (`FloatingToolbarDefaults.standardFloatingToolbarColors` / `vibrantFloatingToolbarColors`); with FAB (FAB at the end or the start); expanded/collapsed; scroll behaviors `exitAlways` (`FloatingToolbarDefaults.exitAlwaysScrollBehavior`) and collapse-on-scroll (`floatingToolbarVerticalNestedScroll`).
+- **Anatomy:** toolbar (pill) with leading items, items, trailing items (leading/trailing show only while expanded); beside a FAB: the toolbar and an adjacent FAB slot (`FloatingToolbarDefaults.Standard/VibrantFloatingActionButton`).
+- **Tokens (verified, generated):** `FloatingToolbarTokens.kt@19991f2c` plus the `FloatingToolbarDefaults` values Compose renders (`components/floating-toolbar-defaults.css`; SOURCES register #27).
+
+  | | value | source |
+  |---|---|---|
+  | container | ≥ 64 across (height horizontal, width vertical), CornerFull, clipped | `ContainerSize` = ContainerHeight (L635); `heightIn` / `widthIn` (L1507, L1731) |
+  | padding | 8 on every side | `ContentPadding` = ContainerLeadingSpace / ContainerTrailingSpace (L677–683) |
+  | items | 48 slots (IconButton's `minimumInteractiveComponentSize`), **edge to edge**: `Arrangement.Center`, no spacing (L1510, L1734); `ContainerBetweenSpace` (4) is not rendered (supersedes the earlier "item gap 4") | |
+  | screen offset | 16 (the samples' offset from the screen edge) | `ScreenOffset` = ContainerExternalPadding (L689) |
+  | elevation | Level0 expanded and collapsed; beside a FAB the toolbar lerps Level0 → **Level1** with the expanded progress (clamped at 1) | L640–666 (upstream "TODO read from token"), L1681–1686 |
+  | with FAB | row 80 tall (`FabSizeRange.endInclusive`), width = toolbar + 8 (`ToolbarToFabGap`) + 56; FAB = lerp(80, 56, progress), shape `FloatingActionButtonDefaults.shape` (baseline, 16) at every size, elevation Level2 / hovered Level3 | L1153, L1160, L1620–1694, L839–911 |
+  | colors | standard: surfaceContainer / onSurface, FAB primaryContainer / onPrimaryContainer; vibrant: primaryContainer / onPrimaryContainer, FAB tertiaryContainer / onTertiaryContainer (contentColorFor) | L1108–1142 |
+
+  The `VibrantButton*` tokens are not read by Compose at the pin (items inherit `LocalContentColor`).
+- **Motion (verified; supersedes "scroll exit on defaultSpatial"):** expand/collapse on `FloatingToolbarDefaults.animationSpec()` = **fast spatial** (L698): without a FAB the leading/trailing items `expandHorizontally` from Start / End and `shrinkHorizontally` towards End / Start (vertical: expand from and shrink towards Bottom for leading, Top for trailing); beside a FAB the toolbar width = max width × progress, its content anchored at the toolbar's leading edge (trailing edge fixed next to the FAB), and the FAB size and toolbar elevation follow the same progress (overshooting with the spring). Interruptible, velocity kept (Compose `updateTransition` / Animatable). Exit on scroll is scroll-linked: the offset moves with every scroll delta between 0 and minus the distance off the container (L547–627); when scrolling stops a partly hidden toolbar snaps to shown (collapsed fraction < 0.5) or hidden on the snap spec = **default effects** (L725, `settleFloatingToolbar` L1383–1437). Reduced motion: the fast spatial spring jumps; the snap (geometry on an effects spring) jumps too (project policy, `--m3e-comp-floating-toolbar-defaults-snap-duration: 0ms`). Collapse-on-scroll: collapses after `ScrollDistanceThreshold` (40) of scrolling down, expands after 40 up (L1013–1106).
+- **Behavior:** hidden parts are not focusable (Compose's sample: `focusProperties { canFocus = expanded }`): collapsed leading/trailing parts, or the folded toolbar beside a FAB, are `inert` and focus inside moves to the FAB (or the first remaining item). An offscreen (exit-always) toolbar leaves the tab order (L190–196: `canFocus = false` while the offset is not 0) and comes back when focus moves into it; it does not hide while it holds focus (WCAG 2.4.11; Compose has no such rule).
+- **Keyboard/ARIA:** `role="toolbar"` with `aria-orientation` and an `aria-label`; roving tabindex (one tab stop: the last focused item, else the first); ArrowLeft/Right (mirrored in RTL) or ArrowUp/Down when vertical; Home/End; no wrapping (APG toolbar; React Aria `useToolbar` keeps every item tabbable and has no Home/End, so both layers use m3e-elements `RovingFocus`, reusable by the docked toolbar §10).
+- **Layers:** css (static layout, color styles, collapsed states; without JS the with-FAB fold transitions on the fast spatial `linear()` curve); elements + react share m3e-elements `FloatingToolbarLayout` (springs, inert, roving focus, scroll behaviors) and m3e-motion `floating-toolbar-scroll.ts` / `toolbarNavigationTarget`.
+- **API:** CSS `.m3e-floating-toolbar(--vertical|--vibrant|--collapsed|--with-fab|--fab-start)[role=toolbar]` > `.m3e-floating-toolbar__bar` (> `__leading`, items, `__trailing`) + `.m3e-floating-toolbar__fab` > `.m3e-fab`. Element `<m3e-floating-toolbar expanded orientation color-style label fab-position scroll-behavior="exit-always|collapse" exit-direction scroll-target>` with `slot="leading|trailing|fab"` children; event `expanded-change` (`{ expanded }`). React `<FloatingToolbar orientation expanded defaultExpanded onExpandedChange colorStyle:'standard'|'vibrant' leading trailing fab fabPosition scrollBehavior?:'exitAlways'|'collapse' exitDirection scrollTarget aria-label />`, `floatingToolbarClassName()`.
 - **Acceptance:**
-  - [ ] Height 64 with 48 item slots.
-  - [ ] Roving tabindex works.
-  - [ ] Hides on scroll down, shows on scroll up.
-  - [ ] Plus CAC.
-- **Sources:** FloatingToolbar.kt.
+  - [x] Height 64 with 48 item slots (generated tokens).
+  - [x] Roving tabindex works.
+  - [x] Hides on scroll down, shows on scroll up.
+  - [x] Plus CAC.
+- **Fidelity:** no touch-exploration (TalkBack) detection, so the toolbar does not force itself expanded or drop its scroll behavior for screen readers, and Compose's expand/collapse custom accessibility actions have no web equivalent; the toolbar's Level0 → Level1 shadow fades the Level1 shadow by the progress instead of lerping the elevation; `minimumInteractiveBalancedPadding` (balances asymmetric 48dp alignment lines) is not needed for symmetric 48dp slots and not ported; no horizontal scrolling of an overflowing toolbar (Compose: `horizontalScroll` beside a FAB); the toolbar does not hide while it holds focus (WCAG 2.4.11); exit-on-scroll is measured against the offset parent or the viewport (Compose: the parent layout) and moves the root with `translate`, so position it with insets/margins.
+- **Sources:** FloatingToolbar.kt (vendored), FloatingToolbarTokens.kt, FloatingToolbarSamples.kt, FloatingActionButton.kt (`FloatingActionButtonDefaults.shape`), ColorScheme.kt (`contentColorFor`).
 
 ## 10. Docked toolbar (FlexibleBottomAppBar) — and BottomAppBar (@deprecated, D4)
 - **Tokens:** height 64, no radius, no elevation, 16 end padding, item spacing max 32 / min 4 (`TODO(verify)` DockedToolbarTokens.kt). Legacy BottomAppBar tokens `TODO(verify)` BottomAppBarTokens.kt.

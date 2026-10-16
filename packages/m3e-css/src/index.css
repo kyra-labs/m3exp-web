@@ -26,6 +26,7 @@
 @import './assist-chip.css';
 @import './loading-indicator.css';
 @import './fab.css';
+@import './floating-toolbar.css'; /* before fab-menu.css: esbuild keeps the last @import of fab.css */
 @import './fab-menu.css';
 @import './menu.css';
 @import './button-group.css';

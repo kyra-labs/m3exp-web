@@ -115,6 +115,36 @@ spring to full and its icon turns 180°. `variant`: `filled` (default), `tonal`,
 `outlined`; `size`: `xs`, `s` (default), `m`, `l`, `xl`; `trailing-icon` (default
 `keyboard_arrow_down`); `disabled`. It emits `press` when the leading button is activated.
 
+## Floating toolbar
+
+```js
+import '@kyralabs/m3e-elements/floating-toolbar.js';
+```
+
+```html
+<m3e-floating-toolbar expanded label="Formatting" scroll-behavior="exit-always">
+  <button class="m3e-icon-button" slot="leading" aria-label="Done">…</button>
+  <button class="m3e-icon-button" aria-label="Bold">…</button>
+  <button class="m3e-icon-button" aria-label="Italic">…</button>
+  <button class="m3e-fab" slot="fab" aria-label="Add">…</button>
+</m3e-floating-toolbar>
+```
+
+`<m3e-floating-toolbar>` renders the `.m3e-floating-toolbar` contract (`role="toolbar"`) and moves
+its children into it: `slot="leading"` / `slot="trailing"` items show only while `expanded`,
+`slot="fab"` makes the with-FAB toolbar (collapsed, the toolbar folds into the FAB). Attributes:
+`expanded`, `orientation` (`horizontal` | `vertical`), `color-style` (`standard` | `vibrant`),
+`label`, `fab-position` (`end` | `start`), `scroll-behavior` (`exit-always` hides it on scroll
+down; `collapse` collapses it on scroll down and fires `expanded-change`), `exit-direction`,
+`scroll-target` (the scrolling element's id). The expand/collapse springs, hidden parts made
+`inert`, roving focus and the scroll behaviors come from the `floating-toolbar-layout.js` entry
+(`FloatingToolbarLayout`), which m3e-react's `<FloatingToolbar>` uses too. Position it with
+`inset`/margins: the exit offset uses `translate`.
+
+The `roving-focus.js` entry exports `RovingFocus`, the toolbar keyboard helper (one tab stop,
+arrows along the orientation mirrored in RTL, Home/End, no wrapping; `tabbable = false` takes the
+widget out of the tab order) for other composite widgets such as the docked toolbar.
+
 ## Progress indicators
 
 ```js

@@ -181,6 +181,22 @@
     "limit": "8 KB"
   },
   {
+    "name": "m3e-css: floating toolbar (incl. FAB)",
+    "path": "packages/m3e-css/dist/floating-toolbar.css",
+    "rolldown": false,
+    "limit": "4 KB"
+  },
+  {
+    "name": "m3e-elements: <m3e-floating-toolbar> entry (FloatingToolbarLayout, RovingFocus, m3e-motion springs)",
+    "path": "packages/m3e-elements/dist/floating-toolbar/index.js",
+    "limit": "8 KB"
+  },
+  {
+    "name": "m3e-elements: roving-focus entry (shared toolbar keyboard helper)",
+    "path": "packages/m3e-elements/dist/roving-focus/index.js",
+    "limit": "2 KB"
+  },
+  {
     "name": "m3e-css: linear progress",
     "path": "packages/m3e-css/dist/linear-progress.css",
     "rolldown": false,
@@ -249,6 +265,13 @@
     "limit": "16 KB"
   },
   {
+    "name": "m3e-react: { FloatingToolbar } only (incl. FloatingToolbarLayout + RovingFocus from m3e-elements)",
+    "path": "packages/m3e-react/dist/index.js",
+    "import": "{ FloatingToolbar }",
+    "ignore": ["react", "react-dom"],
+    "limit": "8 KB"
+  },
+  {
     "name": "m3e-react: { Menu, MenuItem, MenuSection, MenuTrigger } only (incl. react-aria menu hooks + MenuPopup)",
     "path": "packages/m3e-react/dist/index.js",
     "import": "{ Menu, MenuItem, MenuSection, MenuTrigger }",
@@ -291,10 +314,10 @@
     "limit": "1 KB"
   },
   {
-    "name": "m3exp-web (root): { Icon } (the root entry registers every custom element by design, ~27.4 kB with <m3e-menu>, <m3e-split-button>, <m3e-button-group> and the progress indicators; a leaked React component adds ~10 kB of react-aria. Raise with m3e-elements (all), max 31 KB)",
+    "name": "m3exp-web (root): { Icon } (the root entry registers every custom element by design, ~25.6 kB with <m3e-menu>, <m3e-split-button>, <m3e-button-group> and <m3e-floating-toolbar>; a leaked React component adds ~10 kB of react-aria. Raise with m3e-elements (all), max 31 KB)",
     "path": "packages/m3exp-web/dist/index.js",
     "import": "{ Icon }",
     "ignore": ["react", "react-dom"],
-    "limit": "29 KB"
+    "limit": "27 KB"
   }
 ]
