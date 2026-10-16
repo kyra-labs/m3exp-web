@@ -1,6 +1,6 @@
 {
   "name": "@kyralabs/m3e-elements",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "description": "Zero-dependency Material 3 Expressive custom elements.",
   "keywords": [
     "material-design",
