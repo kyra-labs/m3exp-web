@@ -311,12 +311,40 @@ move between items. Events: `selection-change`, `open-change` (`detail: { open }
 Escape, the scrim or a drag ask). The behavior lives in the `navigation-drawer-layout.js` entry
 (`NavigationDrawerLayout`), which m3e-react's `<NavigationDrawer>` uses too.
 
+## Tabs
+
+```js
+import '@kyralabs/m3e-elements/tabs.js';
+```
+
+```html
+<m3e-tabs label="Media" selected="photos">
+  <m3e-tab value="videos" icon="videocam">Videos</m3e-tab>
+  <m3e-tab value="photos" icon="photo">Photos</m3e-tab>
+  <m3e-tab-panel value="videos">…</m3e-tab-panel>
+  <m3e-tab-panel value="photos">…</m3e-tab-panel>
+</m3e-tabs>
+```
+
+`<m3e-tabs>` (Compose `PrimaryTabRow` / `SecondaryTabRow` / `PrimaryScrollableTabRow` /
+`SecondaryScrollableTabRow` with `Tab` / `LeadingIconTab`) renders the `.m3e-tabs` contract (load
+`tabs.css`): a `role="tablist"` of `.m3e-tab`s from its `<m3e-tab>` children (`value`, optional
+`icon`, `disabled`, `label-hidden`), and makes each `<m3e-tab-panel value>` child the matching
+`role="tabpanel"` (labelled by its tab, hidden unless selected). `variant`: `primary` (default) or
+`secondary`; `scrollable`; `icon-position="leading"` puts icons before labels; `label` names the
+tablist; the host `id` prefixes the tab and panel ids. Activation is manual (Compose,
+m3.material.io): the arrow keys (mirrored in RTL), Home and End move the focus without wrapping,
+a press, Enter or Space selects. Selecting slides the indicator on Compose's spring and a
+scrollable row scrolls the selected tab to the centre. Event: `selection-change`
+(`detail: { value }`, cancelable). The behavior lives in the `tabs-layout.js` entry
+(`TabsLayout`), which m3e-react's `<Tabs>` uses too.
+
 ## Ripple for plain HTML
 
 m3e-css draws hover, focus and pressed overlays without JS; the press ripple needs a little.
 One import adds it to every plain-HTML button, icon button, assist chip, FAB, extended FAB, FAB menu item, `.m3e-state-layer`,
-interactive card (pressed through `.m3e-card__action`, drawn on the card) and navigation item
-(drawn on `.m3e-navigation-item__state`) in the document, including ones added later:
+interactive card (pressed through `.m3e-card__action`, drawn on the card), navigation item
+(drawn on `.m3e-navigation-item__state`), navigation drawer item and tab in the document, including ones added later:
 
 ```js
 import '@kyralabs/m3e-elements/ripple.js';

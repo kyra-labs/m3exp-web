@@ -45,6 +45,7 @@ import {
   SPLIT_BUTTON_REDUCED_MOTION,
   extractSplitButtonDefaults,
 } from './split-button-defaults.js';
+import { extractTabsDefaults } from './tabs-defaults.js';
 import {
   ANIMATION_CORE_PATH as ANIMATION_CORE_DIR,
   MATERIAL3_PATH as MATERIAL3_DIR,
@@ -93,6 +94,8 @@ export interface GenerateOptions {
   /** Material Symbols fvar `FILL` maximum (the filled style). */
   iconFillMax: number;
   iconVersion: string;
+  /** Google Sans Flex hhea metrics (font units), from the fonts manifest (D1). */
+  fontMetrics: { unitsPerEm: number; ascent: number; descent: number };
 }
 
 interface Emitted {
@@ -181,6 +184,7 @@ export function generate({
   iconAxes,
   iconFillMax,
   iconVersion,
+  fontMetrics,
 }: GenerateOptions): Map<string, string> {
   const parsed = new Map<string, TokenFile & { file: string }>();
   for (const { name, content } of [...files].sort((a, b) => a.name.localeCompare(b.name))) {
@@ -1105,6 +1109,46 @@ export function generate({
     ),
   });
 
+  // TabRowDefaults / Tab.kt values Compose renders that are not in *NavigationTabTokens: layout
+  // literals, indicator defaults, colors, divider and springs (see tabs-defaults.ts).
+  // Component tokens resolve to sys tokens: references to the tab / divider token objects are
+  // replaced by their generated values (PARITY.md keeps the reference as the raw expression).
+  const componentValues = new Map(
+    [...components.values()].flatMap((c) => c.tokens.map((t) => [t.name, t.value] as const)),
+  );
+  const resolveComponentRef = (value: string) =>
+    value.replace(/var\((--m3e-comp-[\w-]+)\)/g, (_, name: string) => {
+      const resolved = componentValues.get(name);
+      if (resolved === undefined) throw new Error(`tabs-defaults: ${name} is not generated`);
+      return resolved;
+    });
+  const tabsDefaults = extractTabsDefaults(material3Sources, fontMetrics).map((d) => ({
+    ...d,
+    value: resolveComponentRef(d.value),
+    js: typeof d.js === 'string' ? resolveComponentRef(d.js) : d.js,
+  }));
+  components.set('tabs-defaults', {
+    object: 'TabsDefaults',
+    tokens: tabsDefaults.map((d) => {
+      const e: Emitted = {
+        name: d.name,
+        value: d.value,
+        object: d.owner,
+        member: d.member,
+        raw: d.raw,
+        line: d.line,
+        cite:
+          d.cite ??
+          `${d.file === 'TabSamples.kt' ? MATERIAL3_SAMPLES_DIR : MATERIAL3_DIR}/${d.file}@${commit} L${String(d.line)}`,
+      };
+      if (d.note !== undefined) e.note = d.note;
+      return e;
+    }),
+    js: Object.fromEntries(
+      tabsDefaults.map((d) => [camel(d.name.replace(/^--m3e-comp-/, '').split('-')), d.js]),
+    ),
+  });
+
   // SplitButtonDefaults values, optical centering and the samples' icon rotation (see
   // split-button-defaults.ts).
   const splitButtonDefaults = extractSplitButtonDefaults(
@@ -1331,21 +1375,30 @@ export function generate({
                                     ],
                                     `${MATERIAL3_DIR}/{SearchBar,ListItem,ListItemDefaults,ComposeMaterial3Flags,InteractiveComponentSize,internal/TextFieldImpl}.kt + ${MATERIAL3_SAMPLES_DIR}/SearchBarSamples.kt`,
                                   )
-                                : name === 'progress-indicator-defaults'
+                                : name === 'tabs-defaults'
                                   ? cssFile(
-                                      'Compose progress indicator values that are not in *ProgressIndicatorTokens, and the indeterminate keyframes of the flat indicators (lines: PARITY.md).',
+                                      'Compose tab row / tab values that are not in Primary/SecondaryNavigationTabTokens (lines: PARITY.md).',
                                       c.tokens,
-                                      [
-                                        '@media (prefers-reduced-motion: reduce) {',
-                                        '  :root {',
-                                        ...PROGRESS_INDICATOR_REDUCED_MOTION.map((l) => `    ${l}`),
-                                        '  }',
-                                        '}',
-                                        ...progressIndicatorKeyframes(progressIndicator.timing),
-                                      ],
-                                      `${MATERIAL3_DIR}/{ProgressIndicator,WavyProgressIndicator,internal/LinearWavyProgressModifiers,internal/CircularWavyProgressModifiers}.kt + ${MATERIAL3_SAMPLES_DIR}/ProgressIndicatorSamples.kt + m3.material.io token DB md.comp.progress-indicator`,
+                                      [],
+                                      `${MATERIAL3_DIR}/{TabRow,Tab}.kt + ${MATERIAL3_SAMPLES_DIR}/TabSamples.kt`,
                                     )
-                                  : cssFile(`Component tokens: ${c.object}.`, c.tokens),
+                                  : name === 'progress-indicator-defaults'
+                                    ? cssFile(
+                                        'Compose progress indicator values that are not in *ProgressIndicatorTokens, and the indeterminate keyframes of the flat indicators (lines: PARITY.md).',
+                                        c.tokens,
+                                        [
+                                          '@media (prefers-reduced-motion: reduce) {',
+                                          '  :root {',
+                                          ...PROGRESS_INDICATOR_REDUCED_MOTION.map(
+                                            (l) => `    ${l}`,
+                                          ),
+                                          '  }',
+                                          '}',
+                                          ...progressIndicatorKeyframes(progressIndicator.timing),
+                                        ],
+                                        `${MATERIAL3_DIR}/{ProgressIndicator,WavyProgressIndicator,internal/LinearWavyProgressModifiers,internal/CircularWavyProgressModifiers}.kt + ${MATERIAL3_SAMPLES_DIR}/ProgressIndicatorSamples.kt + m3.material.io token DB md.comp.progress-indicator`,
+                                      )
+                                    : cssFile(`Component tokens: ${c.object}.`, c.tokens),
     );
   }
   out.set(

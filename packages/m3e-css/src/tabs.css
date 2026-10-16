@@ -1,0 +1,311 @@
+/*
+ * Tabs (COMPONENT_SPEC §17; Compose PrimaryTabRow, SecondaryTabRow, PrimaryScrollableTabRow,
+ * SecondaryScrollableTabRow, Tab, LeadingIconTab, TabRowDefaults.PrimaryIndicator /
+ * SecondaryIndicator).
+ *
+ *   <div class="m3e-tabs m3e-tabs--primary">          (--secondary; --scrollable; --leading-icon)
+ *     <div class="m3e-tabs__list" role="tablist" aria-label="Media">
+ *       <button class="m3e-tab" type="button" role="tab" id="t-1" aria-selected="true"
+ *               aria-controls="p-1" tabindex="0">
+ *         <span class="m3e-tab__content">
+ *           <span class="m3e-icon m3e-tab__icon" aria-hidden="true">photo</span>   (optional)
+ *           <span class="m3e-tab__label">Photos</span>       (optional when the tab has an icon
+ *         </span>                                              and an aria-label)
+ *       </button>
+ *       <button class="m3e-tab" type="button" role="tab" aria-selected="false" tabindex="-1">…
+ *     </div>
+ *   </div>
+ *   <div class="m3e-tab-panel" role="tabpanel" id="p-1" aria-labelledby="t-1" tabindex="0">…</div>
+ *
+ * Fixed rows split the width into equal tabs; --scrollable rows size each tab to its content (at
+ * least the scrollable minimum width), keep the edge padding before the first and after the last
+ * tab and scroll horizontally (no scrollbar, as Compose). A tab with an icon and a label stacks
+ * them (72dp); --leading-icon puts the icon before the label (Compose LeadingIconTab, 48dp).
+ * The selected tab ([aria-selected='true']) draws the indicator: primary under its content (the
+ * content width, at least the indicator minimum width), secondary across the whole tab. Static
+ * markup needs no JavaScript. m3e-elements' TabsLayout (also run by m3e-react) slides the
+ * indicator from the previous tab: per frame it writes only, on the root,
+ *   --_m3e-tabs-indicator-shift  the indicator's offset from its resting place (physical px),
+ *   --_m3e-tabs-indicator-width  its width,
+ * plus [data-animating]; at rest both are removed and the CSS above places it. It also scrolls
+ * a scrollable row so the selected tab is centred (scrollLeft).
+ *
+ * Sources (compose/material3 @ 19991f2c; values: primary-navigation-tab.css,
+ * secondary-navigation-tab.css and tabs-defaults.css, lines in PARITY.md):
+ * - TabRow.kt TabRowImpl (L390-506): a Surface in the row colors (TabRowDefaults: container
+ *   ContainerColor, content ActiveLabelTextColor), tabs rowWidth / count wide, the row as tall as
+ *   the tallest tab; the divider (HorizontalDivider, DividerTokens) along the bottom inside that
+ *   height, the indicator over it. ScrollableTabRowImpl (L508-650): tabs at least minTabWidth
+ *   wide from edgePadding, layout padding * 2 + tabs wide, aligned to the start when narrower than
+ *   the row; the divider spans the row, not the scrolled content.
+ * - TabIndicatorOffsetNode (L680-751): the indicator is the selected tab's contentWidth (primary:
+ *   its content, i.e. intrinsic width − 2 × HorizontalTextPadding, at least 24dp) or width
+ *   (secondary), centred in the tab, at the bottom; PrimaryIndicator: ActiveIndicatorHeight,
+ *   ActiveIndicatorColor, ActiveIndicatorShape (3dp, every corner); SecondaryIndicator: the same
+ *   height and color, no shape.
+ * - Tab.kt: Tab (L91-120, L226-259): a selectable Column filling its slot, centred, ripple in
+ *   selectedContentColor (LocalContentColor = the row content color); unselectedContentColor
+ *   defaults to selectedContentColor, so both read the row content color unless
+ *   --m3e-comp-tabs-unselected-content-color is set (e.g. to the tokens' inactive label color,
+ *   as m3.material.io shows). TabTransition (L266-290): the color on DefaultEffects to selected,
+ *   FastEffects to unselected. TabBaselineLayout (L297-414): text with HorizontalTextPadding,
+ *   at least SmallTabHeight (text or icon) / LargeTabHeight (icon + text) or the content plus
+ *   IconDistanceFromBaseline; text or icon alone centred; icon + text: the text's last baseline
+ *   SingleLineTextBaselineWithIcon above the indicator top, the icon IconDistanceFromBaseline
+ *   above the first baseline (placed from the label's line height, font size and the typeface's
+ *   baseline position, tabs-defaults.css label-baseline-shift). LeadingIconTab (L152-193): SmallTabHeight row, padding, icon,
+ *   TextDistanceFromLeadingIcon, text. Label style PrimaryNavigationTabTokens.LabelTextFont.
+ * - Selected icons fill (COMPONENT_SPEC §0).
+ */
+@import '@kyralabs/m3e-tokens/components/primary-navigation-tab.css';
+@import '@kyralabs/m3e-tokens/components/secondary-navigation-tab.css';
+@import '@kyralabs/m3e-tokens/components/tabs-defaults.css';
+@import '@kyralabs/m3e-tokens/components/divider.css';
+
+@layer m3e.components {
+  .m3e-tabs {
+    --_m3e-tabs-container: var(--m3e-comp-tabs-primary-container-color);
+    --_m3e-tabs-content: var(--m3e-comp-tabs-primary-content-color);
+    --_m3e-tabs-indicator-height: var(--m3e-comp-tabs-primary-indicator-height);
+    --_m3e-tabs-indicator-color: var(--m3e-comp-tabs-primary-indicator-color);
+    --_m3e-tabs-indicator-shape: var(--m3e-comp-tabs-primary-indicator-shape);
+
+    position: relative;
+    display: block;
+    background-color: var(--_m3e-tabs-container);
+    color: var(--_m3e-tabs-content);
+  }
+
+  .m3e-tabs--secondary {
+    --_m3e-tabs-container: var(--m3e-comp-tabs-secondary-container-color);
+    --_m3e-tabs-content: var(--m3e-comp-tabs-secondary-content-color);
+    --_m3e-tabs-indicator-height: var(--m3e-comp-tabs-secondary-indicator-height);
+    --_m3e-tabs-indicator-color: var(--m3e-comp-tabs-secondary-indicator-color);
+    --_m3e-tabs-indicator-shape: var(--m3e-comp-tabs-secondary-indicator-shape);
+  }
+
+  /* The divider: full width at the bottom, inside the row height, under the tabs. */
+  .m3e-tabs::before {
+    content: '';
+    position: absolute;
+    inset-inline: 0;
+    inset-block-end: 0;
+    block-size: var(--m3e-comp-tabs-divider-thickness);
+    background-color: var(--m3e-comp-tabs-divider-color);
+    pointer-events: none;
+  }
+
+  .m3e-tabs__list {
+    position: relative;
+    display: flex;
+    align-items: stretch;
+  }
+
+  .m3e-tabs--scrollable .m3e-tabs__list {
+    padding-inline: var(--m3e-comp-tabs-scrollable-edge-padding);
+    overflow: auto hidden;
+    overscroll-behavior-x: contain;
+    scrollbar-width: none;
+  }
+
+  .m3e-tabs--scrollable .m3e-tabs__list::-webkit-scrollbar {
+    display: none;
+  }
+
+  .m3e-tab {
+    --m3e-comp-state-layer-color: var(--_m3e-tabs-content);
+
+    position: relative;
+    display: flex;
+    flex: 1 1 0;
+    justify-content: center;
+    align-items: stretch;
+    min-inline-size: 0;
+    min-block-size: var(--m3e-comp-tabs-small-tab-height);
+    margin: 0;
+    padding: 0 var(--m3e-comp-tabs-horizontal-text-padding);
+    border: none;
+    background: none;
+    color: var(--m3e-comp-tabs-unselected-content-color, var(--_m3e-tabs-content));
+    font-family: var(--m3e-comp-tabs-label-text-font);
+    font-size: var(--m3e-comp-tabs-label-text-size);
+    font-weight: var(--m3e-comp-tabs-label-text-weight);
+    line-height: var(--m3e-comp-tabs-label-text-line-height);
+    letter-spacing: var(--m3e-comp-tabs-label-text-tracking);
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    transition: color var(--m3e-comp-tabs-content-color-out-duration)
+      var(--m3e-comp-tabs-content-color-out-easing);
+  }
+
+  .m3e-tab[aria-selected='true'] {
+    color: var(--_m3e-tabs-content);
+    transition: color var(--m3e-comp-tabs-content-color-in-duration)
+      var(--m3e-comp-tabs-content-color-in-easing);
+  }
+
+  .m3e-tab[aria-disabled='true'] {
+    cursor: default;
+  }
+
+  .m3e-tabs--scrollable .m3e-tab {
+    flex: none;
+    min-inline-size: var(--m3e-comp-tabs-scrollable-min-tab-width);
+    white-space: nowrap;
+  }
+
+  /*
+   * The content hugs the icon / label horizontally (the primary indicator's width) and fills the
+   * tab's height (the indicator sits at its bottom). Text or icon alone: centred, the tab at least
+   * the content plus IconDistanceFromBaseline tall.
+   */
+  .m3e-tab__content {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-inline-size: 0;
+    max-inline-size: 100%;
+    padding-block: calc(var(--m3e-comp-tabs-icon-distance-from-baseline) / 2);
+  }
+
+  .m3e-tab__icon {
+    --m3e-comp-icon-size: var(--m3e-comp-primary-navigation-tab-icon-size);
+  }
+
+  .m3e-tabs--secondary .m3e-tab__icon {
+    --m3e-comp-icon-size: var(--m3e-comp-secondary-navigation-tab-icon-size);
+  }
+
+  .m3e-tab[aria-selected='true'] .m3e-tab__icon {
+    --m3e-comp-icon-fill: var(--m3e-ref-typeface-icon-filled);
+  }
+
+  .m3e-tab__label {
+    min-inline-size: 0;
+    max-inline-size: 100%;
+    overflow-wrap: anywhere;
+  }
+
+  /* LeadingIconTab: a SmallTabHeight row, icon, TextDistanceFromLeadingIcon, label. */
+  .m3e-tabs--leading-icon .m3e-tab {
+    block-size: var(--m3e-comp-tabs-small-tab-height);
+  }
+
+  .m3e-tabs--leading-icon .m3e-tab__content {
+    flex-direction: row;
+    gap: var(--m3e-comp-tabs-leading-icon-label-space);
+    padding-block: 0;
+  }
+
+  .m3e-tabs--leading-icon .m3e-tab__label {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  /* Fixed rows: at most two lines, then an ellipsis (the Compose samples' maxLines = 2). */
+  .m3e-tabs:not(.m3e-tabs--scrollable, .m3e-tabs--leading-icon) .m3e-tab__label {
+    display: -webkit-box;
+    overflow: hidden;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: var(--m3e-comp-tabs-label-max-lines);
+  }
+
+  /* Icon + label (TabBaselineLayout placeTextAndIcon): the pair sits at the bottom. */
+  .m3e-tabs:not(.m3e-tabs--leading-icon) .m3e-tab:has(.m3e-tab__icon + .m3e-tab__label) {
+    min-block-size: var(--m3e-comp-tabs-large-tab-height);
+  }
+
+  /*
+   * The label's last baseline SingleLineTextBaselineWithIcon above the indicator top, the icon's
+   * bottom IconDistanceFromBaseline above the first baseline. --_m3e-tab-baseline is the distance
+   * from the bottom of a label line to its baseline (half-leading, Google Sans Flex metrics).
+   */
+  .m3e-tabs:not(.m3e-tabs--leading-icon) .m3e-tab__content:has(.m3e-tab__icon + .m3e-tab__label) {
+    --_m3e-tab-baseline: calc(
+      var(--m3e-comp-tabs-label-text-line-height) / 2 - var(--m3e-comp-tabs-label-text-size) *
+        var(--m3e-comp-tabs-label-baseline-shift)
+    );
+
+    justify-content: flex-end;
+    padding-block: 0
+      calc(
+        var(--m3e-comp-tabs-single-line-text-baseline-with-icon) +
+          var(--m3e-comp-primary-navigation-tab-active-indicator-height) - var(--_m3e-tab-baseline)
+      );
+  }
+
+  .m3e-tabs:not(.m3e-tabs--leading-icon) .m3e-tab__icon + .m3e-tab__label {
+    margin-block-start: calc(
+      var(--m3e-comp-tabs-icon-distance-from-baseline) -
+        var(--m3e-comp-tabs-label-text-line-height) + var(--_m3e-tab-baseline)
+    );
+  }
+
+  /*
+   * The indicator: the selected tab draws it (primary: under the content, at least the minimum
+   * width; secondary: across the tab). While TabsLayout slides it, the root's
+   * --_m3e-tabs-indicator-shift / -width move it from the previous tab.
+   */
+  .m3e-tabs--primary .m3e-tab[aria-selected='true'] .m3e-tab__content::after,
+  .m3e-tabs--secondary .m3e-tab[aria-selected='true']::after {
+    --_m3e-tabs-indicator-inline-size: var(--_m3e-tabs-indicator-width, 100%);
+
+    content: '';
+    position: absolute;
+    inset-inline-start: calc(50% - var(--_m3e-tabs-indicator-inline-size) / 2);
+    inset-block-end: 0;
+    z-index: 1;
+    inline-size: var(--_m3e-tabs-indicator-inline-size);
+    block-size: var(--_m3e-tabs-indicator-height);
+    border-radius: var(--_m3e-tabs-indicator-shape);
+    background-color: var(--_m3e-tabs-indicator-color);
+    translate: var(--_m3e-tabs-indicator-shift, 0) 0;
+    pointer-events: none;
+  }
+
+  .m3e-tabs--primary .m3e-tab[aria-selected='true'] .m3e-tab__content::after {
+    --_m3e-tabs-indicator-inline-size: var(
+      --_m3e-tabs-indicator-width,
+      max(100%, var(--m3e-comp-tabs-indicator-min-width))
+    );
+  }
+
+  @media (forced-colors: active) {
+    .m3e-tabs::before {
+      forced-color-adjust: none;
+      background-color: CanvasText;
+    }
+
+    .m3e-tabs--primary .m3e-tab[aria-selected='true'] .m3e-tab__content::after,
+    .m3e-tabs--secondary .m3e-tab[aria-selected='true']::after {
+      forced-color-adjust: none;
+      background-color: Highlight;
+    }
+  }
+}
+
+@layer m3e.components {
+  /* <m3e-tabs> renders the contract inside itself; <m3e-tab> is data; <m3e-tab-panel> is the panel. */
+  :where(m3e-tabs) {
+    display: contents;
+  }
+
+  :where(m3e-tab) {
+    display: none;
+  }
+
+  :where(m3e-tab-panel) {
+    display: block;
+  }
+
+  :where(m3e-tab-panel[hidden]) {
+    display: none;
+  }
+}

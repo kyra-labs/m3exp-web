@@ -26,6 +26,10 @@ export function readGeneratorInputs(root: string, pin: SourcePin): GenerateOptio
     );
   }
   const materialWebVersion = requirePin(pin, 'material_web');
+  // Google Sans Flex metrics (D1; measured from the pinned TTF by `m3e-codegen fonts`).
+  const fontManifest = JSON.parse(
+    readFileSync(join(root, 'packages/m3e-tokens/fonts/google-sans-flex.manifest.json'), 'utf8'),
+  ) as { metrics: { unitsPerEm: number; ascent: number; descent: number } };
   const iconManifest = JSON.parse(
     readFileSync(join(vendor('material-symbols'), 'manifest.json'), 'utf8'),
   ) as { axes: Record<string, { default: number; max: number }>; version: string };
@@ -60,5 +64,6 @@ export function readGeneratorInputs(root: string, pin: SourcePin): GenerateOptio
     ),
     iconFillMax: iconManifest.axes['FILL']?.max ?? Number.NaN,
     iconVersion: iconManifest.version,
+    fontMetrics: fontManifest.metrics,
   };
 }

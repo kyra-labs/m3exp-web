@@ -8,6 +8,7 @@ import {
   FAST_OUT_LINEAR_IN_EASING,
   SEARCH_BAR_EXPANDED_THRESHOLD,
   SEARCH_DROPDOWN_VISIBLE_PROGRESS,
+  TAB_INDICATOR_MIN_WIDTH,
   TOP_TITLE_ALPHA_EASING,
 } from '@kyralabs/m3e-motion';
 import { describe, expect, it } from 'vitest';
@@ -604,6 +605,76 @@ describe('navigation drawer values (M7)', () => {
     expect(parity).toMatch(/--m3e-comp-navigation-drawer-divider-inset.*28px/);
     expect(parity).toContain('TOKEN_TABLE.376969f91547be8e.json');
     expect(decl.get('--m3e-comp-navigation-drawer-headline-padding-inline')).toBe('28px');
+  });
+});
+
+describe('tabs values (M7)', () => {
+  const css = output.get('components/tabs-defaults.css')!;
+  const decl = declarations(css);
+  const row = inputs.material3Sources['TabRow.kt']!.replace(/\r\n/g, '\n');
+  const tab = inputs.material3Sources['Tab.kt']!.replace(/\r\n/g, '\n');
+  const t = (name: string) => decl.get(`--m3e-comp-tabs-${name}`);
+
+  it('TabRowDefaults and Tab.kt literals', () => {
+    expect(row).toContain('public val ScrollableTabRowMinTabWidth: Dp = 90.dp');
+    expect(row).toContain('public val ScrollableTabRowEdgeStartPadding: Dp = 52.dp');
+    expect(t('scrollable-min-tab-width')).toBe('90px');
+    expect(t('scrollable-edge-padding')).toBe('52px');
+    expect(t('indicator-min-width')).toBe('24px');
+    expect(tab).toMatch(/private val LargeTabHeight\n\s*get\(\) = 72\.dp/);
+    expect(t('large-tab-height')).toBe('72px');
+    expect(t('small-tab-height')).toBe('48px');
+    expect(t('horizontal-text-padding')).toBe('16px');
+    expect(t('single-line-text-baseline-with-icon')).toBe('14px');
+    expect(t('icon-distance-from-baseline')).toBe('20px');
+    expect(t('leading-icon-label-space')).toBe('8px');
+    expect(t('label-max-lines')).toBe('2');
+  });
+
+  it('the label baseline position comes from the Google Sans Flex metrics', () => {
+    const { ascent, descent, unitsPerEm } = inputs.fontMetrics;
+    expect(Number(t('label-baseline-shift'))).toBeCloseTo((ascent + descent) / (2 * unitsPerEm), 4);
+    expect(t('label-baseline-shift')).toBe('0.34');
+  });
+
+  it('the token the rows render instead of IconAndLabelTextContainerHeight (64dp) is not read', () => {
+    expect(source('PrimaryNavigationTabTokens.kt')).toContain('IconAndLabelTextContainerHeight');
+    expect(tab).not.toContain('IconAndLabelTextContainerHeight');
+    expect(row).not.toContain('SecondaryNavigationTabTokens.DividerColor');
+  });
+
+  it('indicators: the secondary one reads the primary tokens and has no shape', () => {
+    expect(t('primary-indicator-height')).toBe('3px');
+    expect(t('secondary-indicator-height')).toBe(t('primary-indicator-height'));
+    expect(t('secondary-indicator-color')).toBe(t('primary-indicator-color'));
+    expect(t('secondary-indicator-shape')).toBe('0px');
+    expect(t('primary-content-color')).toBe('var(--m3e-sys-color-primary)');
+    expect(t('secondary-content-color')).toBe('var(--m3e-sys-color-on-surface)');
+    expect(t('divider-color')).toBe('var(--m3e-sys-color-outline-variant)');
+    // PARITY.md keeps the token the value comes from.
+    expect(output.get('PARITY.md')).toMatch(
+      /SecondaryIndicator\(height\).*PrimaryNavigationTabTokens\.ActiveIndicatorHeight/,
+    );
+  });
+
+  it('springs: indicator and scroll DefaultSpatial; colors DefaultEffects in, FastEffects out', () => {
+    const springs: [string, string][] = [
+      ['indicator', 'default-spatial'],
+      ['scroll', 'default-spatial'],
+      ['content-color-in', 'default-effects'],
+      ['content-color-out', 'fast-effects'],
+    ];
+    for (const [name, key] of springs) {
+      for (const field of ['duration', 'easing', 'damping-ratio', 'stiffness']) {
+        expect(t(`${name}-${field}`), `${name}-${field}`).toBe(
+          `var(--m3e-sys-motion-spring-${key}-${field})`,
+        );
+      }
+    }
+  });
+
+  it('m3e-motion’s minimum indicator width matches the generated one', () => {
+    expect(t('indicator-min-width')).toBe(`${String(TAB_INDICATOR_MIN_WIDTH)}px`);
   });
 });
 

@@ -116,6 +116,15 @@ export class RovingFocus {
     }
   }
 
+  /**
+   * Forgets the last focused item, so the tab stop returns to `initial(items)` (a tablist when
+   * focus leaves it: APG puts the next entry on the selected tab).
+   */
+  reset(): void {
+    this.#current = null;
+    this.update();
+  }
+
   destroy(): void {
     this.#listeners.abort();
     this.#mutations.disconnect();
