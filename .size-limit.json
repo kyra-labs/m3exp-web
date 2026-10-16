@@ -252,6 +252,22 @@
     "limit": "14 KB"
   },
   {
+    "name": "m3e-css: search (bar, expanded views, AppBarWithSearch)",
+    "path": "packages/m3e-css/dist/search.css",
+    "rolldown": false,
+    "limit": "4 KB"
+  },
+  {
+    "name": "m3e-elements: <m3e-search> entry (SearchLayout, m3e-motion springs and view geometry)",
+    "path": "packages/m3e-elements/dist/search/index.js",
+    "limit": "8 KB"
+  },
+  {
+    "name": "m3e-elements: search-layout entry (SearchLayout, used by m3e-react <SearchBar>)",
+    "path": "packages/m3e-elements/dist/search-layout/index.js",
+    "limit": "6 KB"
+  },
+  {
     "name": "m3e-shapes (all presets + Morph)",
     "path": "packages/m3e-shapes/dist/index.js",
     "limit": "14 KB"
@@ -354,6 +370,13 @@
     "limit": "14 KB"
   },
   {
+    "name": "m3e-react: { SearchBar, SearchResult, AppBarWithSearch } only (incl. SearchLayout + attachTopAppBarScroll from m3e-elements)",
+    "path": "packages/m3e-react/dist/index.js",
+    "import": "{ SearchBar, SearchResult, AppBarWithSearch }",
+    "ignore": ["react", "react-dom"],
+    "limit": "10 KB"
+  },
+  {
     "name": "m3exp-web/react: { Icon } only",
     "path": "packages/m3exp-web/dist/react.js",
     "import": "{ Icon }",
@@ -361,10 +384,10 @@
     "limit": "1 KB"
   },
   {
-    "name": "m3exp-web (root): { Icon } (the root entry registers every custom element by design, ~30.7 kB with <m3e-menu>, <m3e-split-button>, <m3e-button-group>, the toolbars and the progress indicators; a leaked React component adds ~10 kB of react-aria. Raise with m3e-elements (all); D17)",
+    "name": "m3exp-web (root): { Icon } (the root entry registers every custom element by design, ~34.4 kB with <m3e-menu>, <m3e-split-button>, <m3e-button-group>, the toolbars, the progress indicators and <m3e-search>; a leaked React component adds ~10 kB of react-aria. Raise with m3e-elements (all); D17)",
     "path": "packages/m3exp-web/dist/index.js",
     "import": "{ Icon }",
     "ignore": ["react", "react-dom"],
-    "limit": "32 KB"
+    "limit": "36 KB"
   }
 ]

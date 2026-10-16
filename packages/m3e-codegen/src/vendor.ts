@@ -38,6 +38,12 @@ export const MATERIAL3_SOURCES = [
   'WavyProgressIndicator.kt',
   'internal/LinearWavyProgressModifiers.kt',
   'internal/CircularWavyProgressModifiers.kt',
+  'SearchBar.kt',
+  'TextFieldDefaults.kt',
+  'internal/TextFieldImpl.kt',
+  'ListItem.kt',
+  'ListItemDefaults.kt',
+  'ComposeMaterial3Flags.kt',
 ] as const;
 
 /** Material3 samples the generator reads (values the Compose catalog renders, e.g. icon rotation). */
@@ -47,6 +53,7 @@ export const MATERIAL3_SAMPLE_SOURCES = [
   'AppBarSamples.kt',
   'SplitButtonSamples.kt',
   'ProgressIndicatorSamples.kt',
+  'SearchBarSamples.kt',
 ] as const;
 
 /** Android `actual`s the generator reads (DropdownMenu's popup margins, AndroidMenu.android.kt). */

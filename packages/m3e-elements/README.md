@@ -193,6 +193,34 @@ import '@kyralabs/m3e-elements/circular-progress.js';
 host's `aria-label` (or `label`) names the progress bar. Flat indicators also work without JS
 (markup in the m3e-css files).
 
+## Search
+
+```js
+import '@kyralabs/m3e-elements/search.js';
+```
+
+```html
+<m3e-search variant="docked" placeholder="Search mail" label="Search mail">
+  <m3e-search-result icon="history" supporting-text="Recent">Inbox</m3e-search-result>
+  <m3e-search-result icon="history">Drafts</m3e-search-result>
+  <button class="m3e-icon-button" aria-label="Voice search">…</button>
+</m3e-search>
+```
+
+`<m3e-search>` (Compose `SearchBar` + `SearchBarDefaults.InputField`) renders the `.m3e-search`
+contract (load m3e-css `search.css`): a `role="search"` landmark around a combobox input and a
+listbox of its `<m3e-search-result>` children (`value`, `icon`, `supporting-text`,
+`trailing-icon`, `disabled`); other children go to the trailing slot. `variant` picks the expanded
+view: `full-screen` (default, `ExpandedFullScreenSearchBar`), `full-screen-contained`, `docked`
+or `docked-with-gap`. A click on the field, typing or ArrowDown expands it (the view moves into the
+top layer on the variant's springs); ArrowDown / ArrowUp move the active result
+(`aria-activedescendant`), Enter selects it or searches, Escape, the back button or a light dismiss
+collapse it. Full-screen views trap Tab. Events: `expanded-change`, `search` and `select`
+(cancelable). The behavior lives in the `search-layout.js` entry (`SearchLayout`), which m3e-react's
+`<SearchBar>` uses too. AppBarWithSearch is markup: put the search between the navigation and
+actions of a `.m3e-top-app-bar.m3e-top-app-bar--search` and call
+`attachTopAppBarScroll(bar, { behavior: 'enter-always' })` for its scroll behavior.
+
 ## Ripple for plain HTML
 
 m3e-css draws hover, focus and pressed overlays without JS; the press ripple needs a little.

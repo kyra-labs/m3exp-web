@@ -644,3 +644,47 @@ button.docs-tile {
   padding: var(--m3e-sys-space-100);
   margin: var(--m3e-sys-space-300) 0;
 }
+
+/* Search page: collapsed bars, the four expanded-view demos, app bar demos. */
+.docs-search-bars,
+.docs-search-app-bars {
+  display: flex;
+  flex-direction: column;
+  gap: var(--m3e-sys-space-300);
+  align-items: flex-start;
+  padding: var(--m3e-sys-space-100);
+  margin: var(--m3e-sys-space-300) 0;
+}
+
+.docs-search-wide {
+  inline-size: 100%;
+  max-inline-size: calc(var(--m3e-sys-space-900) * 6);
+}
+
+.docs-search-views {
+  display: grid;
+  grid-template-columns: repeat(
+    auto-fill,
+    minmax(min(100%, var(--m3e-comp-search-min-width)), 1fr)
+  );
+  gap: var(--m3e-sys-space-300);
+}
+
+.docs-search-view > p {
+  min-block-size: calc(var(--m3e-sys-space-900) * 1.5);
+}
+
+.docs-search-scroll {
+  inline-size: 100%;
+  max-inline-size: calc(var(--m3e-sys-space-900) * 6);
+}
+
+.docs-avatar {
+  display: grid;
+  place-items: center;
+  background-color: var(--m3e-sys-color-primary);
+  color: var(--m3e-sys-color-on-primary);
+  font-family: var(--m3e-sys-typescale-label-large-font);
+  font-size: var(--m3e-sys-typescale-label-large-size);
+  font-weight: var(--m3e-sys-typescale-label-large-weight);
+}

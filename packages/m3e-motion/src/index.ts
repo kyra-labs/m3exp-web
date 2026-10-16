@@ -79,6 +79,22 @@ export {
   withHeightOffset,
 } from './app-bar-scroll.js';
 export {
+  SEARCH_BAR_EXPANDED_THRESHOLD,
+  SEARCH_DROPDOWN_VISIBLE_PROGRESS,
+  type SearchBarSample,
+  type SearchBarSpecs,
+  type SearchRect,
+  type SearchViewFrame,
+  type SearchViewInput,
+  type SearchViewMetrics,
+  type SearchViewVariant,
+  type TweenSpec,
+  SearchBarAnimation,
+  TweenAnimatable,
+  searchNavigationTarget,
+  searchViewFrame,
+} from './search-bar.js';
+export {
   type ButtonGroupItemSize,
   buttonGroupVisibleCount,
   buttonGroupWidths,
