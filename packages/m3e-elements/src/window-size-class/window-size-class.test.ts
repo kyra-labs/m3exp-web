@@ -52,10 +52,7 @@ class FakeResizeObserver {
     this.disconnected = true;
   }
   fire(width: number, height: number) {
-    this.callback(
-      [{ contentRect: { width, height } } as unknown as ResizeObserverEntry],
-      this,
-    );
+    this.callback([{ contentRect: { width, height } } as unknown as ResizeObserverEntry], this);
   }
 }
 
