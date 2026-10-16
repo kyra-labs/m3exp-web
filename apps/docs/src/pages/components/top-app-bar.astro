@@ -3,20 +3,80 @@ import TopAppBarPlayground from '../../islands/TopAppBarPlayground.tsx';
 import Base from '../../layouts/Base.astro';
 
 const items = Array.from({ length: 24 }, (_, i) => `Item ${String(i + 1)}`);
+
+interface TwoRowsBar {
+  id: string;
+  variant: 'medium-flexible' | 'large-flexible' | 'two-rows';
+  center?: boolean;
+  title: string;
+  subtitle?: string;
+  /** Two-rows: different collapsed content (Compose TwoRowsTopAppBar `title(expanded)`). */
+  collapsedTitle?: string;
+  collapsedSubtitle?: string;
+  style?: string;
+}
+
+/** Static (CSS-only) two-rows bars, expanded: the AppBarSamples.kt configurations. */
+const twoRows: TwoRowsBar[] = [
+  { id: 'medium', variant: 'medium-flexible', title: 'Medium flexible' },
+  {
+    id: 'medium-subtitle',
+    variant: 'medium-flexible',
+    title: 'Medium flexible',
+    subtitle: 'Subtitle',
+  },
+  {
+    id: 'medium-center',
+    variant: 'medium-flexible',
+    center: true,
+    title: 'Medium, centered',
+    subtitle: 'Subtitle',
+  },
+  { id: 'large', variant: 'large-flexible', title: 'Large flexible' },
+  { id: 'large-subtitle', variant: 'large-flexible', title: 'Large flexible', subtitle: 'Subtitle' },
+  {
+    id: 'large-center',
+    variant: 'large-flexible',
+    center: true,
+    title: 'Large, centered',
+    subtitle: 'Subtitle',
+  },
+  // CustomTwoRowsTopAppBar: 64 / 156dp, per-row titles, 24dp under the expanded subtitle.
+  {
+    id: 'two-rows',
+    variant: 'two-rows',
+    title: 'Expanded title',
+    subtitle: 'Expanded subtitle',
+    collapsedTitle: 'Collapsed title',
+    collapsedSubtitle: 'Collapsed subtitle',
+    style: '--_m3e-top-app-bar-collapsed-height: 64px; --_m3e-top-app-bar-expanded-height: 156px',
+  },
+];
+
+/** Scroll demos: the exit-until-collapsed samples of AppBarSamples.kt. */
+const collapsing = [
+  { id: 'scroll-medium', bar: twoRows[1]! },
+  { id: 'scroll-large', bar: twoRows[4]! },
+  { id: 'scroll-two-rows', bar: twoRows[6]! },
+];
 ---
 
 <Base title="Top app bar">
   <link rel="stylesheet" href="/icons/docs-icons.css" slot="head" />
   <h1>Top app bar</h1>
   <p>
-    The small top app bar (COMPONENT_SPEC §11, Compose <code>TopAppBar</code>). Plain HTML with
-    m3e-css classes; the scroll behaviors come from <code>attachTopAppBarScroll</code> (m3e-elements)
-    or <code>&lt;TopAppBar scrollBehavior&gt;</code> (m3e-react). The page decides positioning,
-    such as <code>position: sticky</code>.
+    Top app bars (COMPONENT_SPEC §11): small (Compose <code>TopAppBar</code>), center-aligned (<code
+      >CenterAlignedTopAppBar</code
+    >), medium and large flexible (<code>MediumFlexibleTopAppBar</code>, <code
+      >LargeFlexibleTopAppBar</code
+    >) and two-rows (<code>TwoRowsTopAppBar</code>). Plain HTML with m3e-css classes; the scroll
+    behaviors come from <code>attachTopAppBarScroll</code> (m3e-elements) or <code
+      >&lt;TopAppBar scrollBehavior&gt;</code
+    > (m3e-react). The page decides positioning, such as <code>position: sticky</code>.
   </p>
 
   <section aria-labelledby="static-heading">
-    <h2 id="static-heading">Static</h2>
+    <h2 id="static-heading">Small and center-aligned</h2>
     <div class="docs-app-bars" data-testid="static">
       <header class="m3e-top-app-bar" data-testid="title-only">
         <div class="m3e-top-app-bar__headline">
@@ -73,11 +133,141 @@ const items = Array.from({ length: 24 }, (_, i) => `Item ${String(i + 1)}`);
           <p class="m3e-top-app-bar__title">Scrolled (data-scrolled)</p>
         </div>
       </header>
+
+      <header class="m3e-top-app-bar m3e-top-app-bar--center-aligned" data-testid="center">
+        <div class="m3e-top-app-bar__navigation">
+          <button type="button" class="m3e-icon-button m3e-icon-button--standard" aria-label="Menu">
+            <span class="m3e-icon" aria-hidden="true">menu</span>
+          </button>
+        </div>
+        <div class="m3e-top-app-bar__headline">
+          <p class="m3e-top-app-bar__title">Centered</p>
+        </div>
+        <div class="m3e-top-app-bar__actions">
+          <button
+            type="button"
+            class="m3e-icon-button m3e-icon-button--standard"
+            aria-label="Add to favorites"
+          >
+            <span class="m3e-icon" aria-hidden="true">favorite</span>
+          </button>
+        </div>
+      </header>
+
+      <header class="m3e-top-app-bar m3e-top-app-bar--center-aligned" data-testid="center-subtitle">
+        <div class="m3e-top-app-bar__navigation">
+          <button type="button" class="m3e-icon-button m3e-icon-button--standard" aria-label="Back">
+            <span class="m3e-icon" aria-hidden="true">arrow_back</span>
+          </button>
+        </div>
+        <div class="m3e-top-app-bar__headline">
+          <p class="m3e-top-app-bar__title">Centered with subtitle</p>
+          <p class="m3e-top-app-bar__subtitle">Subtitle</p>
+        </div>
+        <div class="m3e-top-app-bar__actions">
+          <button type="button" class="m3e-icon-button m3e-icon-button--standard" aria-label="Search">
+            <span class="m3e-icon" aria-hidden="true">search</span>
+          </button>
+          <button
+            type="button"
+            class="m3e-icon-button m3e-icon-button--standard"
+            aria-label="Favorite"
+          >
+            <span class="m3e-icon" aria-hidden="true">favorite</span>
+          </button>
+          <button
+            type="button"
+            class="m3e-icon-button m3e-icon-button--standard"
+            aria-label="More options"
+          >
+            <span class="m3e-icon" aria-hidden="true">more_vert</span>
+          </button>
+        </div>
+      </header>
+    </div>
+  </section>
+
+  <section aria-labelledby="flexible-heading">
+    <h2 id="flexible-heading">Medium and large flexible, two-rows</h2>
+    <p>
+      Expanded (no scroll behavior). The top row holds the collapsed title, shown as the bar
+      collapses; the expanded title sits in the second row, its last baseline 24dp (medium) or 28dp
+      (large) above the bottom, moved up when it does not fit. Two-rows bars take custom heights and
+      per-row titles (here Compose's <code>CustomTwoRowsTopAppBar</code>: 64 / 156dp).
+    </p>
+    <div class="docs-app-bars" data-testid="flexible">
+      {
+        twoRows.map((bar) => (
+          <header
+            class:list={[
+              'm3e-top-app-bar',
+              `m3e-top-app-bar--${bar.variant}`,
+              { 'm3e-top-app-bar--center-aligned': bar.center },
+            ]}
+            style={bar.style}
+            data-testid={bar.id}
+          >
+            <div class="m3e-top-app-bar__navigation">
+              <button
+                type="button"
+                class="m3e-icon-button m3e-icon-button--standard"
+                aria-label="Menu"
+              >
+                <span class="m3e-icon" aria-hidden="true">
+                  menu
+                </span>
+              </button>
+            </div>
+            <div class="m3e-top-app-bar__headline" aria-hidden="true">
+              <p class="m3e-top-app-bar__title">{bar.collapsedTitle ?? bar.title}</p>
+              {bar.subtitle !== undefined && (
+                <p class="m3e-top-app-bar__subtitle">{bar.collapsedSubtitle ?? bar.subtitle}</p>
+              )}
+            </div>
+            <div class="m3e-top-app-bar__actions">
+              <button
+                type="button"
+                class="m3e-icon-button m3e-icon-button--standard"
+                aria-label="Add to favorites"
+              >
+                <span class="m3e-icon" aria-hidden="true">
+                  favorite
+                </span>
+              </button>
+            </div>
+            <div class="m3e-top-app-bar__expanded">
+              <div class="m3e-top-app-bar__headline">
+                <p class="m3e-top-app-bar__title">{bar.title}</p>
+                {bar.subtitle !== undefined && (
+                  <p
+                    class="m3e-top-app-bar__subtitle"
+                    style={
+                      bar.variant === 'two-rows'
+                        ? 'padding-block-end: var(--m3e-sys-space-300)'
+                        : undefined
+                    }
+                  >
+                    {bar.subtitle}
+                  </p>
+                )}
+              </div>
+            </div>
+          </header>
+        ))
+      }
     </div>
   </section>
 
   <section aria-labelledby="scroll-heading">
     <h2 id="scroll-heading">Scroll behaviors</h2>
+    <p>
+      Pinned: the single-row container color changes once content scrolls under the bar.
+      Enter-always: the bar hides with the scroll and returns on any scroll up. Exit-until-collapsed
+      (the flexible bars): the expanded row collapses with the scroll down to the small bar's 64dp,
+      the titles crossfade and the container color follows the collapsed fraction; it expands again
+      when the content comes back to its start. A partly collapsed bar snaps open or closed on the
+      default effects spring when scrolling stops.
+    </p>
     <div class="docs-app-bar-demos">
       {
         (['pinned', 'enter-always'] as const).map((behavior) => (
@@ -113,23 +303,109 @@ const items = Array.from({ length: 24 }, (_, i) => `Item ${String(i + 1)}`);
           </div>
         ))
       }
+      {
+        collapsing.map(({ id, bar }) => (
+          <div
+            class="docs-scroll"
+            data-behavior="exit-until-collapsed"
+            data-testid={id}
+            tabindex="0"
+            role="region"
+            aria-label={`${bar.variant} exit-until-collapsed demo`}
+          >
+            <header
+              class:list={['m3e-top-app-bar', `m3e-top-app-bar--${bar.variant}`, 'docs-sticky']}
+              style={bar.style}
+            >
+              <div class="m3e-top-app-bar__navigation">
+                <button
+                  type="button"
+                  class="m3e-icon-button m3e-icon-button--standard"
+                  aria-label="Menu"
+                >
+                  <span class="m3e-icon" aria-hidden="true">
+                    menu
+                  </span>
+                </button>
+              </div>
+              <div class="m3e-top-app-bar__headline" aria-hidden="true">
+                <p class="m3e-top-app-bar__title">{bar.collapsedTitle ?? bar.title}</p>
+                <p class="m3e-top-app-bar__subtitle">{bar.collapsedSubtitle ?? bar.subtitle}</p>
+              </div>
+              <div class="m3e-top-app-bar__actions">
+                <button
+                  type="button"
+                  class="m3e-icon-button m3e-icon-button--standard"
+                  aria-label="Add to favorites"
+                >
+                  <span class="m3e-icon" aria-hidden="true">
+                    favorite
+                  </span>
+                </button>
+              </div>
+              <div class="m3e-top-app-bar__expanded">
+                <div class="m3e-top-app-bar__headline">
+                  <p class="m3e-top-app-bar__title">{bar.title}</p>
+                  <p
+                    class="m3e-top-app-bar__subtitle"
+                    style={
+                      bar.variant === 'two-rows'
+                        ? 'padding-block-end: var(--m3e-sys-space-300)'
+                        : undefined
+                    }
+                  >
+                    {bar.subtitle}
+                  </p>
+                </div>
+              </div>
+            </header>
+            <ul class="docs-scroll-list">
+              {items.map((item) => (
+                <li>{item}</li>
+              ))}
+            </ul>
+          </div>
+        ))
+      }
     </div>
   </section>
 
   <section aria-labelledby="react-heading">
     <h2 id="react-heading">React</h2>
-    <p><code>&lt;TopAppBar scrollBehavior="enter-always" scrollTarget=&#123;ref&#125;&gt;</code></p>
+    <p>
+      <code
+        >&lt;TopAppBar variant titleHorizontalAlignment scrollBehavior scrollTarget=&#123;ref&#125;&gt;</code
+      >
+    </p>
     <TopAppBarPlayground client:only="react" />
+  </section>
+
+  <section aria-labelledby="sources-heading">
+    <h2 id="sources-heading">Sources</h2>
+    <p>
+      androidx Compose Material3 1.5.0-beta01 (<code>19991f2c</code>): <code>AppBar.kt</code>{' '}
+      (<code>TopAppBar</code>, <code>CenterAlignedTopAppBar</code>, <code
+        >MediumFlexibleTopAppBar</code
+      >, <code>LargeFlexibleTopAppBar</code>, <code>TwoRowsTopAppBar</code>, <code
+        >TopAppBarDefaults</code
+      >, <code>TopAppBarState</code>, the scroll behaviors and <code>settleAppBar</code>), <code
+        >AppBarTokens.kt</code
+      >, <code>AppBarSmallTokens.kt</code>, <code>AppBarMediumFlexibleTokens.kt</code>, <code
+        >AppBarLargeFlexibleTokens.kt</code
+      > and the values Compose renders in <code>components/top-app-bar-defaults.css</code>; <code
+        >AppBarSamples.kt</code
+      > for the configurations above.
+    </p>
   </section>
 </Base>
 
 <script>
-  import { attachTopAppBarScroll } from '@kyralabs/m3exp-web/elements';
+  import { type AppBarScrollBehavior, attachTopAppBarScroll } from '@kyralabs/m3exp-web/elements';
 
   for (const scroller of document.querySelectorAll<HTMLElement>('.docs-scroll[data-behavior]')) {
     const bar = scroller.querySelector<HTMLElement>('.m3e-top-app-bar')!;
     attachTopAppBarScroll(bar, {
-      behavior: scroller.dataset['behavior'] as 'pinned' | 'enter-always',
+      behavior: scroller.dataset['behavior'] as AppBarScrollBehavior,
       target: scroller,
       signal: new AbortController().signal,
     });

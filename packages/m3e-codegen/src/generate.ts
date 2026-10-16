@@ -12,7 +12,7 @@
 import { springToLinear } from '@kyralabs/m3e-motion';
 import { themeCss } from '@kyralabs/m3e-tokens/theme-css';
 import { type BaselineColor, baselineColors } from './color.js';
-import { extractAppBarDefaults } from './app-bar-defaults.js';
+import { TOP_APP_BAR_REDUCED_MOTION, extractAppBarDefaults } from './app-bar-defaults.js';
 import { extractButtonDefaults } from './button-defaults.js';
 import { checkSmallAgainstCompose, extractButtonGroupDefaults } from './button-group-defaults.js';
 import { extractChipDefaults } from './chip-defaults.js';
@@ -734,25 +734,26 @@ export function generate({
     ),
   });
 
-  // Single-row TopAppBar layout literals (AppBar.kt; see app-bar-defaults.ts).
-  const appBarDefaults = extractAppBarDefaults(material3Sources);
+  // TopAppBarDefaults heights, layout literals, snap spring and two-rows easings (AppBar.kt; see
+  // app-bar-defaults.ts).
+  const appBarDefaults = extractAppBarDefaults(material3Sources, files, easingKt);
   components.set('top-app-bar-defaults', {
     object: 'AppBar.kt',
     tokens: appBarDefaults.map((d) => {
       const e: Emitted = {
         name: d.name,
-        value: px(d.dp),
+        value: d.value,
         object: d.owner,
         member: d.member,
-        raw: d.note ?? `${num(d.dp)}.dp`,
+        raw: d.raw,
         line: d.line,
-        cite: `${MATERIAL3_DIR}/${d.file}@${commit} L${String(d.line)}`,
+        cite: `${d.file === 'Easing.kt' ? ANIMATION_CORE_DIR : MATERIAL3_DIR}/${d.file}@${commit} L${String(d.line)}`,
       };
       if (d.note !== undefined) e.note = d.note;
       return e;
     }),
     js: Object.fromEntries(
-      appBarDefaults.map((d) => [camel(d.name.replace(/^--m3e-comp-/, '').split('-')), d.dp]),
+      appBarDefaults.map((d) => [camel(d.name.replace(/^--m3e-comp-/, '').split('-')), d.js]),
     ),
   });
 
@@ -1111,10 +1112,16 @@ export function generate({
             )
           : name === 'top-app-bar-defaults'
             ? cssFile(
-                'Compose single-row TopAppBar layout values that are not in AppBar*Tokens (lines: PARITY.md).',
+                'Compose top app bar values that are not in AppBar*Tokens (lines: PARITY.md).',
                 c.tokens,
-                [],
-                `${MATERIAL3_DIR}/AppBar.kt`,
+                [
+                  '@media (prefers-reduced-motion: reduce) {',
+                  '  :root {',
+                  ...TOP_APP_BAR_REDUCED_MOTION.map((l) => `    ${l}`),
+                  '  }',
+                  '}',
+                ],
+                `${MATERIAL3_DIR}/AppBar.kt + ${ANIMATION_CORE_DIR}/Easing.kt`,
               )
             : name === 'assist-chip-defaults'
               ? cssFile(

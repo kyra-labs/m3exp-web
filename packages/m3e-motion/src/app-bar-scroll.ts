@@ -14,16 +14,22 @@
  * limitations under the License.
  */
 // Ported to TypeScript by Kyra Labs from compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/AppBar.kt@19991f2c0858aadfcb442ce02b2c8e4743c96898
+// Ported to TypeScript by Kyra Labs from compose/animation/animation-core/src/commonMain/kotlin/androidx/compose/animation/core/Easing.kt@19991f2c0858aadfcb442ce02b2c8e4743c96898
 //
-// TopAppBarState (L2050-2130), the pinned and enter-always scroll behaviors (L3267-3303,
-// L3400-3455) and the settle decision of settleAppBar (L3542-3589), adapted to DOM scrolling.
-// Compose receives nested
-// scroll deltas and can consume them; the web observes `scrollTop` after the browser scrolled, so
-// every delta goes to both the bar and the content, and momentum comes from the browser instead
-// of flingAnimationSpec. Offsets are in CSS px; y grows downward, so collapsing is negative.
+// TopAppBarState (L2050-2130), the pinned, enter-always and exit-until-collapsed scroll behaviors
+// (L3267-3303, L3400-3455, L3476-3536), the settle decision of settleAppBar (L3542-3589) and the
+// two-rows bar's collapsed-fraction interpolation (TwoRowsTopAppBar L2818-2836,
+// TopAppBarColors.containerColor L2229-2235, TopTitleAlphaEasing L3604; FastOutLinearInEasing
+// from Easing.kt L66, solved by the shared cubic-bezier.ts), adapted to DOM scrolling. Compose
+// receives nested scroll deltas and can consume them; the web observes `scrollTop` after the
+// browser scrolled, so every delta goes to both the bar and the content, and momentum comes from
+// the browser instead of flingAnimationSpec. Offsets are in CSS px; y grows downward, so
+// collapsing is negative.
+
+import { cubicBezier } from './cubic-bezier.js';
 
 /** How the bar reacts to its scroll container (TopAppBarDefaults.*ScrollBehavior). */
-export type AppBarScrollBehavior = 'pinned' | 'enter-always';
+export type AppBarScrollBehavior = 'pinned' | 'enter-always' | 'exit-until-collapsed';
 
 export interface AppBarScrollState {
   /** Most negative height offset: minus the bar's full height (adjustHeightOffsetLimit). */
@@ -80,6 +86,13 @@ export function isScrolledUnder(state: AppBarScrollState): boolean {
  * - pinned: only the content offset moves (PinnedScrollBehavior.onPostScroll).
  * - enter-always: the bar also collapses/expands by the same amount
  *   (EnterAlwaysScrollBehavior.onPreScroll: `heightOffset += available.y`).
+ * - exit-until-collapsed: scrolling down collapses the bar by the same amount
+ *   (ExitUntilCollapsedScrollBehavior.onPreScroll); scrolling up expands it only by what the
+ *   content cannot take (onPostScroll: `heightOffset += available.y` once the content is at its
+ *   start). On the web the content scrolls by the whole delta, so the part of an upward scroll
+ *   that lies within the collapsed distance of the top (scroll position below -heightOffset) is
+ *   the part Compose hands to the bar: the bar is fully expanded when the content reaches its
+ *   start, and a bar that collapsed together with the content stays attached to it.
  */
 export function scrollAppBar(
   state: AppBarScrollState,
@@ -88,7 +101,12 @@ export function scrollAppBar(
   delta: number,
 ): AppBarScrollState {
   const next: AppBarScrollState = { ...state, contentOffset: -scrollTop, atStart: scrollTop <= 0 };
-  return behavior === 'enter-always' ? withHeightOffset(next, state.heightOffset + delta) : next;
+  if (behavior === 'pinned') return next;
+  if (behavior === 'enter-always' || delta < 0) {
+    return withHeightOffset(next, state.heightOffset + delta);
+  }
+  const below = (top: number) => Math.max(0, -state.heightOffset - top);
+  return withHeightOffset(next, state.heightOffset + below(scrollTop) - below(scrollTop + delta));
 }
 
 /**
@@ -100,4 +118,34 @@ export function settleTarget(state: AppBarScrollState): number | null {
   if (fraction < 0.01 || fraction === 1) return null;
   if (!(state.heightOffset < 0 && state.heightOffset > state.heightOffsetLimit)) return null;
   return fraction < 0.5 ? 0 : state.heightOffsetLimit;
+}
+
+/** TopTitleAlphaEasing (AppBar.kt L3604): CubicBezierEasing(.8f, 0f, .8f, .15f). */
+export const TOP_TITLE_ALPHA_EASING = [0.8, 0, 0.8, 0.15] as const;
+/** FastOutLinearInEasing (Easing.kt L66): CubicBezierEasing(0.4f, 0.0f, 1.0f, 1.0f). */
+export const FAST_OUT_LINEAR_IN_EASING = [0.4, 0, 1, 1] as const;
+
+const topTitleAlpha = /* @__PURE__ */ cubicBezier(...TOP_TITLE_ALPHA_EASING);
+const fastOutLinearIn = /* @__PURE__ */ cubicBezier(...FAST_OUT_LINEAR_IN_EASING);
+
+/** What a two-rows bar (medium / large flexible, TwoRowsTopAppBar) draws at a collapsed fraction. */
+export interface TwoRowsFrame {
+  /** Alpha of the collapsed (top row) title and subtitle: TopTitleAlphaEasing(fraction). */
+  readonly collapsedTitleAlpha: number;
+  /** Alpha of the expanded (bottom row) title and subtitle: 1 - fraction. */
+  readonly expandedTitleAlpha: number;
+  /** Container → scrolled container color mix (TopAppBarColors.containerColor): FastOutLinearIn. */
+  readonly containerColorFraction: number;
+  /** Below 0.5 the collapsed title is hidden from accessibility, from 0.5 the expanded one. */
+  readonly collapsedTitleHidden: boolean;
+}
+
+/** TwoRowsTopAppBar (L2818-2836): the color, both title alphas and semantics follow the fraction. */
+export function twoRowsFrame(fraction: number): TwoRowsFrame {
+  return {
+    collapsedTitleAlpha: topTitleAlpha(fraction),
+    expandedTitleAlpha: 1 - fraction,
+    containerColorFraction: fastOutLinearIn(fraction),
+    collapsedTitleHidden: fraction < 0.5,
+  };
 }

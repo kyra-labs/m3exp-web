@@ -3268,7 +3268,26 @@ export const tonalButtonTokens = {
 /** AppBar.kt */
 export const appBar = {
   topAppBarHorizontalPadding: 4,
-  topAppBarTitleInset: 12
+  topAppBarTitleInset: 12,
+  topAppBarExpandedHeight: 64,
+  topAppBarMediumCollapsedHeight: 64,
+  topAppBarMediumFlexibleExpandedHeight: 112,
+  topAppBarMediumFlexibleWithSubtitleExpandedHeight: 136,
+  topAppBarLargeCollapsedHeight: 64,
+  topAppBarLargeFlexibleExpandedHeight: 120,
+  topAppBarLargeFlexibleWithSubtitleExpandedHeight: 152,
+  topAppBarTwoRowsCollapsedHeight: 64,
+  topAppBarTwoRowsExpandedHeight: 112,
+  topAppBarTwoRowsWithSubtitleExpandedHeight: 136,
+  topAppBarMediumTitleBottomPadding: 24,
+  topAppBarLargeTitleBottomPadding: 28,
+  topAppBarTwoRowsTitleBottomPadding: 0,
+  topAppBarSnapDuration: "var(--m3e-sys-motion-spring-default-effects-duration)",
+  topAppBarSnapEasing: "var(--m3e-sys-motion-spring-default-effects-easing)",
+  topAppBarSnapDampingRatio: "var(--m3e-sys-motion-spring-default-effects-damping-ratio)",
+  topAppBarSnapStiffness: "var(--m3e-sys-motion-spring-default-effects-stiffness)",
+  topAppBarTopTitleAlphaEasing: "cubic-bezier(0.8, 0, 0.8, 0.15)",
+  topAppBarContainerColorEasing: "cubic-bezier(0.4, 0, 1, 1)"
 } as const;
 
 /** VibrantMenuTokens */

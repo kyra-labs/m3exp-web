@@ -1,7 +1,10 @@
 /*
- * Top app bar, small (COMPONENT_SPEC §11; Compose TopAppBar). No JavaScript needed for the static
- * bar; scroll behaviors (m3e-elements attachTopAppBarScroll, m3e-react <TopAppBar>) only set
- * `data-scroll-behavior`, `data-scrolled` and `--_m3e-top-app-bar-offset`.
+ * Top app bars (COMPONENT_SPEC §11): small (Compose TopAppBar), center-aligned
+ * (CenterAlignedTopAppBar, or any bar with a centered title: titleHorizontalAlignment), medium and
+ * large flexible (MediumFlexibleTopAppBar, LargeFlexibleTopAppBar) and two-rows (TwoRowsTopAppBar).
+ * No JavaScript needed for the static bars; scroll behaviors (m3e-elements attachTopAppBarScroll,
+ * m3e-react <TopAppBar>) only set `data-scroll-behavior`, `data-scrolled`,
+ * `--_m3e-top-app-bar-offset` and, on two-rows bars, the collapsed-fraction values below.
  *
  *   <header class="m3e-top-app-bar">
  *     <div class="m3e-top-app-bar__navigation"><button class="m3e-icon-button …">…</button></div>
@@ -11,6 +14,26 @@
  *     </div>
  *     <div class="m3e-top-app-bar__actions">…icon buttons…</div>
  *   </header>
+ *
+ * Two-rows bars (`--medium-flexible`, `--large-flexible`, `--two-rows`) add the expanded row; the
+ * top row's headline is the collapsed title (hidden from accessibility while the bar is less than
+ * half collapsed, as Compose does; the scroll behaviors swap `aria-hidden` at half):
+ *
+ *   <header class="m3e-top-app-bar m3e-top-app-bar--medium-flexible">
+ *     <div class="m3e-top-app-bar__navigation">…</div>
+ *     <div class="m3e-top-app-bar__headline" aria-hidden="true">…same title (small styles)…</div>
+ *     <div class="m3e-top-app-bar__actions">…</div>
+ *     <div class="m3e-top-app-bar__expanded">
+ *       <div class="m3e-top-app-bar__headline">
+ *         <h1 class="m3e-top-app-bar__title">Title</h1>
+ *         <p class="m3e-top-app-bar__subtitle">Subtitle</p>
+ *       </div>
+ *     </div>
+ *   </header>
+ *
+ * Custom two-rows heights (Compose collapsedHeight / expandedHeight): set
+ * `--_m3e-top-app-bar-collapsed-height` / `--_m3e-top-app-bar-expanded-height` on the bar (what
+ * `<TopAppBar collapsedHeight expandedHeight>` writes).
  *
  * Sources (compose/material3 @ 19991f2c, AppBar.kt):
  * - Height AppBarSmallTokens.ContainerHeight (TopAppBarExpandedHeight); the bar grows if the
@@ -24,9 +47,22 @@
  * - Enter-always: the bar's height shrinks by the height offset, content stays centered in what is
  *   left and is clipped (layoutHeight = height + heightOffset, clipToBounds). Here the box keeps its
  *   height (so nothing reflows) and is clipped instead, with the content shifted by half the offset.
+ *   Exit-until-collapsed moves a single-row bar the same way.
+ * - Center-aligned: SingleRowTopAppBar with Alignment.CenterHorizontally (placeTopAppBar centers
+ *   the title on the whole width, then moves it aside for the navigation / actions).
+ * - Two-rows (TwoRowsTopAppBar): a top row of collapsedHeight (navigation, collapsed title in the
+ *   small styles, actions) over a bottom row of expandedHeight - collapsedHeight holding the
+ *   expanded title (AppBarMediumFlexibleTokens / AppBarLargeFlexibleTokens styles), bottom-arranged
+ *   with its last baseline titleBottomPadding above the bottom, reduced when it does not fit
+ *   (TopAppBarMeasurePolicy). Scrolling collapses the bottom row only: Compose shrinks it (title
+ *   moving up, clipped); here the box keeps its height and is clipped, the expanded title moved up
+ *   by the offset. The container color, both title alphas and the semantics follow the collapsed
+ *   fraction, without animation (m3e-motion twoRowsFrame).
  */
 @import '@kyralabs/m3e-tokens/components/app-bar.css';
 @import '@kyralabs/m3e-tokens/components/app-bar-small.css';
+@import '@kyralabs/m3e-tokens/components/app-bar-medium-flexible.css';
+@import '@kyralabs/m3e-tokens/components/app-bar-large-flexible.css';
 @import '@kyralabs/m3e-tokens/components/top-app-bar-defaults.css';
 @import '@kyralabs/m3e-tokens/components/divider.css';
 @import '@kyralabs/m3e-tokens/components/button-defaults.css';
@@ -58,11 +94,18 @@
   }
 
   /* Set by the scroll behaviors; static bars keep no clip or transform. */
-  .m3e-top-app-bar[data-scroll-behavior='enter-always'] {
+  .m3e-top-app-bar:is(
+    [data-scroll-behavior='enter-always'],
+    [data-scroll-behavior='exit-until-collapsed']
+  ) {
     clip-path: inset(0 0 calc(var(--_m3e-top-app-bar-offset) * -1) 0);
   }
 
-  .m3e-top-app-bar[data-scroll-behavior='enter-always'] > * {
+  .m3e-top-app-bar:is(
+      [data-scroll-behavior='enter-always'],
+      [data-scroll-behavior='exit-until-collapsed']
+    )
+    > * {
     translate: 0 calc(var(--_m3e-top-app-bar-offset) / 2);
   }
 
@@ -86,11 +129,13 @@
   }
 
   .m3e-top-app-bar__navigation {
+    grid-area: 1 / 1;
     padding-inline-start: var(--m3e-comp-top-app-bar-horizontal-padding);
     color: var(--m3e-comp-app-bar-leading-icon-color);
   }
 
   .m3e-top-app-bar__actions {
+    grid-area: 1 / 3;
     gap: var(--m3e-comp-app-bar-icon-button-space);
     justify-content: flex-end;
     margin-inline-start: auto;
@@ -133,6 +178,226 @@
     font-weight: var(--m3e-comp-app-bar-small-subtitle-weight);
     line-height: var(--m3e-comp-app-bar-small-subtitle-line-height);
     letter-spacing: var(--m3e-comp-app-bar-small-subtitle-tracking);
+  }
+
+  /* --- Center-aligned and two-rows bars ------------------------------------------------------ */
+
+  /*
+   * Grid: navigation | headline | actions in the top row, a two-rows bar's expanded row under it.
+   * The top row is collapsedHeight tall (a single-row bar: TopAppBarExpandedHeight), growing with a
+   * taller headline like Compose (max(height, title height)). Flex bars ignore grid-area.
+   */
+  .m3e-top-app-bar:is(.m3e-top-app-bar--center-aligned, :has(> .m3e-top-app-bar__expanded)) {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    grid-template-rows: minmax(
+      var(--_m3e-top-app-bar-collapsed-height, var(--m3e-comp-top-app-bar-expanded-height)),
+      auto
+    );
+  }
+
+  .m3e-top-app-bar > .m3e-top-app-bar__headline {
+    grid-area: 1 / 2;
+  }
+
+  /* Two-rows heights and the expanded title's bottom padding (TopAppBarDefaults, AppBar.kt). */
+  .m3e-top-app-bar--medium-flexible {
+    --_m3e-top-app-bar-collapsed-height: var(--m3e-comp-top-app-bar-medium-collapsed-height);
+    --_m3e-top-app-bar-expanded-height: var(--m3e-comp-top-app-bar-medium-flexible-expanded-height);
+    --_m3e-top-app-bar-title-bottom-padding: var(
+      --m3e-comp-top-app-bar-medium-title-bottom-padding
+    );
+  }
+
+  .m3e-top-app-bar--medium-flexible:has(.m3e-top-app-bar__expanded .m3e-top-app-bar__subtitle) {
+    --_m3e-top-app-bar-expanded-height: var(
+      --m3e-comp-top-app-bar-medium-flexible-with-subtitle-expanded-height
+    );
+  }
+
+  .m3e-top-app-bar--large-flexible {
+    --_m3e-top-app-bar-collapsed-height: var(--m3e-comp-top-app-bar-large-collapsed-height);
+    --_m3e-top-app-bar-expanded-height: var(--m3e-comp-top-app-bar-large-flexible-expanded-height);
+    --_m3e-top-app-bar-title-bottom-padding: var(--m3e-comp-top-app-bar-large-title-bottom-padding);
+  }
+
+  .m3e-top-app-bar--large-flexible:has(.m3e-top-app-bar__expanded .m3e-top-app-bar__subtitle) {
+    --_m3e-top-app-bar-expanded-height: var(
+      --m3e-comp-top-app-bar-large-flexible-with-subtitle-expanded-height
+    );
+  }
+
+  .m3e-top-app-bar--two-rows {
+    --_m3e-top-app-bar-collapsed-height: var(--m3e-comp-top-app-bar-two-rows-collapsed-height);
+    --_m3e-top-app-bar-expanded-height: var(--m3e-comp-top-app-bar-two-rows-expanded-height);
+    --_m3e-top-app-bar-title-bottom-padding: var(
+      --m3e-comp-top-app-bar-two-rows-title-bottom-padding
+    );
+  }
+
+  .m3e-top-app-bar--two-rows:has(.m3e-top-app-bar__expanded .m3e-top-app-bar__subtitle) {
+    --_m3e-top-app-bar-expanded-height: var(
+      --m3e-comp-top-app-bar-two-rows-with-subtitle-expanded-height
+    );
+  }
+
+  /*
+   * TwoRowsTopAppBar: the container color lerps (Oklab, like Compose's Color lerp) with the
+   * collapsed fraction, eased by FastOutLinearIn and not animated; the collapsed title fades in by
+   * TopTitleAlphaEasing, the expanded one out by 1 - fraction (values from the scroll behavior).
+   */
+  .m3e-top-app-bar:has(> .m3e-top-app-bar__expanded) {
+    grid-template-rows:
+      minmax(var(--_m3e-top-app-bar-collapsed-height), auto)
+      minmax(
+        calc(var(--_m3e-top-app-bar-expanded-height) - var(--_m3e-top-app-bar-collapsed-height)),
+        auto
+      );
+    background-color: color-mix(
+      in oklab,
+      var(--m3e-comp-app-bar-container-color),
+      var(--m3e-comp-app-bar-on-scroll-container-color)
+        calc(var(--_m3e-top-app-bar-color-fraction, 0) * 100%)
+    );
+    transition: none;
+  }
+
+  .m3e-top-app-bar:has(> .m3e-top-app-bar__expanded) > * {
+    translate: none;
+  }
+
+  /*
+   * The expanded row (the bottom TopAppBarLayout: an empty navigation slot, so the title starts at
+   * TopAppBarTitleInset, and an empty actions slot padded by TopAppBarHorizontalPadding). Column
+   * flex: the ::after spacer grows up to titleBottomPadding under the headline, so the headline sits
+   * that far above the bottom, or higher up to the row top when it does not fit (Compose's
+   * adjustedBottomPadding). It does not size the bar's columns (inline-size containment).
+   */
+  .m3e-top-app-bar__expanded {
+    display: flex;
+    grid-area: 2 / 1 / 3 / -1;
+    flex-direction: column;
+    align-self: stretch;
+    justify-content: flex-end;
+    min-inline-size: 0;
+    padding-inline-end: var(--m3e-comp-top-app-bar-horizontal-padding);
+    overflow: clip;
+    contain: inline-size;
+  }
+
+  .m3e-top-app-bar__expanded::after {
+    content: '';
+    flex: 1 0 0;
+    max-block-size: var(--_m3e-top-app-bar-title-bottom-padding);
+  }
+
+  /*
+   * The padding is measured from the headline's last baseline (Compose: LastBaseline of the title
+   * column, the subtitle's when there is one): an empty inline-block lowered by the padding ends
+   * the last line that far below its baseline, and the negative margin takes it back out of the
+   * layout, so the headline's margin box ends on the baseline.
+   */
+  .m3e-top-app-bar__expanded > .m3e-top-app-bar__headline {
+    flex: none;
+    margin-block-end: calc(var(--_m3e-top-app-bar-title-bottom-padding) * -1);
+    opacity: var(--_m3e-top-app-bar-expanded-title-opacity, 1);
+    translate: 0 var(--_m3e-top-app-bar-offset);
+  }
+
+  .m3e-top-app-bar__expanded > .m3e-top-app-bar__headline > :last-child::after {
+    content: '';
+    display: inline-block;
+    vertical-align: calc(var(--_m3e-top-app-bar-title-bottom-padding) * -1);
+  }
+
+  /*
+   * Centered title (placeTopAppBar with Alignment.CenterHorizontally): centered on the whole bar
+   * width by two equal side tracks, moved aside when the navigation icon (at least
+   * TopAppBarTitleInset, the ::before) or the actions need more than their share.
+   */
+  .m3e-top-app-bar.m3e-top-app-bar--center-aligned {
+    grid-template-columns: 1fr auto 1fr;
+  }
+
+  .m3e-top-app-bar--center-aligned::before {
+    content: '';
+    grid-area: 1 / 1;
+    inline-size: var(--m3e-comp-top-app-bar-title-inset);
+  }
+
+  .m3e-top-app-bar--center-aligned .m3e-top-app-bar__headline {
+    align-items: center;
+    text-align: center;
+  }
+
+  .m3e-top-app-bar--center-aligned > .m3e-top-app-bar__headline:first-child {
+    margin-inline-start: 0;
+  }
+
+  /* Centered expanded title: same clamping, start ≥ TopAppBarTitleInset, end ≥ the padding. */
+  .m3e-top-app-bar--center-aligned > .m3e-top-app-bar__expanded {
+    padding-inline-end: 0;
+  }
+
+  .m3e-top-app-bar--center-aligned > .m3e-top-app-bar__expanded > .m3e-top-app-bar__headline {
+    display: grid;
+    grid-template-columns:
+      minmax(
+        calc(
+          var(--m3e-comp-top-app-bar-title-inset) + var(--m3e-comp-top-app-bar-horizontal-padding)
+        ),
+        1fr
+      )
+      auto minmax(calc(var(--m3e-comp-top-app-bar-horizontal-padding) * 2), 1fr);
+    justify-items: center;
+    margin-inline-start: 0;
+    padding-inline: 0;
+  }
+
+  .m3e-top-app-bar--center-aligned > .m3e-top-app-bar__expanded > .m3e-top-app-bar__headline > * {
+    grid-column: 2;
+  }
+
+  /* The collapsed title of a two-rows bar (the top row's headline). */
+  .m3e-top-app-bar:has(> .m3e-top-app-bar__expanded) > .m3e-top-app-bar__headline {
+    opacity: var(--_m3e-top-app-bar-collapsed-title-opacity, 0);
+  }
+
+  /* Expanded title styles: AppBarMediumFlexibleTokens (two-rows default) / AppBarLargeFlexibleTokens. */
+  :is(.m3e-top-app-bar--medium-flexible, .m3e-top-app-bar--two-rows)
+    .m3e-top-app-bar__expanded
+    .m3e-top-app-bar__title {
+    font-family: var(--m3e-comp-app-bar-medium-flexible-title-font);
+    font-size: var(--m3e-comp-app-bar-medium-flexible-title-size);
+    font-weight: var(--m3e-comp-app-bar-medium-flexible-title-weight);
+    line-height: var(--m3e-comp-app-bar-medium-flexible-title-line-height);
+    letter-spacing: var(--m3e-comp-app-bar-medium-flexible-title-tracking);
+  }
+
+  :is(.m3e-top-app-bar--medium-flexible, .m3e-top-app-bar--two-rows)
+    .m3e-top-app-bar__expanded
+    .m3e-top-app-bar__subtitle {
+    font-family: var(--m3e-comp-app-bar-medium-flexible-subtitle-font);
+    font-size: var(--m3e-comp-app-bar-medium-flexible-subtitle-size);
+    font-weight: var(--m3e-comp-app-bar-medium-flexible-subtitle-weight);
+    line-height: var(--m3e-comp-app-bar-medium-flexible-subtitle-line-height);
+    letter-spacing: var(--m3e-comp-app-bar-medium-flexible-subtitle-tracking);
+  }
+
+  .m3e-top-app-bar--large-flexible .m3e-top-app-bar__expanded .m3e-top-app-bar__title {
+    font-family: var(--m3e-comp-app-bar-large-flexible-title-font);
+    font-size: var(--m3e-comp-app-bar-large-flexible-title-size);
+    font-weight: var(--m3e-comp-app-bar-large-flexible-title-weight);
+    line-height: var(--m3e-comp-app-bar-large-flexible-title-line-height);
+    letter-spacing: var(--m3e-comp-app-bar-large-flexible-title-tracking);
+  }
+
+  .m3e-top-app-bar--large-flexible .m3e-top-app-bar__expanded .m3e-top-app-bar__subtitle {
+    font-family: var(--m3e-comp-app-bar-large-flexible-subtitle-font);
+    font-size: var(--m3e-comp-app-bar-large-flexible-subtitle-size);
+    font-weight: var(--m3e-comp-app-bar-large-flexible-subtitle-weight);
+    line-height: var(--m3e-comp-app-bar-large-flexible-subtitle-line-height);
+    letter-spacing: var(--m3e-comp-app-bar-large-flexible-subtitle-tracking);
   }
 
   @media (forced-colors: active) {
