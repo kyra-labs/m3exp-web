@@ -131,3 +131,13 @@ export {
   wideNavigationRailItemWidth,
   wideNavigationRailWidth,
 } from './wide-navigation-rail.js';
+export {
+  DRAWER_POSITIONAL_THRESHOLD,
+  DRAWER_SETTLE_MILLIS,
+  DRAWER_VELOCITY_THRESHOLD,
+  type DrawerSample,
+  type DrawerSpecs,
+  DrawerAnimation,
+  drawerSettlesOpen,
+  exponentialDecayTarget,
+} from './navigation-drawer.js';

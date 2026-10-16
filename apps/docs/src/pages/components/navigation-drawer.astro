@@ -1,0 +1,200 @@
+---
+import DrawerPlayground from '../../islands/DrawerPlayground.tsx';
+import Base from '../../layouts/Base.astro';
+
+// Static sheets in the m3e-css contract (navigation-drawer.css), after the m3.material.io specs
+// example: a headline, destinations with a badge, a divider and a section label.
+interface Entry {
+  kind: 'headline' | 'item' | 'divider';
+  label?: string;
+  icon?: string;
+  badge?: string;
+  selected?: boolean;
+}
+const entries: Entry[] = [
+  { kind: 'headline', label: 'Mail' },
+  { kind: 'item', icon: 'inbox', label: 'Inbox', badge: '24', selected: true },
+  { kind: 'item', icon: 'send', label: 'Outbox' },
+  { kind: 'item', icon: 'favorite', label: 'Favorites' },
+  { kind: 'item', icon: 'delete', label: 'Trash' },
+  { kind: 'divider' },
+  { kind: 'headline', label: 'Labels' },
+  { kind: 'item', icon: 'label', label: 'Family' },
+  { kind: 'item', icon: 'label', label: 'School' },
+];
+---
+
+<Base title="Navigation drawer">
+  <link rel="stylesheet" href="/icons/docs-icons.css" slot="head" />
+  <h1>Navigation drawer</h1>
+  <p>
+    Navigation drawers (COMPONENT_SPEC §15; Compose <code>PermanentNavigationDrawer</code>,
+    <code>DismissibleNavigationDrawer</code> and <code>ModalNavigationDrawer</code> with their drawer
+    sheets and <code>NavigationDrawerItem</code>). Static drawers are plain HTML with m3e-css
+    classes. Opening animates on the default spatial spring and closing on the fast effects spring
+    (Compose's <code>DrawerState</code>), from the current position and velocity; a drag on the open
+    sheet (or the modal scrim) moves it with the pointer and settles with Compose's thresholds. The
+    modal drawer opens over a scrim as a dialog.
+  </p>
+  <p class="docs-note" role="note">
+    m3.material.io: the navigation drawer is no longer recommended in the M3 Expressive update; use
+    the <a href="/components/navigation-rail/">expanded navigation rail</a> instead. Compose still
+    ships the drawers (not deprecated at the pin), so they are built.
+  </p>
+
+  <section aria-labelledby="standard-heading">
+    <h2 id="standard-heading">Standard (permanent) and modal (static)</h2>
+    <p>
+      A standard sheet (<code>surface</code>, square corners) in the layout next to the content, and
+      a modal sheet (<code>surface-container-low</code>, large end corners) over the 32%
+      <code>scrim</code>. The modal frame contains its fixed sheet only for this page.
+    </p>
+    <div class="docs-drawer-frames">
+      <div class="docs-drawer-frame" data-testid="static-permanent">
+        <div class="m3e-navigation-drawer">
+          <nav class="m3e-navigation-drawer__sheet" aria-label="Static permanent example">
+            {
+              entries.map((e, i) =>
+                e.kind === 'headline' ? (
+                  <h3 class="m3e-navigation-drawer__headline">{e.label}</h3>
+                ) : e.kind === 'divider' ? (
+                  <hr class="m3e-navigation-drawer__divider" />
+                ) : (
+                  <a
+                    class="m3e-navigation-drawer-item"
+                    href={`#p-${String(i)}`}
+                    aria-current={e.selected ? 'page' : undefined}
+                    data-testid={`p-${e.label?.toLowerCase() ?? ''}`}
+                  >
+                    <span class="m3e-icon m3e-navigation-drawer-item__icon" aria-hidden="true">
+                      {e.icon}
+                    </span>
+                    <span class="m3e-navigation-drawer-item__label">{e.label}</span>
+                    {e.badge ? <span class="m3e-navigation-drawer-item__badge">{e.badge}</span> : null}
+                  </a>
+                ),
+              )
+            }
+          </nav>
+        </div>
+        <div class="docs-drawer-content">Application content</div>
+      </div>
+      <div class="docs-drawer-frame docs-drawer-frame--contain" data-testid="static-modal">
+        <div class="docs-drawer-content">Application content</div>
+        <div class="m3e-navigation-drawer m3e-navigation-drawer--modal m3e-navigation-drawer--open">
+          <div class="m3e-navigation-drawer__scrim" aria-hidden="true"></div>
+          <nav class="m3e-navigation-drawer__sheet" aria-label="Static modal example">
+            {
+              entries.slice(0, 5).map((e, i) =>
+                e.kind === 'headline' ? (
+                  <h3 class="m3e-navigation-drawer__headline">{e.label}</h3>
+                ) : (
+                  <a
+                    class="m3e-navigation-drawer-item"
+                    href={`#m-${String(i)}`}
+                    aria-current={e.selected ? 'page' : undefined}
+                  >
+                    <span class="m3e-icon m3e-navigation-drawer-item__icon" aria-hidden="true">
+                      {e.icon}
+                    </span>
+                    <span class="m3e-navigation-drawer-item__label">{e.label}</span>
+                    {e.badge ? <span class="m3e-navigation-drawer-item__badge">{e.badge}</span> : null}
+                  </a>
+                ),
+              )
+            }
+          </nav>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section aria-labelledby="element-heading">
+    <h2 id="element-heading">Dismissible and modal (element)</h2>
+    <p>
+      <code>&lt;m3e-navigation-drawer variant="dismissible | modal"&gt;</code> with
+      <code>&lt;m3e-navigation-item&gt;</code> children (<code>badge</code> adds the trailing text);
+      other children (headlines, dividers) move into the sheet in order. <code>show()</code>,
+      <code>close()</code>, <code>toggle()</code>; Escape closes; arrow keys move between items. The
+      dismissible drawer pushes the content beside it.
+    </p>
+    <div class="docs-drawer-frame" data-testid="dismissible-frame">
+      <m3e-navigation-drawer
+        variant="dismissible"
+        label="Dismissible example"
+        selected="inbox"
+        data-testid="element-dismissible"
+      >
+        <h3 class="m3e-navigation-drawer__headline">Mail</h3>
+        <m3e-navigation-item value="inbox" icon="inbox" badge="24">Inbox</m3e-navigation-item>
+        <m3e-navigation-item value="outbox" icon="send">Outbox</m3e-navigation-item>
+        <m3e-navigation-item value="trash" icon="delete">Trash</m3e-navigation-item>
+      </m3e-navigation-drawer>
+      <div class="docs-drawer-content" data-testid="dismissible-content">
+        <button
+          type="button"
+          class="m3e-icon-button m3e-icon-button--standard"
+          aria-label="Open navigation menu"
+          aria-expanded="false"
+          data-drawer-toggle="element-dismissible"
+        >
+          <span class="m3e-icon" aria-hidden="true">menu</span>
+        </button>
+        <p>Application content</p>
+      </div>
+    </div>
+    <m3e-navigation-drawer
+      variant="modal"
+      label="Modal example"
+      selected="inbox"
+      data-testid="element-modal"
+    >
+      <h3 class="m3e-navigation-drawer__headline">Mail</h3>
+      <m3e-navigation-item value="inbox" icon="inbox" badge="24">Inbox</m3e-navigation-item>
+      <m3e-navigation-item value="outbox" icon="send">Outbox</m3e-navigation-item>
+      <m3e-navigation-item value="drafts" icon="drafts">Drafts</m3e-navigation-item>
+      <hr class="m3e-navigation-drawer__divider" />
+      <m3e-navigation-item value="trash" icon="delete">Trash</m3e-navigation-item>
+    </m3e-navigation-drawer>
+    <button
+      type="button"
+      class="m3e-button m3e-button--filled"
+      data-testid="open-modal"
+      data-drawer-toggle="element-modal"
+    >
+      <span class="m3e-button__label">Open modal drawer</span>
+    </button>
+  </section>
+
+  <section aria-labelledby="react-heading">
+    <h2 id="react-heading">React</h2>
+    <p>
+      <code>&lt;NavigationDrawer variant items selectedKey onSelectionChange isOpen onOpenChange /&gt;</code>:
+      one component for the three drawers, so an adaptive layout can switch the variant without
+      losing the selection. Items may be destinations, <code>{`{ type: 'headline' }`}</code> or
+      <code>{`{ type: 'divider' }`}</code>.
+    </p>
+    <DrawerPlayground client:only="react" />
+  </section>
+</Base>
+
+<script>
+  import '@kyralabs/m3exp-web/elements';
+
+  // Compose's samples: a menu button opens the drawer (and announces its state).
+  for (const button of document.querySelectorAll<HTMLButtonElement>('[data-drawer-toggle]')) {
+    const drawer = document.querySelector<HTMLElement & { toggle(): void; open?: boolean }>(
+      `[data-testid="${button.dataset['drawerToggle'] ?? ''}"]`,
+    )!;
+    button.addEventListener('click', () => {
+      drawer.toggle();
+    });
+    if (button.hasAttribute('aria-expanded')) {
+      drawer.addEventListener('open-change', () => {
+        queueMicrotask(() => {
+          button.setAttribute('aria-expanded', String(Boolean(drawer.open)));
+        });
+      });
+    }
+  }
+</script>

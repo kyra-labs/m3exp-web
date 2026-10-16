@@ -61,16 +61,17 @@ export class SpringAnimatable {
 
   /**
    * Animates to `target` from the value and velocity at `now` (ms); a null spec (e.g. a spatial
-   * spring under reduced motion) jumps there.
+   * spring under reduced motion) jumps there. `velocity` (units per second) overrides the current
+   * velocity, e.g. after the value was driven by something else (a drag, a tween).
    */
-  animateTo(target: number, spec: SpringSpec | null, now: number): void {
+  animateTo(target: number, spec: SpringSpec | null, now: number, velocity?: number): void {
     this.sample(now);
     if (spec === null) {
       this.snapTo(target);
       return;
     }
     this.#from = this.#value;
-    this.#velocity0 = this.#velocity;
+    this.#velocity0 = velocity ?? this.#velocity;
     this.#target = target;
     this.#start = now;
     this.#spec = spec;

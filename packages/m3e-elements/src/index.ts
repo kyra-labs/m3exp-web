@@ -24,5 +24,7 @@ export * from './short-navigation-bar/index.js';
 export * from './wide-navigation-rail-layout/index.js';
 export * from './wide-navigation-rail/index.js';
 export * from './modal-wide-navigation-rail/index.js';
+export * from './navigation-drawer-layout/index.js';
+export * from './navigation-drawer/index.js';
 // Not `export *` from './ripple/index.js': that entry enables the ripple document-wide on import.
 export { attachAutoRipple } from './ripple/ripple.js';

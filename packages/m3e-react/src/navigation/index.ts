@@ -9,6 +9,14 @@ export {
   ModalWideNavigationRail,
   type ModalWideNavigationRailProps,
 } from './ModalWideNavigationRail.js';
+export {
+  NavigationDrawer,
+  type NavigationDrawerDestination,
+  type NavigationDrawerDivider,
+  type NavigationDrawerEntry,
+  type NavigationDrawerHeadline,
+  type NavigationDrawerProps,
+} from './NavigationDrawer.js';
 // eslint-disable-next-line @typescript-eslint/no-deprecated -- D4: legacy components ship until 2.0
 export { NavigationBar, type NavigationBarProps } from './NavigationBar.js';
 // eslint-disable-next-line @typescript-eslint/no-deprecated -- D4: legacy components ship until 2.0

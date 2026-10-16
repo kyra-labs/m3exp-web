@@ -79,6 +79,12 @@
     "limit": "4 KB"
   },
   {
+    "name": "m3e-css: navigation drawer (sheet, items, headline, divider, scrim)",
+    "path": "packages/m3e-css/dist/navigation-drawer.css",
+    "rolldown": false,
+    "limit": "4 KB"
+  },
+  {
     "name": "m3e-css: legacy navigation bar + rail (D4)",
     "path": [
       "packages/m3e-css/dist/navigation-bar.css",
@@ -293,6 +299,16 @@
     "limit": "6 KB"
   },
   {
+    "name": "m3e-elements: <m3e-navigation-drawer> entry (NavigationDrawerLayout, m3e-motion DrawerAnimation, drags, the modal window)",
+    "path": "packages/m3e-elements/dist/navigation-drawer/index.js",
+    "limit": "8 KB"
+  },
+  {
+    "name": "m3e-elements: navigation-drawer-layout entry (NavigationDrawerLayout, used by m3e-react <NavigationDrawer>)",
+    "path": "packages/m3e-elements/dist/navigation-drawer-layout/index.js",
+    "limit": "6 KB"
+  },
+  {
     "name": "m3e-shapes (all presets + Morph)",
     "path": "packages/m3e-shapes/dist/index.js",
     "limit": "14 KB"
@@ -421,6 +437,12 @@
     "limit": "20 KB"
   },
   {
+    "name": "m3e-react: { NavigationDrawer } only (incl. react-aria press + NavigationDrawerLayout from m3e-elements)",
+    "path": "packages/m3e-react/dist/index.js",
+    "import": "{ NavigationDrawer }",
+    "limit": "20 KB"
+  },
+  {
     "name": "m3exp-web/react: { Icon } only",
     "path": "packages/m3exp-web/dist/react.js",
     "import": "{ Icon }",
@@ -428,10 +450,10 @@
     "limit": "1 KB"
   },
   {
-    "name": "m3exp-web (root): { Icon } (the root entry registers every custom element by design, ~37.7 kB with <m3e-menu>, <m3e-split-button>, <m3e-button-group>, the toolbars, the progress indicators, <m3e-search> and the navigation bar / rails; a leaked React component adds ~10 kB of react-aria. Raise with m3e-elements (all); D17)",
+    "name": "m3exp-web (root): { Icon } (the root entry registers every custom element by design, ~40.4 kB with <m3e-menu>, <m3e-split-button>, <m3e-button-group>, the toolbars, the progress indicators, <m3e-search>, the navigation bar / rails, <m3e-navigation-drawer> and the window size class observer; a leaked React component adds ~10 kB of react-aria. Raise with m3e-elements (all); D17)",
     "path": "packages/m3exp-web/dist/index.js",
     "import": "{ Icon }",
     "ignore": ["react", "react-dom"],
-    "limit": "40 KB"
+    "limit": "42 KB"
   }
 ]

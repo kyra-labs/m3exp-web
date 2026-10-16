@@ -2,6 +2,9 @@
 // independent regexes (not the parser) and compared with what the generator emits.
 import { fileURLToPath } from 'node:url';
 import {
+  DRAWER_POSITIONAL_THRESHOLD,
+  DRAWER_SETTLE_MILLIS,
+  DRAWER_VELOCITY_THRESHOLD,
   FAST_OUT_LINEAR_IN_EASING,
   SEARCH_BAR_EXPANDED_THRESHOLD,
   SEARCH_DROPDOWN_VISIBLE_PROGRESS,
@@ -527,6 +530,80 @@ describe('animated / modal wide navigation rail values (M7)', () => {
     expect(decl.get('--m3e-comp-modal-wide-navigation-rail-expanded-header-top-padding')).toBe(
       '0px',
     );
+  });
+});
+
+describe('navigation drawer values (M7)', () => {
+  const css = output.get('components/navigation-drawer-defaults.css')!;
+  const decl = declarations(css.slice(0, css.indexOf('@media')));
+  const drawer = inputs.material3Sources['NavigationDrawer.kt']!.replace(/\r\n/g, '\n');
+  const spring = (name: string, key: string) => {
+    for (const field of ['duration', 'easing', 'damping-ratio', 'stiffness']) {
+      expect(decl.get(`${name}-${field}`), `${name}-${field}`).toBe(
+        `var(--m3e-sys-motion-spring-${key}-${field})`,
+      );
+    }
+  };
+
+  it('item and sheet literals come from NavigationDrawer.kt and the samples', () => {
+    expect(drawer).toContain('Modifier.padding(start = 16.dp, end = 24.dp)');
+    expect(drawer).toContain('PaddingValues(horizontal = 12.dp)');
+    expect(drawer).toMatch(/private val MinimumDrawerWidth\n\s*get\(\) = 240\.dp/);
+    expect(decl.get('--m3e-comp-navigation-drawer-min-width')).toBe('240px');
+    expect(decl.get('--m3e-comp-navigation-drawer-item-padding-start')).toBe('16px');
+    expect(decl.get('--m3e-comp-navigation-drawer-item-padding-end')).toBe('24px');
+    expect(decl.get('--m3e-comp-navigation-drawer-item-icon-label-space')).toBe('12px');
+    expect(decl.get('--m3e-comp-navigation-drawer-item-label-badge-space')).toBe('12px');
+    expect(decl.get('--m3e-comp-navigation-drawer-item-horizontal-padding')).toBe('12px');
+    expect(decl.get('--m3e-comp-navigation-drawer-top-padding')).toBe('12px');
+    expect(decl.get('--m3e-comp-navigation-drawer-standard-container-shape')).toBe('0px');
+  });
+
+  it('the item label inherits MaterialTheme’s bodyLarge (LabelTextFont is not read)', () => {
+    expect(drawer).not.toContain('LabelTextFont');
+    expect(inputs.material3Sources['MaterialTheme.kt']).toContain(
+      'ProvideTextStyle(value = typography.bodyLarge, content = content)',
+    );
+    expect(decl.get('--m3e-comp-navigation-drawer-item-label-text-size')).toBe(
+      'var(--m3e-sys-typescale-body-large-size)',
+    );
+  });
+
+  it('scrim, modal elevation and motion', () => {
+    expect(decl.get('--m3e-comp-navigation-drawer-scrim-color')).toBe('var(--m3e-sys-color-scrim)');
+    expect(decl.get('--m3e-comp-navigation-drawer-scrim-opacity')).toBe('0.32');
+    expect(decl.get('--m3e-comp-navigation-drawer-modal-elevation')).toBe(
+      'var(--m3e-sys-elevation-level0)',
+    );
+    spring('--m3e-comp-navigation-drawer-open', 'default-spatial');
+    spring('--m3e-comp-navigation-drawer-close', 'fast-effects');
+    expect(decl.get('--m3e-comp-navigation-drawer-settle-duration')).toBe('256ms');
+    expect(decl.get('--m3e-comp-navigation-drawer-settle-easing')).toBe(
+      'cubic-bezier(0.4, 0, 0.2, 1)',
+    );
+    // Close and settle move the sheet: both jump under reduced motion.
+    const reduced = declarations(css.slice(css.indexOf('@media')));
+    expect(reduced.get('--m3e-comp-navigation-drawer-close-duration')).toBe('0ms');
+    expect(reduced.get('--m3e-comp-navigation-drawer-settle-duration')).toBe('0ms');
+  });
+
+  it('m3e-motion’s drawer port uses the generated thresholds and settle spec', () => {
+    expect(decl.get('--m3e-comp-navigation-drawer-positional-threshold')).toBe(
+      String(DRAWER_POSITIONAL_THRESHOLD),
+    );
+    expect(decl.get('--m3e-comp-navigation-drawer-velocity-threshold')).toBe(
+      String(DRAWER_VELOCITY_THRESHOLD),
+    );
+    expect(decl.get('--m3e-comp-navigation-drawer-settle-duration')).toBe(
+      `${String(DRAWER_SETTLE_MILLIS)}ms`,
+    );
+  });
+
+  it('m3.material.io values carry their citation', () => {
+    const parity = output.get('PARITY.md')!;
+    expect(parity).toMatch(/--m3e-comp-navigation-drawer-divider-inset.*28px/);
+    expect(parity).toContain('TOKEN_TABLE.376969f91547be8e.json');
+    expect(decl.get('--m3e-comp-navigation-drawer-headline-padding-inline')).toBe('28px');
   });
 });
 

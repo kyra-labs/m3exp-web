@@ -1941,6 +1941,42 @@ export const navigationDrawerTokens = {
   standardContainerElevation: "var(--m3e-sys-elevation-level0)"
 } as const;
 
+/** NavigationDrawerDefaults */
+export const navigationDrawerDefaults = {
+  navigationDrawerMinWidth: 240,
+  navigationDrawerTopPadding: 12,
+  navigationDrawerItemHorizontalPadding: 12,
+  navigationDrawerItemPaddingStart: 16,
+  navigationDrawerItemPaddingEnd: 24,
+  navigationDrawerItemIconLabelSpace: 12,
+  navigationDrawerItemLabelBadgeSpace: 12,
+  navigationDrawerItemLabelTextFont: "var(--m3e-sys-typescale-body-large-font)",
+  navigationDrawerItemLabelTextWeight: "var(--m3e-sys-typescale-body-large-weight)",
+  navigationDrawerItemLabelTextSize: "var(--m3e-sys-typescale-body-large-size)",
+  navigationDrawerItemLabelTextLineHeight: "var(--m3e-sys-typescale-body-large-line-height)",
+  navigationDrawerItemLabelTextTracking: "var(--m3e-sys-typescale-body-large-tracking)",
+  navigationDrawerStandardContainerShape: 0,
+  navigationDrawerModalElevation: "var(--m3e-sys-elevation-level0)",
+  navigationDrawerScrimColor: "var(--m3e-sys-color-scrim)",
+  navigationDrawerScrimOpacity: 0.32,
+  navigationDrawerOpenDuration: "var(--m3e-sys-motion-spring-default-spatial-duration)",
+  navigationDrawerOpenEasing: "var(--m3e-sys-motion-spring-default-spatial-easing)",
+  navigationDrawerOpenDampingRatio: "var(--m3e-sys-motion-spring-default-spatial-damping-ratio)",
+  navigationDrawerOpenStiffness: "var(--m3e-sys-motion-spring-default-spatial-stiffness)",
+  navigationDrawerCloseDuration: "var(--m3e-sys-motion-spring-fast-effects-duration)",
+  navigationDrawerCloseEasing: "var(--m3e-sys-motion-spring-fast-effects-easing)",
+  navigationDrawerCloseDampingRatio: "var(--m3e-sys-motion-spring-fast-effects-damping-ratio)",
+  navigationDrawerCloseStiffness: "var(--m3e-sys-motion-spring-fast-effects-stiffness)",
+  navigationDrawerSettleDuration: 256,
+  navigationDrawerPositionalThreshold: 0.5,
+  navigationDrawerVelocityThreshold: 400,
+  navigationDrawerSettleEasing: "cubic-bezier(0.4, 0, 0.2, 1)",
+  navigationDrawerHeadlineHeight: 56,
+  navigationDrawerHeadlinePaddingInline: 28,
+  navigationDrawerDividerInset: 28,
+  navigationDrawerDividerColor: "var(--m3e-sys-color-outline)"
+} as const;
+
 /** NavigationRailBaselineItemTokens */
 export const navigationRailBaselineItemTokens = {
   activeIndicatorIconLabelSpace: 8,
