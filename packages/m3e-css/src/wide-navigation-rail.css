@@ -1,7 +1,6 @@
 /*
- * Wide navigation rail (COMPONENT_SPEC §14; Compose WideNavigationRail), collapsed and expanded.
- * No JavaScript needed for the static rail (M4); the animated expand/collapse and the modal rail
- * land in M7.
+ * Wide navigation rail (COMPONENT_SPEC §14; Compose WideNavigationRail / ModalWideNavigationRail),
+ * collapsed, expanded and animated between the two, plus the modal rail.
  *
  *   <nav class="m3e-wide-navigation-rail" aria-label="Main">
  *     <div class="m3e-wide-navigation-rail__header">…menu button, FAB…</div>   (optional)
@@ -9,29 +8,57 @@
  *     …
  *   </nav>
  *
- * Collapsed (default): icons above labels. --expanded: icons before labels, the rail as wide as
- * its widest item within the expanded min/max widths.
+ *   <div class="m3e-modal-wide-navigation-rail">                              (modal)
+ *     <nav class="m3e-wide-navigation-rail" aria-label="Main">…</nav>
+ *     <div class="m3e-modal-wide-navigation-rail__scrim" aria-hidden="true"></div>
+ *   </div>
+ *
+ * Collapsed (default): icons above labels, 96dp. --expanded: icons before labels, the rail as wide
+ * as its widest item within the expanded min/max widths. Static rails need no JavaScript. Every
+ * item position is one formula of the progress Compose animates, so the same CSS draws the
+ * collapsed rail (progress 0), the expanded rail (1) and every frame between them:
+ * m3e-elements' WideNavigationRailLayout (also run by m3e-react) only writes, once per frame,
+ *   --_m3e-wnr-progress     the items' iconPositionProgress (DefaultSpatial),
+ *   --_m3e-wnr-layout       itemVerticalSpacedBy / itemMinHeight (DefaultSpatial),
+ *   --_m3e-wnr-inline-size  the rail width WideNavigationRailLayout measures (m3e-motion),
+ * plus [data-animating] while they move: no layout is read during the animation, so the browser
+ * lays the rail out once per frame. The modal root also gets --_m3e-wnr-scrim (alpha) and
+ * --_m3e-wnr-slide (hideOnCollapse) and [data-open] while its window is shown: the rail and the
+ * scrim then sit in the top layer (popover="manual"; fixed positioning without the Popover API),
+ * the root keeping the collapsed rail's place.
  *
  * Sources (compose/material3 @ 19991f2c):
- * - WideNavigationRail.kt (WideNavigationRailLayout): collapsed width
+ * - WideNavigationRail.kt (WideNavigationRailLayout L301-527): collapsed width
  *   NavigationRailCollapsedTokens.ContainerWidth; expanded width between
  *   NavigationRailExpandedTokens.ContainerWidthMinimum and ContainerWidthMaximum, at least the widest
  *   item + WNRItemHorizontalPadding; top padding NavigationRailCollapsedTokens.TopSpace
  *   (WideNavigationRailDefaults.ContentPadding); header then HeaderSpaceMinimum before the items;
- *   items spaced NavigationRailCollapsedTokens.ItemVerticalSpace when collapsed, 0 expanded; item
- *   min height NavigationRailBaselineItemTokens.ContainerHeight collapsed, the minimum touch target
- *   expanded. Container NavigationRailCollapsedTokens.ContainerColor and ContainerShape (both
- *   states when not modal); window insets vertical + start (here the safe-area insets).
- * - WideNavigationRailItem (AnimatedNavigationItem): collapsed pill
- *   NavigationRailVerticalItemTokens.ActiveIndicatorWidth × ActiveIndicatorHeight, label
- *   NavigationRailVerticalItemTokens.IconLabelSpace below, content at the top of the item;
- *   expanded pill padded by IndicatorExpandedPadding (FullWidthLeadingSpace, (ActiveIndicatorHeight
- *   − IconSize) / 2), icon → label NavigationRailHorizontalItemTokens.IconLabelSpace, the pill
- *   starting WNRItemHorizontalPadding from the rail's start edge. No label: a circle
- *   (WNRItemNoLabelIndicatorPadding on all sides).
+ *   items spaced NavigationRailCollapsedTokens.ItemVerticalSpace → 0 and at least
+ *   NavigationRailBaselineItemTokens.ContainerHeight → the minimum touch target tall (both on
+ *   DefaultSpatial). Container NavigationRailCollapsedTokens.ContainerColor and ContainerShape (both
+ *   states when not modal), clipped to it (Surface); window insets vertical + start.
+ * - NavigationItem.kt (AnimatedNavigationItem L440-554, AnimatedMeasurePolicy L857-944,
+ *   placeAnimatedLabelAndIcon L1103-1199) for WideNavigationRailItem: with p = iconPositionProgress
+ *   (≥ 0), the pill starts WNRItemHorizontalPadding from the item's start, is
+ *   lerp(icon, icon + gap + label, p) + padding wide and lerp(icon, max(icon, label), p) + padding
+ *   tall, the padding (WideNavigationRailItemDefaults.indicatorPadding) going from
+ *   IndicatorCollapsedPadding ((ActiveIndicatorWidth − IconSize) / 2,
+ *   (ActiveIndicatorHeight − IconSize) / 2) to IndicatorExpandedPadding (FullWidthLeadingSpace,
+ *   (NavigationRailHorizontalItemTokens.ActiveIndicatorHeight − IconSize) / 2); the item is
+ *   lerp(heightTop, heightStart, p) tall; the icon moves down to the middle; the label fades out
+ *   below the pill (alpha 4 (p − ½)²) and back in after the icon (x = (icon x + icon + gap −
+ *   offset) · p), switching place at p = ½ and type style when collapsing past ½. The indicator
+ *   grows from the pill's start (indicatorX = item padding); icon-only items keep a centered circle.
  * - Colors: WideNavigationRailItemDefaults (NavigationRailColorTokens; selected label
- *   ItemActiveLabelText on top, ItemActiveIcon at the start). The label color animates on
- *   DefaultEffects, the indicator on DefaultSpatial.
+ *   ItemActiveLabelText with the icon on top, ItemActiveIcon at the start). The label color animates
+ *   on DefaultEffects (StyledLabel animateColor), the indicator on DefaultSpatial.
+ * - Modal (ModalWideNavigationRail L577-623, ModalWideNavigationRailImpl L705-864,
+ *   ModalWideNavigationRailContent L1493-1621, WideNavigationRailDefaults L1229-1322): the window
+ *   rail at the window's start edge, full height, modalContainerColor
+ *   (NavigationRailExpandedTokens.ModalContainerColor) with modalExpandedShape (ModalContainerShape)
+ *   and no elevation; the header gets expandedHeaderTopPadding; the scrim is ScrimTokens.ContainerColor
+ *   at ContainerOpacity × its alpha; the collapsed rail stays in place under it. hideOnCollapse:
+ *   no collapsed rail; the expanded rail slides in from −its width.
  */
 @import '@kyralabs/m3e-tokens/components/navigation-rail-collapsed.css';
 @import '@kyralabs/m3e-tokens/components/navigation-rail-expanded.css';
@@ -46,38 +73,45 @@
 
 @layer m3e.components {
   .m3e-wide-navigation-rail {
-    --_m3e-wnr-item-space: var(--m3e-comp-navigation-rail-collapsed-item-vertical-space);
-    --_m3e-nav-pill-inline: var(--m3e-comp-navigation-rail-vertical-item-active-indicator-width);
-    --_m3e-nav-pill-block: var(--m3e-comp-navigation-rail-vertical-item-active-indicator-height);
-    --_m3e-nav-pill-block-icon-only: var(
-      --m3e-comp-navigation-rail-vertical-item-active-indicator-width
-    );
-    --_m3e-nav-label-gap: var(--m3e-comp-navigation-rail-vertical-item-icon-label-space);
-    --_m3e-nav-item-min-block: var(--m3e-comp-navigation-rail-baseline-item-container-height);
-    --_m3e-nav-item-justify: flex-start;
-    --_m3e-nav-start-padding-block: calc(
+    /* Progress (written per frame while animating; the class gives the resting value). */
+    --_m3e-wnr-progress: 0;
+    --_m3e-wnr-layout: 0;
+
+    /* 1 once the target is expanded: the start type style and the label slide offset. */
+    --_m3e-wnr-target: 0;
+    --_m3e-wnr-icon: var(--m3e-comp-navigation-rail-baseline-item-icon-size);
+    --_m3e-wnr-pad: var(--m3e-comp-wide-navigation-rail-item-horizontal-padding);
+    --_m3e-wnr-gap: var(--m3e-comp-navigation-rail-horizontal-item-icon-label-space);
+    --_m3e-wnr-collapsed-pad-x: calc(
       (
-          var(--m3e-comp-navigation-rail-horizontal-item-active-indicator-height) -
-            var(--m3e-comp-navigation-rail-baseline-item-icon-size)
+          var(--m3e-comp-navigation-rail-vertical-item-active-indicator-width) -
+            var(--_m3e-wnr-icon)
         ) /
         2
     );
-    --_m3e-nav-start-padding-inline: var(
+    --_m3e-wnr-collapsed-pad-y: calc(
+      (
+          var(--m3e-comp-navigation-rail-vertical-item-active-indicator-height) -
+            var(--_m3e-wnr-icon)
+        ) /
+        2
+    );
+    --_m3e-wnr-expanded-pad-x: var(
       --m3e-comp-navigation-rail-horizontal-item-full-width-leading-space
     );
-    --_m3e-nav-icon-label-gap: var(--m3e-comp-navigation-rail-horizontal-item-icon-label-space);
-    --_m3e-nav-label-font: var(--m3e-comp-navigation-rail-vertical-item-label-text-font);
-    --_m3e-nav-label-size: var(--m3e-comp-navigation-rail-vertical-item-label-text-size);
-    --_m3e-nav-label-weight: var(--m3e-comp-navigation-rail-vertical-item-label-text-weight);
-    --_m3e-nav-label-line-height: var(
-      --m3e-comp-navigation-rail-vertical-item-label-text-line-height
+    --_m3e-wnr-expanded-pad-y: calc(
+      (
+          var(--m3e-comp-navigation-rail-horizontal-item-active-indicator-height) -
+            var(--_m3e-wnr-icon)
+        ) /
+        2
     );
-    --_m3e-nav-label-tracking: var(--m3e-comp-navigation-rail-vertical-item-label-text-tracking);
+    --_m3e-wnr-dir: 1;
+    --_m3e-nav-label-font: var(--m3e-comp-navigation-rail-vertical-item-label-text-font);
     --_m3e-nav-icon-unselected: var(--m3e-comp-navigation-rail-color-item-inactive-icon);
     --_m3e-nav-icon-selected: var(--m3e-comp-navigation-rail-color-item-active-icon);
     --_m3e-nav-label-unselected: var(--m3e-comp-navigation-rail-color-item-inactive-label-text);
     --_m3e-nav-label-selected: var(--m3e-comp-navigation-rail-color-item-active-label-text);
-    --_m3e-nav-label-selected-start: var(--m3e-comp-navigation-rail-color-item-active-icon);
     --_m3e-nav-indicator: var(--m3e-comp-navigation-rail-color-item-active-indicator);
     --_m3e-nav-width-duration: var(--m3e-sys-motion-spring-default-spatial-duration);
     --_m3e-nav-width-easing: var(--m3e-sys-motion-spring-default-spatial-easing);
@@ -87,75 +121,395 @@
 
     display: flex;
     flex-direction: column;
-    row-gap: var(--_m3e-wnr-item-space);
+    row-gap: calc(
+      var(--m3e-comp-navigation-rail-collapsed-item-vertical-space) * (1 - var(--_m3e-wnr-layout))
+    );
     box-sizing: border-box;
     inline-size: var(--m3e-comp-navigation-rail-collapsed-container-width);
     max-inline-size: var(--m3e-comp-navigation-rail-expanded-container-width-maximum);
+    margin: 0;
     padding-block: calc(
         var(--m3e-comp-navigation-rail-collapsed-top-space) + env(safe-area-inset-top)
       )
       env(safe-area-inset-bottom);
-    padding-inline-start: env(safe-area-inset-left);
+    padding-inline: env(safe-area-inset-left) 0;
+    border: none;
     border-radius: var(--m3e-comp-navigation-rail-collapsed-container-shape);
     background-color: var(--m3e-comp-navigation-rail-collapsed-container-color);
     color: var(--m3e-sys-color-on-surface);
+
+    /* Compose clips the rail to its shape (Surface); the block axis stays visible. */
+    overflow: clip visible;
+  }
+
+  .m3e-wide-navigation-rail:dir(rtl) {
+    --_m3e-wnr-dir: -1;
   }
 
   .m3e-wide-navigation-rail__header {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
+
+    /* Its own width: the measure policy compares it with the widest item. */
+    align-self: flex-start;
     margin-block-end: calc(
       var(--m3e-comp-navigation-rail-baseline-item-header-space-minimum) -
-        var(--_m3e-wnr-item-space)
+        var(--m3e-comp-navigation-rail-collapsed-item-vertical-space) * (1 - var(--_m3e-wnr-layout))
     );
   }
 
-  .m3e-wide-navigation-rail > .m3e-navigation-item {
-    align-self: stretch;
-  }
-
-  /* --- Expanded --------------------------------------------------------------------------- */
+  /* --- Expanded (resting) ------------------------------------------------------------------- */
   .m3e-wide-navigation-rail--expanded {
-    --_m3e-wnr-item-space: var(--m3e-sys-space-0);
-    --_m3e-nav-item-min-block: var(--m3e-comp-minimum-interactive-component-size);
-    --_m3e-nav-item-justify: center;
-    --_m3e-nav-item-padding-inline-start: var(
-      --m3e-comp-wide-navigation-rail-item-horizontal-padding
-    );
+    --_m3e-wnr-progress: 1;
+    --_m3e-wnr-layout: 1;
+    --_m3e-wnr-target: 1;
     --_m3e-nav-label-font: var(--m3e-comp-navigation-rail-horizontal-item-label-text-font);
-    --_m3e-nav-label-size: var(--m3e-comp-navigation-rail-horizontal-item-label-text-size);
-    --_m3e-nav-label-weight: var(--m3e-comp-navigation-rail-horizontal-item-label-text-weight);
-    --_m3e-nav-label-line-height: var(
-      --m3e-comp-navigation-rail-horizontal-item-label-text-line-height
-    );
-    --_m3e-nav-label-tracking: var(--m3e-comp-navigation-rail-horizontal-item-label-text-tracking);
 
     inline-size: fit-content;
     min-inline-size: var(--m3e-comp-navigation-rail-expanded-container-width-minimum);
-    padding-inline-end: var(--m3e-comp-wide-navigation-rail-item-horizontal-padding);
+    padding-inline-end: var(--_m3e-wnr-pad);
     border-radius: var(--m3e-comp-navigation-rail-expanded-container-shape);
   }
 
-  .m3e-wide-navigation-rail--expanded > .m3e-navigation-item {
-    align-self: flex-start;
+  /* --- Animating: the width WideNavigationRailLayout measures ------------------------------ */
+  .m3e-wide-navigation-rail[data-animating] {
+    inline-size: var(--_m3e-wnr-inline-size);
+    min-inline-size: 0;
+    max-inline-size: none;
+  }
+
+  /* --- Items: one formula of the progress (NavigationItem.kt AnimatedMeasurePolicy) -------- */
+  .m3e-wide-navigation-rail > .m3e-navigation-item {
+    --_p: max(0, var(--_m3e-wnr-progress));
+    --_s: clamp(0, round(down, calc(var(--_p) + 1 / 2), 1), 1);
+    --_f: max(var(--_s), var(--_m3e-wnr-target));
+    --_pad-x: calc(
+      var(--_m3e-wnr-collapsed-pad-x) +
+        (var(--_m3e-wnr-expanded-pad-x) - var(--_m3e-wnr-collapsed-pad-x)) * var(--_p)
+    );
+    --_pad-y: calc(
+      var(--_m3e-wnr-collapsed-pad-y) +
+        (var(--_m3e-wnr-expanded-pad-y) - var(--_m3e-wnr-collapsed-pad-y)) * var(--_p)
+    );
+    --_lh: calc(
+      var(--m3e-comp-navigation-rail-vertical-item-label-text-line-height) +
+        (
+          var(--m3e-comp-navigation-rail-horizontal-item-label-text-line-height) -
+            var(--m3e-comp-navigation-rail-vertical-item-label-text-line-height)
+        ) *
+        var(--_f)
+    );
+    --_pill-h: calc(
+      var(--_m3e-wnr-icon) + (max(var(--_m3e-wnr-icon), var(--_lh)) - var(--_m3e-wnr-icon)) *
+        var(--_p) + var(--_pad-y) + var(--_pad-y)
+    );
+    --_min-h: calc(
+      var(--m3e-comp-navigation-rail-baseline-item-container-height) +
+        (
+          var(--m3e-comp-minimum-interactive-component-size) -
+            var(--m3e-comp-navigation-rail-baseline-item-container-height)
+        ) *
+        var(--_m3e-wnr-layout)
+    );
+    --_h-top: max(
+      var(--_pill-h) + var(--m3e-comp-navigation-rail-vertical-item-icon-label-space) + var(--_lh),
+      var(--_min-h)
+    );
+    --_h-start: max(var(--_pill-h), var(--_min-h));
+    --_h: calc(var(--_h-top) + (var(--_h-start) - var(--_h-top)) * var(--_p));
+    --_icon-y: calc(
+      var(--_pad-y) + var(--_p) * (calc((var(--_h) - var(--_m3e-wnr-icon)) / 2) - var(--_pad-y))
+    );
+
+    /* The pill: lerp(56dp, the start-icon pill, p) — 100% is the content's (pill's) width. */
+    --_pill-w: calc(
+      var(--_m3e-wnr-icon) + var(--_pad-x) + var(--_pad-x) +
+        (
+          100% - var(--_m3e-wnr-icon) - var(--_m3e-wnr-expanded-pad-x) -
+            var(--_m3e-wnr-expanded-pad-x)
+        ) *
+        var(--_p)
+    );
+    --_m3e-nav-label-size: calc(
+      var(--m3e-comp-navigation-rail-vertical-item-label-text-size) +
+        (
+          var(--m3e-comp-navigation-rail-horizontal-item-label-text-size) -
+            var(--m3e-comp-navigation-rail-vertical-item-label-text-size)
+        ) *
+        var(--_f)
+    );
+    --_m3e-nav-label-weight: calc(
+      var(--m3e-comp-navigation-rail-vertical-item-label-text-weight) +
+        (
+          var(--m3e-comp-navigation-rail-horizontal-item-label-text-weight) -
+            var(--m3e-comp-navigation-rail-vertical-item-label-text-weight)
+        ) *
+        var(--_f)
+    );
+    --_m3e-nav-label-line-height: var(--_lh);
+    --_m3e-nav-label-tracking: calc(
+      var(--m3e-comp-navigation-rail-vertical-item-label-text-tracking) +
+        (
+          var(--m3e-comp-navigation-rail-horizontal-item-label-text-tracking) -
+            var(--m3e-comp-navigation-rail-vertical-item-label-text-tracking)
+        ) *
+        var(--_f)
+    );
+
+    display: flex;
+    flex-direction: column;
     align-items: flex-start;
-    max-inline-size: 100%;
+    justify-content: flex-start;
+    align-self: stretch;
+    block-size: var(--_h);
+    min-block-size: 0;
+    padding: 0;
+    padding-inline-start: var(--_m3e-wnr-pad);
+    text-align: start;
   }
 
-  .m3e-wide-navigation-rail--expanded > .m3e-wide-navigation-rail__header {
-    margin-block-end: var(--m3e-comp-navigation-rail-baseline-item-header-space-minimum);
+  /*
+   * Expanded target: the item is as wide as its pill + padding (Compose places it at the start
+   * with its own width); the selected label color follows the icon position
+   * (textColor(…, iconPosition == Top)).
+   */
+  .m3e-wide-navigation-rail--expanded > .m3e-navigation-item {
+    --_m3e-nav-label-selected: var(--m3e-comp-navigation-rail-color-item-active-icon);
+
+    align-self: flex-start;
   }
 
-  /* The label color animates on DefaultEffects (StyledLabel animateColor). */
-  .m3e-wide-navigation-rail .m3e-navigation-item__label {
-    transition: color var(--m3e-sys-motion-spring-default-effects-duration)
-      var(--m3e-sys-motion-spring-default-effects-easing);
+  .m3e-wide-navigation-rail > .m3e-navigation-item > .m3e-navigation-item__content {
+    position: relative;
+    display: flex;
+    align-items: flex-start;
+    column-gap: var(--_m3e-wnr-gap);
+    box-sizing: border-box;
+    inline-size: max-content;
+    block-size: var(--_pill-h);
+    padding-inline: var(--_m3e-wnr-expanded-pad-x);
+  }
+
+  .m3e-wide-navigation-rail
+    > .m3e-navigation-item
+    > .m3e-navigation-item__content
+    > :is(.m3e-navigation-item__indicator, .m3e-navigation-item__state) {
+    position: absolute;
+    inset-block: 0;
+    inset-inline-start: 0;
+    block-size: auto;
+  }
+
+  .m3e-wide-navigation-rail
+    > .m3e-navigation-item
+    > .m3e-navigation-item__content
+    > .m3e-navigation-item__state {
+    inline-size: var(--_pill-w);
+  }
+
+  /* Grows from the pill's start (placeAnimatedLabelAndIcon: indicatorX = item padding). */
+  .m3e-wide-navigation-rail
+    > .m3e-navigation-item
+    > .m3e-navigation-item__content
+    > .m3e-navigation-item__indicator {
+    inline-size: calc(var(--_pill-w) * max(0, var(--_m3e-nav-indicator-progress)));
+  }
+
+  .m3e-wide-navigation-rail
+    > .m3e-navigation-item
+    > .m3e-navigation-item__content
+    > :is(.m3e-navigation-item__icon, .m3e-navigation-item__label) {
+    position: relative;
+    flex: none;
+  }
+
+  .m3e-wide-navigation-rail
+    > .m3e-navigation-item
+    > .m3e-navigation-item__content
+    > .m3e-navigation-item__icon {
+    translate: calc((var(--_pad-x) - var(--_m3e-wnr-expanded-pad-x)) * var(--_m3e-wnr-dir))
+      var(--_icon-y);
+  }
+
+  /*
+   * The label sits after the icon in the flow (its start-icon place, which sizes the pill and the
+   * rail); translate moves it to placeAnimatedLabelAndIcon's position. % is the label's own size.
+   */
+  .m3e-wide-navigation-rail
+    > .m3e-navigation-item
+    > .m3e-navigation-item__content
+    > .m3e-navigation-item__label {
+    --_flow-x: calc(
+      var(--_m3e-wnr-pad) + var(--_m3e-wnr-expanded-pad-x) + var(--_m3e-wnr-icon) +
+        var(--_m3e-wnr-gap)
+    );
+    --_x-top: calc(
+      (
+          var(--_m3e-wnr-icon) + var(--_pad-x) + var(--_pad-x) + var(--_m3e-wnr-pad) +
+            var(--_m3e-wnr-pad) - 100%
+        ) /
+        2
+    );
+    --_x-start: calc(
+      (
+          var(--_m3e-wnr-pad) + var(--_pad-x) + var(--_m3e-wnr-icon) + var(--_m3e-wnr-gap) -
+            var(--_m3e-wnr-pad) * (1 - var(--_p)) * var(--_m3e-wnr-target)
+        ) *
+        var(--_p)
+    );
+    --_y-top: calc(
+      var(--_icon-y) + var(--_m3e-wnr-icon) + var(--_pad-y) +
+        var(--m3e-comp-navigation-rail-vertical-item-icon-label-space)
+    );
+    --_y-start: calc((var(--_h) - var(--_lh)) / 2);
+
+    inline-size: max-content;
+    max-inline-size: var(--m3e-comp-navigation-rail-collapsed-container-width);
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    translate: calc(
+        ((1 - var(--_s)) * var(--_x-top) + var(--_s) * var(--_x-start) - var(--_flow-x)) *
+          var(--_m3e-wnr-dir)
+      )
+      calc((1 - var(--_s)) * var(--_y-top) + var(--_s) * var(--_y-start));
+    opacity: calc((var(--_p) + var(--_p) - 1) * (var(--_p) + var(--_p) - 1));
+    transition: color var(--m3e-comp-wide-navigation-rail-label-color-duration)
+      var(--m3e-comp-wide-navigation-rail-label-color-easing);
+  }
+
+  .m3e-wide-navigation-rail--expanded
+    > .m3e-navigation-item
+    > .m3e-navigation-item__content
+    > .m3e-navigation-item__label {
+    max-inline-size: calc(
+      var(--m3e-comp-navigation-rail-expanded-container-width-maximum) - var(--_m3e-wnr-pad) -
+        var(--_m3e-wnr-pad) - var(--_m3e-wnr-expanded-pad-x) - var(--_m3e-wnr-expanded-pad-x) -
+        var(--_m3e-wnr-icon) - var(--_m3e-wnr-gap)
+    );
+  }
+
+  /* --- Icon only: a centered circle (TopIconOrIconOnlyMeasurePolicy, no icon animation) ---- */
+  .m3e-wide-navigation-rail > .m3e-navigation-item:not(:has(.m3e-navigation-item__label)) {
+    --_pill-w: 100%;
+
+    justify-content: center;
+    block-size: max(
+      var(--m3e-comp-navigation-rail-vertical-item-active-indicator-width),
+      var(--_min-h)
+    );
+  }
+
+  .m3e-wide-navigation-rail
+    > .m3e-navigation-item:not(:has(.m3e-navigation-item__label))
+    > .m3e-navigation-item__content {
+    align-items: center;
+    inline-size: var(--m3e-comp-navigation-rail-vertical-item-active-indicator-width);
+    block-size: var(--m3e-comp-navigation-rail-vertical-item-active-indicator-width);
+    padding-inline: var(--_m3e-wnr-collapsed-pad-x);
+  }
+
+  .m3e-wide-navigation-rail
+    > .m3e-navigation-item:not(:has(.m3e-navigation-item__label))
+    > .m3e-navigation-item__content
+    > .m3e-navigation-item__indicator {
+    inset-inline-end: 0;
+    margin-inline: auto;
+  }
+
+  .m3e-wide-navigation-rail
+    > .m3e-navigation-item:not(:has(.m3e-navigation-item__label))
+    > .m3e-navigation-item__content
+    > .m3e-navigation-item__icon {
+    translate: none;
+  }
+
+  /* --- Modal ---------------------------------------------------------------------------------- */
+  .m3e-modal-wide-navigation-rail {
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    inline-size: max-content;
+    border-radius: var(--m3e-comp-navigation-rail-collapsed-container-shape);
+    background-color: var(--m3e-comp-navigation-rail-collapsed-container-color);
+  }
+
+  .m3e-modal-wide-navigation-rail > .m3e-wide-navigation-rail {
+    flex: 1 1 auto;
+  }
+
+  /* hideOnCollapse: the expanded rail slides in from −its width (shown only while open). */
+  .m3e-modal-wide-navigation-rail--hide-on-collapse > .m3e-wide-navigation-rail {
+    translate: calc((var(--_m3e-wnr-slide, 1) - 1) * 100% * var(--_m3e-wnr-dir)) 0;
+  }
+
+  /* The window is shown: the collapsed rail keeps its place (and color) under the scrim. */
+  .m3e-modal-wide-navigation-rail[data-open] {
+    inline-size: var(--m3e-comp-navigation-rail-collapsed-container-width);
+  }
+
+  .m3e-modal-wide-navigation-rail[data-open] > .m3e-wide-navigation-rail {
+    position: fixed;
+    inset-block: 0;
+    inset-inline: 0 auto;
+    block-size: auto;
+    max-block-size: none;
+    border-radius: var(--m3e-comp-modal-wide-navigation-rail-container-shape);
+    background-color: var(--m3e-comp-modal-wide-navigation-rail-container-color);
+    color: var(--m3e-sys-color-on-surface);
+  }
+
+  .m3e-modal-wide-navigation-rail[data-open]
+    > .m3e-wide-navigation-rail
+    > .m3e-wide-navigation-rail__header {
+    padding-block-start: var(--m3e-comp-modal-wide-navigation-rail-expanded-header-top-padding);
+  }
+
+  .m3e-modal-wide-navigation-rail__scrim {
+    display: none;
+  }
+
+  .m3e-modal-wide-navigation-rail[data-open] > .m3e-modal-wide-navigation-rail__scrim {
+    position: fixed;
+    inset: 0;
+    display: block;
+    inline-size: auto;
+    block-size: auto;
+    margin: 0;
+    padding: 0;
+    border: none;
+    background-color: var(--m3e-comp-modal-wide-navigation-rail-scrim-color);
+    opacity: calc(
+      var(--m3e-comp-modal-wide-navigation-rail-scrim-opacity) * var(--_m3e-wnr-scrim, 1)
+    );
+  }
+
+  /* hideOnCollapse: no collapsed rail. */
+  .m3e-modal-wide-navigation-rail--hide-on-collapse,
+  .m3e-modal-wide-navigation-rail--hide-on-collapse[data-open] {
+    inline-size: 0;
+    background: none;
+  }
+
+  .m3e-modal-wide-navigation-rail--hide-on-collapse:not([data-open]) > .m3e-wide-navigation-rail {
+    display: none;
   }
 
   @media (forced-colors: active) {
     .m3e-wide-navigation-rail {
       border-inline-end: var(--m3e-comp-divider-thickness) solid CanvasText;
     }
+
+    .m3e-modal-wide-navigation-rail[data-open] > .m3e-modal-wide-navigation-rail__scrim {
+      forced-color-adjust: none;
+    }
+  }
+}
+
+@layer m3e.base {
+  /* The elements render the contract inside themselves (m3e-elements). */
+  :where(m3e-wide-navigation-rail, m3e-modal-wide-navigation-rail) {
+    display: contents;
   }
 }

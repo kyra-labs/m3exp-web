@@ -14,7 +14,8 @@
  *
  * Selected: aria-current (any value but "false") or data-selected. Disabled: aria-disabled="true".
  * Layout: icon above the label; icon before the label inside a horizontal short navigation bar
- * and an expanded wide navigation rail (Compose NavigationItemIconPosition.Start).
+ * (Compose NavigationItemIconPosition.Start). The wide navigation rail lays its items out itself
+ * (wide-navigation-rail.css: one formula of the animated icon position).
  *
  * Sources (compose/material3 @ 19991f2c):
  * - NavigationItem.kt (ShortNavigationBarItem, WideNavigationRailItem): the whole item is the
@@ -135,14 +136,14 @@
   }
 
   /* --- Start-icon layout: the pill hugs icon + label --------------------------------------- */
-  :where(.m3e-short-navigation-bar--horizontal, .m3e-wide-navigation-rail--expanded)
+  :where(.m3e-short-navigation-bar--horizontal)
     > .m3e-navigation-item:has(.m3e-navigation-item__label) {
     --_m3e-nav-label-selected: var(--_m3e-nav-label-selected-start);
 
     text-align: start;
   }
 
-  :where(.m3e-short-navigation-bar--horizontal, .m3e-wide-navigation-rail--expanded)
+  :where(.m3e-short-navigation-bar--horizontal)
     > .m3e-navigation-item:has(.m3e-navigation-item__label)
     .m3e-navigation-item__content {
     position: relative;
@@ -151,7 +152,7 @@
     padding: var(--_m3e-nav-start-padding-block) var(--_m3e-nav-start-padding-inline);
   }
 
-  :where(.m3e-short-navigation-bar--horizontal, .m3e-wide-navigation-rail--expanded)
+  :where(.m3e-short-navigation-bar--horizontal)
     > .m3e-navigation-item:has(.m3e-navigation-item__label)
     :is(.m3e-navigation-item__indicator, .m3e-navigation-item__state) {
     position: absolute;
@@ -160,26 +161,26 @@
     margin-inline: auto;
   }
 
-  :where(.m3e-short-navigation-bar--horizontal, .m3e-wide-navigation-rail--expanded)
+  :where(.m3e-short-navigation-bar--horizontal)
     > .m3e-navigation-item:has(.m3e-navigation-item__label)
     .m3e-navigation-item__state {
     inline-size: 100%;
   }
 
-  :where(.m3e-short-navigation-bar--horizontal, .m3e-wide-navigation-rail--expanded)
+  :where(.m3e-short-navigation-bar--horizontal)
     > .m3e-navigation-item:has(.m3e-navigation-item__label)
     .m3e-navigation-item__indicator {
     inline-size: calc(100% * max(0, var(--_m3e-nav-indicator-progress)));
   }
 
-  :where(.m3e-short-navigation-bar--horizontal, .m3e-wide-navigation-rail--expanded)
+  :where(.m3e-short-navigation-bar--horizontal)
     > .m3e-navigation-item:has(.m3e-navigation-item__label)
     .m3e-navigation-item__icon {
     grid-area: icon;
   }
 
   /* Positioned so they paint above the absolutely positioned indicator and overlay. */
-  :where(.m3e-short-navigation-bar--horizontal, .m3e-wide-navigation-rail--expanded)
+  :where(.m3e-short-navigation-bar--horizontal)
     > .m3e-navigation-item:has(.m3e-navigation-item__label)
     :is(.m3e-navigation-item__icon, .m3e-navigation-item__label) {
     position: relative;
@@ -235,5 +236,12 @@
       :is(.m3e-navigation-item__icon, .m3e-navigation-item__label) {
       color: GrayText;
     }
+  }
+}
+
+@layer m3e.base {
+  /* <m3e-navigation-item> is data for the bar / rail elements, which render the contract. */
+  :where(m3e-navigation-item) {
+    display: none;
   }
 }
