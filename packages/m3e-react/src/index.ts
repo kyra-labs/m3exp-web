@@ -18,3 +18,4 @@ export * from './floating-toolbar/index.js';
 export * from './docked-toolbar/index.js';
 export * from './progress/index.js';
 export * from './search/index.js';
+export * from './window-size-class/index.js';

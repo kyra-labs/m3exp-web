@@ -4,7 +4,7 @@
 > Source: compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/tokens @ 19991f2c0858aadfcb442ce02b2c8e4743c96898  
 > Values: Copyright (C) The Android Open Source Project, Apache License 2.0 (see NOTICE).  
 
-Emitted: 371 system and 2992 component variables from 121 component token objects.
+Emitted: 377 system and 2992 component variables from 121 component token objects.
 
 ## Not emitted here
 
@@ -386,6 +386,12 @@ Emitted: 371 system and 2992 component variables from 121 component token object
 | `m3.material.io.md.sys.measurement.space700` | `56dp` | m3.material.io token DB "Google Material 3" v38.2.9 (_dsm/data/dsdb-m3/2026-09-23_06-10-05/MEASUREMENT.20543ce18892f7d9.json) set md.sys.measurement; matches material-web v2.5.0 labs/gb/styles/space/md-space-tokens.scss L6-27 | `--m3e-sys-space-700` | `56px` |  |
 | `m3.material.io.md.sys.measurement.space800` | `64dp` | m3.material.io token DB "Google Material 3" v38.2.9 (_dsm/data/dsdb-m3/2026-09-23_06-10-05/MEASUREMENT.20543ce18892f7d9.json) set md.sys.measurement; matches material-web v2.5.0 labs/gb/styles/space/md-space-tokens.scss L6-27 | `--m3e-sys-space-800` | `64px` |  |
 | `m3.material.io.md.sys.measurement.space900` | `72dp` | m3.material.io token DB "Google Material 3" v38.2.9 (_dsm/data/dsdb-m3/2026-09-23_06-10-05/MEASUREMENT.20543ce18892f7d9.json) set md.sys.measurement; matches material-web v2.5.0 labs/gb/styles/space/md-space-tokens.scss L6-27 | `--m3e-sys-space-900` | `72px` |  |
+| `WindowSizeClass.kt.WIDTH_DP_MEDIUM_LOWER_BOUND` | `600` | window/window-core/src/commonMain/kotlin/androidx/window/core/layout/WindowSizeClass.kt@19991f2c0858aadfcb442ce02b2c8e4743c96898 L146 (= window-core 1.5.0, which material3-adaptive depends on) | `--m3e-sys-window-width-medium` | `600px` |  |
+| `WindowSizeClass.kt.WIDTH_DP_EXPANDED_LOWER_BOUND` | `840` | window/window-core/src/commonMain/kotlin/androidx/window/core/layout/WindowSizeClass.kt@19991f2c0858aadfcb442ce02b2c8e4743c96898 L149 (= window-core 1.5.0, which material3-adaptive depends on) | `--m3e-sys-window-width-expanded` | `840px` |  |
+| `WindowSizeClass.kt.WIDTH_DP_LARGE_LOWER_BOUND` | `1200` | window/window-core/src/commonMain/kotlin/androidx/window/core/layout/WindowSizeClass.kt@19991f2c0858aadfcb442ce02b2c8e4743c96898 L152 (= window-core 1.5.0, which material3-adaptive depends on) | `--m3e-sys-window-width-large` | `1200px` |  |
+| `WindowSizeClass.kt.WIDTH_DP_EXTRA_LARGE_LOWER_BOUND` | `1600` | window/window-core/src/commonMain/kotlin/androidx/window/core/layout/WindowSizeClass.kt@19991f2c0858aadfcb442ce02b2c8e4743c96898 L155 (= window-core 1.5.0, which material3-adaptive depends on) | `--m3e-sys-window-width-extra-large` | `1600px` |  |
+| `WindowSizeClass.kt.HEIGHT_DP_MEDIUM_LOWER_BOUND` | `480` | window/window-core/src/commonMain/kotlin/androidx/window/core/layout/WindowSizeClass.kt@19991f2c0858aadfcb442ce02b2c8e4743c96898 L158 (= window-core 1.5.0, which material3-adaptive depends on) | `--m3e-sys-window-height-medium` | `480px` |  |
+| `WindowSizeClass.kt.HEIGHT_DP_EXPANDED_LOWER_BOUND` | `900` | window/window-core/src/commonMain/kotlin/androidx/window/core/layout/WindowSizeClass.kt@19991f2c0858aadfcb442ce02b2c8e4743c96898 L161 (= window-core 1.5.0, which material3-adaptive depends on) | `--m3e-sys-window-height-expanded` | `900px` |  |
 | `ColorScheme.kt.DisabledAlpha` | `0.38f` | compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/ColorScheme.kt@19991f2c0858aadfcb442ce02b2c8e4743c96898 L1544 | `--m3e-sys-state-disabled-alpha` | `0.38` |  |
 | `Material Symbols.fvar FILL default` | `0` | Material Symbols 2.975 fvar default (packages/m3e-codegen/vendor/material-symbols/manifest.json) | `--m3e-ref-typeface-icon-fill` | `0` |  |
 | `Material Symbols.fvar GRAD default` | `0` | Material Symbols 2.975 fvar default (packages/m3e-codegen/vendor/material-symbols/manifest.json) | `--m3e-ref-typeface-icon-grade` | `0` |  |

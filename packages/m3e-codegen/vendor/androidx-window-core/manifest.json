@@ -1,0 +1,8 @@
+{
+  "repo": "https://android.googlesource.com/platform/frameworks/support",
+  "commit": "19991f2c0858aadfcb442ce02b2c8e4743c96898",
+  "path": "window/window-core/src/commonMain/kotlin/androidx/window/core/layout",
+  "files": {
+    "WindowSizeClass.kt": "ebdedafcf39459fa938cd2bf31dd1052020670f4650bc50aac59be0107e11e95"
+  }
+}

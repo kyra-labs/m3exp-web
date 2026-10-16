@@ -274,6 +274,11 @@
     "limit": "6 KB"
   },
   {
+    "name": "m3e-elements: window-size-class entry (observeWindowSizeClass + m3e-motion classification; registers nothing)",
+    "path": "packages/m3e-elements/dist/window-size-class/index.js",
+    "limit": "2 KB"
+  },
+  {
     "name": "m3e-elements: <m3e-short-navigation-bar> entry (renders the navigation item contract, ripple)",
     "path": "packages/m3e-elements/dist/short-navigation-bar/index.js",
     "limit": "8 KB"
@@ -411,6 +416,13 @@
     "import": "{ SearchBar, SearchResult, AppBarWithSearch }",
     "ignore": ["react", "react-dom"],
     "limit": "10 KB"
+  },
+  {
+    "name": "m3e-react: { useWindowSizeClass } only (incl. observeWindowSizeClass from m3e-elements)",
+    "path": "packages/m3e-react/dist/index.js",
+    "import": "{ useWindowSizeClass }",
+    "ignore": ["react", "react-dom"],
+    "limit": "2 KB"
   },
   {
     "name": "m3e-react: { ShortNavigationBar } only (incl. react-aria link / button press)",

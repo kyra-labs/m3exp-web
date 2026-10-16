@@ -33,6 +33,10 @@ import {
   MATERIAL3_ANDROID_SOURCES,
   MATERIAL3_SAMPLES_PATH,
   MATERIAL3_SAMPLE_SOURCES,
+  MATERIAL3_ADAPTIVE_PATH,
+  MATERIAL3_ADAPTIVE_SOURCES,
+  WINDOW_CORE_PATH,
+  WINDOW_CORE_SOURCES,
   fetchMavenSources,
   fetchNpmFiles,
   fetchTokens,
@@ -184,6 +188,20 @@ async function main(command: string | undefined, flags: readonly string[]): Prom
     );
     await fetchVendor(repo, commit, MATERIAL3_SAMPLES_PATH, samplesDir, MATERIAL3_SAMPLE_SOURCES);
     await fetchVendor(repo, commit, UI_PATH, uiSourcesDir, UI_SOURCES);
+    await fetchVendor(
+      repo,
+      commit,
+      WINDOW_CORE_PATH,
+      shapesVendor('androidx-window-core'),
+      WINDOW_CORE_SOURCES,
+    );
+    await fetchVendor(
+      repo,
+      commit,
+      MATERIAL3_ADAPTIVE_PATH,
+      shapesVendor('androidx-material3-adaptive'),
+      MATERIAL3_ADAPTIVE_SOURCES,
+    );
     await fetchNpmFiles(
       MATERIAL_WEB_PACKAGE,
       requirePin(pin, 'material_web'),
