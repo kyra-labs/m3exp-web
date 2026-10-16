@@ -231,6 +231,22 @@ export const bottomAppBarTokens = {
   containerShape: "var(--m3e-sys-shape-corner-none)"
 } as const;
 
+/** BottomAppBarDefaults */
+export const bottomAppBarDefaults = {
+  bottomAppBarDefaultsContainerHeight: 80,
+  bottomAppBarDefaultsHorizontalArrangement: "flex-start",
+  bottomAppBarDefaultsContentPaddingHorizontal: 4,
+  bottomAppBarDefaultsContentPaddingTop: 4,
+  bottomAppBarDefaultsFabPaddingEnd: 12,
+  bottomAppBarDefaultsFabPaddingTop: 8,
+  bottomAppBarDefaultsContainerElevation: 0,
+  bottomAppBarDefaultsContainerShadow: "var(--m3e-sys-elevation-level0-shadow)",
+  bottomAppBarDefaultsFabContainerColor: "var(--m3e-sys-color-secondary-container)",
+  bottomAppBarDefaultsFabContentColor: "var(--m3e-sys-color-on-secondary-container)",
+  bottomAppBarDefaultsFabElevation: 0,
+  bottomAppBarDefaultsFabShadow: "var(--m3e-sys-elevation-level0-shadow)"
+} as const;
+
 /** ButtonDefaults */
 export const buttonDefaults = {
   buttonMinWidth: 58,
@@ -635,6 +651,27 @@ export const dockedToolbarTokens = {
   containerMinSpacing: 4,
   containerShape: "var(--m3e-sys-shape-corner-none)",
   containerTrailingSpace: 16
+} as const;
+
+/** DockedToolbarDefaults */
+export const dockedToolbarDefaults = {
+  dockedToolbarDefaultsContainerHeight: 64,
+  dockedToolbarDefaultsContentPaddingStart: 16,
+  dockedToolbarDefaultsContentPaddingEnd: 16,
+  dockedToolbarDefaultsHorizontalArrangement: "space-between",
+  dockedToolbarDefaultsFixedItemSpacing: 32,
+  dockedToolbarDefaultsFixedHorizontalArrangement: "center",
+  dockedToolbarDefaultsSpaceAroundArrangement: "space-around",
+  dockedToolbarDefaultsSpaceEvenlyArrangement: "space-evenly",
+  dockedToolbarDefaultsSpacedContentPadding: 0,
+  dockedToolbarDefaultsContainerColor: "var(--m3e-sys-color-surface-container)",
+  dockedToolbarDefaultsContentColor: "var(--m3e-sys-color-on-surface)",
+  dockedToolbarDefaultsVibrantContainerColor: "var(--m3e-sys-color-primary-container)",
+  dockedToolbarDefaultsVibrantContentColor: "var(--m3e-sys-color-on-primary-container)",
+  dockedToolbarDefaultsSnapDuration: "var(--m3e-sys-motion-spring-fast-spatial-duration)",
+  dockedToolbarDefaultsSnapEasing: "var(--m3e-sys-motion-spring-fast-spatial-easing)",
+  dockedToolbarDefaultsSnapDampingRatio: "var(--m3e-sys-motion-spring-fast-spatial-damping-ratio)",
+  dockedToolbarDefaultsSnapStiffness: "var(--m3e-sys-motion-spring-fast-spatial-stiffness)"
 } as const;
 
 /** DragHandleTokens */

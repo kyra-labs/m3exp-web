@@ -22,6 +22,14 @@
 // the browser scrolled, so `delta` (previous minus new scroll position, positive when the content
 // is pulled down, like Compose's `consumed.y`) moves both, and momentum comes from the browser
 // instead of flingAnimationSpec. Offsets are CSS px; hiding is negative.
+//
+// The docked toolbar (FlexibleBottomAppBar) and the legacy BottomAppBar use the same math, so they
+// reuse these functions (AppBar.kt@19991f2c0858aadfcb442ce02b2c8e4743c96898):
+// BottomAppBarStateImpl (L2513-2539) coerces heightOffset between heightOffsetLimit (minus the
+// bar's measured height, BottomAppBarLayout L1365-1375) and 0 like FloatingToolbarState.offset,
+// ExitAlwaysScrollBehavior.onPostScroll (L2569-2579) moves contentOffset and heightOffset by
+// `consumed.y` like the floating toolbar's, and settleAppBarBottom (L2600-2648) makes the same
+// settle decision (none within 1 % of either end; shown below half, hidden from half).
 import { settleTarget } from './app-bar-scroll.js';
 
 /** Where a floating toolbar leaves the screen (FloatingToolbarExitDirection), logical. */

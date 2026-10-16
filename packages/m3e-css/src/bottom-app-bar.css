@@ -1,0 +1,116 @@
+/*
+ * @deprecated (D4) Legacy bottom app bar (COMPONENT_SPEC §10; Compose BottomAppBar). Use the docked
+ * toolbar (docked-toolbar.css). Shipped until 2.0; no new features.
+ *
+ *   <div class="m3e-bottom-app-bar" role="toolbar" aria-label="Actions">
+ *     <div class="m3e-bottom-app-bar__actions">…icon buttons…</div>
+ *     <div class="m3e-bottom-app-bar__fab"><button class="m3e-fab" aria-label="Add">…</button></div>
+ *   </div>
+ *
+ * m3e-react <BottomAppBar> (m3e-elements DockedToolbarLayout) adds roving focus and the
+ * exit-always scroll behavior on the same classes.
+ *
+ * Sources (compose/material3 AppBar.kt @ 19991f2c; values in bottom-app-bar-defaults.css and
+ * docked-toolbar-defaults.css, lines in PARITY.md):
+ * - BottomAppBar (actions + floatingActionButton, L1077-1112 → L1194-1216 → BottomAppBarLayout
+ *   L1318-1389): a Row BottomAppBarTokens.ContainerHeight (80dp) tall above the window insets (here
+ *   the safe-area insets: horizontal + bottom), padded by ContentPadding (4dp start, top and end:
+ *   16dp minus IconButton's 12dp touch-target expansion), items centered vertically. The actions
+ *   take the remaining width, from the start; items are IconButtons in 48dp slots (ours add the
+ *   difference to their visual size as margin). The FAB slot is full height with 8dp above and
+ *   12dp after the FAB (FABVerticalPadding / FABHorizontalPadding), the FAB at its top start.
+ * - Container BottomAppBarDefaults.containerColor (surfaceContainer), content contentColorFor
+ *   (onSurface), BottomAppBarTokens.ContainerShape (CornerNone), BottomAppBarDefaults
+ *   .ContainerElevation 0dp (tonal; BottomAppBarTokens.ContainerElevation Level2 is not rendered).
+ * - The FAB as the BottomAppBarWithFAB sample passes it: BottomAppBarDefaults.bottomAppBarFabColor
+ *   (secondaryContainer / onSecondaryContainer) with FloatingActionButtonDefaults
+ *   .bottomAppBarFabElevation() (0dp in every state).
+ * - Exit on scroll (BottomAppBarDefaults.exitAlwaysScrollBehavior): as the docked toolbar.
+ */
+@import '@kyralabs/m3e-tokens/components/bottom-app-bar.css';
+@import '@kyralabs/m3e-tokens/components/bottom-app-bar-defaults.css';
+@import '@kyralabs/m3e-tokens/components/docked-toolbar-defaults.css';
+@import '@kyralabs/m3e-tokens/components/button-defaults.css';
+@import './fab.css';
+
+@layer m3e.components {
+  .m3e-bottom-app-bar {
+    display: flex;
+    align-items: center;
+    box-sizing: content-box;
+    block-size: calc(
+      var(--m3e-comp-bottom-app-bar-defaults-container-height) -
+        var(--m3e-comp-bottom-app-bar-defaults-content-padding-top)
+    );
+    padding-block: var(--m3e-comp-bottom-app-bar-defaults-content-padding-top)
+      env(safe-area-inset-bottom);
+    padding-inline: calc(
+        var(--m3e-comp-bottom-app-bar-defaults-content-padding-horizontal) +
+          env(safe-area-inset-left)
+      )
+      calc(
+        var(--m3e-comp-bottom-app-bar-defaults-content-padding-horizontal) +
+          env(safe-area-inset-right)
+      );
+    border-radius: var(--m3e-comp-bottom-app-bar-container-shape);
+    background-color: var(--m3e-comp-bottom-app-bar-container-color);
+    box-shadow: var(--m3e-comp-bottom-app-bar-defaults-container-shadow);
+    color: var(--m3e-comp-docked-toolbar-defaults-content-color);
+  }
+
+  .m3e-bottom-app-bar:dir(rtl) {
+    padding-inline: calc(
+        var(--m3e-comp-bottom-app-bar-defaults-content-padding-horizontal) +
+          env(safe-area-inset-right)
+      )
+      calc(
+        var(--m3e-comp-bottom-app-bar-defaults-content-padding-horizontal) +
+          env(safe-area-inset-left)
+      );
+  }
+
+  .m3e-bottom-app-bar__actions {
+    display: flex;
+    flex: 1 1 0;
+    align-items: center;
+    justify-content: var(--m3e-comp-bottom-app-bar-defaults-horizontal-arrangement);
+    min-inline-size: 0;
+  }
+
+  /* 48dp slots (IconButton's minimumInteractiveComponentSize). */
+  .m3e-bottom-app-bar__actions > .m3e-icon-button {
+    flex: none;
+    margin-inline: max(
+      0%,
+      calc((var(--m3e-comp-minimum-interactive-component-size) - var(--_m3e-icon-button-width)) / 2)
+    );
+  }
+
+  .m3e-bottom-app-bar__fab {
+    display: flex;
+    align-items: flex-start;
+    align-self: stretch;
+    padding-block-start: var(--m3e-comp-bottom-app-bar-defaults-fab-padding-top);
+    padding-inline-end: var(--m3e-comp-bottom-app-bar-defaults-fab-padding-end);
+  }
+
+  .m3e-bottom-app-bar__fab > .m3e-fab {
+    --_m3e-fab-container: var(--m3e-comp-bottom-app-bar-defaults-fab-container-color);
+    --_m3e-fab-content: var(--m3e-comp-bottom-app-bar-defaults-fab-content-color);
+    --_m3e-fab-shadow: var(--m3e-comp-bottom-app-bar-defaults-fab-shadow);
+    --_m3e-fab-shadow-hovered: var(--m3e-comp-bottom-app-bar-defaults-fab-shadow);
+    --_m3e-fab-shadow-focused: var(--m3e-comp-bottom-app-bar-defaults-fab-shadow);
+    --_m3e-fab-shadow-pressed: var(--m3e-comp-bottom-app-bar-defaults-fab-shadow);
+  }
+
+  /* Exit on scroll (written by the JS layers). */
+  .m3e-bottom-app-bar[data-scroll-behavior] {
+    translate: 0 calc(-1 * var(--_m3e-bottom-app-bar-offset, 0%));
+  }
+
+  @media (forced-colors: active) {
+    .m3e-bottom-app-bar {
+      border-block-start: thin solid CanvasText;
+    }
+  }
+}

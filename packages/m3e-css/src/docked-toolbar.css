@@ -1,0 +1,122 @@
+/*
+ * Docked toolbar (COMPONENT_SPEC §10; Compose FlexibleBottomAppBar). Static layout, the four
+ * arrangements, both color styles and the exit-on-scroll offset. <m3e-docked-toolbar> and m3e-react
+ * <DockedToolbar> (m3e-elements DockedToolbarLayout) add roving focus and the exit-always scroll
+ * behavior on the same classes.
+ *
+ *   <div class="m3e-docked-toolbar" role="toolbar" aria-label="Actions">…icon buttons…</div>
+ *
+ * Modifiers: --center (fixed spacing, centered), --space-around, --space-evenly, --vibrant.
+ * Without a modifier the items spread (space between). Dock it yourself at the bottom of the
+ * screen or of a container (position: fixed / sticky / absolute, inset-block-end: 0).
+ *
+ * Sources (compose/material3 AppBar.kt and samples/AppBarSamples.kt @ 19991f2c; values in
+ * docked-toolbar-defaults.css, lines in PARITY.md):
+ * - Layout (FlexibleBottomAppBar L1286-1315 → BottomAppBarLayout L1318-1389): a Surface with
+ *   BottomAppBarTokens.ContainerShape (CornerNone) and AppBarTokens.ContainerElevation (Level0,
+ *   tonal: no shadow) holding a Row that is FlexibleBottomAppBarHeight (64dp) tall above the window
+ *   insets (here the safe-area insets: horizontal + bottom), padded by FlexibleContentPadding
+ *   (16dp start and end), items centered vertically. Items are IconButtons whose
+ *   minimumInteractiveComponentSize reserves a 48dp slot: ours lay out at their visual size (touch
+ *   target via ::after), so the bar adds the difference as margin, as the floating toolbar does.
+ * - Arrangements: FlexibleHorizontalArrangement = SpaceBetween (default, “spread”: the first and
+ *   last items keep the 16dp padding); FlexibleFixedHorizontalArrangement = spacedBy(
+ *   DockedToolbarTokens.ContainerMaxSpacing 32dp, CenterHorizontally) (“center”); the samples'
+ *   SpaceAround / SpaceEvenly with no horizontal padding. DockedToolbarTokens.ContainerMinSpacing
+ *   (4dp) is not read by Compose: spread items can meet.
+ * - Colors: BottomAppBarDefaults.containerColor (surfaceContainer) / contentColorFor (onSurface);
+ *   vibrant: the ExitAlwaysBottomAppBarFixedVibrant sample's primaryContainer / onPrimaryContainer.
+ *   Items inherit the content color (LocalContentColor), so standard icon buttons take it.
+ * - Exit on scroll (BottomAppBarDefaults.exitAlwaysScrollBehavior): the JS layers write the offset
+ *   (0 → minus the bar height) and the bar moves down by it (Compose shrinks the bar's layout
+ *   height by it, drawing the bar from its top; here the layout box stays put).
+ */
+@import '@kyralabs/m3e-tokens/components/bottom-app-bar.css';
+@import '@kyralabs/m3e-tokens/components/docked-toolbar-defaults.css';
+@import '@kyralabs/m3e-tokens/components/button-defaults.css';
+
+@layer m3e.components {
+  .m3e-docked-toolbar {
+    --_m3e-docked-toolbar-container: var(--m3e-comp-docked-toolbar-defaults-container-color);
+    --_m3e-docked-toolbar-content: var(--m3e-comp-docked-toolbar-defaults-content-color);
+    --_m3e-docked-toolbar-padding-start: var(
+      --m3e-comp-docked-toolbar-defaults-content-padding-start
+    );
+    --_m3e-docked-toolbar-padding-end: var(--m3e-comp-docked-toolbar-defaults-content-padding-end);
+
+    display: flex;
+    align-items: center;
+    justify-content: var(--m3e-comp-docked-toolbar-defaults-horizontal-arrangement);
+    box-sizing: content-box;
+    block-size: var(--m3e-comp-docked-toolbar-defaults-container-height);
+    padding-block: 0 env(safe-area-inset-bottom);
+    padding-inline: calc(var(--_m3e-docked-toolbar-padding-start) + env(safe-area-inset-left))
+      calc(var(--_m3e-docked-toolbar-padding-end) + env(safe-area-inset-right));
+    border-radius: var(--m3e-comp-bottom-app-bar-container-shape);
+    background-color: var(--_m3e-docked-toolbar-container);
+    color: var(--_m3e-docked-toolbar-content);
+  }
+
+  .m3e-docked-toolbar:dir(rtl) {
+    padding-inline: calc(var(--_m3e-docked-toolbar-padding-start) + env(safe-area-inset-right))
+      calc(var(--_m3e-docked-toolbar-padding-end) + env(safe-area-inset-left));
+  }
+
+  .m3e-docked-toolbar--center {
+    justify-content: var(--m3e-comp-docked-toolbar-defaults-fixed-horizontal-arrangement);
+    gap: var(--m3e-comp-docked-toolbar-defaults-fixed-item-spacing);
+  }
+
+  .m3e-docked-toolbar--space-around,
+  .m3e-docked-toolbar--space-evenly {
+    --_m3e-docked-toolbar-padding-start: var(
+      --m3e-comp-docked-toolbar-defaults-spaced-content-padding
+    );
+    --_m3e-docked-toolbar-padding-end: var(
+      --m3e-comp-docked-toolbar-defaults-spaced-content-padding
+    );
+  }
+
+  .m3e-docked-toolbar--space-around {
+    justify-content: var(--m3e-comp-docked-toolbar-defaults-space-around-arrangement);
+  }
+
+  .m3e-docked-toolbar--space-evenly {
+    justify-content: var(--m3e-comp-docked-toolbar-defaults-space-evenly-arrangement);
+  }
+
+  .m3e-docked-toolbar--vibrant {
+    --_m3e-docked-toolbar-container: var(
+      --m3e-comp-docked-toolbar-defaults-vibrant-container-color
+    );
+    --_m3e-docked-toolbar-content: var(--m3e-comp-docked-toolbar-defaults-vibrant-content-color);
+  }
+
+  /* 48dp slots (IconButton's minimumInteractiveComponentSize). */
+  .m3e-docked-toolbar > .m3e-icon-button {
+    flex: none;
+    margin-inline: max(
+      0%,
+      calc((var(--m3e-comp-minimum-interactive-component-size) - var(--_m3e-icon-button-width)) / 2)
+    );
+  }
+
+  /* Exit on scroll (written by the JS layers). */
+  .m3e-docked-toolbar[data-scroll-behavior] {
+    translate: 0 calc(-1 * var(--_m3e-docked-toolbar-offset, 0%));
+  }
+
+  /* Forced colors drop the background: keep the bar's edge visible. */
+  @media (forced-colors: active) {
+    .m3e-docked-toolbar {
+      border-block-start: thin solid CanvasText;
+    }
+  }
+}
+
+@layer m3e.base {
+  /* <m3e-docked-toolbar> renders the contract inside itself. */
+  :where(m3e-docked-toolbar) {
+    display: contents;
+  }
+}

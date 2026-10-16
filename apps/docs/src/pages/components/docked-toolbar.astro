@@ -1,0 +1,196 @@
+---
+import DockedToolbarPlayground from '../../islands/DockedToolbarPlayground.tsx';
+import Base from '../../layouts/Base.astro';
+
+/** The items of Compose's ExitAlwaysBottomAppBar* samples (the third is a filled icon button). */
+const items = [
+  { icon: 'arrow_back', label: 'Back' },
+  { icon: 'arrow_forward', label: 'Forward' },
+  { icon: 'add', label: 'Add', filled: true },
+  { icon: 'check', label: 'Check' },
+  { icon: 'edit', label: 'Edit' },
+];
+
+/** Static (CSS-only) toolbars: every arrangement, and the vibrant color style. */
+const statics = [
+  { id: 'spread', modifier: '', title: 'Spread (default): space between, 16dp ends' },
+  { id: 'center', modifier: 'm3e-docked-toolbar--center', title: 'Center: 32dp apart' },
+  { id: 'space-around', modifier: 'm3e-docked-toolbar--space-around', title: 'Space around' },
+  { id: 'space-evenly', modifier: 'm3e-docked-toolbar--space-evenly', title: 'Space evenly' },
+  {
+    id: 'vibrant',
+    modifier: 'm3e-docked-toolbar--center m3e-docked-toolbar--vibrant',
+    title: 'Vibrant, center',
+  },
+] as const;
+
+const rows = Array.from({ length: 30 }, (_, i) => `Row ${String(i + 1)}`);
+---
+
+<Base title="Docked toolbar">
+  <link rel="stylesheet" href="/icons/docs-icons.css" slot="head" />
+  <h1>Docked toolbar</h1>
+  <p>
+    A full-width bar of actions docked at the bottom of the screen (COMPONENT_SPEC §10; Compose{' '}
+    <code>FlexibleBottomAppBar</code>): 64dp tall, surface container, no corner radius and no
+    shadow, items in 48dp slots. The items spread with 16dp ends (the default), sit centered 32dp
+    apart, or are spaced around / evenly. With the exit-always scroll behavior it hides on scroll
+    down and comes back on scroll up; a partly hidden bar snaps on the fast spatial spring when
+    scrolling stops. It replaces the legacy bottom app bar (deprecated, below).
+  </p>
+
+  <section aria-labelledby="css-heading">
+    <h2 id="css-heading">CSS only</h2>
+    <p>
+      Plain HTML with m3e-css classes: <code>.m3e-docked-toolbar</code> with{' '}
+      <code>role="toolbar"</code>, and <code>--center</code>, <code>--space-around</code>,{' '}
+      <code>--space-evenly</code> or <code>--vibrant</code>. Roving focus and the scroll behavior come
+      from <code>&lt;m3e-docked-toolbar&gt;</code> or React.
+    </p>
+    {
+      statics.map((s) => (
+        <figure class="docs-docked-toolbar-figure">
+          <figcaption>{s.title}</figcaption>
+          <div class="docs-nav-frame">
+            <div
+              class={['m3e-docked-toolbar', s.modifier].filter(Boolean).join(' ')}
+              role="toolbar"
+              aria-label={`Static ${s.id}`}
+              data-testid={`static-${s.id}`}
+            >
+              {items.map((item, i) => (
+                <button
+                  type="button"
+                  class={
+                    item.filled
+                      ? 'm3e-icon-button m3e-icon-button--filled m3e-icon-button--width-wide'
+                      : 'm3e-icon-button'
+                  }
+                  aria-label={item.label}
+                  tabindex={i === 0 ? '0' : '-1'}
+                >
+                  <span class="m3e-icon" aria-hidden="true">
+                    {item.icon}
+                  </span>
+                </button>
+              ))}
+            </div>
+          </div>
+        </figure>
+      ))
+    }
+  </section>
+
+  <section aria-labelledby="element-heading">
+    <h2 id="element-heading">Element</h2>
+    <p>
+      <code>&lt;m3e-docked-toolbar scroll-behavior="exit-always"&gt;</code> docked under a scrolling
+      region: scroll down and it slides away by the scrolled distance, scroll up and it returns. One
+      tab stop; the arrow keys, Home and End move between items. Focus never lands in a hidden bar: it
+      comes back when focus moves into it and stays while it holds focus.
+    </p>
+    <div class="docs-docked-toolbar-scroll-frame" data-testid="element-frame">
+      <div
+        class="docs-docked-toolbar-scroll"
+        id="element-scroller"
+        data-testid="element-scroller"
+        tabindex="0"
+        role="region"
+        aria-label="Element exit-always demo"
+      >
+        <ul class="docs-scroll-list">
+          {rows.map((row) => <li>{row}</li>)}
+        </ul>
+      </div>
+      <m3e-docked-toolbar
+        label="Element actions"
+        arrangement="center"
+        scroll-behavior="exit-always"
+        scroll-target="element-scroller"
+        data-testid="element-toolbar"
+      >
+        {
+          items.map((item) => (
+            <button
+              type="button"
+              class={
+                item.filled
+                  ? 'm3e-icon-button m3e-icon-button--filled m3e-icon-button--width-wide'
+                  : 'm3e-icon-button'
+              }
+              aria-label={item.label}
+            >
+              <span class="m3e-icon" aria-hidden="true">
+                {item.icon}
+              </span>
+            </button>
+          ))
+        }
+      </m3e-docked-toolbar>
+    </div>
+  </section>
+
+  <section aria-labelledby="react-heading">
+    <h2 id="react-heading">React</h2>
+    <p>
+      <code>&lt;DockedToolbar arrangement scrollBehavior="exitAlways" scrollTarget&gt;</code> over a
+      scrolling region, with the arrangement switchable.
+    </p>
+    <DockedToolbarPlayground client:only="react" kind="docked" />
+  </section>
+
+  <section aria-labelledby="legacy-heading" data-deprecated>
+    <h2 id="legacy-heading">Bottom app bar (deprecated)</h2>
+    <p class="docs-deprecated" role="note">
+      Deprecated (DECISIONS D4): the legacy <code>BottomAppBar</code> ships until 2.0 for migration and
+      gets no new features. Use the docked toolbar.
+    </p>
+    <p>
+      Compose <code>BottomAppBar</code> with actions and a FAB: 80dp tall, actions from the start, the
+      FAB 8dp below the top and 16dp from the end, colored secondary container with no shadow as in
+      Compose's <code>BottomAppBarWithFAB</code> sample. CSS <code>.m3e-bottom-app-bar</code> or React{' '}
+      <code>&lt;BottomAppBar actions floatingActionButton scrollBehavior&gt;</code>; no element.
+    </p>
+    <div class="docs-nav-frame">
+      <div
+        class="m3e-bottom-app-bar"
+        role="toolbar"
+        aria-label="Legacy example"
+        data-testid="legacy-static"
+      >
+        <div class="m3e-bottom-app-bar__actions">
+          <button type="button" class="m3e-icon-button" aria-label="Check" tabindex="0">
+            <span class="m3e-icon" aria-hidden="true">check</span>
+          </button>
+          <button type="button" class="m3e-icon-button" aria-label="Edit" tabindex="-1">
+            <span class="m3e-icon" aria-hidden="true">edit</span>
+          </button>
+        </div>
+        <div class="m3e-bottom-app-bar__fab">
+          <button type="button" class="m3e-fab" aria-label="Add" tabindex="-1">
+            <span class="m3e-icon" aria-hidden="true">add</span>
+          </button>
+        </div>
+      </div>
+    </div>
+    <DockedToolbarPlayground client:only="react" kind="legacy" />
+  </section>
+
+  <section aria-labelledby="sources-heading">
+    <h2 id="sources-heading">Sources</h2>
+    <p>
+      androidx Compose Material3 1.5.0-beta01 (<code>19991f2c</code>): <code>AppBar.kt</code>{' '}
+      (<code>FlexibleBottomAppBar</code>, <code>BottomAppBar</code>, <code>BottomAppBarDefaults</code>,{' '}
+      <code>BottomAppBarState</code>, <code>exitAlwaysScrollBehavior</code>,{' '}
+      <code>settleAppBarBottom</code>), <code>DockedToolbarTokens.kt</code>,{' '}
+      <code>BottomAppBarTokens.kt</code> and the values Compose renders in{' '}
+      <code>components/docked-toolbar-defaults.css</code> /{' '}
+      <code>components/bottom-app-bar-defaults.css</code>; <code>AppBarSamples.kt</code> for the
+      space-around / space-evenly arrangements, the vibrant color and the bottom app bar FAB.
+    </p>
+  </section>
+</Base>
+
+<script>
+  import '@kyralabs/m3exp-web/elements';
+</script>
