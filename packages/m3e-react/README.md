@@ -75,4 +75,27 @@ rule with a function of the size class. `isNavigationHidden` runs Compose's show
 `primaryAction` (e.g. a `<Fab>`) floats above the bar or heads the rail / drawer. The selection,
 the item elements (bar ↔ rail) and keyboard focus survive a switch.
 
+## Canonical layouts
+
+```tsx
+import { ListDetailPaneScaffold, useListDetailPaneScaffoldNavigator } from '@kyralabs/m3e-react';
+
+const navigator = useListDetailPaneScaffoldNavigator<number>();
+<ListDetailPaneScaffold
+  navigator={navigator}
+  paneLabels={{ list: 'Inbox', detail: 'Message' }}
+  hasDragHandle
+  listPane={<Inbox onOpen={(id) => navigator.navigateTo('detail', id)} />}
+  detailPane={<Message id={navigator.currentDestination?.contentKey} onBack={() => navigator.navigateBack()} />}
+  style={{ blockSize: '100%' }}
+/>;
+```
+
+`ListDetailPaneScaffold` / `SupportingPaneScaffold` (Compose's names) with
+`useListDetailPaneScaffoldNavigator` / `useSupportingPaneScaffoldNavigator` (Compose
+`remember…PaneScaffoldNavigator`): one pane below 840px of the layout's own width, two from 840px,
+three from 1200px (`paneRule="recommended"`: from 1600px). The navigator re-renders on each
+change (`scaffoldValue`, `currentDestination`, `isExpanded(pane)`, `canNavigateBack()`). `FeedLayout`
+is the CSS-only feed grid.
+
 Apache-2.0; see `LICENSE` and `NOTICE`.

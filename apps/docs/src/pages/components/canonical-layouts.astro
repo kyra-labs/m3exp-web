@@ -1,0 +1,392 @@
+---
+import CanonicalLayoutsPlayground from '../../islands/CanonicalLayoutsPlayground.tsx';
+import Base from '../../layouts/Base.astro';
+
+// Frame widths, one per window size class (compact, medium, expanded, large, extra-large).
+const widths = [
+  { px: 360, label: 'Compact 360' },
+  { px: 700, label: 'Medium 700' },
+  { px: 1000, label: 'Expanded 1000' },
+  { px: 1300, label: 'Large 1300' },
+  { px: 1700, label: 'Extra-large 1700' },
+];
+const mail = [
+  { key: '1', from: 'Ali Connors', subject: 'Brunch this weekend?' },
+  { key: '2', from: 'Sandra Adams', subject: 'Summer BBQ' },
+  { key: '3', from: 'Trevor Hansen', subject: 'Oui oui' },
+];
+const feed = ['Mountains', 'Coast', 'Forest', 'Desert', 'City', 'Lakes', 'Islands'];
+---
+
+<Base title="Canonical layouts">
+  <h1>Canonical layouts</h1>
+  <p>
+    List-detail and supporting pane (COMPONENT_SPEC §16a; Compose <code>ListDetailPaneScaffold</code>
+    and <code>SupportingPaneScaffold</code>) and the feed (m3.material.io). Each layout sizes itself by
+    its own width (a container query on <code>.m3e-layout</code>), so it adapts inside a navigation
+    suite's content area or any pane. Pick a frame width below, or resize the window.
+  </p>
+  <table class="docs-table">
+    <caption>Panes side by side by the layout's width</caption>
+    <thead>
+      <tr>
+        <th scope="col">Width</th>
+        <th scope="col">Compose (default)</th>
+        <th scope="col">m3.material.io (<code>pane-rule="recommended"</code>)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>compact, medium (&lt; 840px)</td><td>1</td><td>1</td></tr>
+      <tr><td>expanded (840–1199px)</td><td>2</td><td>2</td></tr>
+      <tr><td>large (1200–1599px)</td><td>3</td><td>2</td></tr>
+      <tr><td>extra-large (≥ 1600px)</td><td>3</td><td>3</td></tr>
+    </tbody>
+  </table>
+
+  <div class="docs-layout-widths" role="group" aria-label="Frame width">
+    {
+      widths.map((w, i) => (
+        <button
+          type="button"
+          class="m3e-button m3e-button--outlined"
+          data-width={w.px}
+          aria-pressed={i === 2 ? 'true' : 'false'}
+        >
+          <span class="m3e-button__label">{w.label}</span>
+        </button>
+      ))
+    }
+  </div>
+
+  <section aria-labelledby="list-detail-heading">
+    <h2 id="list-detail-heading">List-detail (element)</h2>
+    <p>
+      <code>&lt;m3e-list-detail-layout&gt;</code> with <code>slot="list"</code>,{' '}
+      <code>slot="detail"</code> and <code>slot="extra"</code> children. A click on an element with{' '}
+      <code>data-pane-navigate="detail"</code> navigates there (Compose's navigator{' '}
+      <code>navigateTo</code>); <code>data-pane-navigate="back"</code> goes back and hides while there
+      is nothing to go back to. Focus moves to the new pane, and back to the item. The handle between
+      two panes drags the split (←/→, Home / End, Enter).
+    </p>
+    <div class="docs-layout-scroll">
+      <div class="docs-layout-frame" data-testid="list-detail-frame" style="inline-size: 1000px">
+        <m3e-list-detail-layout
+          data-testid="list-detail"
+          list-label="Inbox"
+          detail-label="Message"
+          extra-label="Notes"
+          drag-handle
+        >
+          <div slot="list" class="docs-layout-list">
+            {
+              mail.map((m) => (
+                <button
+                  type="button"
+                  class="docs-layout-item"
+                  data-pane-navigate="detail"
+                  data-content-key={m.key}
+                >
+                  <span class="docs-layout-item__title">{m.from}</span>
+                  <span>{m.subject}</span>
+                </button>
+              ))
+            }
+          </div>
+          <div slot="detail" class="docs-layout-screen">
+            <div class="docs-layout-bar">
+              <button
+                type="button"
+                class="m3e-icon-button m3e-icon-button--standard"
+                aria-label="Back"
+                data-pane-navigate="back"
+                data-testid="list-detail-back"
+              >
+                <span class="m3e-icon" aria-hidden="true">arrow_back</span>
+              </button>
+              <h3 data-testid="list-detail-title">No item selected</h3>
+            </div>
+            <div class="docs-layout-card">
+              <p data-testid="list-detail-body">Select an item from the list.</p>
+              <button
+                type="button"
+                class="m3e-button m3e-button--tonal"
+                data-pane-navigate="extra"
+                data-testid="list-detail-extra"
+              >
+                <span class="m3e-button__label">Show notes</span>
+              </button>
+            </div>
+          </div>
+          <div slot="extra" class="docs-layout-screen">
+            <div class="docs-layout-bar">
+              <button
+                type="button"
+                class="m3e-icon-button m3e-icon-button--standard"
+                aria-label="Back from notes"
+                data-pane-navigate="back"
+              >
+                <span class="m3e-icon" aria-hidden="true">arrow_back</span>
+              </button>
+              <h3>Notes</h3>
+            </div>
+            <div class="docs-layout-card docs-layout-card--extra">
+              <p>Extra content about the message.</p>
+            </div>
+          </div>
+        </m3e-list-detail-layout>
+      </div>
+    </div>
+  </section>
+
+  <section aria-labelledby="supporting-heading">
+    <h2 id="supporting-heading">Supporting pane (element)</h2>
+    <p>
+      <code>&lt;m3e-supporting-pane-layout&gt;</code>: the main pane, with the supporting pane beside it
+      from 840px; below that it reflows under the main pane when the layout is at least 900px tall
+      (Compose's default <code>AdaptStrategy.Reflow</code>), else it is a destination of its own.
+    </p>
+    <div class="docs-layout-scroll">
+      <div class="docs-layout-frame" data-testid="supporting-frame" style="inline-size: 1000px">
+        <m3e-supporting-pane-layout
+          data-testid="supporting"
+          main-label="Article"
+          supporting-label="Related"
+        >
+          <div class="docs-layout-screen">
+            <div class="docs-layout-bar"><h3>My content</h3></div>
+            <div class="docs-layout-card">
+              <p>
+                The main pane holds the primary content; the supporting pane adds related material.
+              </p>
+              <button
+                type="button"
+                class="m3e-button m3e-button--tonal"
+                data-pane-navigate="supporting"
+                data-testid="supporting-open"
+              >
+                <span class="m3e-button__label">Show related</span>
+              </button>
+            </div>
+          </div>
+          <div slot="supporting" class="docs-layout-list">
+            <div class="docs-layout-bar">
+              <button
+                type="button"
+                class="m3e-icon-button m3e-icon-button--standard"
+                aria-label="Back to the article"
+                data-pane-navigate="back"
+              >
+                <span class="m3e-icon" aria-hidden="true">arrow_back</span>
+              </button>
+              <h3>Related</h3>
+            </div>
+            {mail.map((m) => <p class="docs-layout-item">{m.subject}</p>)}
+          </div>
+        </m3e-supporting-pane-layout>
+      </div>
+    </div>
+  </section>
+
+  <section aria-labelledby="react-heading">
+    <h2 id="react-heading">React</h2>
+    <p>
+      <code>useListDetailPaneScaffoldNavigator()</code> (Compose{' '}
+      <code>rememberListDetailPaneScaffoldNavigator</code>) and{' '}
+      <code>&lt;ListDetailPaneScaffold navigator listPane detailPane extraPane&gt;</code>; the list
+      marks the selected item only while the detail pane is expanded beside it, as the Compose sample
+      does.
+    </p>
+    <div class="docs-layout-scroll">
+      <div class="docs-layout-frame" data-testid="react-frame" style="inline-size: 1000px">
+        <CanonicalLayoutsPlayground client:only="react" />
+      </div>
+    </div>
+  </section>
+
+  <section aria-labelledby="suite-heading">
+    <h2 id="suite-heading">Inside a navigation suite</h2>
+    <p>
+      The layout reads its own width, not the window's: here it sits in the content area beside an
+      expanded rail, so a 1000px frame leaves it under 840px and it shows one pane where the
+      layouts above show two.
+    </p>
+    <div class="docs-layout-scroll">
+      <div class="docs-layout-frame" data-testid="suite-frame" style="inline-size: 1000px">
+        <m3e-navigation-suite
+          label="Layout in a suite"
+          selected="inbox"
+          layout-type="wide-navigation-rail-expanded"
+        >
+          <m3e-navigation-item value="inbox" icon="inbox">Inbox</m3e-navigation-item>
+          <m3e-navigation-item value="star" icon="star">Starred</m3e-navigation-item>
+          <m3e-list-detail-layout data-testid="suite-layout" list-label="Suite inbox" detail-label="Suite message">
+            <div slot="list" class="docs-layout-list">
+              {
+                mail.map((m) => (
+                  <button
+                    type="button"
+                    class="docs-layout-item"
+                    data-pane-navigate="detail"
+                    data-content-key={m.key}
+                  >
+                    <span class="docs-layout-item__title">{m.from}</span>
+                    <span>{m.subject}</span>
+                  </button>
+                ))
+              }
+            </div>
+            <div slot="detail" class="docs-layout-screen">
+              <div class="docs-layout-bar">
+                <button
+                  type="button"
+                  class="m3e-icon-button m3e-icon-button--standard"
+                  aria-label="Back to the suite inbox"
+                  data-pane-navigate="back"
+                >
+                  <span class="m3e-icon" aria-hidden="true">arrow_back</span>
+                </button>
+                <h3>Message</h3>
+              </div>
+              <div class="docs-layout-card"><p>The message.</p></div>
+            </div>
+          </m3e-list-detail-layout>
+        </m3e-navigation-suite>
+      </div>
+    </div>
+  </section>
+
+  <section aria-labelledby="static-heading">
+    <h2 id="static-heading">No JavaScript</h2>
+    <p>
+      <code>.m3e-layout &gt; .m3e-pane-scaffold--list-detail</code> with the panes as regions; the
+      container queries show the destination (<code>data-destination</code>, here the detail) below
+      840px, two panes from 840px and three from 1200px.
+    </p>
+    <div class="docs-layout-scroll">
+      <div class="docs-layout-frame" data-testid="static-frame" style="inline-size: 1000px">
+        <div class="m3e-layout">
+          <div class="m3e-pane-scaffold m3e-pane-scaffold--list-detail" data-destination="primary">
+            <div
+              class="m3e-pane-scaffold__pane m3e-pane-scaffold__pane--secondary"
+              role="region"
+              aria-label="Static list"
+            >
+              <div class="docs-layout-list">
+                {mail.map((m) => <p class="docs-layout-item">{m.from}</p>)}
+              </div>
+            </div>
+            <div
+              class="m3e-pane-scaffold__pane m3e-pane-scaffold__pane--primary"
+              role="region"
+              aria-label="Static detail"
+            >
+              <div class="docs-layout-screen">
+                <div class="docs-layout-bar"><h3>{mail[0]?.subject}</h3></div>
+                <div class="docs-layout-card"><p>Shown on its own below 840px.</p></div>
+              </div>
+            </div>
+            <div
+              class="m3e-pane-scaffold__pane m3e-pane-scaffold__pane--tertiary"
+              role="region"
+              aria-label="Static extra"
+            >
+              <div class="docs-layout-screen">
+                <div class="docs-layout-bar"><h3>Notes</h3></div>
+                <div class="docs-layout-card docs-layout-card--extra"><p>From 1200px.</p></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section aria-labelledby="feed-heading">
+    <h2 id="feed-heading">Feed</h2>
+    <p>
+      <code>.m3e-layout &gt; .m3e-feed</code> (React <code>&lt;FeedLayout&gt;</code>): one column below
+      600px, then as many columns as fit, with 16 / 24dp margins (m3.material.io).{' '}
+      <code>.m3e-feed__item--wide</code> spans two columns. Compose has no feed scaffold; the gap and
+      the column width are project defaults until m3.material.io states them.
+    </p>
+    <div class="docs-layout-scroll">
+      <div class="docs-layout-frame docs-layout-frame--feed" data-testid="feed-frame" style="inline-size: 1000px">
+        <div class="m3e-layout">
+          <div class="m3e-feed">
+            {
+              feed.map((name, i) => (
+                <article
+                  class:list={['m3e-card m3e-card--filled', i === 0 && 'm3e-feed__item--wide']}
+                >
+                  <div class="docs-layout-card">
+                    <h3>{name}</h3>
+                    <p>Feed item {i + 1}</p>
+                  </div>
+                </article>
+              ))
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section aria-labelledby="sources-heading">
+    <h2 id="sources-heading">Sources</h2>
+    <p>
+      androidx Compose Material3 adaptive (1.4.0-alpha03) at <code>19991f2c</code>:{' '}
+      <code>ThreePaneScaffold.kt</code>, <code>ThreePaneScaffoldValue.kt</code>,{' '}
+      <code>ListDetailPaneScaffold.kt</code>, <code>SupportingPaneScaffold.kt</code>,{' '}
+      <code>PaneScaffoldDirective.kt</code>, <code>PaneMotion.kt</code>, <code>Pane.kt</code>,{' '}
+      <code>PaneExpansionState.kt</code>, <code>ThreePaneScaffoldNavigator.kt</code> and{' '}
+      <code>ThreePaneScaffoldSample.kt</code>; material3 <code>DragHandle.kt</code>. m3.material.io
+      Breakpoints, Scaffold and Canonical examples (feed, pane counts, margins).
+    </p>
+  </section>
+</Base>
+
+<script>
+  import '@kyralabs/m3exp-web/elements';
+
+  const subjects: Record<string, string> = {
+    '1': 'Brunch this weekend?',
+    '2': 'Summer BBQ',
+    '3': 'Oui oui',
+  };
+  type Layout = HTMLElement & {
+    currentDestination: { pane: string; contentKey?: unknown } | null;
+    scaffoldValue: Record<string, string>;
+  };
+  const layout = document.querySelector<Layout>('[data-testid="list-detail"]')!;
+  const title = document.querySelector<HTMLElement>('[data-testid="list-detail-title"]')!;
+  const body = document.querySelector<HTMLElement>('[data-testid="list-detail-body"]')!;
+  // The detail shows the item the history last navigated to; the list marks it while both panes
+  // show (m3.material.io: a selected state only in two-pane layouts).
+  let selected: string | undefined;
+  layout.addEventListener('scaffold-value-change', () => {
+    const history = (layout as unknown as { navigator: { destinationHistory: { contentKey?: unknown }[] } })
+      .navigator.destinationHistory;
+    const key = [...history].reverse().find((d) => typeof d.contentKey === 'string')?.contentKey as
+      | string
+      | undefined;
+    selected = key;
+    title.textContent = key ? (subjects[key] ?? '') : 'No item selected';
+    body.textContent = key ? `This is a description about ${subjects[key] ?? ''}.` : 'Select an item from the list.';
+    const both = layout.scaffoldValue['primary'] === 'expanded' && layout.scaffoldValue['secondary'] === 'expanded';
+    for (const item of layout.querySelectorAll<HTMLElement>('.docs-layout-item[data-content-key]')) {
+      if (both && item.dataset['contentKey'] === selected) item.setAttribute('aria-current', 'true');
+      else item.removeAttribute('aria-current');
+    }
+  });
+
+  // Frame width buttons: every frame takes the width (the layouts follow their own width).
+  const buttons = document.querySelectorAll<HTMLButtonElement>('.docs-layout-widths button');
+  for (const button of buttons) {
+    button.addEventListener('click', () => {
+      for (const b of buttons) b.setAttribute('aria-pressed', String(b === button));
+      for (const frame of document.querySelectorAll<HTMLElement>('.docs-layout-frame')) {
+        frame.style.inlineSize = `${button.dataset['width'] ?? '1000'}px`;
+      }
+    });
+  }
+</script>

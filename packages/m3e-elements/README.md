@@ -392,4 +392,36 @@ disabled ones. Enter and Space press from the center (links: Enter only). To sco
 call `attachAutoRipple(root, signal)` from the package root instead; that import has no side
 effect, and aborting the signal removes the attributes and variables it wrote.
 
+## Canonical layouts
+
+```js
+import '@kyralabs/m3e-elements/list-detail-layout.js'; // or supporting-pane-layout.js
+```
+
+```html
+<m3e-list-detail-layout list-label="Inbox" detail-label="Message" drag-handle style="block-size: 100%">
+  <div slot="list">
+    <button data-pane-navigate="detail" data-content-key="42">Brunch this weekend?</button>
+  </div>
+  <div slot="detail">
+    <button data-pane-navigate="back" aria-label="Back">…</button>
+    …
+  </div>
+  <div slot="extra">…</div>
+</m3e-list-detail-layout>
+```
+
+`<m3e-list-detail-layout>` and `<m3e-supporting-pane-layout>` (Compose `ListDetailPaneScaffold` /
+`SupportingPaneScaffold` with their navigators) render the `.m3e-layout > .m3e-pane-scaffold`
+contract (load `layout.css`) and size themselves by their own width: one pane below 840px, two
+from 840px, three (with an extra pane) from 1200px — `pane-rule="recommended"` keeps two until
+1600px. `navigateTo(pane, contentKey?)` (`list` / `detail` / `extra`, `main` / `supporting` /
+`extra`), `navigateBack(behavior?)`, `canNavigateBack()` and the `navigator` property (an m3e-motion
+`ThreePaneScaffoldNavigator`) drive them; a click on `[data-pane-navigate]` does too, and
+`[data-pane-navigate="back"]` hides while there is nothing to go back to. Panes move on Compose's
+pane motion, focus follows the destination, and `drag-handle` adds the pane expansion handle.
+Event: `scaffold-value-change`. The behavior is the `pane-scaffold-layout.js` entry
+(`PaneScaffoldLayout`, also used by m3e-react); the elements load the `pane-motion.js` and
+`pane-expansion.js` entries lazily.
+
 Apache-2.0; see `LICENSE` and `NOTICE`.

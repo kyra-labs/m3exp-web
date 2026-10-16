@@ -39,6 +39,10 @@ import {
   NAVIGATION_SUITE_REDUCED_MOTION,
   extractNavigationSuiteDefaults,
 } from './navigation-suite-defaults.js';
+import {
+  PANE_SCAFFOLD_REDUCED_MOTION,
+  extractPaneScaffoldDefaults,
+} from './pane-scaffold-defaults.js';
 import { SEARCH_REDUCED_MOTION, extractSearchDefaults } from './search-defaults.js';
 import {
   PROGRESS_INDICATOR_REDUCED_MOTION,
@@ -1146,6 +1150,35 @@ export function generate({
     ),
   });
 
+  // Canonical layouts (material3-adaptive adaptive-layout; no tokens exist): the directive's
+  // partition spacer and default pane sizes, the pane motion spring, and the feed values (see
+  // pane-scaffold-defaults.ts).
+  const paneDefaults = extractPaneScaffoldDefaults(material3Sources);
+  const directivePath = MATERIAL3_ADAPTIVE_SOURCES.find((p) =>
+    p.endsWith('/PaneScaffoldDirective.kt'),
+  )!;
+  const layoutDir = `${MATERIAL3_ADAPTIVE_PATH}/${directivePath.slice(0, directivePath.lastIndexOf('/'))}`;
+  components.set('pane-scaffold-defaults', {
+    object: 'PaneScaffoldDefaults',
+    tokens: paneDefaults.map((d) => {
+      const e: Emitted = {
+        name: d.name,
+        value: d.value,
+        object: d.owner,
+        member: d.member,
+        raw: d.raw,
+        line: d.line,
+        cite:
+          d.file === null ? (d.cite ?? '') : `${layoutDir}/${d.file}@${commit} L${String(d.line)}`,
+      };
+      if (d.note !== undefined) e.note = d.note;
+      return e;
+    }),
+    js: Object.fromEntries(
+      paneDefaults.map((d) => [camel(d.name.replace(/^--m3e-comp-/, '').split('-')), d.js]),
+    ),
+  });
+
   // TabRowDefaults / Tab.kt values Compose renders that are not in *NavigationTabTokens: layout
   // literals, indicator defaults, colors, divider and springs (see tabs-defaults.ts).
   // Component tokens resolve to sys tokens: references to the tab / divider token objects are
@@ -1467,6 +1500,21 @@ export function generate({
         '}',
       ],
       `${MATERIAL3_ADAPTIVE_PATH}/${suitePath} + ${ANIMATION_CORE_DIR}/VectorizedAnimationSpec.kt`,
+    ),
+  );
+  out.set(
+    'components/pane-scaffold-defaults.css',
+    cssFile(
+      'Compose three-pane scaffold values (PaneScaffoldDirective, PaneMotionDefaults; no tokens exist) and the m3.material.io feed values (lines and citations: PARITY.md).',
+      components.get('pane-scaffold-defaults')!.tokens,
+      [
+        '@media (prefers-reduced-motion: reduce) {',
+        '  :root {',
+        ...PANE_SCAFFOLD_REDUCED_MOTION.map((l) => `    ${l}`),
+        '  }',
+        '}',
+      ],
+      `${layoutDir}/{PaneScaffoldDirective,PaneMotion,PaneExpansionState,ThreePaneScaffold}.kt + m3.material.io`,
     ),
   );
   out.set(

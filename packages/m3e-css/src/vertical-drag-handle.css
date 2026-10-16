@@ -1,0 +1,49 @@
+/*
+ * Vertical drag handle (Compose VerticalDragHandle, material3 DragHandle.kt): the bar a pane
+ * scaffold's pane expansion handle draws (layout.css). The host gives it its touch target and
+ * states:
+ *
+ *   <div class="m3e-pane-scaffold__drag-handle" role="separator" …>   (≥ 48dp target)
+ *     <span class="m3e-vertical-drag-handle"></span>
+ *   </div>
+ *
+ * [data-pressed] on the host: pressed size / shape / color; [data-dragged]: dragged. Compose
+ * switches them without animation (graphicsLayer shape and layout size read the interaction
+ * state directly, DragHandle.kt L84-124), so this does too.
+ *
+ * Tokens (DragHandleTokens.kt @ 19991f2c, generated drag-handle.css): 4 × 48dp, corner full,
+ * outline; pressed and dragged 12 × 52dp, corner medium, on-surface.
+ */
+@import '@kyralabs/m3e-tokens/components/drag-handle.css';
+
+@layer m3e.components {
+  .m3e-vertical-drag-handle {
+    display: block;
+    flex: none;
+    inline-size: var(--m3e-comp-drag-handle-width);
+    block-size: var(--m3e-comp-drag-handle-height);
+    border-radius: var(--m3e-comp-drag-handle-shape);
+    background-color: var(--m3e-comp-drag-handle-color);
+    pointer-events: none;
+  }
+
+  [data-pressed] > .m3e-vertical-drag-handle {
+    inline-size: var(--m3e-comp-drag-handle-width-pressed);
+    block-size: var(--m3e-comp-drag-handle-height-pressed);
+    border-radius: var(--m3e-comp-drag-handle-shape-pressed);
+    background-color: var(--m3e-comp-drag-handle-color-pressed);
+  }
+
+  [data-dragged] > .m3e-vertical-drag-handle {
+    inline-size: var(--m3e-comp-drag-handle-width-dragged);
+    block-size: var(--m3e-comp-drag-handle-height-dragged);
+    border-radius: var(--m3e-comp-drag-handle-shape-dragged);
+    background-color: var(--m3e-comp-drag-handle-color-dragged);
+  }
+
+  @media (forced-colors: active) {
+    .m3e-vertical-drag-handle {
+      background-color: CanvasText;
+    }
+  }
+}
