@@ -63,6 +63,12 @@ export interface ProgressTokens {
   trackThickness: number;
   gap: number;
   wavelength: number;
+  stopSize: number;
+  /** The root's size in px (re-measured on resize; read once, not every frame). */
+  width: number;
+  height: number;
+  linear: LinearIndeterminateTiming | null;
+  circular: CircularIndeterminateTiming | null;
 }
 
 export function readTokens(el: Element): ProgressTokens {
@@ -87,6 +93,11 @@ export function readTokens(el: Element): ProgressTokens {
     trackThickness: num(style, '--_m3e-progress-track-thickness') || 0,
     gap: num(style, '--_m3e-progress-gap') || 0,
     wavelength: num(style, '--_m3e-progress-wavelength') || 0,
+    stopSize: num(style, '--_m3e-progress-stop-size') || 0,
+    width: el.clientWidth,
+    height: el.clientHeight,
+    linear: linearTiming(style),
+    circular: circularTiming(style),
   };
 }
 
@@ -185,6 +196,10 @@ export abstract class ProgressIndicatorDriver {
     root.toggleAttribute('data-driven', true);
     if (typeof ResizeObserver === 'function') {
       this.#observer = new ResizeObserver(() => {
+        if (this.tokens) {
+          this.tokens.width = root.clientWidth;
+          this.tokens.height = root.clientHeight;
+        }
         this.#schedule();
       });
       this.#observer.observe(root);

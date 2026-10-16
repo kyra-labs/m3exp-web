@@ -5,8 +5,6 @@ import {
   type ProgressIndicatorOptions,
   type ProgressTokens,
   SVG_NS,
-  linearTiming,
-  num,
   renderProgressRoot,
 } from './driver.js';
 
@@ -89,10 +87,9 @@ export class LinearProgressDriver extends ProgressIndicatorDriver {
     const springing = this.value?.isRunning ?? false;
     if (this.options.shape !== 'wavy') return springing;
     const svg = this.root.querySelector('svg');
-    const width = this.root.clientWidth;
-    const height = this.root.clientHeight;
+    const { width, height } = t;
     if (!svg || width <= 0 || height <= 0) return springing;
-    const timing = progress === null ? linearTiming(t.style) : null;
+    const timing = progress === null ? t.linear : null;
     const fractions =
       progress === null
         ? timing === null
@@ -128,7 +125,7 @@ export class LinearProgressDriver extends ProgressIndicatorDriver {
       const stop = linearWavyStopIndicator(
         progress ?? 0,
         width,
-        num(t.style, '--_m3e-progress-stop-size') || 0,
+        t.stopSize,
         paths.capWidth,
         t.trackThickness,
       );

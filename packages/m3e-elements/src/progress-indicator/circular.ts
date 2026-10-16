@@ -9,7 +9,6 @@ import {
   type ProgressIndicatorOptions,
   type ProgressTokens,
   SVG_NS,
-  circularTiming,
   renderProgressRoot,
 } from './driver.js';
 
@@ -71,7 +70,7 @@ export class CircularProgressDriver extends ProgressIndicatorDriver {
     const progress = this.progressAt(now);
     const springing = this.value?.isRunning ?? false;
     const svg = this.root.querySelector('svg');
-    const size = Math.min(this.root.clientWidth, this.root.clientHeight);
+    const size = Math.min(t.width, t.height);
     if (this.options.shape !== 'wavy' || !svg || size <= 0) return springing;
     const wavelength = this.options.wavelength ?? t.wavelength;
     const travel = this.travel(
@@ -87,7 +86,7 @@ export class CircularProgressDriver extends ProgressIndicatorDriver {
       // A fixed amplitude: a Morph only for one between 0 and 1 (requiresMorph).
       amplitude = this.targetAmplitude(t, null);
       this.#morph ||= amplitude > 0 && amplitude < 1;
-      const timing = circularTiming(t.style);
+      const timing = t.circular;
       if (timing) {
         const frame = circularIndeterminateFrame(now - this.startedAt, timing);
         end = frame.sweep;
