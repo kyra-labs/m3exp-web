@@ -19,6 +19,10 @@ import { extractChipDefaults } from './chip-defaults.js';
 import { extractElevationMotion } from './elevation-motion.js';
 import { extractFabDefaults } from './fab-defaults.js';
 import { extractFabMenuDefaults } from './fab-menu-defaults.js';
+import {
+  FLOATING_TOOLBAR_REDUCED_MOTION,
+  extractFloatingToolbarDefaults,
+} from './floating-toolbar-defaults.js';
 import { extractCenteredPadding, extractNavigationDefaults } from './navigation-defaults.js';
 import { extractLoadingIndicatorMotion } from './loading-indicator-motion.js';
 import { extractMenuDefaults } from './menu-defaults.js';
@@ -895,6 +899,31 @@ export function generate({
     ),
   });
 
+  // FloatingToolbarDefaults values Compose renders (see floating-toolbar-defaults.ts).
+  const floatingToolbarDefaults = extractFloatingToolbarDefaults(material3Sources, files);
+  components.set('floating-toolbar-defaults', {
+    object: 'FloatingToolbarDefaults',
+    tokens: floatingToolbarDefaults.map((d) => {
+      const e: Emitted = {
+        name: d.name,
+        value: d.value,
+        object: d.owner,
+        member: d.member,
+        raw: d.raw,
+        line: d.line,
+        cite: `${MATERIAL3_DIR}/${d.file}@${commit} L${String(d.line)}`,
+      };
+      if (d.note !== undefined) e.note = d.note;
+      return e;
+    }),
+    js: Object.fromEntries(
+      floatingToolbarDefaults.map((d) => [
+        camel(d.name.replace(/^--m3e-comp-/, '').split('-')),
+        d.js,
+      ]),
+    ),
+  });
+
   // Menu layout literals and open/close targets (Menu.kt, MenuDefaults.kt; see menu-defaults.ts).
   const menuDefaults = extractMenuDefaults(material3Sources);
   components.set('menu-defaults', {
@@ -1075,6 +1104,21 @@ export function generate({
                             : cssFile(`Component tokens: ${c.object}.`, c.tokens),
     );
   }
+  out.set(
+    'components/floating-toolbar-defaults.css',
+    cssFile(
+      'Compose FloatingToolbarDefaults values that are not in FloatingToolbarTokens (lines: PARITY.md).',
+      components.get('floating-toolbar-defaults')!.tokens,
+      [
+        '@media (prefers-reduced-motion: reduce) {',
+        '  :root {',
+        ...FLOATING_TOOLBAR_REDUCED_MOTION.map((l) => `    ${l}`),
+        '  }',
+        '}',
+      ],
+      `${MATERIAL3_DIR}/{FloatingToolbar,FloatingActionButton,ColorScheme}.kt`,
+    ),
+  );
 
   out.set(
     'sys.ts',
