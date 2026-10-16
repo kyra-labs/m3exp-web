@@ -26,6 +26,8 @@ export * from './wide-navigation-rail/index.js';
 export * from './modal-wide-navigation-rail/index.js';
 export * from './navigation-drawer-layout/index.js';
 export * from './navigation-drawer/index.js';
+export * from './navigation-suite-layout/index.js';
+export * from './navigation-suite/index.js';
 export * from './tabs-layout/index.js';
 export * from './tabs/index.js';
 // Not `export *` from './ripple/index.js': that entry enables the ripple document-wide on import.

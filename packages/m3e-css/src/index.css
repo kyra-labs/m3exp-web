@@ -21,6 +21,7 @@
 @import './short-navigation-bar.css';
 @import './wide-navigation-rail.css';
 @import './navigation-drawer.css';
+@import './navigation-suite.css'; /* re-imports the bar, rail and drawer: right after them */
 @import './tabs.css';
 @import './navigation-bar.css'; /* @deprecated (D4) */
 @import './navigation-rail.css'; /* @deprecated (D4) */

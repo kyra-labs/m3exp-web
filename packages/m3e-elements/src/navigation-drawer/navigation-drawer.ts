@@ -1,17 +1,11 @@
-import { attachRipple } from '../base/ripple.js';
-import {
-  M3eNavigationContainer,
-  M3eNavigationItem,
-  setItemAttributes,
-  span,
-} from '../navigation-item/navigation-item.js';
+import { M3eNavigationContainer, M3eNavigationItem } from '../navigation-item/navigation-item.js';
 import {
   NavigationDrawerLayout,
   type NavigationDrawerVariant,
 } from '../navigation-drawer-layout/navigation-drawer-layout.js';
+import { createDrawerItemElement, fillDrawerItemElement } from './drawer-item.js';
 
 const DRAWER = 'm3e-navigation-drawer';
-const ITEM = 'm3e-navigation-drawer-item';
 const VARIANTS: readonly NavigationDrawerVariant[] = ['permanent', 'dismissible', 'modal'];
 
 /**
@@ -173,8 +167,7 @@ export class M3eNavigationDrawer extends M3eNavigationContainer {
   }
 
   protected override createItemElement(_doc: Document, el: HTMLElement, signal: AbortSignal): void {
-    el.className = ITEM;
-    attachRipple(el, signal);
+    createDrawerItemElement(el, signal);
   }
 
   /** NavigationDrawerItem: [icon] label [badge]. */
@@ -184,26 +177,6 @@ export class M3eNavigationDrawer extends M3eNavigationContainer {
     el: HTMLElement,
     selected: boolean,
   ): void {
-    setItemAttributes(el, item, selected);
-    const label = item.textContent.trim();
-    const part = (name: string) => el.querySelector<HTMLSpanElement>(`:scope > .${ITEM}__${name}`);
-    const parts: HTMLSpanElement[] = [];
-    if (item.icon) {
-      const icon = part('icon') ?? span(doc, `m3e-icon ${ITEM}__icon`);
-      if (icon.textContent !== item.icon) icon.textContent = item.icon;
-      parts.push(icon);
-    }
-    const text = part('label') ?? span(doc, `${ITEM}__label`, undefined, false);
-    if (text.textContent !== label) text.textContent = label;
-    parts.push(text);
-    if (item.badge) {
-      const badge = part('badge') ?? span(doc, `${ITEM}__badge`, undefined, false);
-      if (badge.textContent !== item.badge) badge.textContent = item.badge;
-      parts.push(badge);
-    }
-    const current = [...el.children];
-    if (current.length !== parts.length || parts.some((p, i) => current[i] !== p)) {
-      el.replaceChildren(...parts);
-    }
+    fillDrawerItemElement(doc, item, el, selected);
   }
 }

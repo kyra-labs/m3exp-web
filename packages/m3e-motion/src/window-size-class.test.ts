@@ -4,6 +4,9 @@ import {
   WINDOW_WIDTH_BREAKPOINTS,
   isAtLeastBreakpoint,
   isHeightAtLeastBreakpoint,
+  NAVIGATION_SUITE_EXPANDED_FROM,
+  NAVIGATION_SUITE_TYPES,
+  isNavigationBarType,
   isWidthAtLeastBreakpoint,
   navigationSuiteType,
   paneScaffoldDirective,
@@ -151,5 +154,40 @@ describe('navigationSuiteType', () => {
     expect(type(900, 800, true)).toBe('short-navigation-bar-medium');
     expect(type(600, 480)).toBe('wide-navigation-rail-collapsed');
     expect(type(1600, 1000)).toBe('wide-navigation-rail-collapsed');
+  });
+
+  it('expands from `expandedFrom` (the scaffold default: large), after the bar rules', () => {
+    const expanded = (width: number, height: number, options = {}) =>
+      navigationSuiteType(windowSizeClass({ width, height }), {
+        expandedFrom: NAVIGATION_SUITE_EXPANDED_FROM,
+        ...options,
+      });
+    expect(NAVIGATION_SUITE_EXPANDED_FROM).toBe('large');
+    expect(expanded(599, 900)).toBe('short-navigation-bar-compact');
+    expect(expanded(1199, 900)).toBe('wide-navigation-rail-collapsed');
+    expect(expanded(1200, 900)).toBe('wide-navigation-rail-expanded');
+    expect(expanded(1800, 900)).toBe('wide-navigation-rail-expanded');
+    // Compact height and tabletop keep the medium bar (Compose's custom configuration sample).
+    expect(expanded(1600, 479)).toBe('short-navigation-bar-medium');
+    expect(expanded(1600, 900, { isTabletop: true })).toBe('short-navigation-bar-medium');
+    expect(expanded(1300, 900, { expandedType: 'navigation-drawer' })).toBe('navigation-drawer');
+    // A px bound compares with the class's lower bound (isWidthAtLeastBreakpoint).
+    expect(expanded(900, 900, { expandedFrom: 840 })).toBe('wide-navigation-rail-expanded');
+    expect(expanded(1000, 900, { expandedFrom: 1000 })).toBe('wide-navigation-rail-collapsed');
+    expect(expanded(1300, 900, { expandedFrom: null })).toBe('wide-navigation-rail-collapsed');
+    // The V1 set never reaches large.
+    expect(
+      navigationSuiteType(
+        windowSizeClass({ width: 1800, height: 900 }, { largeAndExtraLargeWidth: false }),
+        { expandedFrom: 'large' },
+      ),
+    ).toBe('wide-navigation-rail-collapsed');
+  });
+
+  it('bar types', () => {
+    expect(NAVIGATION_SUITE_TYPES.filter(isNavigationBarType)).toEqual([
+      'short-navigation-bar-compact',
+      'short-navigation-bar-medium',
+    ]);
   });
 });

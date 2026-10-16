@@ -453,6 +453,30 @@ button.docs-tile {
   align-items: center;
 }
 
+/*
+ * Navigation suite frames: the suite fills the frame as it would fill an app window (the window
+ * size class is the viewport's, so the navigation follows the browser width). The frame clips the
+ * suite; `contain` keeps it from painting outside.
+ */
+.docs-suite-frame {
+  /* Fits a short window too (the compact-height example). */
+  block-size: min(calc(var(--m3e-sys-space-900) * 7), calc(100dvh - var(--m3e-sys-space-900)));
+  margin: var(--m3e-sys-space-300) 0;
+  contain: layout paint;
+  outline: var(--m3e-comp-divider-thickness) solid var(--m3e-sys-color-outline-variant);
+}
+
+.docs-suite-content {
+  padding: var(--m3e-sys-space-200);
+}
+
+.docs-suite-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--m3e-sys-space-200);
+  align-items: center;
+}
+
 /* Tabs: phone-width frames (Compose catalog, 412dp), the panel below the row. */
 .docs-tabs-frames {
   display: flex;

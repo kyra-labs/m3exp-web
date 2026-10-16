@@ -107,7 +107,9 @@ export const WINDOW_CORE_SOURCES = ['WindowSizeClass.kt'] as const;
 /**
  * Compose Material3 adaptive (1.4.0-alpha03 at the pin) as ported by m3e-motion's
  * window-size-class.ts: currentWindowAdaptiveInfo(V2), the default width/height size class sets,
- * calculatePaneScaffoldDirective and NavigationSuiteScaffoldDefaults.navigationSuiteType.
+ * calculatePaneScaffoldDirective and NavigationSuiteScaffoldDefaults.navigationSuiteType; the
+ * navigation suite scaffold (layout, show / hide state, defaults) and its samples, read by the
+ * generator (navigation-suite-defaults.ts) and ported by m3e-motion's navigation-suite.ts.
  */
 export const MATERIAL3_ADAPTIVE_PATH = 'compose/material3';
 export const MATERIAL3_ADAPTIVE_SOURCES = [
@@ -115,6 +117,7 @@ export const MATERIAL3_ADAPTIVE_SOURCES = [
   'adaptive/adaptive/src/commonMain/kotlin/androidx/compose/material3/adaptive/WindowSizeClassHelper.kt',
   'adaptive/adaptive-layout/src/commonMain/kotlin/androidx/compose/material3/adaptive/layout/PaneScaffoldDirective.kt',
   'material3-adaptive-navigation-suite/src/commonMain/kotlin/androidx/compose/material3/adaptive/navigationsuite/NavigationSuiteScaffold.kt',
+  'material3-adaptive-navigation-suite/samples/src/main/java/androidx/compose/material3/adaptive/navigationsuite/samples/NavigationSuiteScaffoldSamples.kt',
 ] as const;
 
 /**

@@ -35,6 +35,10 @@ import {
   NAVIGATION_DRAWER_REDUCED_MOTION,
   extractNavigationDrawerDefaults,
 } from './navigation-drawer-defaults.js';
+import {
+  NAVIGATION_SUITE_REDUCED_MOTION,
+  extractNavigationSuiteDefaults,
+} from './navigation-suite-defaults.js';
 import { SEARCH_REDUCED_MOTION, extractSearchDefaults } from './search-defaults.js';
 import {
   PROGRESS_INDICATOR_REDUCED_MOTION,
@@ -48,6 +52,8 @@ import {
 import { extractTabsDefaults } from './tabs-defaults.js';
 import {
   ANIMATION_CORE_PATH as ANIMATION_CORE_DIR,
+  MATERIAL3_ADAPTIVE_PATH,
+  MATERIAL3_ADAPTIVE_SOURCES,
   MATERIAL3_PATH as MATERIAL3_DIR,
   MATERIAL3_ANDROID_PATH as MATERIAL3_ANDROID_DIR,
   MATERIAL3_SAMPLES_PATH as MATERIAL3_SAMPLES_DIR,
@@ -1109,6 +1115,37 @@ export function generate({
     ),
   });
 
+  // Navigation suite scaffold values (material3-adaptive-navigation-suite; no tokens exist): the
+  // scaffold colors, the primary action placement and the show / hide spring (see
+  // navigation-suite-defaults.ts).
+  const suiteDefaults = extractNavigationSuiteDefaults(material3Sources);
+  const suitePath = MATERIAL3_ADAPTIVE_SOURCES.find((p) =>
+    p.endsWith('/NavigationSuiteScaffold.kt'),
+  )!;
+  const suiteDir = (file: string) =>
+    file === 'VectorizedAnimationSpec.kt'
+      ? ANIMATION_CORE_DIR
+      : `${MATERIAL3_ADAPTIVE_PATH}/${suitePath.slice(0, suitePath.lastIndexOf('/'))}`;
+  components.set('navigation-suite-defaults', {
+    object: 'NavigationSuiteScaffoldDefaults',
+    tokens: suiteDefaults.map((d) => {
+      const e: Emitted = {
+        name: d.name,
+        value: d.value,
+        object: d.owner,
+        member: d.member,
+        raw: d.raw,
+        line: d.line,
+        cite: `${suiteDir(d.file)}/${d.file}@${commit} L${String(d.line)}`,
+      };
+      if (d.note !== undefined) e.note = d.note;
+      return e;
+    }),
+    js: Object.fromEntries(
+      suiteDefaults.map((d) => [camel(d.name.replace(/^--m3e-comp-/, '').split('-')), d.js]),
+    ),
+  });
+
   // TabRowDefaults / Tab.kt values Compose renders that are not in *NavigationTabTokens: layout
   // literals, indicator defaults, colors, divider and springs (see tabs-defaults.ts).
   // Component tokens resolve to sys tokens: references to the tab / divider token objects are
@@ -1417,6 +1454,21 @@ export function generate({
     ),
   );
 
+  out.set(
+    'components/navigation-suite-defaults.css',
+    cssFile(
+      'Compose navigation suite scaffold values (NavigationSuiteScaffoldDefaults and the scaffold layout; no tokens exist; lines: PARITY.md).',
+      components.get('navigation-suite-defaults')!.tokens,
+      [
+        '@media (prefers-reduced-motion: reduce) {',
+        '  :root {',
+        ...NAVIGATION_SUITE_REDUCED_MOTION.map((l) => `    ${l}`),
+        '  }',
+        '}',
+      ],
+      `${MATERIAL3_ADAPTIVE_PATH}/${suitePath} + ${ANIMATION_CORE_DIR}/VectorizedAnimationSpec.kt`,
+    ),
+  );
   out.set(
     'components/docked-toolbar-defaults.css',
     cssFile(

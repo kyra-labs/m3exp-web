@@ -17,6 +17,11 @@ export {
   type NavigationDrawerHeadline,
   type NavigationDrawerProps,
 } from './NavigationDrawer.js';
+export {
+  NavigationSuiteScaffold,
+  type NavigationSuiteDestination,
+  type NavigationSuiteScaffoldProps,
+} from './NavigationSuiteScaffold.js';
 // eslint-disable-next-line @typescript-eslint/no-deprecated -- D4: legacy components ship until 2.0
 export { NavigationBar, type NavigationBarProps } from './NavigationBar.js';
 // eslint-disable-next-line @typescript-eslint/no-deprecated -- D4: legacy components ship until 2.0
