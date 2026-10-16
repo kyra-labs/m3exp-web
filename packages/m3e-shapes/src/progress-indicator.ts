@@ -200,6 +200,13 @@ export function linearWavyStopIndicator(
 // CircularShapes (L1269–1407).
 const MIN_VERTICES = 5;
 
+/**
+ * The wave count of a circular wavy indicator: as many wavelengths as fit around the circle (its
+ * radius inset by half the stroke), at least 5 (`MinCircularVertexCount`).
+ */
+export const circularWavyVertexCount = (size: number, wavelength: number, stroke: number) =>
+  Math.max(MIN_VERTICES, Math.round((2 * Math.PI * (size / 2 - stroke / 2)) / wavelength));
+
 export interface CircularWavyInput extends ProgressStrokes {
   /** Square drawing size (px). */
   size: number;
@@ -251,9 +258,7 @@ export class CircularWavyPathCache {
         this.#morph = new Morph(this.#trackPolygon!, this.#activePolygon!);
       return;
     }
-    // As many waves as the wavelength fits around the circle (its radius inset by the stroke).
-    const r = size / 2 - stroke / 2;
-    const n = Math.max(MIN_VERTICES, Math.round((2 * Math.PI * r) / wavelength));
+    const n = circularWavyVertexCount(size, wavelength, stroke);
     if (n !== this.#vertices) {
       this.#trackPolygon = circle({ numVertices: n }).normalized();
       this.#activePolygon = star(n, {

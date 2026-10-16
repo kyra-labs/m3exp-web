@@ -35,6 +35,7 @@ export {
   type LinearWavyPaths,
   LinearWavyPathCache,
   type ProgressStrokes,
+  circularWavyVertexCount,
   linearWavyStopIndicator,
 } from './progress-indicator.js';
 export {

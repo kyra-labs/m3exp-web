@@ -181,6 +181,28 @@
     "limit": "8 KB"
   },
   {
+    "name": "m3e-css: linear progress",
+    "path": "packages/m3e-css/dist/linear-progress.css",
+    "rolldown": false,
+    "limit": "4 KB"
+  },
+  {
+    "name": "m3e-css: circular progress",
+    "path": "packages/m3e-css/dist/circular-progress.css",
+    "rolldown": false,
+    "limit": "4 KB"
+  },
+  {
+    "name": "m3e-elements: <m3e-linear-progress> entry (wavy paths + PathMeasure from m3e-shapes, m3e-motion timelines)",
+    "path": "packages/m3e-elements/dist/linear-progress/index.js",
+    "limit": "8 KB"
+  },
+  {
+    "name": "m3e-elements: <m3e-circular-progress> entry (bundles the m3e-shapes Morph for the wavy star)",
+    "path": "packages/m3e-elements/dist/circular-progress/index.js",
+    "limit": "8 KB"
+  },
+  {
     "name": "m3e-shapes (all presets + Morph)",
     "path": "packages/m3e-shapes/dist/index.js",
     "limit": "14 KB"
