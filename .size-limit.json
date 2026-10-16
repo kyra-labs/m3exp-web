@@ -134,9 +134,20 @@
     "limit": "1 KB"
   },
   {
-    "name": "m3e-elements (all)",
+    "name": "m3e-elements (all) — D17: reported, 100 KB sanity cap (not a budget)",
     "path": "packages/m3e-elements/dist/index.js",
-    "limit": "30 KB"
+    "limit": "100 KB"
+  },
+  {
+    "name": "m3e-elements: common-page set (D17: icon + ripple + menu + top-app-bar + loading-indicator)",
+    "path": [
+      "packages/m3e-elements/dist/icon/index.js",
+      "packages/m3e-elements/dist/ripple/index.js",
+      "packages/m3e-elements/dist/menu/index.js",
+      "packages/m3e-elements/dist/top-app-bar/index.js",
+      "packages/m3e-elements/dist/loading-indicator/index.js"
+    ],
+    "limit": "24 KB"
   },
   {
     "name": "m3e-elements: <m3e-loading-indicator> entry (bundles m3e-shapes + m3e-motion; D13/D14: m3e-shapes budget, not 8 KB)",
@@ -224,10 +235,17 @@
     "limit": "14 KB"
   },
   {
-    "name": "m3e-react (excluding peer deps)",
+    "name": "m3e-react (all, excluding peer deps) — D17: reported, 150 KB sanity cap (not a budget)",
     "path": "packages/m3e-react/dist/index.js",
     "ignore": ["react", "react-dom"],
-    "limit": "60 KB"
+    "limit": "150 KB"
+  },
+  {
+    "name": "m3e-react: common-page set (D17: Button, IconButton, Card, CardAction, TopAppBar, MenuTrigger, Menu, MenuItem, LoadingIndicator)",
+    "path": "packages/m3e-react/dist/index.js",
+    "import": "{ Button, IconButton, Card, CardAction, TopAppBar, MenuTrigger, Menu, MenuItem, LoadingIndicator }",
+    "ignore": ["react", "react-dom"],
+    "limit": "52 KB"
   },
   {
     "name": "m3e-react: { Icon } only (tree-shaking guard: any other component leaking in fails this)",
@@ -314,7 +332,7 @@
     "limit": "1 KB"
   },
   {
-    "name": "m3exp-web (root): { Icon } (the root entry registers every custom element by design, ~30 kB with <m3e-menu>, <m3e-split-button>, <m3e-button-group>, <m3e-floating-toolbar> and the progress indicators; a leaked React component adds ~10 kB of react-aria. Raise with m3e-elements (all), max 31 KB)",
+    "name": "m3exp-web (root): { Icon } (the root entry registers every custom element by design, ~30 kB with <m3e-menu>, <m3e-split-button>, <m3e-button-group>, <m3e-floating-toolbar> and the progress indicators; a leaked React component adds ~10 kB of react-aria. Raise with m3e-elements (all); D17)",
     "path": "packages/m3exp-web/dist/index.js",
     "import": "{ Icon }",
     "ignore": ["react", "react-dom"],
