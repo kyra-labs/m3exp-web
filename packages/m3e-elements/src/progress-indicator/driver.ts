@@ -145,7 +145,10 @@ export class OffsetClock {
   #base = 0;
   #start = 0;
   #travel = Number.POSITIVE_INFINITY;
+  #started = false;
   running = false;
+  /** When the indicator attached (ms): Compose starts the offset tween there, not at a draw. */
+  origin = 0;
 
   value(now: number): number {
     return this.running
@@ -157,7 +160,8 @@ export class OffsetClock {
   run(now: number, travel: number): void {
     if (this.running && travel === this.#travel) return;
     this.#base = Number.isFinite(travel) ? this.value(now) : 0;
-    this.#start = now;
+    this.#start = this.#started ? now : Math.min(now, this.origin || now);
+    this.#started = true;
     this.#travel = travel;
     this.running = Number.isFinite(travel);
   }
@@ -215,6 +219,7 @@ export abstract class ProgressIndicatorDriver {
     this.root.toggleAttribute('data-driven', true);
     if ((previous.value === null) !== (options.value === null) || this.startedAt === 0)
       this.startedAt = now;
+    this.offset.origin ||= now;
     const value = options.value;
     if (value === null) {
       this.value = null;

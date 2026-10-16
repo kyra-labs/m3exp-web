@@ -12,12 +12,16 @@ const emphasizedAccelerate = cubicBezier(0.3, 0, 0.8, 0.15);
 const bar = (page: Page, label: string) =>
   page.getByRole('progressbar', { name: label, exact: true });
 
-/** Pauses every CSS animation at `ms` of its cycle. */
+/** Pauses the indeterminate CSS animations at `ms` of their cycle; finishes everything else. */
 const freezeCss = (page: Page, ms: number) =>
   page.evaluate((t) => {
     for (const a of document.getAnimations()) {
-      a.pause();
-      a.currentTime = t;
+      if ('animationName' in a && (a as CSSAnimation).animationName.startsWith('m3e-progress-')) {
+        a.pause();
+        a.currentTime = t;
+      } else if (a.effect?.getComputedTiming().endTime !== Infinity) {
+        a.finish();
+      }
     }
   }, ms);
 
