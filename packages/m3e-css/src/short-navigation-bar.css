@@ -143,3 +143,10 @@
     }
   }
 }
+
+@layer m3e.base {
+  /* <m3e-short-navigation-bar> renders the contract inside itself (m3e-elements). */
+  :where(m3e-short-navigation-bar) {
+    display: contents;
+  }
+}

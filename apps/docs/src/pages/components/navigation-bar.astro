@@ -63,6 +63,23 @@ const iconOnly: Item[] = items.map((item) => ({ ...item, iconOnly: true }));
     </div>
   </section>
 
+  <section aria-labelledby="element-heading">
+    <h2 id="element-heading">Element</h2>
+    <p>
+      <code>&lt;m3e-short-navigation-bar&gt;</code> with <code>&lt;m3e-navigation-item&gt;</code>
+      children renders the same contract; a press moves <code>selected</code> and fires a
+      cancelable <code>selection-change</code>.
+    </p>
+    <div class="docs-nav-frame">
+      <m3e-short-navigation-bar label="Element example" selected="home" data-testid="element-bar">
+        <m3e-navigation-item value="home" icon="home">Home</m3e-navigation-item>
+        <m3e-navigation-item value="search" icon="search">Search</m3e-navigation-item>
+        <m3e-navigation-item value="favorite" icon="favorite">Favorites</m3e-navigation-item>
+        <m3e-navigation-item value="settings" icon="settings">Settings</m3e-navigation-item>
+      </m3e-short-navigation-bar>
+    </div>
+  </section>
+
   <section aria-labelledby="react-heading">
     <h2 id="react-heading">React</h2>
     <p><code>&lt;ShortNavigationBar&gt;</code> with buttons: press an item to move the indicator.</p>
@@ -73,7 +90,7 @@ const iconOnly: Item[] = items.map((item) => ({ ...item, iconOnly: true }));
     <h2 id="legacy-heading">Navigation bar (deprecated)</h2>
     <p class="docs-deprecated" role="note">
       Deprecated (DECISIONS D4): the legacy <code>NavigationBar</code> ships until 2.0 for
-      migration and gets no new features. Use the short navigation bar.
+      migration and gets no new features (no element). Use the short navigation bar.
     </p>
     <div class="docs-nav-frame">
       <nav class="m3e-navigation-bar" aria-label="Legacy example" data-testid="legacy-bar">
@@ -82,3 +99,7 @@ const iconOnly: Item[] = items.map((item) => ({ ...item, iconOnly: true }));
     </div>
   </section>
 </Base>
+
+<script>
+  import '@kyralabs/m3exp-web/elements';
+</script>

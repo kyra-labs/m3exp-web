@@ -15,9 +15,12 @@ const items: Item[] = [
   <link rel="stylesheet" href="/icons/docs-icons.css" slot="head" />
   <h1>Navigation rail</h1>
   <p>
-    The wide navigation rail (COMPONENT_SPEC §14; Compose <code>WideNavigationRail</code>),
-    collapsed and expanded. Plain HTML with m3e-css classes. The animated expand/collapse and the
-    modal rail come in M7.
+    The wide navigation rail (COMPONENT_SPEC §14; Compose <code>WideNavigationRail</code> and
+    <code>ModalWideNavigationRail</code>). Static rails are plain HTML with m3e-css classes.
+    Expanding and collapsing animate the width, the items and the labels on Compose's springs
+    (width, spacing and icon position on the default spatial spring, label color on the default
+    effects spring), writing one progress per frame so the rail lays out once per frame; a new
+    target keeps the current velocity. The modal rail opens over a scrim as a dialog.
   </p>
 
   <section aria-labelledby="rails-heading">
@@ -46,7 +49,7 @@ const items: Item[] = [
             class="m3e-icon-button m3e-icon-button--standard docs-rail-menu"
             aria-label="Collapse"
           >
-            <span class="m3e-icon" aria-hidden="true">menu</span>
+            <span class="m3e-icon" aria-hidden="true">menu_open</span>
           </button>
         </div>
         <NavItems items={items} prefix="e" />
@@ -54,11 +57,88 @@ const items: Item[] = [
     </div>
   </section>
 
+  <section aria-labelledby="element-heading">
+    <h2 id="element-heading">Animated (element)</h2>
+    <p>
+      <code>&lt;m3e-wide-navigation-rail&gt;</code> with <code>&lt;m3e-navigation-item&gt;</code>
+      children; other children go to the header. The menu button calls <code>toggle()</code>.
+    </p>
+    <div class="docs-rail-frames">
+      <m3e-wide-navigation-rail
+        label="Element example"
+        selected="home"
+        data-testid="element-rail"
+      >
+        <button
+          type="button"
+          class="m3e-icon-button m3e-icon-button--standard docs-rail-menu"
+          aria-label="Expand"
+          aria-expanded="false"
+          data-rail-toggle
+        >
+          <span class="m3e-icon" aria-hidden="true">menu</span>
+        </button>
+        <m3e-navigation-item value="home" icon="home">Home</m3e-navigation-item>
+        <m3e-navigation-item value="search" icon="search">Search</m3e-navigation-item>
+        <m3e-navigation-item value="favorite" icon="favorite">Favorites</m3e-navigation-item>
+        <m3e-navigation-item value="settings" icon="settings">Settings</m3e-navigation-item>
+      </m3e-wide-navigation-rail>
+    </div>
+  </section>
+
+  <section aria-labelledby="modal-heading">
+    <h2 id="modal-heading">Modal (element)</h2>
+    <p>
+      <code>&lt;m3e-modal-wide-navigation-rail&gt;</code>: collapsed it is a collapsed rail;
+      expanded it opens over a scrim (the scrim at 32% <code>scrim</code>, a
+      <code>surface-container</code> rail with large corners) as a <code>dialog</code>: focus stays
+      inside, Escape or the scrim collapse it and focus returns to the menu button. With
+      <code>hide-on-collapse</code> nothing shows while collapsed and the expanded rail slides in.
+    </p>
+    <div class="docs-rail-frames">
+      <m3e-modal-wide-navigation-rail
+        label="Modal example"
+        selected="home"
+        data-testid="element-modal-rail"
+      >
+        <button
+          type="button"
+          class="m3e-icon-button m3e-icon-button--standard docs-rail-menu"
+          aria-label="Expand"
+          aria-expanded="false"
+          data-rail-toggle
+        >
+          <span class="m3e-icon" aria-hidden="true">menu</span>
+        </button>
+        <m3e-navigation-item value="home" icon="home">Home</m3e-navigation-item>
+        <m3e-navigation-item value="search" icon="search">Search</m3e-navigation-item>
+        <m3e-navigation-item value="favorite" icon="favorite">Favorites</m3e-navigation-item>
+        <m3e-navigation-item value="settings" icon="settings">Settings</m3e-navigation-item>
+      </m3e-modal-wide-navigation-rail>
+      <div class="docs-rail-dismissible">
+        <m3e-modal-wide-navigation-rail
+          label="Dismissible example"
+          selected="home"
+          hide-on-collapse
+          data-testid="element-dismissible-rail"
+        >
+          <m3e-navigation-item value="home" icon="home">Home</m3e-navigation-item>
+          <m3e-navigation-item value="search" icon="search">Search</m3e-navigation-item>
+          <m3e-navigation-item value="settings" icon="settings">Settings</m3e-navigation-item>
+        </m3e-modal-wide-navigation-rail>
+        <button type="button" class="m3e-button m3e-button--filled" data-testid="open-dismissible">
+          <span class="m3e-button__label">Open modal rail</span>
+        </button>
+      </div>
+    </div>
+  </section>
+
   <section aria-labelledby="react-heading">
     <h2 id="react-heading">React</h2>
     <p>
       <code>&lt;WideNavigationRail&gt;</code>: press an item to move the indicator; the menu button
-      switches <code>isExpanded</code>.
+      switches <code>isExpanded</code>, which animates. <code>&lt;ModalWideNavigationRail&gt;</code>:
+      <code>isExpanded</code> + <code>onExpandedChange</code> (Escape and the scrim ask to collapse).
     </p>
     <NavigationPlayground client:only="react" kind="rail" />
   </section>
@@ -67,7 +147,7 @@ const items: Item[] = [
     <h2 id="legacy-heading">Navigation rail (deprecated)</h2>
     <p class="docs-deprecated" role="note">
       Deprecated (DECISIONS D4): the legacy <code>NavigationRail</code> ships until 2.0 for
-      migration and gets no new features. Use the wide navigation rail.
+      migration and gets no new features (no element, no animation). Use the wide navigation rail.
     </p>
     <div class="docs-rail-frames">
       <nav class="m3e-navigation-rail" aria-label="Legacy example" data-testid="legacy-rail">
@@ -79,3 +159,32 @@ const items: Item[] = [
     </div>
   </section>
 </Base>
+
+<script>
+  import '@kyralabs/m3exp-web/elements';
+
+  // Compose's samples: the header menu button toggles the rail and announces its state.
+  for (const button of document.querySelectorAll<HTMLButtonElement>('[data-rail-toggle]')) {
+    const rail = button.closest<HTMLElement & { toggle(): void; expanded?: boolean }>(
+      'm3e-wide-navigation-rail, m3e-modal-wide-navigation-rail',
+    )!;
+    const sync = () => {
+      const expanded = Boolean(rail.expanded);
+      button.setAttribute('aria-expanded', String(expanded));
+      button.setAttribute('aria-label', expanded ? 'Collapse' : 'Expand');
+      button.querySelector('.m3e-icon')!.textContent = expanded ? 'menu_open' : 'menu';
+    };
+    button.addEventListener('click', () => {
+      rail.toggle();
+    });
+    rail.addEventListener('expanded-change', () => {
+      queueMicrotask(sync);
+    });
+  }
+  const dismissible = document.querySelector<HTMLElement & { expand(): void }>(
+    '[data-testid="element-dismissible-rail"]',
+  )!;
+  document.querySelector('[data-testid="open-dismissible"]')!.addEventListener('click', () => {
+    dismissible.expand();
+  });
+</script>

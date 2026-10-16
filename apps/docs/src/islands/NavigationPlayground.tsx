@@ -1,6 +1,7 @@
 import {
   Icon,
   IconButton,
+  ModalWideNavigationRail,
   type NavigationDestination,
   ShortNavigationBar,
   WideNavigationRail,
@@ -14,10 +15,25 @@ const ITEMS: NavigationDestination[] = [
   { key: 'settings', icon: 'settings', label: 'Settings' },
 ];
 
-/** React navigation bar / rail with live selection (React Aria; CSS springs on the indicator). */
+/** The Compose samples' header: a menu button that toggles the rail and announces its state. */
+function MenuButton({ expanded, onPress }: { expanded: boolean; onPress: () => void }) {
+  return (
+    <IconButton
+      className="docs-rail-menu"
+      aria-label={expanded ? 'Collapse' : 'Expand'}
+      aria-expanded={expanded}
+      onPress={onPress}
+    >
+      <Icon name={expanded ? 'menu_open' : 'menu'} />
+    </IconButton>
+  );
+}
+
+/** React navigation bar / rails with live selection (React Aria; the shared rail layout). */
 export default function NavigationPlayground({ kind }: { kind: 'bar' | 'rail' }) {
   const [selected, setSelected] = useState('home');
   const [expanded, setExpanded] = useState(false);
+  const [modalExpanded, setModalExpanded] = useState(false);
   if (kind === 'bar') {
     return (
       <div className="docs-nav-frame">
@@ -41,16 +57,29 @@ export default function NavigationPlayground({ kind }: { kind: 'bar' | 'rail' })
         onSelectionChange={setSelected}
         isExpanded={expanded}
         header={
-          <IconButton
-            className="docs-rail-menu"
-            aria-label={expanded ? 'Collapse' : 'Expand'}
-            aria-expanded={expanded}
+          <MenuButton
+            expanded={expanded}
             onPress={() => {
               setExpanded((value) => !value);
             }}
-          >
-            <Icon name="menu" />
-          </IconButton>
+          />
+        }
+      />
+      <ModalWideNavigationRail
+        aria-label="React modal example"
+        data-testid="react-modal-rail"
+        items={ITEMS}
+        selectedKey={selected}
+        onSelectionChange={setSelected}
+        isExpanded={modalExpanded}
+        onExpandedChange={setModalExpanded}
+        header={
+          <MenuButton
+            expanded={modalExpanded}
+            onPress={() => {
+              setModalExpanded((value) => !value);
+            }}
+          />
         }
       />
     </div>
