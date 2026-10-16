@@ -40,8 +40,27 @@ const PANE_TITLE = 'Navigation menu';
  * Compose's anchoredDraggable reads (SOURCES register #33).
  */
 const DRAG_SLOP = 8;
-/** Velocity window: the pointer samples of the last 100ms (Compose VelocityTracker horizon). */
+/**
+ * Release velocity (an approximation of Compose's VelocityTracker1D, which fits the samples of the
+ * last 100ms and drops everything before a 40ms pause, AssumePointerMoveStoppedMilliseconds):
+ * the average speed over the trailing samples within that horizon, the release included.
+ */
 const VELOCITY_WINDOW = 100;
+const VELOCITY_PAUSE = 40;
+
+/** px/s over the trailing run of samples (newest last) without a pause, within the window. */
+export function releaseVelocity(samples: readonly { t: number; x: number }[]): number {
+  const last = samples.at(-1);
+  if (!last) return 0;
+  let first = last;
+  for (let i = samples.length - 2; i >= 0; i--) {
+    const s = samples[i];
+    if (!s || first.t - s.t > VELOCITY_PAUSE || last.t - s.t > VELOCITY_WINDOW) break;
+    first = s;
+  }
+  const dt = (last.t - first.t) / 1000;
+  return dt > 0 ? (last.x - first.x) / dt : 0;
+}
 
 const round = (v: number) => String(Math.round(v * 1e4) / 1e4);
 const px = (v: number) => `${String(Math.round(v * 100) / 100)}px`;
@@ -311,11 +330,8 @@ export class NavigationDrawerLayout {
     setTimeout(() => {
       this.root.removeEventListener('click', guard, { capture: true });
     }, 0);
-    const first = drag.samples[0] ?? { t: 0, x: 0 };
-    const last = drag.samples.at(-1) ?? first;
-    const dt = (last.t - first.t) / 1000;
-    const velocity =
-      e.type === 'pointercancel' || dt <= 0 ? 0 : ((last.x - first.x) / dt) * drag.dir;
+    drag.samples.push({ t: e.timeStamp || performance.now(), x: e.clientX });
+    const velocity = e.type === 'pointercancel' ? 0 : releaseVelocity(drag.samples) * drag.dir;
     const now = performance.now();
     const open = this.#animation.release(
       velocity,

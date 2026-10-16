@@ -1,7 +1,34 @@
 import { springValue } from '@kyralabs/m3e-motion';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { releaseVelocity } from '../navigation-drawer-layout/navigation-drawer-layout.js';
 import type { M3eNavigationDrawer } from './navigation-drawer.js';
 import './index.js';
+
+describe('releaseVelocity (VelocityTracker approximation)', () => {
+  it('averages the trailing samples within 100ms', () => {
+    expect(releaseVelocity([])).toBe(0);
+    expect(
+      releaseVelocity([
+        { t: 0, x: 0 },
+        { t: 16, x: 10 },
+        { t: 32, x: 20 },
+      ]),
+    ).toBeCloseTo(625, 6);
+    expect(
+      releaseVelocity(Array.from({ length: 20 }, (_, i) => ({ t: i * 10, x: i * 5 }))),
+    ).toBeCloseTo(500, 6);
+  });
+
+  it('a 40ms pause before the release drops the movement (velocity 0)', () => {
+    expect(
+      releaseVelocity([
+        { t: 0, x: 0 },
+        { t: 16, x: 50 },
+        { t: 200, x: 50 },
+      ]),
+    ).toBe(0);
+  });
+});
 
 const flush = async () => {
   for (let i = 0; i < 4; i++) {

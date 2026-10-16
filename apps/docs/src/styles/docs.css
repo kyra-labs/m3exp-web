@@ -418,6 +418,48 @@ button.docs-tile {
   margin-inline-start: var(--m3e-sys-space-300);
 }
 
+/* Navigation drawer frames: the drawer and the content in a row, as Compose's drawers lay out. */
+.docs-drawer-frames {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--m3e-sys-space-300);
+}
+
+.docs-drawer-frame {
+  display: flex;
+  flex: 1 1 calc(var(--m3e-sys-space-900) * 7);
+  block-size: calc(var(--m3e-sys-space-900) * 8);
+  margin: var(--m3e-sys-space-300) 0;
+  overflow: hidden;
+  outline: var(--m3e-comp-divider-thickness) solid var(--m3e-sys-color-outline-variant);
+}
+
+/* Contains the static modal sheet and scrim (fixed positioning) for this page only. */
+.docs-drawer-frame--contain {
+  position: relative;
+  contain: layout paint;
+}
+
+.docs-drawer-content {
+  flex: 1 1 auto;
+  min-inline-size: 0;
+  padding: var(--m3e-sys-space-200);
+}
+
+.docs-drawer-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--m3e-sys-space-100);
+  align-items: center;
+}
+
+.docs-note {
+  padding: var(--m3e-sys-space-150) var(--m3e-sys-space-200);
+  border-radius: var(--m3e-sys-shape-corner-medium);
+  background: var(--m3e-sys-color-secondary-container);
+  color: var(--m3e-sys-color-on-secondary-container);
+}
+
 .docs-deprecated {
   padding: var(--m3e-sys-space-150) var(--m3e-sys-space-200);
   border-radius: var(--m3e-sys-shape-corner-medium);
