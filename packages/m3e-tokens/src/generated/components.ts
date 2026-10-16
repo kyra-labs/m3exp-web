@@ -3186,6 +3186,54 @@ export const switchTokens = {
   iconHandleWidth: 24
 } as const;
 
+/** TabsDefaults */
+export const tabsDefaults = {
+  tabsScrollableMinTabWidth: 90,
+  tabsScrollableEdgePadding: 52,
+  tabsIndicatorMinWidth: 24,
+  tabsPrimaryContainerColor: "var(--m3e-sys-color-surface)",
+  tabsSecondaryContainerColor: "var(--m3e-sys-color-surface)",
+  tabsPrimaryContentColor: "var(--m3e-sys-color-primary)",
+  tabsSecondaryContentColor: "var(--m3e-sys-color-on-surface)",
+  tabsPrimaryIndicatorHeight: "3px",
+  tabsPrimaryIndicatorColor: "var(--m3e-sys-color-primary)",
+  tabsPrimaryIndicatorShape: "3px",
+  tabsSecondaryIndicatorHeight: "3px",
+  tabsSecondaryIndicatorColor: "var(--m3e-sys-color-primary)",
+  tabsSecondaryIndicatorShape: 0,
+  tabsDividerThickness: "1px",
+  tabsDividerColor: "var(--m3e-sys-color-outline-variant)",
+  tabsIndicatorDuration: "var(--m3e-sys-motion-spring-default-spatial-duration)",
+  tabsIndicatorEasing: "var(--m3e-sys-motion-spring-default-spatial-easing)",
+  tabsIndicatorDampingRatio: "var(--m3e-sys-motion-spring-default-spatial-damping-ratio)",
+  tabsIndicatorStiffness: "var(--m3e-sys-motion-spring-default-spatial-stiffness)",
+  tabsScrollDuration: "var(--m3e-sys-motion-spring-default-spatial-duration)",
+  tabsScrollEasing: "var(--m3e-sys-motion-spring-default-spatial-easing)",
+  tabsScrollDampingRatio: "var(--m3e-sys-motion-spring-default-spatial-damping-ratio)",
+  tabsScrollStiffness: "var(--m3e-sys-motion-spring-default-spatial-stiffness)",
+  tabsHorizontalTextPadding: 16,
+  tabsSmallTabHeight: "48px",
+  tabsLargeTabHeight: 72,
+  tabsSingleLineTextBaselineWithIcon: 14,
+  tabsIconDistanceFromBaseline: 20,
+  tabsLeadingIconLabelSpace: 8,
+  tabsLabelTextFont: "var(--m3e-sys-typescale-title-small-font)",
+  tabsLabelTextWeight: "var(--m3e-sys-typescale-title-small-weight)",
+  tabsLabelTextSize: "var(--m3e-sys-typescale-title-small-size)",
+  tabsLabelTextLineHeight: "var(--m3e-sys-typescale-title-small-line-height)",
+  tabsLabelTextTracking: "var(--m3e-sys-typescale-title-small-tracking)",
+  tabsLabelMaxLines: 2,
+  tabsContentColorInDuration: "var(--m3e-sys-motion-spring-default-effects-duration)",
+  tabsContentColorInEasing: "var(--m3e-sys-motion-spring-default-effects-easing)",
+  tabsContentColorInDampingRatio: "var(--m3e-sys-motion-spring-default-effects-damping-ratio)",
+  tabsContentColorInStiffness: "var(--m3e-sys-motion-spring-default-effects-stiffness)",
+  tabsContentColorOutDuration: "var(--m3e-sys-motion-spring-fast-effects-duration)",
+  tabsContentColorOutEasing: "var(--m3e-sys-motion-spring-fast-effects-easing)",
+  tabsContentColorOutDampingRatio: "var(--m3e-sys-motion-spring-fast-effects-damping-ratio)",
+  tabsContentColorOutStiffness: "var(--m3e-sys-motion-spring-fast-effects-stiffness)",
+  tabsLabelBaselineShift: 0.34
+} as const;
+
 /** TextButtonTokens */
 export const textButtonTokens = {
   containerColorDisabled: "var(--m3e-sys-color-on-surface)",

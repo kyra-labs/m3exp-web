@@ -40,6 +40,7 @@
     .m3e-extended-fab,
     .m3e-navigation-item__state,
     .m3e-navigation-drawer-item,
+    .m3e-tab,
     .m3e-menu__item,
     .m3e-fab-menu__item,
     .m3e-search__result
@@ -58,6 +59,7 @@
     .m3e-extended-fab,
     .m3e-navigation-item__state,
     .m3e-navigation-drawer-item,
+    .m3e-tab,
     .m3e-menu__item,
     .m3e-fab-menu__item,
     .m3e-search__result
@@ -108,6 +110,7 @@
         .m3e-fab,
         .m3e-extended-fab,
         .m3e-navigation-drawer-item,
+        .m3e-tab,
         .m3e-menu__item,
         .m3e-fab-menu__item,
         .m3e-search__result
@@ -125,6 +128,7 @@
       .m3e-fab,
       .m3e-extended-fab,
       .m3e-navigation-drawer-item,
+      .m3e-tab,
       .m3e-menu__item,
       .m3e-fab-menu__item,
       .m3e-search__result
@@ -141,6 +145,7 @@
       .m3e-fab,
       .m3e-extended-fab,
       .m3e-navigation-drawer-item,
+      .m3e-tab,
       .m3e-menu__item,
       .m3e-fab-menu__item,
       .m3e-search__result
@@ -157,6 +162,7 @@
       .m3e-fab,
       .m3e-extended-fab,
       .m3e-navigation-drawer-item,
+      .m3e-tab,
       .m3e-menu__item,
       .m3e-fab-menu__item,
       .m3e-search__result
@@ -171,6 +177,7 @@
       .m3e-extended-fab,
       .m3e-navigation-item__state,
       .m3e-navigation-drawer-item,
+      .m3e-tab,
       .m3e-menu__item,
       .m3e-fab-menu__item,
       .m3e-search__result
@@ -187,6 +194,7 @@
       .m3e-fab,
       .m3e-extended-fab,
       .m3e-navigation-drawer-item,
+      .m3e-tab,
       .m3e-menu__item,
       .m3e-fab-menu__item,
       .m3e-search__result
@@ -234,6 +242,7 @@
       .m3e-extended-fab,
       .m3e-navigation-item__state,
       .m3e-navigation-drawer-item,
+      .m3e-tab,
       .m3e-menu__item,
       .m3e-fab-menu__item,
       .m3e-search__result
@@ -274,6 +283,7 @@
       .m3e-extended-fab,
       .m3e-navigation-item__state,
       .m3e-navigation-drawer-item,
+      .m3e-tab,
       .m3e-menu__item,
       .m3e-fab-menu__item,
       .m3e-search__result

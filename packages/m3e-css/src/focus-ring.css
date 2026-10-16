@@ -40,14 +40,18 @@
 
   /*
    * Menu items sit edge to edge in their group, and drawer items draw the ripple's inset ring
-   * (m3.material.io token DB: focus-indicator.outline.offset = inner offset): drawn inward.
+   * (m3.material.io token DB: focus-indicator.outline.offset = inner offset): drawn inward. Tabs
+   * fill their row edge to edge (the ripple's inset ring on the tab) and tab panels often span
+   * the page width: inward too.
    */
-  :where(.m3e-menu__item, .m3e-navigation-drawer-item):focus-visible {
+  :where(.m3e-menu__item, .m3e-navigation-drawer-item, .m3e-tab, .m3e-tab-panel):focus-visible {
     outline: var(--m3e-sys-state-focus-indicator-thickness) solid var(--m3e-sys-color-secondary);
     outline-offset: var(--m3e-sys-state-focus-indicator-inner-offset);
   }
 
-  :where(.m3e-menu__item, .m3e-navigation-drawer-item):focus:not(:focus-visible) {
+  :where(.m3e-menu__item, .m3e-navigation-drawer-item, .m3e-tab, .m3e-tab-panel):focus:not(
+      :focus-visible
+    ) {
     outline: none;
   }
 
@@ -86,7 +90,7 @@
     ):focus-visible,
     :where(.m3e-card--interactive):has(.m3e-card__action:focus-visible),
     :where(.m3e-navigation-item:focus-visible .m3e-navigation-item__state),
-    :where(.m3e-menu__item, .m3e-navigation-drawer-item):focus-visible,
+    :where(.m3e-menu__item, .m3e-navigation-drawer-item, .m3e-tab, .m3e-tab-panel):focus-visible,
     :where(.m3e-search__field):has(.m3e-search__input:focus-visible),
     :where(.m3e-search__result)[data-focus-visible] {
       outline-color: Highlight;

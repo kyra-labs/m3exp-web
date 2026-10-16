@@ -141,3 +141,16 @@ export {
   drawerSettlesOpen,
   exponentialDecayTarget,
 } from './navigation-drawer.js';
+export {
+  TAB_INDICATOR_MIN_WIDTH,
+  type TabIndicatorSample,
+  type TabMeasure,
+  type TabPosition,
+  type TabRowVariant,
+  TabIndicatorAnimation,
+  TabScrollAnimation,
+  scrollableTabOffset,
+  tabIndicatorShift,
+  tabIndicatorTarget,
+  tabPositions,
+} from './tabs.js';

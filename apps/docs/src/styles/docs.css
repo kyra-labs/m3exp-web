@@ -453,6 +453,27 @@ button.docs-tile {
   align-items: center;
 }
 
+/* Tabs: phone-width frames (Compose catalog, 412dp), the panel below the row. */
+.docs-tabs-frames {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--m3e-sys-space-300);
+  align-items: flex-start;
+}
+
+.docs-tabs-frame {
+  inline-size: min(100%, 412px);
+  margin: var(--m3e-sys-space-150) 0;
+  outline: var(--m3e-comp-divider-thickness) solid var(--m3e-sys-color-outline-variant);
+}
+
+.docs-tabs-panel {
+  padding: var(--m3e-sys-space-200);
+  color: var(--m3e-sys-color-on-surface);
+  font: var(--m3e-sys-typescale-body-large-weight) var(--m3e-sys-typescale-body-large-size) /
+    var(--m3e-sys-typescale-body-large-line-height) var(--m3e-sys-typescale-body-large-font);
+}
+
 .docs-note {
   padding: var(--m3e-sys-space-150) var(--m3e-sys-space-200);
   border-radius: var(--m3e-sys-shape-corner-medium);

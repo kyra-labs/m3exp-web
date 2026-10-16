@@ -1,0 +1,213 @@
+---
+import TabsPlayground from '../../islands/TabsPlayground.tsx';
+import Base from '../../layouts/Base.astro';
+
+// Static rows in the m3e-css contract (tabs.css), after the Compose samples (TabSamples.kt):
+// PrimaryTextTabs / SecondaryTextTabs, PrimaryIconTabs / SecondaryIconTabs, TextAndIconTabs,
+// LeadingIconTabs and the scrolling rows. No JavaScript: the selected tab is fixed.
+interface StaticTab {
+  label: string;
+  icon?: string;
+  labelHidden?: boolean;
+}
+interface StaticRow {
+  id: string;
+  title: string;
+  variant: 'primary' | 'secondary';
+  scrollable?: boolean;
+  leading?: boolean;
+  tabs: StaticTab[];
+}
+const TEXT: StaticTab[] = [{ label: 'Tab 1' }, { label: 'Tab 2' }, { label: 'Tab 3 with lots of text' }];
+const ICON: StaticTab[] = ['Favorites', 'Starred', 'Settings'].map((label, i) => ({
+  label,
+  icon: ['favorite', 'star', 'settings'][i]!,
+  labelHidden: true,
+}));
+const ICON_TEXT: StaticTab[] = [
+  { label: 'Videos', icon: 'videocam' },
+  { label: 'Photos', icon: 'photo' },
+  { label: 'Audio', icon: 'music_note' },
+];
+const LEADING: StaticTab[] = [
+  { label: 'Tab', icon: 'favorite' },
+  { label: 'Tab & icon', icon: 'favorite' },
+  { label: 'Tab 3 with lots of text', icon: 'favorite' },
+];
+const SCROLLING: StaticTab[] = Array.from({ length: 10 }, (_, i) => ({
+  label: `Tab ${String(i + 1)}${(i + 1) % 3 === 0 ? ' with lots of text' : ''}`,
+}));
+const ROWS: StaticRow[] = [
+  { id: 'primary-text', title: 'Primary, text', variant: 'primary', tabs: TEXT },
+  { id: 'primary-icon', title: 'Primary, icon', variant: 'primary', tabs: ICON },
+  { id: 'primary-icon-text', title: 'Primary, icon and text', variant: 'primary', tabs: ICON_TEXT },
+  { id: 'primary-leading', title: 'Primary, leading icon', variant: 'primary', leading: true, tabs: LEADING },
+  { id: 'secondary-text', title: 'Secondary, text', variant: 'secondary', tabs: TEXT },
+  { id: 'secondary-icon', title: 'Secondary, icon', variant: 'secondary', tabs: ICON },
+  { id: 'secondary-icon-text', title: 'Secondary, icon and text', variant: 'secondary', tabs: ICON_TEXT },
+  { id: 'primary-scrollable', title: 'Primary, scrollable', variant: 'primary', scrollable: true, tabs: SCROLLING },
+  { id: 'secondary-scrollable', title: 'Secondary, scrollable', variant: 'secondary', scrollable: true, tabs: SCROLLING },
+];
+const rowClass = (row: StaticRow) =>
+  [
+    'm3e-tabs',
+    `m3e-tabs--${row.variant}`,
+    row.scrollable ? 'm3e-tabs--scrollable' : '',
+    row.leading ? 'm3e-tabs--leading-icon' : '',
+  ]
+    .filter(Boolean)
+    .join(' ');
+---
+
+<Base title="Tabs">
+  <link rel="stylesheet" href="/icons/docs-icons.css" slot="head" />
+  <h1>Tabs</h1>
+  <p>
+    Primary and secondary tabs (COMPONENT_SPEC §17; Compose <code>PrimaryTabRow</code>,
+    <code>SecondaryTabRow</code>, <code>PrimaryScrollableTabRow</code>,
+    <code>SecondaryScrollableTabRow</code> with <code>Tab</code> and <code>LeadingIconTab</code>).
+    Fixed rows split the width into equal tabs; scrollable rows size tabs to their labels (at least
+    90dp) after a 52dp edge padding. The primary indicator spans the selected tab's content, the
+    secondary one the whole tab. Selecting another tab slides the indicator on the default spatial
+    spring from wherever it is (Compose's <code>TabIndicatorOffsetNode</code>), and a scrollable
+    row scrolls the selected tab to the centre.
+  </p>
+  <p>
+    Keyboard (APG tabs, manual activation as Compose and m3.material.io): Tab enters the row on the
+    selected tab, the arrow keys move the focus (no wrapping), Home / End jump to the ends, Space /
+    Enter select. Each tab controls a <code>role="tabpanel"</code>.
+  </p>
+
+  <section aria-labelledby="static-heading">
+    <h2 id="static-heading">Static rows (m3e-css)</h2>
+    <p>
+      Plain HTML with m3e-css classes: <code>.m3e-tabs</code> (<code>--primary</code> /
+      <code>--secondary</code>, <code>--scrollable</code>, <code>--leading-icon</code>), a
+      <code>role="tablist"</code> <code>__list</code> and <code>.m3e-tab</code> buttons. The
+      <code>aria-selected="true"</code> tab draws the indicator.
+    </p>
+    <div class="docs-tabs-frames">
+      {
+        ROWS.map((row) => (
+          <div class="docs-tabs-frame" data-testid={`static-${row.id}`}>
+            <div class={rowClass(row)}>
+              <div class="m3e-tabs__list" role="tablist" aria-label={row.title}>
+                {row.tabs.map((tab, i) => (
+                  <button
+                    type="button"
+                    class="m3e-tab"
+                    role="tab"
+                    aria-selected={i === 0 ? 'true' : 'false'}
+                    tabindex={i === 0 ? '0' : '-1'}
+                    aria-label={tab.labelHidden ? tab.label : undefined}
+                  >
+                    <span class="m3e-tab__content">
+                      {tab.icon ? (
+                        <span class="m3e-icon m3e-tab__icon" aria-hidden="true">
+                          {tab.icon}
+                        </span>
+                      ) : null}
+                      {tab.labelHidden ? null : <span class="m3e-tab__label">{tab.label}</span>}
+                    </span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+        ))
+      }
+    </div>
+  </section>
+
+  <section aria-labelledby="element-heading">
+    <h2 id="element-heading">Element</h2>
+    <p>
+      <code>&lt;m3e-tabs variant scrollable icon-position label selected&gt;</code> with
+      <code>&lt;m3e-tab value icon disabled label-hidden&gt;</code> children and a
+      <code>&lt;m3e-tab-panel value&gt;</code> per tab; <code>selection-change</code> (cancelable)
+      when another tab is pressed.
+    </p>
+    <div class="docs-tabs-frames">
+      <div class="docs-tabs-frame">
+        <m3e-tabs id="element-primary" label="Media" selected="videos" data-testid="element-primary">
+          <m3e-tab value="videos" icon="videocam">Videos</m3e-tab>
+          <m3e-tab value="photos" icon="photo">Photos</m3e-tab>
+          <m3e-tab value="audio" icon="music_note">Audio</m3e-tab>
+          <m3e-tab-panel value="videos" class="docs-tabs-panel">Videos you watched recently.</m3e-tab-panel>
+          <m3e-tab-panel value="photos" class="docs-tabs-panel">Photos from your library.</m3e-tab-panel>
+          <m3e-tab-panel value="audio" class="docs-tabs-panel">Songs and podcasts.</m3e-tab-panel>
+        </m3e-tabs>
+      </div>
+      <div class="docs-tabs-frame">
+        <m3e-tabs
+          id="element-secondary"
+          variant="secondary"
+          label="Sections"
+          selected="overview"
+          data-testid="element-secondary"
+        >
+          <m3e-tab value="overview">Overview</m3e-tab>
+          <m3e-tab value="specs">Specs</m3e-tab>
+          <m3e-tab value="usage">Usage</m3e-tab>
+          <m3e-tab value="code" disabled>Code</m3e-tab>
+          <m3e-tab-panel value="overview" class="docs-tabs-panel">Overview panel.</m3e-tab-panel>
+          <m3e-tab-panel value="specs" class="docs-tabs-panel">Specs panel.</m3e-tab-panel>
+          <m3e-tab-panel value="usage" class="docs-tabs-panel">Usage panel.</m3e-tab-panel>
+          <m3e-tab-panel value="code" class="docs-tabs-panel">Code panel.</m3e-tab-panel>
+        </m3e-tabs>
+      </div>
+      <div class="docs-tabs-frame">
+        <m3e-tabs
+          id="element-scrollable"
+          scrollable
+          label="Scrolling tabs"
+          selected="t1"
+          data-testid="element-scrollable"
+        >
+          {
+            SCROLLING.map((tab, i) => (
+              <m3e-tab value={`t${String(i + 1)}`}>{tab.label}</m3e-tab>
+            ))
+          }
+          {
+            SCROLLING.map((tab, i) => (
+              <m3e-tab-panel value={`t${String(i + 1)}`} class="docs-tabs-panel">
+                {tab.label} panel.
+              </m3e-tab-panel>
+            ))
+          }
+        </m3e-tabs>
+      </div>
+      <div class="docs-tabs-frame">
+        <m3e-tabs
+          id="element-secondary-scrollable"
+          variant="secondary"
+          scrollable
+          label="Scrolling secondary tabs"
+          selected="t1"
+          data-testid="element-secondary-scrollable"
+        >
+          {
+            SCROLLING.map((tab, i) => (
+              <m3e-tab value={`t${String(i + 1)}`}>{tab.label}</m3e-tab>
+            ))
+          }
+        </m3e-tabs>
+      </div>
+    </div>
+  </section>
+
+  <section aria-labelledby="react-heading">
+    <h2 id="react-heading">React</h2>
+    <p>
+      <code>&lt;Tabs variant scrollable iconPosition items selectedKey onSelectionChange&gt;</code>
+      (or <code>&lt;Tab id icon&gt;</code> children) followed by its
+      <code>&lt;TabPanel id&gt;</code>s; the same DOM as the element.
+    </p>
+    <TabsPlayground client:only="react" />
+  </section>
+</Base>
+
+<script>
+  import '@kyralabs/m3exp-web/elements';
+</script>
