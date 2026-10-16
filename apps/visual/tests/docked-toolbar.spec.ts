@@ -164,11 +164,12 @@ for (const [layer, id] of [
     await expect(items.first()).toBeFocused();
     await page.keyboard.press('ArrowLeft');
     await expect(items.first()).toBeFocused();
-    // Tab leaves the toolbar; Shift+Tab comes back to the last focused item.
+    // Shift+Tab leaves the toolbar (to its scrolling region; the legacy bar is the last tab stop
+    // of the page, where Firefox keeps focus on Tab); Tab comes back to the last focused item.
     await page.keyboard.press('ArrowRight');
-    await page.keyboard.press('Tab');
-    expect(await tb.evaluate((el) => el.contains(document.activeElement))).toBe(false);
     await page.keyboard.press('Shift+Tab');
+    expect(await tb.evaluate((el) => el.contains(document.activeElement))).toBe(false);
+    await page.keyboard.press('Tab');
     await expect(items.nth(1)).toBeFocused();
   });
 }
