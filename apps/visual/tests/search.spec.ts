@@ -93,6 +93,10 @@ test.describe('expanded views (reduced motion: springs jump)', () => {
     test(`${id}: visual baseline with results`, async ({ page }) => {
       // Keyboard only, so no pointer hovers a result.
       const root = search(page, id);
+      // The bar at the top of the window, so the docked views have room below it.
+      await root.evaluate((el) => {
+        el.scrollIntoView({ block: 'start' });
+      });
       await parts(root).input.focus();
       await page.keyboard.press('ArrowDown');
       await settled(root);
