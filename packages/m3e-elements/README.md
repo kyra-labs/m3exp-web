@@ -221,6 +221,37 @@ collapse it. Full-screen views trap Tab. Events: `expanded-change`, `search` and
 actions of a `.m3e-top-app-bar.m3e-top-app-bar--search` and call
 `attachTopAppBarScroll(bar, { behavior: 'enter-always' })` for its scroll behavior.
 
+## Navigation bar and rails
+
+```js
+import '@kyralabs/m3e-elements/short-navigation-bar.js';
+import '@kyralabs/m3e-elements/wide-navigation-rail.js';
+import '@kyralabs/m3e-elements/modal-wide-navigation-rail.js';
+```
+
+```html
+<m3e-wide-navigation-rail label="Main" selected="inbox">
+  <button class="m3e-icon-button" aria-label="Expand" onclick="this.closest('m3e-wide-navigation-rail').toggle()">…</button>
+  <m3e-navigation-item value="inbox" icon="inbox" href="/inbox">Inbox</m3e-navigation-item>
+  <m3e-navigation-item value="sent" icon="send" href="/sent">Sent</m3e-navigation-item>
+</m3e-wide-navigation-rail>
+```
+
+`<m3e-short-navigation-bar>` (Compose `ShortNavigationBar`; `layout="horizontal"`),
+`<m3e-wide-navigation-rail>` (`WideNavigationRail`) and `<m3e-modal-wide-navigation-rail>`
+(`ModalWideNavigationRail`) render the m3e-css `.m3e-short-navigation-bar` /
+`.m3e-wide-navigation-rail` / `.m3e-modal-wide-navigation-rail` contracts (load
+`short-navigation-bar.css` / `wide-navigation-rail.css`) from their `<m3e-navigation-item>` children
+(`value`, `icon`, `href` for a link, `disabled`, `label-hidden`); other rail children go to the
+header. `selected` marks one item `aria-current="page"`; a press fires a cancelable
+`selection-change`. On the rails, `expanded` (or `expand()` / `collapse()` / `toggle()`) animates
+width, items and labels on Compose's springs, one layout per frame and interruptible. The modal
+rail opens over a scrim as a `dialog` (focus trapped, Escape or the scrim collapse it with a
+cancelable `expanded-change`, focus returns to the opener); `hide-on-collapse` slides it in from the
+edge instead of expanding a collapsed rail. The behavior lives in the `wide-navigation-rail-layout.js`
+entry (`WideNavigationRailLayout`), which m3e-react's `<WideNavigationRail>` /
+`<ModalWideNavigationRail>` use too. The deprecated legacy bar and rail (D4) get no elements.
+
 ## Ripple for plain HTML
 
 m3e-css draws hover, focus and pressed overlays without JS; the press ripple needs a little.

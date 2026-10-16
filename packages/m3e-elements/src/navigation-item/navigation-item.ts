@@ -113,9 +113,9 @@ export abstract class M3eNavigationContainer extends M3eElement {
     const items = [...this.children].filter(
       (c): c is M3eNavigationItem => c instanceof M3eNavigationItem,
     );
-    for (const item of [...this.#rendered.keys()]) {
+    for (const [item, el] of [...this.#rendered]) {
       if (!items.includes(item)) {
-        this.#ripples.get(this.#rendered.get(item)!)?.abort();
+        this.#ripples.get(el)?.abort();
         this.#rendered.delete(item);
       }
     }
@@ -163,7 +163,8 @@ export abstract class M3eNavigationContainer extends M3eElement {
     setAttr(el, 'aria-disabled', disabled ? 'true' : null);
     setAttr(el, 'aria-current', selected ? 'page' : null);
     setAttr(el, 'aria-label', item.labelHidden ? label : null);
-    const content = el.firstElementChild!;
+    const content = el.firstElementChild;
+    if (!content) return;
     let icon = content.querySelector(`:scope > .${ITEM}__icon`);
     if (!icon) {
       icon = span(doc, `m3e-icon ${ITEM}__icon`);

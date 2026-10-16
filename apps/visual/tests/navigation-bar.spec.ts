@@ -146,6 +146,36 @@ test('the indicator animates between items (default spatial spring)', async ({ p
     .toBeCloseTo(0, 1);
 });
 
+test('element bar: the static geometry; a press moves aria-current and the indicator', async ({
+  page,
+}) => {
+  const host = page.getByTestId('element-bar');
+  const bar = host.locator('nav');
+  await expect(bar).toHaveClass('m3e-short-navigation-bar');
+  const reference = await box(page.getByTestId('short-vertical'));
+  const barBox = await box(bar);
+  expect(barBox.width).toBeCloseTo(reference.width, 0);
+  expect(barBox.height).toBeCloseTo(reference.height, 0);
+  const items = bar.locator('.m3e-navigation-item');
+  const values: string[] = [];
+  await page.exposeFunction('logSelection', (v: string) => values.push(v));
+  await host.evaluate((el) => {
+    el.addEventListener('selection-change', (e) => {
+      void (window as unknown as { logSelection(v: string): Promise<void> }).logSelection(
+        (e as CustomEvent<{ value: string }>).detail.value,
+      );
+    });
+  });
+  await items.nth(1).click();
+  await expect(bar.locator('[aria-current]')).toHaveCount(1);
+  await expect(items.nth(1)).toHaveAttribute('aria-current', 'page');
+  await expect(host).toHaveAttribute('selected', 'search');
+  await expect.poll(() => values).toEqual(['search']);
+  await expect
+    .poll(() => box(part(items.nth(1), 'indicator')).then((b) => b.width))
+    .toBeCloseTo(56, 1);
+});
+
 test('legacy bar geometry follows NavigationBar (D4)', async ({ page }) => {
   await expect(page.locator('[data-deprecated] .docs-deprecated')).toBeVisible();
   const bar = page.getByTestId('legacy-bar');

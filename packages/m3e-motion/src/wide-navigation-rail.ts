@@ -20,7 +20,7 @@
 // - WideNavigationRailLayout (WideNavigationRail.kt L314-476): minWidth / widthFullRange on the
 //   rail's spring (DefaultSpatial; FastSpatial in the modal window), itemVerticalSpacedBy and
 //   itemMinHeight on DefaultSpatial, and the measure policy's width (wideNavigationRailWidth).
-// - AnimatedNavigationItem (NavigationItem.kt L486-493, L1103-1199): the item's
+// - AnimatedNavigationItem (NavigationItem.kt L488-493, L1103-1199): the item's
 //   iconPositionProgress on DefaultSpatial and its width (wideNavigationRailItemWidth); the rest of
 //   the item geometry is CSS (wide-navigation-rail.css) driven by the same progress.
 // - ModalWideNavigationRail / ModalWideNavigationRailImpl (L593-600, L726-863): positionProgress
@@ -43,7 +43,7 @@ export interface WideNavigationRailSpecs {
   readonly width: SpringSpec | null;
   /** `modalAnimationSpec` (L325): the modal window rail's width. */
   readonly modalWidth: SpringSpec | null;
-  /** AnimatedNavigationItem `iconPositionProgress` (NavigationItem.kt L489-493). */
+  /** AnimatedNavigationItem `iconPositionProgress` (NavigationItem.kt L488-493). */
   readonly iconPosition: SpringSpec | null;
   /** ModalWideNavigationRail `positionProgress` (L593-598). */
   readonly position: SpringSpec | null;

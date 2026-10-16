@@ -80,7 +80,7 @@ async function mount<T extends HTMLElement>(html: string): Promise<T> {
       nav.style.setProperty(`--m3e-comp-${name}-stiffness`, String(stiffness));
     }
   }
-  return document.body.querySelector('[data-m3e-navigation]') as T;
+  return document.body.querySelector<T>('[data-m3e-navigation]')!;
 }
 
 const items = (host: Element) => [...host.querySelectorAll<HTMLElement>('.m3e-navigation-item')];
