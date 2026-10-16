@@ -1,7 +1,7 @@
+import type { FloatingToolbarExitDirection } from '@kyralabs/m3e-motion';
 import { M3eElement } from '../base/M3eElement.js';
 import {
-  type FloatingToolbarExitDirection,
-  type FloatingToolbarScrollBehavior,
+  type FloatingToolbarLayoutScrollBehavior,
   FloatingToolbarLayout,
 } from '../floating-toolbar-layout/floating-toolbar-layout.js';
 
@@ -98,7 +98,7 @@ export class M3eFloatingToolbar extends M3eElement {
       ['scrollBehavior', 'exitDirection', 'scrollTarget', 'orientation'].some((p) => changed.has(p))
     ) {
       const behavior = SCROLL_BEHAVIORS.includes(this.scrollBehavior ?? '')
-        ? (this.scrollBehavior as FloatingToolbarScrollBehavior)
+        ? (this.scrollBehavior as FloatingToolbarLayoutScrollBehavior)
         : null;
       const direction = EXIT_DIRECTIONS.includes(this.exitDirection ?? '')
         ? (this.exitDirection as FloatingToolbarExitDirection)

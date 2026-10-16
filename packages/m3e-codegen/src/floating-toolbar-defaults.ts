@@ -346,12 +346,12 @@ export function extractFloatingToolbarDefaults(
   const fab = normalize(sources[FAB_FILE], FAB_FILE);
   const colorScheme = normalize(sources[COLOR_FILE], COLOR_FILE);
   const tokens = normalize(tokenFiles.find((f) => f.name === TOKENS_FILE)?.content, TOKENS_FILE);
-  if (/ContainerBetweenSpace/.test(text)) {
+  if (text.includes('ContainerBetweenSpace')) {
     throw new Error(
       `${FILE} now reads FloatingToolbarTokens.ContainerBetweenSpace: emit it as the item spacing`,
     );
   }
-  if (!/verticalArrangement = Arrangement\.Center,/.test(text)) {
+  if (!text.includes('verticalArrangement = Arrangement.Center,')) {
     throw new Error(`${FILE}: VerticalFloatingToolbarLayout no longer centers its items`);
   }
 
@@ -437,7 +437,7 @@ export function extractFloatingToolbarDefaults(
           ref(`var(--m3e-sys-elevation-${level})`, `ElevationTokens.${captured}`),
           {
             ...ref(`var(--m3e-sys-elevation-${level}-shadow)`, `ElevationTokens.${captured}`),
-            name: `${name.replace(/-elevation/, '-shadow')}`,
+            name: name.replace(/-elevation/, '-shadow'),
             note: 'derived: box-shadow of the referenced elevation level',
           },
         ];

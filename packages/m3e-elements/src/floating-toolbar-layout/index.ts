@@ -1,9 +1,9 @@
 // Floating toolbar motion, focus and scroll handling (registers no element), shared by
-// <m3e-floating-toolbar> and m3e-react's <FloatingToolbar>.
+// <m3e-floating-toolbar> and m3e-react's <FloatingToolbar> (which exports the
+// FloatingToolbarScrollBehavior / FloatingToolbarExitDirection names in the umbrella).
 export {
-  type FloatingToolbarExitDirection,
   type FloatingToolbarLayoutOptions,
-  type FloatingToolbarScrollBehavior,
+  type FloatingToolbarLayoutScrollBehavior,
   type FloatingToolbarScrollOptions,
   FloatingToolbarLayout,
 } from './floating-toolbar-layout.js';

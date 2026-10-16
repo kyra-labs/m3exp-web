@@ -13,15 +13,13 @@ import {
 } from '@kyralabs/m3e-motion';
 import { RovingFocus } from '../roving-focus/roving-focus.js';
 
-export type { FloatingToolbarExitDirection };
-
 /**
  * How the toolbar reacts to its scroll container: `exit-always`
  * (FloatingToolbarDefaults.exitAlwaysScrollBehavior: hides on scroll down, returns on scroll up) or
  * `collapse` (floatingToolbarVerticalNestedScroll: collapses on scroll down, expands on scroll up,
  * reported through `onExpandedChange`).
  */
-export type FloatingToolbarScrollBehavior = 'exit-always' | 'collapse';
+export type FloatingToolbarLayoutScrollBehavior = 'exit-always' | 'collapse';
 
 export interface FloatingToolbarLayoutOptions {
   /** Called when the `collapse` scroll behavior wants the toolbar expanded or collapsed. */
@@ -29,7 +27,7 @@ export interface FloatingToolbarLayoutOptions {
 }
 
 export interface FloatingToolbarScrollOptions {
-  behavior?: FloatingToolbarScrollBehavior | null | undefined;
+  behavior?: FloatingToolbarLayoutScrollBehavior | null | undefined;
   /** `exit-always` only. Default `bottom` (horizontal) / `end` (vertical), as Compose's samples. */
   exitDirection?: FloatingToolbarExitDirection | null | undefined;
   /** The scrolling element the toolbar floats over. Default: the document (window scrolling). */
@@ -63,7 +61,7 @@ interface Slot {
 }
 
 interface Scroll {
-  behavior: FloatingToolbarScrollBehavior;
+  behavior: FloatingToolbarLayoutScrollBehavior;
   direction: FloatingToolbarExitDirection;
   abort: AbortController;
 }
