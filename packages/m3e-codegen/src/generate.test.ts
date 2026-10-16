@@ -1,6 +1,7 @@
 // Reference comparisons: values are re-read from the vendored androidx sources with simple,
 // independent regexes (not the parser) and compared with what the generator emits.
 import { fileURLToPath } from 'node:url';
+import { FAST_OUT_LINEAR_IN_EASING, TOP_TITLE_ALPHA_EASING } from '@kyralabs/m3e-motion';
 import { describe, expect, it } from 'vitest';
 import { generate } from './generate.js';
 import { parseTokenFile } from './kotlin.js';
@@ -473,16 +474,85 @@ describe('navigation layout literals (M4 navigation bar + rail)', () => {
   });
 });
 
-describe('TopAppBar layout literals (M4 Top app bar)', () => {
-  const decl = declarations(output.get('components/top-app-bar-defaults.css')!);
+describe('TopAppBar layout literals (M4 Top app bar, M6 flexible / two-rows bars)', () => {
+  const css = output.get('components/top-app-bar-defaults.css')!;
+  const decl = declarations(css.slice(0, css.indexOf('@media')));
   const appBar = inputs.material3Sources['AppBar.kt']!.replace(/\r\n/g, '\n');
+  const t = (name: string) => decl.get(`--m3e-comp-top-app-bar-${name}`);
+  /** `<Object>.<Member>` dp token, re-read from its token file. */
+  const tokenPx = (ref: string) => {
+    const [object, member] = ref.split('.') as [string, string];
+    const m = new RegExp(`val ${member}: [\\w.]+\\n\\s*get\\(\\) = ([\\d.]+)\\.dp`).exec(
+      source(`${object}.kt`).replace(/\r\n/g, '\n'),
+    );
+    return `${String(Number(m![1]))}px`;
+  };
+  const defaultsRef = (member: string) =>
+    new RegExp(`public val ${member}: Dp =\\s*(\\w+\\.\\w+)`).exec(appBar)![1]!;
 
   it('horizontal padding and title inset come from AppBar.kt', () => {
     const padding = /private val TopAppBarHorizontalPadding\n\s*get\(\) = (\d+)\.dp/.exec(appBar);
     const inset = /TopAppBarTitleInset = (\d+)\.dp - TopAppBarHorizontalPadding/.exec(appBar);
-    expect(decl.get('--m3e-comp-top-app-bar-horizontal-padding')).toBe(`${padding![1]!}px`);
-    expect(decl.get('--m3e-comp-top-app-bar-title-inset')).toBe(
-      `${String(Number(inset![1]) - Number(padding![1]))}px`,
+    expect(t('horizontal-padding')).toBe(`${padding![1]!}px`);
+    expect(t('title-inset')).toBe(`${String(Number(inset![1]) - Number(padding![1]))}px`);
+  });
+
+  it.each([
+    ['expanded-height', 'TopAppBarExpandedHeight'],
+    ['medium-collapsed-height', 'MediumAppBarCollapsedHeight'],
+    ['medium-flexible-expanded-height', 'MediumFlexibleAppBarWithoutSubtitleExpandedHeight'],
+    [
+      'medium-flexible-with-subtitle-expanded-height',
+      'MediumFlexibleAppBarWithSubtitleExpandedHeight',
+    ],
+    ['large-collapsed-height', 'LargeAppBarCollapsedHeight'],
+    ['large-flexible-expanded-height', 'LargeFlexibleAppBarWithoutSubtitleExpandedHeight'],
+    [
+      'large-flexible-with-subtitle-expanded-height',
+      'LargeFlexibleAppBarWithSubtitleExpandedHeight',
+    ],
+    ['two-rows-collapsed-height', 'MediumAppBarCollapsedHeight'],
+    ['two-rows-expanded-height', 'MediumFlexibleAppBarWithoutSubtitleExpandedHeight'],
+    ['two-rows-with-subtitle-expanded-height', 'MediumFlexibleAppBarWithSubtitleExpandedHeight'],
+  ])('%s = TopAppBarDefaults.%s', (name, member) => {
+    expect(t(name)).toBe(tokenPx(defaultsRef(member)));
+  });
+
+  it('flexible heights match the tokens (64 / 112 / 136 / 120 / 152)', () => {
+    expect(
+      [
+        'medium-collapsed-height',
+        'medium-flexible-expanded-height',
+        'medium-flexible-with-subtitle-expanded-height',
+        'large-flexible-expanded-height',
+        'large-flexible-with-subtitle-expanded-height',
+      ].map(t),
+    ).toEqual(['64px', '112px', '136px', '120px', '152px']);
+  });
+
+  it('title bottom paddings: medium 24, large 28, two-rows 0', () => {
+    const literal = (name: string) =>
+      `${new RegExp(`private val ${name}\\n\\s*get\\(\\) = (\\d+)\\.dp`).exec(appBar)![1]!}px`;
+    expect(t('medium-title-bottom-padding')).toBe(literal('MediumTitleBottomPadding'));
+    expect(t('large-title-bottom-padding')).toBe(literal('LargeTitleBottomPadding'));
+    expect(t('two-rows-title-bottom-padding')).toBe('0px');
+  });
+
+  it('snap = TopAppBarDefaults.snapAnimationSpec (default effects), jumping under reduced motion', () => {
+    expect(appBar).toContain(
+      'public val snapAnimationSpec: AnimationSpec<Float>\n        @Composable get() = MotionSchemeKeyTokens.DefaultEffects.value()',
+    );
+    for (const field of ['duration', 'easing', 'damping-ratio', 'stiffness'])
+      expect(t(`snap-${field}`)).toBe(`var(--m3e-sys-motion-spring-default-effects-${field})`);
+    expect(css.slice(css.indexOf('@media'))).toContain(
+      '--m3e-comp-top-app-bar-snap-duration: 0ms;',
+    );
+  });
+
+  it('the m3e-motion port uses the easings AppBar.kt / Easing.kt declare', () => {
+    expect(t('top-title-alpha-easing')).toBe(`cubic-bezier(${TOP_TITLE_ALPHA_EASING.join(', ')})`);
+    expect(t('container-color-easing')).toBe(
+      `cubic-bezier(${FAST_OUT_LINEAR_IN_EASING.join(', ')})`,
     );
   });
 });
