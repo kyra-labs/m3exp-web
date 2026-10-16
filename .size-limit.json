@@ -450,7 +450,7 @@
     "limit": "1 KB"
   },
   {
-    "name": "m3exp-web (root): { Icon } (the root entry registers every custom element by design, ~40.3 kB with <m3e-menu>, <m3e-split-button>, <m3e-button-group>, the toolbars, the progress indicators, <m3e-search>, the navigation bar / rails and <m3e-navigation-drawer>; a leaked React component adds ~10 kB of react-aria. Raise with m3e-elements (all); D17)",
+    "name": "m3exp-web (root): { Icon } (the root entry registers every custom element by design, ~40.4 kB with <m3e-menu>, <m3e-split-button>, <m3e-button-group>, the toolbars, the progress indicators, <m3e-search>, the navigation bar / rails, <m3e-navigation-drawer> and the window size class observer; a leaked React component adds ~10 kB of react-aria. Raise with m3e-elements (all); D17)",
     "path": "packages/m3exp-web/dist/index.js",
     "import": "{ Icon }",
     "ignore": ["react", "react-dom"],
