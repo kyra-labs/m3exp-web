@@ -137,6 +137,14 @@ export class NavigationDrawerLayout {
       }
       this.update();
       root.addEventListener('pointerdown', this.#onPointerDown, { signal });
+      // A mouse drag on an item link would start the browser's link drag (and cancel the pointer).
+      root.addEventListener(
+        'dragstart',
+        (e) => {
+          if (this.#shown && this.#options.gesturesEnabled !== false) e.preventDefault();
+        },
+        { signal },
+      );
       if (open) this.#show(false);
     }
   }
@@ -203,6 +211,7 @@ export class NavigationDrawerLayout {
     this.#observer?.disconnect();
     this.#hide();
     this.#rest();
+    this.root.removeAttribute('data-dragging');
   }
 
   #confirm(open: boolean): boolean {
@@ -303,6 +312,8 @@ export class NavigationDrawerLayout {
       }
       if (dx <= DRAG_SLOP || dx < dy) return;
       drag.active = true;
+      // Until the release's click / press has passed: items ignore it (m3e-react's onPress).
+      this.root.setAttribute('data-dragging', '');
       drag.last = e.clientX;
       cancelAnimationFrame(this.#frame);
       this.#frame = 0;
@@ -329,6 +340,7 @@ export class NavigationDrawerLayout {
     this.root.addEventListener('click', guard, { capture: true, once: true });
     setTimeout(() => {
       this.root.removeEventListener('click', guard, { capture: true });
+      this.root.removeAttribute('data-dragging');
     }, 0);
     drag.samples.push({ t: e.timeStamp || performance.now(), x: e.clientX });
     const velocity = e.type === 'pointercancel' ? 0 : releaseVelocity(drag.samples) * drag.dir;

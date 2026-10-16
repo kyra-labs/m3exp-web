@@ -36,7 +36,8 @@
  *   --_m3e-nd-stretch     max(offset, 0): the container is stretched behind the start edge,
  *   --_m3e-nd-fraction    the open fraction (scrim alpha),
  *   --_m3e-nd-inline-size dismissible only: the space the drawer takes (width + offset),
- * plus [data-animating]; [data-open] is set while the sheet is visible (in the top layer for the
+ * plus [data-animating] ([data-dragging] while a drag lasts); [data-open] is set while the sheet
+ * is visible (in the top layer for the
  * modal drawer: popover="manual", fixed positioning without the Popover API).
  *
  * Sources (compose/material3 @ 19991f2c; values: navigation-drawer.css and
@@ -177,6 +178,12 @@
 
   .m3e-navigation-drawer[data-animating] {
     user-select: none;
+  }
+
+  /* Horizontal drags close the drawer (NavigationDrawerLayout); vertical ones scroll the sheet. */
+  :is(.m3e-navigation-drawer--dismissible, .m3e-navigation-drawer--modal)
+    > :is(.m3e-navigation-drawer__sheet, .m3e-navigation-drawer__scrim) {
+    touch-action: pan-y;
   }
 
   /* --- Content -------------------------------------------------------------------------------- */

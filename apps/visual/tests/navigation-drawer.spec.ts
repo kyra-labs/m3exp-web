@@ -265,11 +265,13 @@ test('modal: dragging the sheet towards the start edge closes it; a short slow d
   await rests(drawer);
   await expect(page.getByTestId('element-modal')).toHaveAttribute('open', '');
   expect((await box(drawer.locator('nav'))).x).toBeCloseTo(0, 0);
-  // Past the middle: closed, and the drag did not press an item.
-  await page.mouse.move(300, y);
+  // Started on an item and past the middle: closed, and the drag did not select the item.
+  const item = await box(drawer.locator('.m3e-navigation-drawer-item').nth(1));
+  const itemY = item.y + item.height / 2;
+  await page.mouse.move(300, itemY);
   await page.mouse.down();
   for (let i = 1; i <= 10; i++) {
-    await page.mouse.move(300 - 25 * i, y);
+    await page.mouse.move(300 - 25 * i, itemY);
     await page.waitForTimeout(20);
   }
   await page.mouse.up();
@@ -362,6 +364,27 @@ test('React: switching the variant keeps the selection; the modal closes on a se
   await drawer.locator('.m3e-navigation-drawer-item').nth(2).click();
   await expect(drawer).not.toHaveAttribute('data-open', '');
   await expect(frame.getByText('Selected: drafts')).toBeVisible();
+});
+
+test('React: a drag that starts on an item closes the modal drawer without selecting it', async ({
+  page,
+}) => {
+  const frame = page.getByTestId('react-frame');
+  const drawer = page.getByTestId('react-drawer');
+  await page.getByTestId('react-variant-modal').click();
+  await page.getByTestId('react-drawer-toggle').click();
+  await rests(drawer);
+  const item = await box(drawer.locator('.m3e-navigation-drawer-item').nth(2));
+  const y = item.y + item.height / 2;
+  await page.mouse.move(300, y);
+  await page.mouse.down();
+  for (let i = 1; i <= 10; i++) {
+    await page.mouse.move(300 - 25 * i, y);
+    await page.waitForTimeout(20);
+  }
+  await page.mouse.up();
+  await expect(drawer).not.toHaveAttribute('data-open', '');
+  await expect(frame.getByText('Selected: inbox')).toBeVisible();
 });
 
 test.describe('forced colors', () => {

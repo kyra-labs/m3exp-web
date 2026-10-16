@@ -86,6 +86,8 @@ function NavigationDrawerItem({ item, isSelected, onSelect }: DrawerItemProps): 
   const stateLayer = useStateLayer();
   const press = {
     onPress: () => {
+      // The release of a drag that closes the drawer is not a press (NavigationDrawerLayout).
+      if (ref.current?.closest('[data-dragging]')) return;
       onSelect(key);
     },
     onPressStart: stateLayer.onPressStart,
