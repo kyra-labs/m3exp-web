@@ -459,7 +459,8 @@ button.docs-tile {
  * suite; `contain` keeps it from painting outside.
  */
 .docs-suite-frame {
-  block-size: calc(var(--m3e-sys-space-900) * 7);
+  /* Fits a short window too (the compact-height example). */
+  block-size: min(calc(var(--m3e-sys-space-900) * 7), calc(100dvh - var(--m3e-sys-space-900)));
   margin: var(--m3e-sys-space-300) 0;
   contain: layout paint;
   outline: var(--m3e-comp-divider-thickness) solid var(--m3e-sys-color-outline-variant);

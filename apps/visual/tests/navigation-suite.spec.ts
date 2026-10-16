@@ -65,6 +65,10 @@ for (const [name, size] of Object.entries(SIZES) as [
   (typeof SIZES)[keyof typeof SIZES],
 ][]) {
   test.describe(`${name} window (${String(size.width)}×${String(size.height)})`, () => {
+    // The page starts at this size (a setViewportSize right before the load can race the first
+    // render in Chromium, which then switches type once and shows "last switch" in the demo).
+    test.use({ viewport: size });
+
     test.beforeEach(async ({ page }) => {
       await open(page, size);
     });
@@ -92,8 +96,16 @@ for (const [name, size] of Object.entries(SIZES) as [
       expect(results.violations).toEqual([]);
     });
 
-    test('matches the visual baseline', async ({ page }) => {
-      await expect(page).toHaveScreenshot(`navigation-suite-${name}.png`, { fullPage: true });
+    // Element frames, not the full page: a full-page capture resizes the viewport, which is what
+    // the suite reacts to.
+    test('matches the visual baselines (element and CSS-only suites)', async ({ page }) => {
+      await page.mouse.move(0, 0);
+      await expect(page.getByTestId('element-frame')).toHaveScreenshot(
+        `navigation-suite-${name}-element.png`,
+      );
+      await expect(page.getByTestId('static-frame')).toHaveScreenshot(
+        `navigation-suite-${name}-static.png`,
+      );
     });
 
     test('48dp targets for every item', async ({ page }) => {
@@ -242,7 +254,7 @@ test.describe('show / hide', () => {
     // The FAB stays, 16dp above the bottom.
     const fab = await box(page.getByTestId('element-fab'));
     expect(fab.y + fab.height).toBeCloseTo(frame.y + frame.height - 16, 0);
-    await expect(page).toHaveScreenshot('navigation-suite-hidden.png', { clip: frame });
+    await expect(page.getByTestId('element-frame')).toHaveScreenshot('navigation-suite-hidden.png');
     await page.getByTestId('element-toggle').click();
     await rests(suite);
     await expect(navOf(suite)).toBeVisible();

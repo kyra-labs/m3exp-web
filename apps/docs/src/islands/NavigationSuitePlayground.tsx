@@ -31,7 +31,6 @@ export default function NavigationSuitePlayground() {
   const [drawer, setDrawer] = useState(false);
   const [hidden, setHidden] = useState(false);
   const [selected, setSelected] = useState('home');
-  const [shown, setShown] = useState<NavigationSuiteType | null>(null);
   return (
     <>
       <div className="docs-suite-controls">
@@ -83,7 +82,6 @@ export default function NavigationSuitePlayground() {
           layoutType={type === 'adaptive' ? undefined : type}
           expandedType={drawer ? 'navigation-drawer' : 'wide-navigation-rail-expanded'}
           isNavigationHidden={hidden}
-          onNavigationSuiteTypeChange={setShown}
           primaryAction={
             <Fab aria-label="Compose" data-testid="react-fab" icon={<Icon name="edit" />} />
           }
@@ -91,11 +89,6 @@ export default function NavigationSuitePlayground() {
           <div className="docs-suite-content">
             <p>
               Selected: <output data-testid="react-selected">{selected}</output>
-              {shown ? (
-                <>
-                  ; last switch: <output>{shown}</output>
-                </>
-              ) : null}
             </p>
           </div>
         </NavigationSuiteScaffold>
