@@ -198,7 +198,7 @@
     "limit": "8 KB"
   },
   {
-    "name": "m3e-elements: <m3e-circular-progress> entry (bundles m3e-shapes for the wavy star morph; D17: m3e-shapes budget like D13, not 8 KB)",
+    "name": "m3e-elements: <m3e-circular-progress> entry (bundles m3e-shapes for the wavy star morph; D17 (#50): 14 KB for entries bundling m3e-shapes for runtime Compose shape morphs)",
     "path": "packages/m3e-elements/dist/circular-progress/index.js",
     "limit": "14 KB"
   },
@@ -208,10 +208,10 @@
     "limit": "14 KB"
   },
   {
-    "name": "m3e-react (excluding peer deps) (D17: 70 KB)",
+    "name": "m3e-react (excluding peer deps)",
     "path": "packages/m3e-react/dist/index.js",
     "ignore": ["react", "react-dom"],
-    "limit": "70 KB"
+    "limit": "60 KB"
   },
   {
     "name": "m3e-react: { Icon } only (tree-shaking guard: any other component leaking in fails this)",
