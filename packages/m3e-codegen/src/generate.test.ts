@@ -705,6 +705,107 @@ describe('FloatingToolbarDefaults values (M6 floating toolbar)', () => {
   });
 });
 
+describe('BottomAppBarDefaults values (M6 docked toolbar + deprecated BottomAppBar)', () => {
+  const docked = declarations(output.get('components/docked-toolbar-defaults.css')!);
+  const legacy = declarations(output.get('components/bottom-app-bar-defaults.css')!);
+  const kt = inputs.material3Sources['AppBar.kt']!.replace(/\r\n/g, '\n');
+  const samples = inputs.material3Sources['AppBarSamples.kt']!.replace(/\r\n/g, '\n');
+  const fab = inputs.material3Sources['FloatingActionButton.kt']!.replace(/\r\n/g, '\n');
+  const tokens = source('DockedToolbarTokens.kt');
+  const tokenDp = (member: string) =>
+    `${String(
+      Number(
+        new RegExp(
+          `val ${member}: androidx\\.compose\\.ui\\.unit\\.Dp\\n\\s*get\\(\\) = ([\\d.]+)\\.dp`,
+        ).exec(tokens)![1],
+      ),
+    )}px`;
+  const d = (name: string) => docked.get(`--m3e-comp-docked-toolbar-defaults-${name}`);
+  const l = (name: string) => legacy.get(`--m3e-comp-bottom-app-bar-defaults-${name}`);
+
+  it('docked toolbar: 64dp tall, 16dp start/end padding (DockedToolbarTokens)', () => {
+    expect(kt).toContain(
+      'public val FlexibleBottomAppBarHeight: Dp = DockedToolbarTokens.ContainerHeight',
+    );
+    expect(d('container-height')).toBe(tokenDp('ContainerHeight'));
+    expect(d('container-height')).toBe('64px');
+    expect(kt).toMatch(
+      /FlexibleContentPadding: PaddingValues =\n\s*PaddingValues\(\n\s*start = DockedToolbarTokens\.ContainerLeadingSpace,\n\s*end = DockedToolbarTokens\.ContainerTrailingSpace,/,
+    );
+    expect(d('content-padding-start')).toBe(tokenDp('ContainerLeadingSpace'));
+    expect(d('content-padding-end')).toBe(tokenDp('ContainerTrailingSpace'));
+    expect(d('content-padding-end')).toBe('16px');
+  });
+
+  it('arrangements: spread = SpaceBetween; center = spacedBy(32dp, centered); samples around / evenly', () => {
+    expect(kt).toContain(
+      'FlexibleHorizontalArrangement: Arrangement.Horizontal = Arrangement.SpaceBetween',
+    );
+    expect(d('horizontal-arrangement')).toBe('space-between');
+    expect(kt).toContain(
+      'Arrangement.spacedBy(DockedToolbarTokens.ContainerMaxSpacing, Alignment.CenterHorizontally)',
+    );
+    expect(d('fixed-item-spacing')).toBe(tokenDp('ContainerMaxSpacing'));
+    expect(d('fixed-item-spacing')).toBe('32px');
+    expect(d('fixed-horizontal-arrangement')).toBe('center');
+    expect(samples).toContain('horizontalArrangement = Arrangement.SpaceAround,');
+    expect(samples).toContain('horizontalArrangement = Arrangement.SpaceEvenly,');
+    expect(d('space-around-arrangement')).toBe('space-around');
+    expect(d('space-evenly-arrangement')).toBe('space-evenly');
+    expect(d('spaced-content-padding')).toBe('0px');
+  });
+
+  it('ContainerMinSpacing and DockedToolbarTokens.ContainerColor are not read by Compose', () => {
+    expect(kt).not.toContain('ContainerMinSpacing');
+    expect(kt).not.toContain('DockedToolbarTokens.ContainerColor');
+    expect([...docked.keys()].some((k) => k.includes('min-spacing'))).toBe(false);
+  });
+
+  it('colors: surfaceContainer / onSurface; vibrant sample primaryContainer / onPrimaryContainer', () => {
+    expect(kt).toContain('@Composable get() = BottomAppBarTokens.ContainerColor.value');
+    expect(d('container-color')).toBe('var(--m3e-sys-color-surface-container)');
+    expect(d('content-color')).toBe('var(--m3e-sys-color-on-surface)');
+    expect(samples).toContain('MaterialTheme.colorScheme.primaryContainer, // TODO(b/356885344)');
+    expect(d('vibrant-container-color')).toBe('var(--m3e-sys-color-primary-container)');
+    expect(d('vibrant-content-color')).toBe('var(--m3e-sys-color-on-primary-container)');
+  });
+
+  it('snap: BottomAppBarDefaults.snapAnimationSpec is fast spatial (not default effects)', () => {
+    expect(kt).toMatch(
+      /Default \[AnimationSpec\] that defines how the bottom app bar snaps[\s\S]*?public val snapAnimationSpec: AnimationSpec<Float>\n\s*@Composable get\(\) = MotionSchemeKeyTokens\.FastSpatial\.value\(\)/,
+    );
+    expect(d('snap-stiffness')).toBe('var(--m3e-sys-motion-spring-fast-spatial-stiffness)');
+    expect(d('snap-duration')).toBe('var(--m3e-sys-motion-spring-fast-spatial-duration)');
+  });
+
+  it('legacy BottomAppBar: 80dp, 4dp padding (16 − 12), FAB 8dp below the top and 12dp from the end', () => {
+    expect(source('BottomAppBarTokens.kt')).toMatch(
+      /ContainerHeight: androidx\.compose\.ui\.unit\.Dp\n\s*get\(\) = 80\.0\.dp/,
+    );
+    expect(l('container-height')).toBe('80px');
+    expect(kt).toContain('private val BottomAppBarHorizontalPadding = 16.dp - 12.dp');
+    expect(l('content-padding-horizontal')).toBe('4px');
+    expect(l('content-padding-top')).toBe('4px');
+    expect(kt).toContain(
+      'private val FABHorizontalPadding = 16.dp - BottomAppBarHorizontalPadding',
+    );
+    expect(l('fab-padding-end')).toBe('12px');
+    expect(kt).toContain('private val FABVerticalPadding = 12.dp - BottomAppBarVerticalPadding');
+    expect(l('fab-padding-top')).toBe('8px');
+    expect(l('horizontal-arrangement')).toBe('flex-start');
+  });
+
+  it('legacy BottomAppBar: no shadow (0dp, not BottomAppBarTokens Level2); FAB secondaryContainer at 0dp', () => {
+    expect(kt).toContain('public val ContainerElevation: Dp = 0.dp');
+    expect(l('container-shadow')).toBe('var(--m3e-sys-elevation-level0-shadow)');
+    expect(kt).toContain('get() = FabSecondaryContainerTokens.ContainerColor.value');
+    expect(l('fab-container-color')).toBe('var(--m3e-sys-color-secondary-container)');
+    expect(l('fab-content-color')).toBe('var(--m3e-sys-color-on-secondary-container)');
+    expect(fab).toMatch(/fun bottomAppBarFabElevation\(\n\s*defaultElevation: Dp = 0\.dp,/);
+    expect(l('fab-shadow')).toBe('var(--m3e-sys-elevation-level0-shadow)');
+  });
+});
+
 describe('menu literals (M5 Menus)', () => {
   const decl = declarations(output.get('components/menu-defaults.css')!);
   const kt = (name: string) => inputs.material3Sources[name]!.replace(/\r\n/g, '\n');

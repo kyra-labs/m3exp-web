@@ -11,6 +11,7 @@ import {
   withHeight,
   withHeightOffset,
 } from '@kyralabs/m3e-motion';
+import { observeScroll, readSpringTokens } from '../base/scroll.js';
 
 export type { AppBarScrollBehavior };
 
@@ -22,26 +23,11 @@ export interface TopAppBarScrollOptions {
   signal: AbortSignal;
 }
 
-/**
- * Browsers without `scrollend` (older Safari) settle the bar once scrolling has been idle this
- * long. A scroll-detection heuristic, not a motion value.
- */
-const SCROLL_IDLE_MS = 100;
-
 /** Compose's TopAppBarDefaults.snapAnimationSpec is the default effects spring (AppBar.kt L1540). */
-const SNAP_SPRING = 'default-effects';
+const SNAP_SPRING = '--m3e-sys-motion-spring-default-effects';
 
-function readSpring(el: Element): SpringSpec | null {
-  const style = getComputedStyle(el);
-  const read = (part: string) =>
-    Number.parseFloat(style.getPropertyValue(`--m3e-sys-motion-spring-${SNAP_SPRING}-${part}`));
-  if (read('duration') === 0) return null;
-  const dampingRatio = read('damping-ratio');
-  const stiffness = read('stiffness');
-  return Number.isFinite(dampingRatio) && Number.isFinite(stiffness)
-    ? { dampingRatio, stiffness }
-    : null;
-}
+const readSpring = (el: Element): SpringSpec | null =>
+  readSpringTokens(getComputedStyle(el), SNAP_SPRING);
 
 /**
  * Scroll behaviors for a `.m3e-top-app-bar` (COMPONENT_SPEC §11), ported from Compose's
@@ -55,20 +41,10 @@ function readSpring(el: Element): SpringSpec | null {
  */
 export function attachTopAppBarScroll(bar: HTMLElement, options: TopAppBarScrollOptions): void {
   const { behavior = 'pinned', target = window, signal } = options;
-  const scroller = target === window ? document.scrollingElement : (target as HTMLElement);
-  const scrollTop = () => {
-    if (!scroller) return 0;
-    const max = scroller.scrollHeight - scroller.clientHeight;
-    return Math.min(Math.max(scroller.scrollTop, 0), Math.max(max, 0));
-  };
 
   let state: AppBarScrollState = appBarScrollState(bar.offsetHeight);
-  let lastTop = scrollTop();
-  state = scrollAppBar(state, 'pinned', lastTop, 0);
   let frameId = 0;
   let snapTarget: number | null = null;
-  let idleTimer = 0;
-  const hasScrollEnd = 'onscrollend' in window;
 
   const apply = () => {
     bar.toggleAttribute('data-scrolled', isScrolledUnder(state));
@@ -108,16 +84,12 @@ export function attachTopAppBarScroll(bar: HTMLElement, options: TopAppBarScroll
   };
 
   const settle = () => {
-    clearTimeout(idleTimer);
     if (behavior !== 'enter-always' || snapTarget !== null) return;
     const to = settleTarget(state);
     if (to !== null) snapTo(to);
   };
 
-  const onScroll = () => {
-    const top = scrollTop();
-    const delta = lastTop - top;
-    lastTop = top;
+  const onScroll = (delta: number, top: number) => {
     // An upward scroll (e.g. the browser revealing a focused control) would open the bar anyway:
     // let a snap that is opening it finish. Any other scroll takes over from the snap.
     if (snapTarget === 0 && delta >= 0) {
@@ -127,17 +99,16 @@ export function attachTopAppBarScroll(bar: HTMLElement, options: TopAppBarScroll
       state = scrollAppBar(state, behavior, top, delta);
     }
     apply();
-    if (!hasScrollEnd) {
-      clearTimeout(idleTimer);
-      idleTimer = window.setTimeout(settle, SCROLL_IDLE_MS);
-    }
   };
 
+  state = scrollAppBar(
+    state,
+    'pinned',
+    observeScroll(target, { onScroll, onSettle: settle }, signal),
+    0,
+  );
   bar.setAttribute('data-scroll-behavior', behavior);
   apply();
-  const listenOptions = { passive: true, signal };
-  target.addEventListener('scroll', onScroll, listenOptions);
-  target.addEventListener('scrollend', settle, listenOptions);
   if (behavior === 'enter-always') {
     // A keyboard user tabbing into a hidden bar gets it back.
     bar.addEventListener(
@@ -158,7 +129,6 @@ export function attachTopAppBarScroll(bar: HTMLElement, options: TopAppBarScroll
     'abort',
     () => {
       stopSnap();
-      clearTimeout(idleTimer);
       resize.disconnect();
       bar.removeAttribute('data-scroll-behavior');
       bar.removeAttribute('data-scrolled');

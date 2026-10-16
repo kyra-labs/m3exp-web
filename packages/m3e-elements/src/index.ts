@@ -11,6 +11,8 @@ export * from './split-button/index.js';
 export * from './roving-focus/index.js';
 export * from './floating-toolbar-layout/index.js';
 export * from './floating-toolbar/index.js';
+export * from './docked-toolbar-layout/index.js';
+export * from './docked-toolbar/index.js';
 export * from './progress-indicator/index.js';
 export * from './linear-progress/index.js';
 export * from './circular-progress/index.js';

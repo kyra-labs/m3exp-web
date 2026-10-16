@@ -23,6 +23,7 @@ import {
   FLOATING_TOOLBAR_REDUCED_MOTION,
   extractFloatingToolbarDefaults,
 } from './floating-toolbar-defaults.js';
+import { extractDockedToolbarDefaults } from './docked-toolbar-defaults.js';
 import { extractCenteredPadding, extractNavigationDefaults } from './navigation-defaults.js';
 import { extractLoadingIndicatorMotion } from './loading-indicator-motion.js';
 import { extractMenuDefaults } from './menu-defaults.js';
@@ -929,6 +930,37 @@ export function generate({
     ),
   });
 
+  // BottomAppBarDefaults values Compose renders for the docked toolbar (FlexibleBottomAppBar) and
+  // the legacy BottomAppBar, plus the AppBarSamples.kt arrangements (see docked-toolbar-defaults.ts).
+  const dockedToolbarDefaults = extractDockedToolbarDefaults(material3Sources, files);
+  const dockedDir = (file: string) =>
+    file === 'AppBarSamples.kt' ? MATERIAL3_SAMPLES_DIR : MATERIAL3_DIR;
+  for (const [name, prefix, object] of [
+    ['docked-toolbar-defaults', '--m3e-comp-docked-toolbar-defaults-', 'DockedToolbarDefaults'],
+    ['bottom-app-bar-defaults', '--m3e-comp-bottom-app-bar-defaults-', 'BottomAppBarDefaults'],
+  ] as const) {
+    const values = dockedToolbarDefaults.filter((d) => d.name.startsWith(prefix));
+    components.set(name, {
+      object,
+      tokens: values.map((d) => {
+        const e: Emitted = {
+          name: d.name,
+          value: d.value,
+          object: d.owner,
+          member: d.member,
+          raw: d.raw,
+          line: d.line,
+          cite: `${dockedDir(d.file)}/${d.file}@${commit} L${String(d.line)}`,
+        };
+        if (d.note !== undefined) e.note = d.note;
+        return e;
+      }),
+      js: Object.fromEntries(
+        values.map((d) => [camel(d.name.replace(/^--m3e-comp-/, '').split('-')), d.js]),
+      ),
+    });
+  }
+
   // Menu layout literals and open/close targets (Menu.kt, MenuDefaults.kt; see menu-defaults.ts).
   const menuDefaults = extractMenuDefaults(material3Sources);
   components.set('menu-defaults', {
@@ -1176,6 +1208,25 @@ export function generate({
         '}',
       ],
       `${MATERIAL3_DIR}/{FloatingToolbar,FloatingActionButton,ColorScheme}.kt`,
+    ),
+  );
+
+  out.set(
+    'components/docked-toolbar-defaults.css',
+    cssFile(
+      'Compose FlexibleBottomAppBar (docked toolbar) values that are not in DockedToolbarTokens (lines: PARITY.md).',
+      components.get('docked-toolbar-defaults')!.tokens,
+      [],
+      `${MATERIAL3_DIR}/AppBar.kt + ${MATERIAL3_SAMPLES_DIR}/AppBarSamples.kt`,
+    ),
+  );
+  out.set(
+    'components/bottom-app-bar-defaults.css',
+    cssFile(
+      'Compose BottomAppBar (@deprecated, D4) values that are not in BottomAppBarTokens (lines: PARITY.md).',
+      components.get('bottom-app-bar-defaults')!.tokens,
+      [],
+      `${MATERIAL3_DIR}/{AppBar,FloatingActionButton,ColorScheme}.kt`,
     ),
   );
 

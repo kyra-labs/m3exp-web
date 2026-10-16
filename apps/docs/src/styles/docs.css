@@ -585,6 +585,47 @@ button.docs-tile {
   margin-inline: auto;
 }
 
+/* Docked toolbar demos: phone-width frames with captions, and a scrolling region the bar is
+   docked under (absolute at the frame's bottom; the list keeps room for it). */
+.docs-docked-toolbar-figure {
+  margin: var(--m3e-sys-space-300) 0;
+}
+
+.docs-docked-toolbar-figure > .docs-nav-frame {
+  margin-block: var(--m3e-sys-space-100) 0;
+}
+
+.docs-docked-toolbar-scroll-frame {
+  position: relative;
+  overflow: hidden;
+  max-inline-size: calc(var(--m3e-sys-space-900) * 6);
+  block-size: calc(var(--m3e-sys-space-900) * 4);
+  margin-block: var(--m3e-sys-space-300);
+  border: var(--m3e-comp-divider-thickness) solid var(--m3e-sys-color-outline-variant);
+}
+
+.docs-docked-toolbar-scroll {
+  overflow: auto;
+  block-size: 100%;
+}
+
+.docs-docked-toolbar-scroll > .docs-scroll-list {
+  padding-block-end: var(--m3e-comp-bottom-app-bar-defaults-container-height);
+}
+
+.docs-docked-toolbar-scroll-frame > m3e-docked-toolbar > *,
+.docs-docked-toolbar-docked {
+  position: absolute;
+  inset-block-end: 0;
+  inset-inline: 0;
+}
+
+.docs-docked-toolbar-controls {
+  display: flex;
+  gap: var(--m3e-sys-space-100);
+  align-items: center;
+}
+
 /* Progress indicators page: linear indicators stacked, circular ones in a row. */
 .docs-progress-column {
   display: flex;

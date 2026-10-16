@@ -44,6 +44,7 @@ export const MATERIAL3_SOURCES = [
 export const MATERIAL3_SAMPLES_PATH =
   'compose/material3/material3/samples/src/main/java/androidx/compose/material3/samples';
 export const MATERIAL3_SAMPLE_SOURCES = [
+  'AppBarSamples.kt',
   'SplitButtonSamples.kt',
   'ProgressIndicatorSamples.kt',
 ] as const;
