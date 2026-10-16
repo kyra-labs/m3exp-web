@@ -1,0 +1,453 @@
+/*
+ * Floating toolbar (COMPONENT_SPEC §9; Compose HorizontalFloatingToolbar / VerticalFloatingToolbar
+ * and their with-FAB overloads). Static layout, both color styles, the expanded/collapsed states
+ * and the exit-on-scroll offset. Without JavaScript the with-FAB toolbar folds on the fast spatial
+ * curve and the leading/trailing items show or hide at once; <m3e-floating-toolbar> and m3e-react
+ * <FloatingToolbar> (m3e-elements FloatingToolbarLayout) add Compose's interruptible springs, the
+ * leading/trailing expand/shrink, roving focus and the scroll behaviors on the same classes.
+ *
+ *   <div class="m3e-floating-toolbar" role="toolbar" aria-label="Formatting">
+ *     <div class="m3e-floating-toolbar__bar">
+ *       <div class="m3e-floating-toolbar__leading">…icon buttons…</div>
+ *       …icon buttons…
+ *       <div class="m3e-floating-toolbar__trailing">…icon buttons…</div>
+ *     </div>
+ *   </div>
+ *
+ *   <div class="m3e-floating-toolbar m3e-floating-toolbar--with-fab m3e-floating-toolbar--vibrant"
+ *        role="toolbar" aria-label="Actions">
+ *     <div class="m3e-floating-toolbar__bar">…icon buttons…</div>
+ *     <div class="m3e-floating-toolbar__fab"><button class="m3e-fab" aria-label="Add">…</button></div>
+ *   </div>
+ *
+ * Modifiers: --vertical (aria-orientation="vertical"), --vibrant (standard default), --collapsed,
+ * --with-fab, --fab-start (the FAB before the toolbar: start / top). Leading and trailing items
+ * show only while expanded; beside a FAB the whole toolbar folds into the FAB instead. Set `inert`
+ * on hidden parts yourself without JavaScript (the JS layers do it).
+ *
+ * Sources (compose/material3 FloatingToolbar.kt @ 19991f2c; values in floating-toolbar.css and
+ * floating-toolbar-defaults.css, lines in PARITY.md):
+ * - Toolbar (Horizontal/VerticalFloatingToolbarLayout, L1474-1560, L1697-1784): at least
+ *   ContainerSize (64dp) across, ContentPadding 8dp, CornerFull, clipped; items centered with no
+ *   spacing (Arrangement.Center: FloatingToolbarTokens.ContainerBetweenSpace is not read). Items are
+ *   IconButtons whose minimumInteractiveComponentSize reserves a 48dp slot: ours lay out at their
+ *   visual size (touch target via ::after), so the toolbar adds the difference as margin, as the top
+ *   app bar does. Elevation Level0 expanded and collapsed.
+ * - Leading / trailing (AnimatedVisibility, L1514-1557): expandHorizontally from Start / End and
+ *   shrinkHorizontally towards End / Start on animationSpec() = fast spatial; vertical: expand from
+ *   and shrink towards Bottom (leading) / Top (trailing). Hidden content is not composed.
+ * - With FAB (L1562-1695, L1786-1919): a FloatingToolbarDefaults.FabSizeRange.endInclusive (80dp)
+ *   tall row; width = toolbar max width + ToolbarToFabGap 8dp + FabSizeRange.start 56dp. With the
+ *   expanded progress p (fast spatial; overshoots), the toolbar is (max width × p) wide, its
+ *   content starting at its leading edge and its trailing edge fixed next to the FAB; the FAB
+ *   (aligned to the outer end) is lerp(80dp, 56dp, p) square; the toolbar shadow lerps Level0 →
+ *   Level1 with p clamped at 1 (here: the Level1 shadow at opacity p). FAB: FloatingActionButton
+ *   with FloatingActionButtonDefaults.shape (baseline, 16dp) at every size, elevation Level2,
+ *   hovered Level3; colors primaryContainer (standard) / tertiaryContainer (vibrant).
+ * - Colors (defaultFloatingToolbar{Standard,Vibrant}Colors, L1108-1142): surfaceContainer /
+ *   onSurface and primaryContainer / onPrimaryContainer (contentColorFor). Items inherit the
+ *   content color (LocalContentColor), so standard icon buttons take it.
+ * - Exit on scroll (ExitAlwaysFloatingToolbarScrollBehavior, L540-628): the JS layers write the
+ *   offset (0 → minus the distance off the container) and the exit direction; the toolbar moves by
+ *   it along that direction (logical, mirrored in RTL).
+ */
+@import '@kyralabs/m3e-tokens/components/floating-toolbar.css';
+@import '@kyralabs/m3e-tokens/components/floating-toolbar-defaults.css';
+@import '@kyralabs/m3e-tokens/components/button-defaults.css';
+@import './fab.css';
+
+/* Expanded progress: 1 expanded, 0 collapsed (overshoots on the spring). */
+@property --_m3e-floating-toolbar-progress {
+  syntax: '<number>';
+  inherits: true;
+  initial-value: 1;
+}
+
+@layer m3e.components {
+  .m3e-floating-toolbar {
+    --_m3e-floating-toolbar-progress: 1;
+    --_m3e-floating-toolbar-container: var(
+      --m3e-comp-floating-toolbar-defaults-standard-container-color
+    );
+    --_m3e-floating-toolbar-content: var(
+      --m3e-comp-floating-toolbar-defaults-standard-content-color
+    );
+    --_m3e-floating-toolbar-fab-container: var(
+      --m3e-comp-floating-toolbar-defaults-standard-fab-container-color
+    );
+    --_m3e-floating-toolbar-fab-content: var(
+      --m3e-comp-floating-toolbar-defaults-standard-fab-content-color
+    );
+    --_m3e-floating-toolbar-slot: var(--m3e-comp-minimum-interactive-component-size);
+
+    display: inline-flex;
+    align-items: center;
+    vertical-align: middle;
+    transition: --_m3e-floating-toolbar-progress
+      var(--m3e-comp-floating-toolbar-defaults-animation-duration)
+      var(--m3e-comp-floating-toolbar-defaults-animation-easing);
+  }
+
+  .m3e-floating-toolbar--collapsed {
+    --_m3e-floating-toolbar-progress: 0;
+  }
+
+  .m3e-floating-toolbar--vibrant {
+    --_m3e-floating-toolbar-container: var(
+      --m3e-comp-floating-toolbar-defaults-vibrant-container-color
+    );
+    --_m3e-floating-toolbar-content: var(
+      --m3e-comp-floating-toolbar-defaults-vibrant-content-color
+    );
+    --_m3e-floating-toolbar-fab-container: var(
+      --m3e-comp-floating-toolbar-defaults-vibrant-fab-container-color
+    );
+    --_m3e-floating-toolbar-fab-content: var(
+      --m3e-comp-floating-toolbar-defaults-vibrant-fab-content-color
+    );
+  }
+
+  /* --- Toolbar ------------------------------------------------------------------------------ */
+  .m3e-floating-toolbar__bar {
+    display: flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    gap: var(--m3e-comp-floating-toolbar-defaults-item-spacing);
+    box-sizing: border-box;
+    min-block-size: var(--m3e-comp-floating-toolbar-defaults-container-size);
+    padding-block: var(--m3e-comp-floating-toolbar-defaults-content-padding-top)
+      var(--m3e-comp-floating-toolbar-defaults-content-padding-bottom);
+    padding-inline: var(--m3e-comp-floating-toolbar-defaults-content-padding-start)
+      var(--m3e-comp-floating-toolbar-defaults-content-padding-end);
+    border-radius: var(--m3e-comp-floating-toolbar-container-shape);
+    background-color: var(--_m3e-floating-toolbar-container);
+    box-shadow: var(--m3e-comp-floating-toolbar-defaults-expanded-shadow);
+    color: var(--_m3e-floating-toolbar-content);
+  }
+
+  .m3e-floating-toolbar--collapsed > .m3e-floating-toolbar__bar {
+    box-shadow: var(--m3e-comp-floating-toolbar-defaults-collapsed-shadow);
+  }
+
+  .m3e-floating-toolbar__leading,
+  .m3e-floating-toolbar__trailing {
+    display: flex;
+    flex: none;
+    align-items: center;
+    gap: var(--m3e-comp-floating-toolbar-defaults-item-spacing);
+  }
+
+  /* expandHorizontally(expandFrom = Start) / shrinkHorizontally(shrinkTowards = End): the visible
+     part is the start of the leading items while expanding, their end while shrinking. */
+  .m3e-floating-toolbar__leading {
+    justify-content: flex-start;
+  }
+
+  .m3e-floating-toolbar__trailing {
+    justify-content: flex-end;
+  }
+
+  .m3e-floating-toolbar--collapsed .m3e-floating-toolbar__leading {
+    justify-content: flex-end;
+  }
+
+  .m3e-floating-toolbar--collapsed .m3e-floating-toolbar__trailing {
+    justify-content: flex-start;
+  }
+
+  /* Collapsed: the leading and trailing items are gone (not composed); while the JS layers
+     animate them (data-animating) they are clipped to the sprung size they write. */
+  .m3e-floating-toolbar--collapsed:not([data-animating])
+    :is(.m3e-floating-toolbar__leading, .m3e-floating-toolbar__trailing) {
+    display: none;
+  }
+
+  .m3e-floating-toolbar[data-animating]
+    :is(.m3e-floating-toolbar__leading, .m3e-floating-toolbar__trailing) {
+    overflow: hidden;
+  }
+
+  /* 48dp slots (IconButton's minimumInteractiveComponentSize). */
+  :is(.m3e-floating-toolbar__bar, .m3e-floating-toolbar__leading, .m3e-floating-toolbar__trailing)
+    > .m3e-icon-button {
+    flex: none;
+    margin-inline: max(
+      0%,
+      calc((var(--_m3e-floating-toolbar-slot) - var(--_m3e-icon-button-width)) / 2)
+    );
+  }
+
+  /* --- Vertical ----------------------------------------------------------------------------- */
+  .m3e-floating-toolbar--vertical,
+  .m3e-floating-toolbar--vertical .m3e-floating-toolbar__bar,
+  .m3e-floating-toolbar--vertical .m3e-floating-toolbar__leading,
+  .m3e-floating-toolbar--vertical .m3e-floating-toolbar__trailing {
+    flex-direction: column;
+  }
+
+  .m3e-floating-toolbar--vertical .m3e-floating-toolbar__bar {
+    min-block-size: 0;
+    min-inline-size: var(--m3e-comp-floating-toolbar-defaults-container-size);
+  }
+
+  /* verticalEnterTransition / verticalExitTransition: leading from / towards Bottom, trailing
+     from / towards Top, in both directions. */
+  .m3e-floating-toolbar--vertical .m3e-floating-toolbar__leading {
+    justify-content: flex-end;
+  }
+
+  .m3e-floating-toolbar--vertical .m3e-floating-toolbar__trailing {
+    justify-content: flex-start;
+  }
+
+  .m3e-floating-toolbar--vertical
+    :is(.m3e-floating-toolbar__bar, .m3e-floating-toolbar__leading, .m3e-floating-toolbar__trailing)
+    > .m3e-icon-button {
+    margin-block: max(
+      0%,
+      calc((var(--_m3e-floating-toolbar-slot) - var(--_m3e-icon-button-height)) / 2)
+    );
+    margin-inline: 0;
+  }
+
+  .m3e-floating-toolbar--vertical
+    :is(.m3e-floating-toolbar__bar, .m3e-floating-toolbar__leading, .m3e-floating-toolbar__trailing)
+    > .m3e-button {
+    margin-block: max(
+      0%,
+      calc((var(--_m3e-floating-toolbar-slot) - var(--_m3e-button-height)) / 2)
+    );
+  }
+
+  /* --- With a FAB --------------------------------------------------------------------------- */
+  .m3e-floating-toolbar--with-fab {
+    --_m3e-floating-toolbar-clamped: clamp(0, var(--_m3e-floating-toolbar-progress), 1);
+    --_m3e-floating-toolbar-fold: calc(1 - var(--_m3e-floating-toolbar-progress));
+    --_m3e-floating-toolbar-fab-size: calc(
+      var(--m3e-comp-floating-toolbar-defaults-fab-size-min) +
+        (
+          var(--m3e-comp-floating-toolbar-defaults-fab-size-max) -
+            var(--m3e-comp-floating-toolbar-defaults-fab-size-min)
+        ) *
+        var(--_m3e-floating-toolbar-fold)
+    );
+
+    display: inline-grid;
+    grid-template:
+      'bar gap fab' var(--m3e-comp-floating-toolbar-defaults-fab-size-max)
+      / max-content var(--m3e-comp-floating-toolbar-defaults-toolbar-to-fab-gap)
+      var(--m3e-comp-floating-toolbar-defaults-fab-size-min);
+    align-items: center;
+  }
+
+  .m3e-floating-toolbar--with-fab.m3e-floating-toolbar--fab-start {
+    grid-template:
+      'fab gap bar' var(--m3e-comp-floating-toolbar-defaults-fab-size-max)
+      / var(--m3e-comp-floating-toolbar-defaults-fab-size-min)
+      var(--m3e-comp-floating-toolbar-defaults-toolbar-to-fab-gap) max-content;
+  }
+
+  .m3e-floating-toolbar--with-fab.m3e-floating-toolbar--vertical {
+    grid-template:
+      'bar' max-content
+      'gap' var(--m3e-comp-floating-toolbar-defaults-toolbar-to-fab-gap)
+      'fab' var(--m3e-comp-floating-toolbar-defaults-fab-size-min)
+      / var(--m3e-comp-floating-toolbar-defaults-fab-size-max);
+    justify-items: center;
+  }
+
+  .m3e-floating-toolbar--with-fab.m3e-floating-toolbar--vertical.m3e-floating-toolbar--fab-start {
+    grid-template:
+      'fab' var(--m3e-comp-floating-toolbar-defaults-fab-size-min)
+      'gap' var(--m3e-comp-floating-toolbar-defaults-toolbar-to-fab-gap)
+      'bar' max-content
+      / var(--m3e-comp-floating-toolbar-defaults-fab-size-max);
+  }
+
+  /* The visible toolbar: its shadow (::before, Level1 at opacity p) and its pill (::after), max
+     width × p wide, at the FAB side of the toolbar's full-width area. */
+  .m3e-floating-toolbar--with-fab::before,
+  .m3e-floating-toolbar--with-fab::after {
+    content: '';
+    grid-area: bar;
+    justify-self: end;
+    inline-size: calc(100% * max(var(--_m3e-floating-toolbar-progress), 0));
+    block-size: var(--m3e-comp-floating-toolbar-defaults-container-size);
+    border-radius: var(--m3e-comp-floating-toolbar-container-shape);
+    pointer-events: none;
+  }
+
+  .m3e-floating-toolbar--with-fab::before {
+    box-shadow: var(--m3e-comp-floating-toolbar-defaults-expanded-shadow-with-fab);
+    opacity: var(--_m3e-floating-toolbar-clamped);
+  }
+
+  .m3e-floating-toolbar--with-fab::after {
+    background-color: var(--_m3e-floating-toolbar-container);
+  }
+
+  .m3e-floating-toolbar--with-fab.m3e-floating-toolbar--fab-start::before,
+  .m3e-floating-toolbar--with-fab.m3e-floating-toolbar--fab-start::after {
+    justify-self: start;
+  }
+
+  .m3e-floating-toolbar--with-fab.m3e-floating-toolbar--vertical::before,
+  .m3e-floating-toolbar--with-fab.m3e-floating-toolbar--vertical::after {
+    place-self: end center;
+    inline-size: var(--m3e-comp-floating-toolbar-defaults-container-size);
+    block-size: calc(100% * max(var(--_m3e-floating-toolbar-progress), 0));
+  }
+
+  .m3e-floating-toolbar--with-fab.m3e-floating-toolbar--vertical.m3e-floating-toolbar--fab-start::before,
+  .m3e-floating-toolbar--with-fab.m3e-floating-toolbar--vertical.m3e-floating-toolbar--fab-start::after {
+    align-self: start;
+  }
+
+  /* The content keeps its full size: it starts at the visible toolbar's leading edge (moving with
+     it when the FAB is at the end) and is clipped at its trailing edge. Visibility stays visible
+     while it folds and turns hidden when the fold ends. */
+  .m3e-floating-toolbar--with-fab > .m3e-floating-toolbar__bar {
+    z-index: 1;
+    grid-area: bar;
+    background-color: transparent;
+    box-shadow: none;
+    clip-path: inset(0 calc(100% * max(var(--_m3e-floating-toolbar-fold), 0)) 0 0);
+    translate: calc(100% * var(--_m3e-floating-toolbar-fold)) 0;
+    visibility: visible;
+    transition: visibility var(--m3e-comp-floating-toolbar-defaults-animation-duration)
+      var(--m3e-sys-motion-easing-linear);
+  }
+
+  /* The JS layers drive the progress and the sizes with springs (inline styles). */
+  .m3e-floating-toolbar[data-spring],
+  .m3e-floating-toolbar[data-spring] > .m3e-floating-toolbar__bar {
+    transition: none;
+  }
+
+  .m3e-floating-toolbar--with-fab.m3e-floating-toolbar--collapsed > .m3e-floating-toolbar__bar {
+    visibility: hidden;
+  }
+
+  .m3e-floating-toolbar--with-fab[data-animating] > .m3e-floating-toolbar__bar {
+    visibility: visible;
+  }
+
+  .m3e-floating-toolbar--with-fab:dir(rtl) > .m3e-floating-toolbar__bar {
+    clip-path: inset(0 0 0 calc(100% * max(var(--_m3e-floating-toolbar-fold), 0)));
+    translate: calc(-100% * var(--_m3e-floating-toolbar-fold)) 0;
+  }
+
+  .m3e-floating-toolbar--with-fab.m3e-floating-toolbar--vertical > .m3e-floating-toolbar__bar {
+    clip-path: inset(0 0 calc(100% * max(var(--_m3e-floating-toolbar-fold), 0)) 0);
+    translate: 0 calc(100% * var(--_m3e-floating-toolbar-fold));
+  }
+
+  /* With the FAB first, the toolbar's leading edge stays put. */
+  .m3e-floating-toolbar--with-fab.m3e-floating-toolbar--fab-start > .m3e-floating-toolbar__bar {
+    translate: none;
+  }
+
+  /* The FAB slot: lerp(80dp, 56dp, p) square, at the outer edge, centered across. */
+  .m3e-floating-toolbar__fab {
+    z-index: 2;
+    display: grid;
+    grid-area: fab;
+    justify-self: start;
+    inline-size: var(--_m3e-floating-toolbar-fab-size);
+    block-size: var(--_m3e-floating-toolbar-fab-size);
+    margin-inline-start: calc(
+      var(--m3e-comp-floating-toolbar-defaults-fab-size-min) - var(--_m3e-floating-toolbar-fab-size)
+    );
+  }
+
+  .m3e-floating-toolbar--fab-start > .m3e-floating-toolbar__fab {
+    margin-inline: 0
+      calc(
+        var(--m3e-comp-floating-toolbar-defaults-fab-size-min) -
+          var(--_m3e-floating-toolbar-fab-size)
+      );
+  }
+
+  .m3e-floating-toolbar--vertical > .m3e-floating-toolbar__fab {
+    justify-self: center;
+    margin-inline: 0;
+    margin-block: calc(
+        var(--m3e-comp-floating-toolbar-defaults-fab-size-min) -
+          var(--_m3e-floating-toolbar-fab-size)
+      )
+      0;
+  }
+
+  .m3e-floating-toolbar--vertical.m3e-floating-toolbar--fab-start > .m3e-floating-toolbar__fab {
+    margin-block: 0
+      calc(
+        var(--m3e-comp-floating-toolbar-defaults-fab-size-min) -
+          var(--_m3e-floating-toolbar-fab-size)
+      );
+  }
+
+  /* FloatingToolbarDefaults.Standard/VibrantFloatingActionButton: fills the slot (fillMaxSize). */
+  .m3e-floating-toolbar__fab > .m3e-fab {
+    --_m3e-fab-width: 100%;
+    --_m3e-fab-height: 100%;
+    --_m3e-fab-shape: var(--m3e-comp-floating-toolbar-defaults-fab-shape);
+    --_m3e-fab-icon-size: var(--m3e-comp-fab-baseline-icon-size);
+    --_m3e-fab-container: var(--_m3e-floating-toolbar-fab-container);
+    --_m3e-fab-content: var(--_m3e-floating-toolbar-fab-content);
+    --_m3e-fab-shadow: var(--m3e-comp-floating-toolbar-defaults-fab-shadow);
+    --_m3e-fab-shadow-hovered: var(--m3e-comp-floating-toolbar-defaults-fab-shadow-hovered);
+    --_m3e-fab-shadow-focused: var(--m3e-comp-floating-toolbar-defaults-fab-shadow-focused);
+    --_m3e-fab-shadow-pressed: var(--m3e-comp-floating-toolbar-defaults-fab-shadow-pressed);
+
+    inline-size: 100%;
+    block-size: 100%;
+    min-inline-size: 0;
+    min-block-size: 0;
+  }
+
+  /* --- Exit on scroll (written by the JS layers) -------------------------------------------- */
+  .m3e-floating-toolbar[data-exit-direction='bottom'] {
+    translate: 0 calc(-1 * var(--_m3e-floating-toolbar-offset, 0%));
+  }
+
+  .m3e-floating-toolbar[data-exit-direction='top'] {
+    translate: 0 var(--_m3e-floating-toolbar-offset, 0%);
+  }
+
+  .m3e-floating-toolbar[data-exit-direction='start'] {
+    translate: var(--_m3e-floating-toolbar-offset, 0%) 0;
+  }
+
+  .m3e-floating-toolbar[data-exit-direction='end'] {
+    translate: calc(-1 * var(--_m3e-floating-toolbar-offset, 0%)) 0;
+  }
+
+  .m3e-floating-toolbar[data-exit-direction='start']:dir(rtl) {
+    translate: calc(-1 * var(--_m3e-floating-toolbar-offset, 0%)) 0;
+  }
+
+  .m3e-floating-toolbar[data-exit-direction='end']:dir(rtl) {
+    translate: var(--_m3e-floating-toolbar-offset, 0%) 0;
+  }
+
+  /* Forced colors drop backgrounds and shadows: keep the toolbar's boundary visible. */
+  @media (forced-colors: active) {
+    .m3e-floating-toolbar__bar,
+    .m3e-floating-toolbar--with-fab::after {
+      box-sizing: border-box;
+      border: thin solid CanvasText;
+    }
+
+    .m3e-floating-toolbar--with-fab > .m3e-floating-toolbar__bar {
+      border-color: transparent;
+    }
+  }
+}
+
+@layer m3e.base {
+  /* <m3e-floating-toolbar> renders the contract inside itself. */
+  :where(m3e-floating-toolbar) {
+    display: contents;
+  }
+}
