@@ -145,10 +145,7 @@ export class OffsetClock {
   #base = 0;
   #start = 0;
   #travel = Number.POSITIVE_INFINITY;
-  #started = false;
   running = false;
-  /** When the indicator attached (ms): Compose starts the offset tween there, not at a draw. */
-  origin = 0;
 
   value(now: number): number {
     return this.running
@@ -160,8 +157,7 @@ export class OffsetClock {
   run(now: number, travel: number): void {
     if (this.running && travel === this.#travel) return;
     this.#base = Number.isFinite(travel) ? this.value(now) : 0;
-    this.#start = this.#started ? now : Math.min(now, this.origin || now);
-    this.#started = true;
+    this.#start = now;
     this.#travel = travel;
     this.running = Number.isFinite(travel);
   }
@@ -190,8 +186,8 @@ export abstract class ProgressIndicatorDriver {
   protected value: SpringAnimatable | null = null;
   protected amplitude: AmplitudeAnimation | null = null;
   protected offset = new OffsetClock();
-  /** When the indeterminate timeline started (ms). */
-  protected startedAt = 0;
+  /** When the indeterminate timeline started (ms; the first frame drawn, -1 before it). */
+  protected startedAt = -1;
   #frame = 0;
   #observer: ResizeObserver | undefined;
 
@@ -217,9 +213,8 @@ export abstract class ProgressIndicatorDriver {
     this.options = options;
     this.tokens = readTokens(this.root);
     this.root.toggleAttribute('data-driven', true);
-    if ((previous.value === null) !== (options.value === null) || this.startedAt === 0)
-      this.startedAt = now;
-    this.offset.origin ||= now;
+    // Compose's infinite transitions start on the first frame after composition.
+    if ((previous.value === null) !== (options.value === null)) this.startedAt = -1;
     const value = options.value;
     if (value === null) {
       this.value = null;
@@ -294,6 +289,7 @@ export abstract class ProgressIndicatorDriver {
     this.#frame = 0;
     const tokens = this.tokens;
     if (!this.root.isConnected || tokens === null) return;
+    if (this.startedAt < 0) this.startedAt = now;
     if (this.draw(now, tokens)) this.#frame = requestAnimationFrame(this.#step);
   };
 }
