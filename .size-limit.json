@@ -197,10 +197,17 @@
     "limit": "14 KB"
   },
   {
-    "name": "m3e-react (excluding peer deps)",
+    "name": "m3e-react (all, excluding peer deps) — D17: reported, 150 KB sanity cap (not a budget)",
     "path": "packages/m3e-react/dist/index.js",
     "ignore": ["react", "react-dom"],
-    "limit": "60 KB"
+    "limit": "150 KB"
+  },
+  {
+    "name": "m3e-react: common-page set (D17: Button, IconButton, Card, CardAction, TopAppBar, MenuTrigger, Menu, MenuItem, LoadingIndicator)",
+    "path": "packages/m3e-react/dist/index.js",
+    "import": "{ Button, IconButton, Card, CardAction, TopAppBar, MenuTrigger, Menu, MenuItem, LoadingIndicator }",
+    "ignore": ["react", "react-dom"],
+    "limit": "52 KB"
   },
   {
     "name": "m3e-react: { Icon } only (tree-shaking guard: any other component leaking in fails this)",
