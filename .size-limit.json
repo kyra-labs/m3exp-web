@@ -50,6 +50,12 @@
     "limit": "1 KB"
   },
   {
+    "name": "m3e-css: layout (canonical layouts + vertical drag handle)",
+    "path": "packages/m3e-css/dist/layout.css",
+    "rolldown": false,
+    "limit": "4 KB"
+  },
+  {
     "name": "m3e-css: top app bar",
     "path": "packages/m3e-css/dist/top-app-bar.css",
     "rolldown": false,
@@ -331,6 +337,43 @@
     "limit": "4 KB"
   },
   {
+    "name": "m3e-elements: <m3e-list-detail-layout> entry (PaneScaffoldLayout, observeWindowSizeClass, the m3e-motion navigator / value / layout port; the pane-motion and pane-expansion entries are imported lazily and measured on their own)",
+    "path": "packages/m3e-elements/dist/list-detail-layout/index.js",
+    "ignore": ["@kyralabs/m3e-elements"],
+    "limit": "8 KB"
+  },
+  {
+    "name": "m3e-elements: <m3e-supporting-pane-layout> entry (the list-detail entry's code; pane-motion / pane-expansion lazy, measured on their own)",
+    "path": "packages/m3e-elements/dist/supporting-pane-layout/index.js",
+    "ignore": ["@kyralabs/m3e-elements"],
+    "limit": "8 KB"
+  },
+  {
+    "name": "m3e-elements: list-detail + pane-motion + pane-expansion (what a page with an animated, resizable list-detail layout loads in all)",
+    "path": [
+      "packages/m3e-elements/dist/list-detail-layout/index.js",
+      "packages/m3e-elements/dist/pane-motion/index.js",
+      "packages/m3e-elements/dist/pane-expansion/index.js"
+    ],
+    "limit": "14 KB"
+  },
+  {
+    "name": "m3e-elements: pane-scaffold-layout entry (PaneScaffoldLayout, used by m3e-react ListDetailPaneScaffold / SupportingPaneScaffold)",
+    "path": "packages/m3e-elements/dist/pane-scaffold-layout/index.js",
+    "limit": "8 KB"
+  },
+  {
+    "name": "m3e-elements: pane-motion entry (calculatePaneMotion, pane transitions, ThreePaneScaffoldAnimation + m3e-motion springs)",
+    "path": "packages/m3e-elements/dist/pane-motion/index.js",
+    "limit": "5 KB"
+  },
+  {
+    "name": "m3e-elements: pane-expansion entry (drag handle pointer / keyboard, anchor settle spring)",
+    "path": "packages/m3e-elements/dist/pane-expansion/index.js",
+    "ignore": ["@kyralabs/m3e-elements"],
+    "limit": "5 KB"
+  },
+  {
     "name": "m3e-elements: <m3e-tabs> entry (<m3e-tab>, <m3e-tab-panel>, TabsLayout, m3e-motion TabIndicatorAnimation, RovingFocus, ripple)",
     "path": "packages/m3e-elements/dist/tabs/index.js",
     "limit": "8 KB"
@@ -481,6 +524,20 @@
     "limit": "20 KB"
   },
   {
+    "name": "m3e-react: { ListDetailPaneScaffold, useListDetailPaneScaffoldNavigator } only (incl. react-aria useObjectRef, PaneScaffoldLayout, pane-motion and pane-expansion from m3e-elements)",
+    "path": "packages/m3e-react/dist/index.js",
+    "import": "{ ListDetailPaneScaffold, useListDetailPaneScaffoldNavigator }",
+    "ignore": ["react", "react-dom"],
+    "limit": "11 KB"
+  },
+  {
+    "name": "m3e-react: { FeedLayout } only (CSS-only layout)",
+    "path": "packages/m3e-react/dist/index.js",
+    "import": "{ FeedLayout }",
+    "ignore": ["react", "react-dom"],
+    "limit": "1 KB"
+  },
+  {
     "name": "m3e-react: { Tabs, TabPanel } only (incl. react-aria press + TabsLayout from m3e-elements)",
     "path": "packages/m3e-react/dist/index.js",
     "import": "{ Tabs, TabPanel }",
@@ -494,10 +551,10 @@
     "limit": "1 KB"
   },
   {
-    "name": "m3exp-web (root): { Icon } (the root entry registers every custom element by design, ~44.7 kB with <m3e-menu>, <m3e-split-button>, <m3e-button-group>, the toolbars, the progress indicators, <m3e-search>, the navigation bar / rails, <m3e-navigation-drawer>, <m3e-navigation-suite>, the window size class observer and <m3e-tabs>; a leaked React component adds ~10 kB of react-aria. Raise with m3e-elements (all); D17)",
+    "name": "m3exp-web (root): { Icon } (the root entry registers every custom element by design, with <m3e-menu>, <m3e-split-button>, <m3e-button-group>, the toolbars, the progress indicators, <m3e-search>, the navigation bar / rails, <m3e-navigation-drawer>, <m3e-navigation-suite>, the window size class observer, <m3e-tabs> and the canonical layouts (~51.8 kB with their lazily imported pane-motion / pane-expansion entries); a leaked React component adds ~10 kB of react-aria. Raise with m3e-elements (all); D17)",
     "path": "packages/m3exp-web/dist/index.js",
     "import": "{ Icon }",
     "ignore": ["react", "react-dom"],
-    "limit": "46 KB"
+    "limit": "53 KB"
   }
 ]

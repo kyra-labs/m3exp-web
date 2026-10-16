@@ -1,0 +1,258 @@
+/*
+ * Canonical layouts (COMPONENT_SPEC §16a, FOUNDATIONS §9): list-detail and supporting pane
+ * (Compose ListDetailPaneScaffold / SupportingPaneScaffold over ThreePaneScaffold), and the feed
+ * (m3.material.io; Compose has no feed scaffold).
+ *
+ *   <div class="m3e-layout">                                    (the size container)
+ *     <div class="m3e-pane-scaffold m3e-pane-scaffold--list-detail" data-destination="secondary">
+ *       <div class="m3e-pane-scaffold__pane m3e-pane-scaffold__pane--secondary"
+ *            role="region" aria-label="Inbox" tabindex="-1">…list…</div>
+ *       <div class="m3e-pane-scaffold__pane m3e-pane-scaffold__pane--primary" …>…detail…</div>
+ *       <div class="m3e-pane-scaffold__pane m3e-pane-scaffold__pane--tertiary" …>…extra…</div>
+ *     </div>
+ *   </div>
+ *
+ *   <div class="m3e-layout"><div class="m3e-feed">…items (.m3e-feed__item--wide spans two
+ *     columns)…</div></div>
+ *
+ * Pane roles are Compose's ThreePaneScaffoldRole: list-detail = list (secondary), detail
+ * (primary), extra (tertiary), in that order from the start; supporting pane = main (primary),
+ * supporting (secondary), extra (tertiary). Put the panes in that DOM order (it is the visual and
+ * focus order; RTL mirrors it).
+ *
+ * Sizing is the layout's own: `.m3e-layout` is an inline-size container and the queries below
+ * read its width, so a layout inside a navigation suite's content area (or any pane) adapts to
+ * the room it has, not to the window. Compose reads the window size class
+ * (calculatePaneScaffoldDirective); the breakpoints and pane counts are the same:
+ * - below 840px (compact, medium): one pane, the destination (data-destination: `primary`,
+ *   `secondary` or `tertiary`; default the list / the main pane);
+ * - from 840px (expanded): two panes, the destination plus the highest-priority other pane
+ *   (primary, then secondary, then tertiary), 24dp apart;
+ * - from 1200px (large): all three panes (Compose's directive allows three from large);
+ *   --recommended keeps two until 1600px (m3.material.io Breakpoints: two panes at large, three
+ *   at extra-large).
+ * Each pane starts at its preferred width (360dp, 412dp from large; a pane's own
+ * --m3e-comp-pane-scaffold-pane-preferred-width overrides it), the primary pane takes the rest,
+ * and every pane shrinks by the same ratio when they do not fit (ThreePaneScaffold's measure
+ * policy). Give the layout a height (it fills its parent); each pane scrolls on its own.
+ *
+ * CSS alone shows the current destination only. m3e-elements' PaneScaffoldLayout (used by
+ * <m3e-list-detail-layout>, <m3e-supporting-pane-layout> and m3e-react) adds the destination
+ * history, reflow, navigation motion, focus and the drag handle. It sets [data-managed] and then
+ * writes, per pane, data-pane-value (`expanded` | `reflowed` | `hidden`), [data-grow] (the pane
+ * that takes the rest), [data-collapsed] (a split dragged to an edge) and --_m3e-pane-basis (a
+ * resting drag split), plus [data-reflow] on the scaffold (a pane reflowed under another:
+ * stacked, the lower one at most its preferred height or half). While panes move
+ * ([data-animating]) every shown pane is absolutely placed from
+ *   --_m3e-pane-x / --_m3e-pane-y / --_m3e-pane-w / --_m3e-pane-h   (px, physical, per frame)
+ * and an exiting pane keeps [data-exiting] until it is out; nothing reads layout meanwhile.
+ * The drag handle (__drag-handle, a separator around .m3e-vertical-drag-handle) is centred on
+ *   --_m3e-pane-handle-x   (px from the left edge)
+ * while [data-handle] is set (exactly two panes expanded).
+ *
+ * Sources (material3-adaptive adaptive-layout @ 19991f2c; values in pane-scaffold-defaults.css,
+ * lines in PARITY.md): PaneScaffoldDirective.kt (spacer, default pane sizes), ThreePaneScaffold.kt
+ * (measure policy L700-771), ListDetailPaneScaffold.kt / SupportingPaneScaffold.kt (pane orders);
+ * feed: m3.material.io Canonical examples › Feed (one column at compact, more columns as the
+ * window grows) and Breakpoints (margins 16dp compact, 24dp from medium).
+ */
+@import '@kyralabs/m3e-tokens/components/pane-scaffold-defaults.css';
+@import '@kyralabs/m3e-tokens/components/button-defaults.css';
+@import '@kyralabs/m3e-tokens/components/divider.css';
+@import './vertical-drag-handle.css';
+
+@layer m3e.components {
+  .m3e-layout {
+    container: m3e-layout / inline-size;
+    box-sizing: border-box;
+    block-size: 100%;
+    min-inline-size: 0;
+  }
+
+  /* --- Pane scaffold ---------------------------------------------------------------------------- */
+  .m3e-pane-scaffold {
+    position: relative;
+    display: flex;
+    gap: var(--m3e-comp-pane-scaffold-partition-spacer-size);
+    box-sizing: border-box;
+    block-size: 100%;
+    isolation: isolate;
+  }
+
+  .m3e-pane-scaffold__pane {
+    display: none;
+    flex: 1 1 var(--_m3e-pane-basis, var(--m3e-comp-pane-scaffold-pane-preferred-width));
+    flex-direction: column;
+    box-sizing: border-box;
+    min-inline-size: 0;
+    min-block-size: 0;
+    overflow: auto;
+  }
+
+  /* One pane: the destination (default: the list / the main pane). */
+  .m3e-pane-scaffold--list-detail:not([data-destination], [data-managed])
+    > .m3e-pane-scaffold__pane--secondary,
+  .m3e-pane-scaffold--supporting-pane:not([data-destination], [data-managed])
+    > .m3e-pane-scaffold__pane--primary {
+    display: flex;
+  }
+
+  .m3e-pane-scaffold[data-destination='primary']:not([data-managed])
+    > .m3e-pane-scaffold__pane--primary,
+  .m3e-pane-scaffold[data-destination='secondary']:not([data-managed])
+    > .m3e-pane-scaffold__pane--secondary,
+  .m3e-pane-scaffold[data-destination='tertiary']:not([data-managed])
+    > .m3e-pane-scaffold__pane--tertiary {
+    display: flex;
+  }
+
+  @container m3e-layout (width >= 840px) {
+    /* Two panes: the destination and the highest-priority other pane; the primary takes the rest. */
+    .m3e-pane-scaffold:not([data-managed]) > .m3e-pane-scaffold__pane--primary,
+    .m3e-pane-scaffold:not([data-managed], [data-destination='tertiary'])
+      > .m3e-pane-scaffold__pane--secondary {
+      display: flex;
+    }
+
+    .m3e-pane-scaffold:not([data-managed])
+      > .m3e-pane-scaffold__pane:not(.m3e-pane-scaffold__pane--primary) {
+      flex-grow: 0;
+    }
+  }
+
+  @container m3e-layout (width >= 1200px) {
+    .m3e-pane-scaffold {
+      --m3e-comp-pane-scaffold-pane-preferred-width: var(
+        --m3e-comp-pane-scaffold-pane-preferred-width-large
+      );
+    }
+
+    .m3e-pane-scaffold:not([data-managed], .m3e-pane-scaffold--recommended)
+      > .m3e-pane-scaffold__pane {
+      display: flex;
+    }
+  }
+
+  @container m3e-layout (width >= 1600px) {
+    .m3e-pane-scaffold--recommended:not([data-managed]) > .m3e-pane-scaffold__pane {
+      display: flex;
+    }
+  }
+
+  /*
+   * Moving: every shown pane at its animated bounds. Physical left / top, as Compose's measure
+   * policy places panes (the pane order is mirrored for RTL before layout).
+   */
+  .m3e-pane-scaffold[data-animating] > .m3e-pane-scaffold__pane {
+    position: absolute;
+    inset: 0 auto auto 0;
+    z-index: 1;
+    inline-size: var(--_m3e-pane-w);
+    block-size: var(--_m3e-pane-h);
+    translate: var(--_m3e-pane-x) var(--_m3e-pane-y);
+  }
+
+  /* Hidden panes animate under the shown ones (HiddenPaneZIndexOffset). */
+  .m3e-pane-scaffold[data-animating] > .m3e-pane-scaffold__pane[data-exiting] {
+    z-index: 0;
+  }
+
+  /* Managed (m3e-elements PaneScaffoldLayout): the value it calculated. */
+  .m3e-pane-scaffold[data-managed] > .m3e-pane-scaffold__pane {
+    flex-grow: 0;
+  }
+
+  .m3e-pane-scaffold[data-managed]
+    > .m3e-pane-scaffold__pane:is(
+      [data-pane-value='expanded'],
+      [data-pane-value='reflowed'],
+      [data-exiting]
+    ):not([data-collapsed]) {
+    display: flex;
+  }
+
+  .m3e-pane-scaffold[data-managed] > .m3e-pane-scaffold__pane[data-grow] {
+    flex-grow: 1;
+  }
+
+  /* A pane reflowed under the expanded one: at most its preferred height or half (L737-771). */
+  .m3e-pane-scaffold[data-reflow] {
+    flex-direction: column;
+  }
+
+  .m3e-pane-scaffold[data-reflow] > .m3e-pane-scaffold__pane[data-pane-value='expanded'] {
+    flex: 1 1 0;
+  }
+
+  .m3e-pane-scaffold[data-reflow] > .m3e-pane-scaffold__pane[data-pane-value='reflowed'] {
+    flex: 0 0
+      min(
+        var(--m3e-comp-pane-scaffold-pane-preferred-height),
+        calc(50% - var(--m3e-comp-pane-scaffold-partition-spacer-size) / 2)
+      );
+    order: 1;
+  }
+
+  /* Back controls the layout hides while there is nothing to go back to (over their display). */
+  .m3e-pane-scaffold[data-managed] [data-pane-navigate][hidden] {
+    display: none;
+  }
+
+  /* --- Drag handle (pane expansion) ------------------------------------------------------------- */
+  .m3e-pane-scaffold__drag-handle {
+    position: absolute;
+    inset: 50% auto auto 0;
+    z-index: 2;
+    display: none;
+    place-items: center;
+    box-sizing: border-box;
+    min-inline-size: var(--m3e-comp-minimum-interactive-component-size);
+    min-block-size: var(--m3e-comp-minimum-interactive-component-size);
+    translate: calc(var(--_m3e-pane-handle-x) - 50%) -50%;
+    border-radius: var(--m3e-comp-drag-handle-shape);
+    cursor: col-resize;
+    touch-action: none;
+    user-select: none;
+  }
+
+  .m3e-pane-scaffold[data-handle] > .m3e-pane-scaffold__drag-handle {
+    display: grid;
+  }
+
+  /* --- Feed ------------------------------------------------------------------------------------- */
+  .m3e-feed {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--m3e-comp-feed-gap);
+    align-content: start;
+    box-sizing: border-box;
+    padding-inline: var(--m3e-comp-feed-margin-compact);
+  }
+
+  @container m3e-layout (width >= 600px) {
+    .m3e-feed {
+      grid-template-columns: repeat(
+        auto-fill,
+        minmax(min(100%, var(--m3e-comp-feed-column-min-width)), 1fr)
+      );
+      padding-inline: var(--m3e-comp-feed-margin);
+    }
+
+    .m3e-feed__item--wide {
+      grid-column: span 2;
+    }
+  }
+
+  @media (forced-colors: active) {
+    .m3e-pane-scaffold__pane {
+      border: var(--m3e-comp-divider-thickness) solid CanvasText;
+    }
+  }
+}
+
+@layer m3e.base {
+  /* The elements render the contract inside themselves (m3e-elements). */
+  :where(m3e-list-detail-layout, m3e-supporting-pane-layout) {
+    display: contents;
+  }
+}

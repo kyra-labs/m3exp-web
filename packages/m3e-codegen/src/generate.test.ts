@@ -1483,3 +1483,41 @@ describe('search literals (M6 Search, AppBarWithSearch)', () => {
     expect(search).toContain(`{ state.progress > ${String(SEARCH_DROPDOWN_VISIBLE_PROGRESS)}f }`);
   });
 });
+
+describe('canonical layout values (M7)', () => {
+  const css = output.get('components/pane-scaffold-defaults.css')!;
+  const decl = declarations(css.slice(0, css.indexOf('@media')));
+  const kt = (file: string) => inputs.material3Sources[file]!.replace(/\r\n/g, '\n');
+  const t = (name: string) => decl.get(`--m3e-comp-${name}`);
+
+  it('PaneScaffoldDirective: 24dp spacer from expanded; 360 / 412 / 420dp default pane sizes', () => {
+    expect(kt('PaneScaffoldDirective.kt')).toContain('internal val DefaultPreferredWidth = 360.dp');
+    expect(kt('PaneScaffoldDirective.kt')).toContain(
+      'internal val DefaultPreferredWidthXL = 412.dp',
+    );
+    expect(t('pane-scaffold-partition-spacer-size')).toBe('24px');
+    expect(t('pane-scaffold-pane-preferred-width')).toBe('360px');
+    expect(t('pane-scaffold-pane-preferred-width-large')).toBe('412px');
+    expect(t('pane-scaffold-pane-preferred-height')).toBe('420px');
+  });
+
+  it('PaneMotionDefaults: spring(0.8, 380), delayed by 10 %; jumps under reduced motion', () => {
+    expect(t('pane-scaffold-motion-damping-ratio')).toBe('0.8');
+    expect(t('pane-scaffold-motion-stiffness')).toBe('380');
+    expect(t('pane-scaffold-motion-delayed-ratio')).toBe('0.1');
+    expect(t('pane-scaffold-motion-easing')).toMatch(/^linear\(0, .*, 1\)$/);
+    expect(css.slice(css.indexOf('@media'))).toContain(
+      '--m3e-comp-pane-scaffold-motion-duration: 0ms;',
+    );
+  });
+
+  it('feed: m3.material.io margins 16 / 24dp; gap and column width flagged TODO(verify)', () => {
+    expect(t('feed-margin-compact')).toBe('16px');
+    expect(t('feed-margin')).toBe('24px');
+    expect(t('feed-gap')).toBe('16px');
+    expect(t('feed-column-min-width')).toBe('240px');
+    const parity = output.get('PARITY.md')!;
+    expect(parity).toContain('TODO(verify): SOURCES.md register #65');
+    expect(parity).toContain('TODO(verify): SOURCES.md register #66');
+  });
+});

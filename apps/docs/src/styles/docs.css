@@ -782,3 +782,106 @@ button.docs-tile {
   font-size: var(--m3e-sys-typescale-label-large-size);
   font-weight: var(--m3e-sys-typescale-label-large-weight);
 }
+
+/*
+ * Canonical layouts: frames with a set width (the layouts size themselves by their own width, so
+ * each frame stands in for a window size class); wider frames scroll sideways.
+ */
+.docs-layout-widths {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--m3e-sys-space-100);
+  margin: var(--m3e-sys-space-300) 0;
+}
+
+.docs-layout-scroll {
+  overflow-x: auto;
+}
+
+.docs-layout-frame {
+  box-sizing: border-box;
+  block-size: calc(var(--m3e-sys-space-900) * 7);
+  margin: var(--m3e-sys-space-200) 0;
+  outline: var(--m3e-comp-divider-thickness) solid var(--m3e-sys-color-outline-variant);
+  outline-offset: calc(-1 * var(--m3e-comp-divider-thickness));
+  background-color: var(--m3e-sys-color-surface);
+  contain: layout paint;
+}
+
+.docs-layout-frame--feed {
+  block-size: auto;
+  padding-block: var(--m3e-sys-space-200);
+}
+
+/* Pane content as in Compose's samples: a list of outlined items, or a bar above a card. */
+.docs-layout-list,
+.docs-layout-screen {
+  display: flex;
+  flex-direction: column;
+  gap: var(--m3e-sys-space-100);
+  box-sizing: border-box;
+  min-block-size: 100%;
+  padding: var(--m3e-sys-space-100);
+}
+
+.docs-layout-item {
+  display: flex;
+  flex-direction: column;
+  gap: var(--m3e-sys-space-50);
+  box-sizing: border-box;
+  inline-size: 100%;
+  min-block-size: var(--m3e-sys-space-900);
+  margin: 0;
+  padding: var(--m3e-sys-space-150);
+  border: var(--m3e-comp-divider-thickness) solid var(--m3e-sys-color-outline-variant);
+  border-radius: var(--m3e-sys-shape-corner-medium);
+  background-color: var(--m3e-sys-color-surface);
+  color: var(--m3e-sys-color-on-surface);
+  font: inherit;
+  text-align: start;
+}
+
+button.docs-layout-item {
+  cursor: pointer;
+}
+
+button.docs-layout-item:focus-visible {
+  outline: var(--m3e-sys-state-focus-indicator-thickness) solid var(--m3e-sys-color-secondary);
+  outline-offset: var(--m3e-sys-state-focus-indicator-inner-offset);
+}
+
+.docs-layout-item[aria-current='true'] {
+  background-color: var(--m3e-sys-color-primary-container);
+  color: var(--m3e-sys-color-on-primary-container);
+}
+
+.docs-layout-item__title {
+  font-weight: var(--m3e-sys-typescale-title-medium-weight);
+}
+
+.docs-layout-bar {
+  display: flex;
+  gap: var(--m3e-sys-space-100);
+  align-items: center;
+  min-block-size: var(--m3e-sys-space-800);
+}
+
+.docs-layout-bar h3 {
+  margin: 0;
+}
+
+.docs-layout-card {
+  flex: 1;
+  padding: var(--m3e-sys-space-200);
+  border-radius: var(--m3e-sys-shape-corner-medium);
+  background-color: var(--m3e-sys-color-surface-container);
+  color: var(--m3e-sys-color-on-surface);
+}
+
+.docs-layout-card--extra {
+  background-color: var(--m3e-sys-color-surface-container-highest);
+}
+
+.docs-layout-card > :first-child {
+  margin-block-start: 0;
+}

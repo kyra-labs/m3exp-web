@@ -50,6 +50,7 @@ export const MATERIAL3_SOURCES = [
   'ComposeMaterial3Flags.kt',
   'TabRow.kt',
   'Tab.kt',
+  'DragHandle.kt',
 ] as const;
 
 /** Material3 samples the generator reads (values the Compose catalog renders, e.g. icon rotation). */
@@ -109,7 +110,10 @@ export const WINDOW_CORE_SOURCES = ['WindowSizeClass.kt'] as const;
  * window-size-class.ts: currentWindowAdaptiveInfo(V2), the default width/height size class sets,
  * calculatePaneScaffoldDirective and NavigationSuiteScaffoldDefaults.navigationSuiteType; the
  * navigation suite scaffold (layout, show / hide state, defaults) and its samples, read by the
- * generator (navigation-suite-defaults.ts) and ported by m3e-motion's navigation-suite.ts.
+ * generator (navigation-suite-defaults.ts) and ported by m3e-motion's navigation-suite.ts; the
+ * three-pane scaffolds (ThreePaneScaffold, ListDetailPaneScaffold, SupportingPaneScaffold, their
+ * value, motion, pane expansion and navigator) and their samples, read by the generator
+ * (pane-scaffold-defaults.ts) and ported by m3e-motion's three-pane-scaffold.ts.
  */
 export const MATERIAL3_ADAPTIVE_PATH = 'compose/material3';
 export const MATERIAL3_ADAPTIVE_SOURCES = [
@@ -118,6 +122,22 @@ export const MATERIAL3_ADAPTIVE_SOURCES = [
   'adaptive/adaptive-layout/src/commonMain/kotlin/androidx/compose/material3/adaptive/layout/PaneScaffoldDirective.kt',
   'material3-adaptive-navigation-suite/src/commonMain/kotlin/androidx/compose/material3/adaptive/navigationsuite/NavigationSuiteScaffold.kt',
   'material3-adaptive-navigation-suite/samples/src/main/java/androidx/compose/material3/adaptive/navigationsuite/samples/NavigationSuiteScaffoldSamples.kt',
+  // Canonical layouts (COMPONENT_SPEC §16a), ported by m3e-motion's three-pane-scaffold.ts and
+  // read by the generator (pane-scaffold-defaults.ts).
+  'adaptive/adaptive-layout/src/commonMain/kotlin/androidx/compose/material3/adaptive/layout/AdaptStrategy.kt',
+  'adaptive/adaptive-layout/src/commonMain/kotlin/androidx/compose/material3/adaptive/layout/ListDetailPaneScaffold.kt',
+  'adaptive/adaptive-layout/src/commonMain/kotlin/androidx/compose/material3/adaptive/layout/Pane.kt',
+  'adaptive/adaptive-layout/src/commonMain/kotlin/androidx/compose/material3/adaptive/layout/PaneExpansionDraggableModifier.kt',
+  'adaptive/adaptive-layout/src/commonMain/kotlin/androidx/compose/material3/adaptive/layout/PaneExpansionState.kt',
+  'adaptive/adaptive-layout/src/commonMain/kotlin/androidx/compose/material3/adaptive/layout/PaneMotion.kt',
+  'adaptive/adaptive-layout/src/commonMain/kotlin/androidx/compose/material3/adaptive/layout/SupportingPaneScaffold.kt',
+  'adaptive/adaptive-layout/src/commonMain/kotlin/androidx/compose/material3/adaptive/layout/ThreePaneMotion.kt',
+  'adaptive/adaptive-layout/src/commonMain/kotlin/androidx/compose/material3/adaptive/layout/ThreePaneScaffold.kt',
+  'adaptive/adaptive-layout/src/commonMain/kotlin/androidx/compose/material3/adaptive/layout/ThreePaneScaffoldValue.kt',
+  'adaptive/adaptive-layout/src/androidMain/res/values/strings.xml',
+  'adaptive/adaptive-navigation/src/commonMain/kotlin/androidx/compose/material3/adaptive/navigation/BackNavigationBehavior.kt',
+  'adaptive/adaptive-navigation/src/commonMain/kotlin/androidx/compose/material3/adaptive/navigation/ThreePaneScaffoldNavigator.kt',
+  'adaptive/samples/src/main/java/androidx/compose/material3/adaptive/samples/ThreePaneScaffoldSample.kt',
 ] as const;
 
 /**

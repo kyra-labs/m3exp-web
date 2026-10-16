@@ -46,4 +46,11 @@ ports Compose's `NavigationSuiteScaffoldState` show / hide with its layout progr
 `windowWidthSizeClass` / `windowHeightSizeClass` classify one axis; `{ largeAndExtraLargeWidth:
 false }` keeps Compose's V1 width set (every width from 840 is `expanded`).
 
+Three-pane scaffolds (ports of Compose Material3 adaptive `ThreePaneScaffold`, the list-detail and
+supporting-pane scaffolds and their navigator): `calculateThreePaneScaffoldValue`,
+`ThreePaneScaffoldNavigator` (`navigateTo`, `navigateBack` with the four back behaviors),
+`threePaneScaffoldDirective` (`paneRule: 'recommended'` caps large at two panes),
+`threePaneScaffoldLayout` (pane bounds), `calculatePaneMotion` / `paneTransitions` /
+`ThreePaneScaffoldAnimation` (pane motion) and the pane expansion anchors.
+
 Apache-2.0; see `LICENSE` and `NOTICE`.

@@ -11,5 +11,10 @@ export default defineConfig({
   entry: ['src/index.ts', 'src/*/index.ts'],
   splitting: true,
   // <m3e-button-group> imports the menu entry lazily (its first overflow); keep it a package import.
-  external: ['@kyralabs/m3e-elements/menu.js'],
+  // A pane scaffold imports its pane-motion and pane-expansion entries lazily; same.
+  external: [
+    '@kyralabs/m3e-elements/menu.js',
+    '@kyralabs/m3e-elements/pane-motion.js',
+    '@kyralabs/m3e-elements/pane-expansion.js',
+  ],
 });
