@@ -548,10 +548,17 @@ test.describe('springs (frames driven by the Playwright clock)', () => {
   }) => {
     await page.clock.pauseAt((await page.evaluate(() => Date.now())) + 10_000);
     const rail = elementRail(page);
+    // Toggle inside a frame so the spring starts on the clock's frame grid, then step exactly six
+    // 16ms frames: the screenshot always shows the spring 96ms in.
     await page.getByTestId('element-rail').evaluate((host) => {
-      (host as RailHost).toggle();
+      requestAnimationFrame(() => {
+        (host as RailHost).toggle();
+      });
     });
-    await page.clock.runFor(96);
+    for (let i = 0; i < 7; i++) await page.clock.runFor(16);
+    expect(
+      Number(await rail.evaluate((el) => el.style.getPropertyValue('--_m3e-wnr-progress'))),
+    ).toBeCloseTo(springValue(await spring(page, 'default-spatial'), 96, 0, 1), 3);
     const frame = await box(rail);
     await expect(page).toHaveScreenshot('navigation-rail-mid-animation.png', {
       clip: { x: frame.x, y: frame.y, width: 240, height: frame.height },
