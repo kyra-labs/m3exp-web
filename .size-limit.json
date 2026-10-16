@@ -197,6 +197,28 @@
     "limit": "2 KB"
   },
   {
+    "name": "m3e-css: docked toolbar",
+    "path": "packages/m3e-css/dist/docked-toolbar.css",
+    "rolldown": false,
+    "limit": "4 KB"
+  },
+  {
+    "name": "m3e-css: legacy bottom app bar (D4, incl. FAB)",
+    "path": "packages/m3e-css/dist/bottom-app-bar.css",
+    "rolldown": false,
+    "limit": "4 KB"
+  },
+  {
+    "name": "m3e-elements: <m3e-docked-toolbar> entry (DockedToolbarLayout, RovingFocus, ExitOnScroll, m3e-motion springs)",
+    "path": "packages/m3e-elements/dist/docked-toolbar/index.js",
+    "limit": "8 KB"
+  },
+  {
+    "name": "m3e-elements: docked-toolbar-layout entry (DockedToolbarLayout, used by m3e-react <DockedToolbar> / <BottomAppBar>)",
+    "path": "packages/m3e-elements/dist/docked-toolbar-layout/index.js",
+    "limit": "4 KB"
+  },
+  {
     "name": "m3e-shapes (all presets + Morph)",
     "path": "packages/m3e-shapes/dist/index.js",
     "limit": "14 KB"
@@ -246,6 +268,13 @@
     "name": "m3e-react: { FloatingToolbar } only (incl. FloatingToolbarLayout + RovingFocus from m3e-elements)",
     "path": "packages/m3e-react/dist/index.js",
     "import": "{ FloatingToolbar }",
+    "ignore": ["react", "react-dom"],
+    "limit": "8 KB"
+  },
+  {
+    "name": "m3e-react: { DockedToolbar } only (incl. DockedToolbarLayout + RovingFocus from m3e-elements)",
+    "path": "packages/m3e-react/dist/index.js",
+    "import": "{ DockedToolbar }",
     "ignore": ["react", "react-dom"],
     "limit": "8 KB"
   },

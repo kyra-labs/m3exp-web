@@ -5,6 +5,7 @@ import {
   floatingToolbarScrollState,
   scrollFloatingToolbar,
   toolbarSettleTarget,
+  withToolbarOffset,
   withToolbarOffsetLimit,
 } from '@kyralabs/m3e-motion';
 
@@ -140,6 +141,9 @@ export class ExitOnScroll {
   }
 
   #onScroll(delta: number): void {
+    // A scroll event that did not move (a repeat at the same position) changes nothing and leaves
+    // a running snap alone.
+    if (delta === 0) return;
     const active = this.root.ownerDocument.activeElement;
     if (delta < 0 && active && this.root.contains(active)) {
       // Keep a focused bar in place (WCAG 2.4.11 Focus Not Obscured).
@@ -165,7 +169,9 @@ export class ExitOnScroll {
   }
 
   #tick(now: number): void {
-    this.#state = { ...this.#state, offset: this.#offset.sample(now) };
+    // The state setter coerces (Compose: `state.heightOffset = value` / `state.offset = value`), so
+    // an overshooting spring rests at the edge instead of moving the bar past its place.
+    this.#state = withToolbarOffset(this.#state, this.#offset.sample(now));
     this.#options.write(this.#state.offset);
     const running = this.#offset.isRunning;
     // Keep a pending frame rather than re-requesting it, so it stays first in its frame.

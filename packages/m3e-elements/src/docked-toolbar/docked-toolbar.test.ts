@@ -166,7 +166,17 @@ describe('exit-always (BottomAppBarDefaults.exitAlwaysScrollBehavior)', () => {
     scroller.dispatchEvent(new Event('scrollend'));
     runFrames(1);
     expect(offset()).toBeCloseTo(springValue(FAST_SPATIAL, 16, -20, 0), 5);
-    runFrames(60);
+    // The fast spatial spring (ζ 0.6) overshoots 0, but the offset is coerced like Compose's
+    // BottomAppBarState.heightOffset setter: the bar never moves above its place.
+    expect(
+      Math.max(
+        ...Array.from({ length: 30 }, (_, i) => springValue(FAST_SPATIAL, 16 * (i + 2), -20, 0)),
+      ),
+    ).toBeGreaterThan(0);
+    for (let i = 0; i < 60; i++) {
+      runFrames(1);
+      expect(offset()).toBeLessThanOrEqual(0);
+    }
     expect(offset()).toBe(0);
     // From half: hidden.
     scrollTo(60);
