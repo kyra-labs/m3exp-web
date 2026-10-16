@@ -252,6 +252,35 @@ edge instead of expanding a collapsed rail. The behavior lives in the `wide-navi
 entry (`WideNavigationRailLayout`), which m3e-react's `<WideNavigationRail>` /
 `<ModalWideNavigationRail>` use too. The deprecated legacy bar and rail (D4) get no elements.
 
+## Navigation drawer
+
+```js
+import '@kyralabs/m3e-elements/navigation-drawer.js';
+```
+
+```html
+<m3e-navigation-drawer variant="modal" label="Main" selected="inbox">
+  <h2 class="m3e-navigation-drawer__headline">Mail</h2>
+  <m3e-navigation-item value="inbox" icon="inbox" href="/inbox" badge="24">Inbox</m3e-navigation-item>
+  <m3e-navigation-item value="sent" icon="send" href="/sent">Sent</m3e-navigation-item>
+  <hr class="m3e-navigation-drawer__divider" />
+  <m3e-navigation-item value="trash" icon="delete" href="/trash">Trash</m3e-navigation-item>
+</m3e-navigation-drawer>
+```
+
+`<m3e-navigation-drawer>` (Compose `PermanentNavigationDrawer` / `DismissibleNavigationDrawer` /
+`ModalNavigationDrawer`) renders the `.m3e-navigation-drawer` contract (load
+`navigation-drawer.css`): a `<nav>` sheet of `.m3e-navigation-drawer-item`s from its
+`<m3e-navigation-item>` children (`value`, optional `icon`, `href`, `badge`); other children move
+into the sheet in their order. `variant`: `permanent` (default; place it in a flex row before the
+content), `dismissible` (in the layout, shown with `open`; the content beside it moves) or `modal`
+(opens over a scrim as a `dialog`: focus moves in and is trapped, Escape or the scrim close it,
+focus returns to the opener). `open` (or `show()` / `close()` / `toggle()`) animates on Compose's
+springs; a drag on the open sheet or scrim closes it past Compose's thresholds; ArrowDown / ArrowUp
+move between items. Events: `selection-change`, `open-change` (`detail: { open }`, cancelable when
+Escape, the scrim or a drag ask). The behavior lives in the `navigation-drawer-layout.js` entry
+(`NavigationDrawerLayout`), which m3e-react's `<NavigationDrawer>` uses too.
+
 ## Ripple for plain HTML
 
 m3e-css draws hover, focus and pressed overlays without JS; the press ripple needs a little.
