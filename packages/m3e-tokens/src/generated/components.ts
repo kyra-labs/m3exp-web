@@ -2264,6 +2264,48 @@ export const progressIndicatorTokens = {
   trackShape: "var(--m3e-sys-shape-corner-full)"
 } as const;
 
+/** ProgressIndicatorDefaults */
+export const progressIndicatorDefaults = {
+  progressIndicatorDefaultsLinearWidth: 240,
+  progressIndicatorDefaultsLinearStopTrailingSpaceMax: 6,
+  progressIndicatorDefaultsCircularIndeterminateTrackColor: "transparent",
+  progressIndicatorDefaultsProgressDampingRatio: 1,
+  progressIndicatorDefaultsProgressStiffness: 50,
+  progressIndicatorDefaultsProgressVisibilityThreshold: 0.001,
+  progressIndicatorDefaultsProgressDuration: 1305,
+  progressIndicatorDefaultsProgressEasing: "linear(0, 0.0012 0.54%, 0.0052 1.15%, 0.0119 1.76%, 0.0208 2.38%, 0.0317 2.99%, 0.0461 3.68%, 0.0624 4.37%, 0.0824 5.13%, 0.1176 6.36%, 0.1607 7.74%, 0.366 13.87%, 0.4179 15.48%, 0.4629 16.93%, 0.5124 18.62%, 0.5567 20.23%, 0.5981 21.84%, 0.6365 23.45%, 0.672 25.06%, 0.706 26.74%, 0.7371 28.43%, 0.7665 30.19%, 0.793 31.95%, 0.8178 33.79%, 0.8399 35.63%, 0.8603 37.55%, 0.8804 39.69%, 0.8988 41.99%, 0.9151 44.37%, 0.9297 46.9%, 0.9422 49.5%, 0.9534 52.34%, 0.9632 55.4%, 0.9713 58.62%, 0.9778 61.92%, 0.9833 65.52%, 0.9914 73.79%, 0.996 83.14%, 0.999 99.92%, 1)",
+  progressIndicatorDefaultsAmplitudeMinProgress: 0.1,
+  progressIndicatorDefaultsAmplitudeMaxProgress: 0.95,
+  progressIndicatorDefaultsAmplitudeIncreaseDuration: "var(--m3e-sys-motion-duration-long2)",
+  progressIndicatorDefaultsAmplitudeIncreaseEasing: "var(--m3e-sys-motion-easing-standard)",
+  progressIndicatorDefaultsAmplitudeDecreaseDuration: "var(--m3e-sys-motion-duration-long2)",
+  progressIndicatorDefaultsAmplitudeDecreaseEasing: "var(--m3e-sys-motion-easing-emphasized-accelerate)",
+  progressIndicatorDefaultsWaveTravelDuration: 1000,
+  progressIndicatorDefaultsWaveMinTravelDuration: 50,
+  progressIndicatorDefaultsLinearIndeterminateDuration: 1750,
+  progressIndicatorDefaultsLinearFirstHeadDelay: 0,
+  progressIndicatorDefaultsLinearFirstHeadDuration: 1000,
+  progressIndicatorDefaultsLinearFirstTailDelay: 250,
+  progressIndicatorDefaultsLinearFirstTailDuration: 1000,
+  progressIndicatorDefaultsLinearSecondHeadDelay: 650,
+  progressIndicatorDefaultsLinearSecondHeadDuration: 850,
+  progressIndicatorDefaultsLinearSecondTailDelay: 900,
+  progressIndicatorDefaultsLinearSecondTailDuration: 850,
+  progressIndicatorDefaultsLinearIndeterminateEasing: "var(--m3e-sys-motion-easing-emphasized-accelerate)",
+  progressIndicatorDefaultsCircularIndeterminateDuration: 6000,
+  progressIndicatorDefaultsCircularRotation: 1080,
+  progressIndicatorDefaultsCircularAdditionalRotation: 360,
+  progressIndicatorDefaultsCircularAdditionalRotationDelay: 1500,
+  progressIndicatorDefaultsCircularAdditionalRotationDuration: 300,
+  progressIndicatorDefaultsCircularMinProgress: 0.1,
+  progressIndicatorDefaultsCircularMaxProgress: 0.87,
+  progressIndicatorDefaultsCircularProgressEasing: "var(--m3e-sys-motion-easing-standard)",
+  progressIndicatorDefaultsThickThickness: 8,
+  progressIndicatorDefaultsLinearThickWavyHeight: 14,
+  progressIndicatorDefaultsCircularThickSize: 52,
+  progressIndicatorDefaultsLinearThickHeight: 8
+} as const;
+
 /** RadioButtonTokens */
 export const radioButtonTokens = {
   iconColorDisabledSelected: "var(--m3e-sys-color-on-surface)",
