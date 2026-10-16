@@ -7,6 +7,7 @@ import {
 import {
   ProgressIndicatorDriver,
   type ProgressIndicatorOptions,
+  type ProgressTokens,
   SVG_NS,
   circularTiming,
   renderProgressRoot,
@@ -66,22 +67,25 @@ export class CircularProgressDriver extends ProgressIndicatorDriver {
   #paths = new CircularWavyPathCache();
   #morph = false;
 
-  protected draw(now: number): boolean {
+  protected draw(now: number, t: ProgressTokens): boolean {
     const progress = this.progressAt(now);
     const springing = this.value?.isRunning ?? false;
     const svg = this.root.querySelector('svg');
-    const t = this.tokens!;
     const size = Math.min(this.root.clientWidth, this.root.clientHeight);
     if (this.options.shape !== 'wavy' || !svg || size <= 0) return springing;
     const wavelength = this.options.wavelength ?? t.wavelength;
-    const travel = this.travel(wavelength, circularWavyVertexCount(size, wavelength, t.thickness));
+    const travel = this.travel(
+      t,
+      wavelength,
+      circularWavyVertexCount(size, wavelength, t.thickness),
+    );
     let amplitude: number;
     let end = progress ?? 0;
     let wavy: boolean;
     let motion: boolean;
     if (progress === null) {
       // A fixed amplitude: a Morph only for one between 0 and 1 (requiresMorph).
-      amplitude = this.targetAmplitude(null);
+      amplitude = this.targetAmplitude(t, null);
       this.#morph ||= amplitude > 0 && amplitude < 1;
       const timing = circularTiming(t.style);
       if (timing) {
@@ -95,7 +99,7 @@ export class CircularProgressDriver extends ProgressIndicatorDriver {
       wavy = amplitude > 0;
       motion = wavy && Number.isFinite(travel);
     } else {
-      const target = this.targetAmplitude(progress);
+      const target = this.targetAmplitude(t, progress);
       this.amplitude ??= new AmplitudeAnimation(target);
       // The Morph exists once an amplitude tween has started (requiresMorph).
       if (this.amplitude.update(target, now, t.increase, t.decrease)) this.#morph = true;

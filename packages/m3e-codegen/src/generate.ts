@@ -966,7 +966,7 @@ export function generate({
       ? MATERIAL3_SAMPLES_DIR
       : file === 'VectorizedAnimationSpec.kt'
         ? ANIMATION_CORE_DIR
-        : /WavyProgressModifiers\.kt$/.test(file)
+        : file.endsWith('WavyProgressModifiers.kt')
           ? `${MATERIAL3_DIR}/internal`
           : MATERIAL3_DIR;
   components.set('progress-indicator-defaults', {

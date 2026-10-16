@@ -3,6 +3,7 @@ import { LinearWavyPathCache, linearWavyStopIndicator, toSvgPathData } from '@ky
 import {
   ProgressIndicatorDriver,
   type ProgressIndicatorOptions,
+  type ProgressTokens,
   SVG_NS,
   linearTiming,
   num,
@@ -83,12 +84,11 @@ export function renderLinearProgress(root: HTMLElement, c: LinearProgressContrac
 export class LinearProgressDriver extends ProgressIndicatorDriver {
   #paths = new LinearWavyPathCache();
 
-  protected draw(now: number): boolean {
+  protected draw(now: number, t: ProgressTokens): boolean {
     const progress = this.progressAt(now);
     const springing = this.value?.isRunning ?? false;
     if (this.options.shape !== 'wavy') return springing;
     const svg = this.root.querySelector('svg');
-    const t = this.tokens!;
     const width = this.root.clientWidth;
     const height = this.root.clientHeight;
     if (!svg || width <= 0 || height <= 0) return springing;
@@ -100,12 +100,12 @@ export class LinearProgressDriver extends ProgressIndicatorDriver {
           : linearIndeterminateFractions(now - this.startedAt, timing)
         : [0, progress];
     // The amplitude animates toward its target; a running tween is never retargeted.
-    const target = this.targetAmplitude(progress);
+    const target = this.targetAmplitude(t, progress);
     this.amplitude ??= new AmplitudeAnimation(target);
     this.amplitude.update(target, now, t.increase, t.decrease);
     const amplitude = this.amplitude.sample(now);
     const wavelength = this.options.wavelength ?? t.wavelength;
-    this.offset.run(now, this.travel(wavelength));
+    this.offset.run(now, this.travel(t, wavelength));
     const paths = this.#paths.paths({
       width,
       height,

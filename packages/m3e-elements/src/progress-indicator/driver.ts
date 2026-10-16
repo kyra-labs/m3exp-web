@@ -1,5 +1,5 @@
 import {
-  AmplitudeAnimation,
+  type AmplitudeAnimation,
   type AmplitudeTween,
   type CircularIndeterminateTiming,
   type LinearIndeterminateTiming,
@@ -203,6 +203,7 @@ export abstract class ProgressIndicatorDriver {
     const value = options.value;
     if (value === null) {
       this.value = null;
+      this.root.style.removeProperty('--m3e-comp-progress-indicator-value');
     } else {
       const target = Math.min(Math.max(Number.isNaN(value) ? 0 : value, 0), 1);
       if (this.value === null) this.value = new SpringAnimatable(target, this.tokens.threshold);
@@ -234,9 +235,8 @@ export abstract class ProgressIndicatorDriver {
   }
 
   /** Target amplitude for `progress` (determinate) per the options. */
-  protected targetAmplitude(progress: number | null): number {
+  protected targetAmplitude(t: ProgressTokens, progress: number | null): number {
     const a = this.options.amplitude;
-    const t = this.tokens!;
     const raw =
       typeof a === 'function'
         ? a(progress ?? 0)
@@ -249,26 +249,21 @@ export abstract class ProgressIndicatorDriver {
   }
 
   /** Wave speed in px/s (0 holds the wave still: no speed, or reduced motion). */
-  protected waveSpeed(wavelength: number): number {
+  protected waveSpeed(t: ProgressTokens, wavelength: number): number {
     if (prefersReducedMotion()) return 0;
     const speed = this.options.waveSpeed;
     if (speed != null) return speed;
-    const travel = this.tokens!.travelMillis;
+    const travel = t.travelMillis;
     return travel > 0 ? (wavelength * 1000) / travel : 0;
   }
 
   /** Wave offset travel (ms per wavelength × `vertices`). */
-  protected travel(wavelength: number, vertices = 1): number {
-    return waveTravelMillis(
-      wavelength,
-      this.waveSpeed(wavelength),
-      this.tokens!.minTravelMillis,
-      vertices,
-    );
+  protected travel(t: ProgressTokens, wavelength: number, vertices = 1): number {
+    return waveTravelMillis(wavelength, this.waveSpeed(t, wavelength), t.minTravelMillis, vertices);
   }
 
   /** Draws one frame; returns true while something still moves. */
-  protected abstract draw(now: number): boolean;
+  protected abstract draw(now: number, tokens: ProgressTokens): boolean;
 
   #schedule(): void {
     if (this.#frame !== 0 || typeof requestAnimationFrame !== 'function') return;
@@ -277,8 +272,9 @@ export abstract class ProgressIndicatorDriver {
 
   #step = (now: number): void => {
     this.#frame = 0;
-    if (!this.root.isConnected || this.tokens === null) return;
-    if (this.draw(now)) this.#frame = requestAnimationFrame(this.#step);
+    const tokens = this.tokens;
+    if (!this.root.isConnected || tokens === null) return;
+    if (this.draw(now, tokens)) this.#frame = requestAnimationFrame(this.#step);
   };
 }
 

@@ -71,7 +71,7 @@ export abstract class M3eProgressElement extends M3eElement {
     const value = this.value;
     const finite = (n: number | null | undefined) => (n == null || Number.isNaN(n) ? undefined : n);
     const contract: ProgressContract = {
-      value: value == null ? null : value,
+      value: value ?? null,
       shape: this.shape === 'wavy' ? 'wavy' : 'flat',
       thickness: this.thickness === 'thick' ? 'thick' : 'default',
       amplitude: finite(this.amplitude),

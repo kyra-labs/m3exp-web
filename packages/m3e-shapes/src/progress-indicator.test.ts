@@ -21,11 +21,11 @@ const ends = (path: readonly PathCommand[]) => {
 };
 const close = (actual: readonly PathCommand[], expected: readonly PathCommand[]) => {
   expect(actual.map((c) => c[0])).toEqual(expected.map((c) => c[0]));
-  actual.forEach((c, i) =>
+  actual.forEach((c, i) => {
     c.slice(1).forEach((v, j) => {
       expect(v as number).toBeCloseTo(expected[i]![j + 1] as number, 6);
-    }),
-  );
+    });
+  });
 };
 const points = (path: readonly PathCommand[]) =>
   path.flatMap((c) => {
