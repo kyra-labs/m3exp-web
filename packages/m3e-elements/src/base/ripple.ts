@@ -50,18 +50,25 @@ export function releaseRipple(host: HTMLElement): void {
 
 /**
  * Tracks presses on `host` until `signal` aborts. Disabled hosts (`:disabled`,
- * `aria-disabled="true"`) are ignored.
+ * `aria-disabled="true"`) are ignored. A `trigger` takes the presses for a host that only draws
+ * them (a navigation item's indicator pill, as m3e-react's `useStateLayer(hostRef)`); links press
+ * on Enter only, since Space does not activate them.
  */
-export function attachRipple(host: HTMLElement, signal: AbortSignal): void {
+export function attachRipple(
+  host: HTMLElement,
+  signal: AbortSignal,
+  trigger: HTMLElement = host,
+): void {
   host.setAttribute('data-ripple', '');
+  const keys = trigger.matches('a[href], [role="link"]') ? new Set(['Enter']) : PRESS_KEYS;
   const press = (point: { x: number; y: number } | null) => {
-    if (!isRippleDisabled(host)) pressRipple(host, point);
+    if (!isRippleDisabled(host) && !isRippleDisabled(trigger)) pressRipple(host, point);
   };
   const release = () => {
     releaseRipple(host);
   };
   const options = { signal };
-  host.addEventListener(
+  trigger.addEventListener(
     'pointerdown',
     (e) => {
       if (e.button === 0) press({ x: e.clientX, y: e.clientY });
@@ -69,19 +76,19 @@ export function attachRipple(host: HTMLElement, signal: AbortSignal): void {
     options,
   );
   for (const type of ['pointerup', 'pointercancel', 'pointerleave', 'blur'] as const) {
-    host.addEventListener(type, release, options);
+    trigger.addEventListener(type, release, options);
   }
-  host.addEventListener(
+  trigger.addEventListener(
     'keydown',
     (e) => {
-      if (PRESS_KEYS.has(e.key) && !e.repeat) press(null);
+      if (keys.has(e.key) && !e.repeat) press(null);
     },
     options,
   );
-  host.addEventListener(
+  trigger.addEventListener(
     'keyup',
     (e) => {
-      if (PRESS_KEYS.has(e.key)) release();
+      if (keys.has(e.key)) release();
     },
     options,
   );

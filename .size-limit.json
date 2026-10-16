@@ -273,6 +273,26 @@
     "limit": "2 KB"
   },
   {
+    "name": "m3e-elements: <m3e-short-navigation-bar> entry (renders the navigation item contract, ripple)",
+    "path": "packages/m3e-elements/dist/short-navigation-bar/index.js",
+    "limit": "8 KB"
+  },
+  {
+    "name": "m3e-elements: <m3e-wide-navigation-rail> entry (WideNavigationRailLayout, m3e-motion springs and rail width)",
+    "path": "packages/m3e-elements/dist/wide-navigation-rail/index.js",
+    "limit": "8 KB"
+  },
+  {
+    "name": "m3e-elements: <m3e-modal-wide-navigation-rail> entry (WideNavigationRailLayout incl. the modal window)",
+    "path": "packages/m3e-elements/dist/modal-wide-navigation-rail/index.js",
+    "limit": "8 KB"
+  },
+  {
+    "name": "m3e-elements: wide-navigation-rail-layout entry (WideNavigationRailLayout, used by m3e-react <WideNavigationRail> / <ModalWideNavigationRail>)",
+    "path": "packages/m3e-elements/dist/wide-navigation-rail-layout/index.js",
+    "limit": "6 KB"
+  },
+  {
     "name": "m3e-shapes (all presets + Morph)",
     "path": "packages/m3e-shapes/dist/index.js",
     "limit": "14 KB"
@@ -389,6 +409,18 @@
     "limit": "2 KB"
   },
   {
+    "name": "m3e-react: { ShortNavigationBar } only (incl. react-aria link / button press)",
+    "path": "packages/m3e-react/dist/index.js",
+    "import": "{ ShortNavigationBar }",
+    "limit": "16 KB"
+  },
+  {
+    "name": "m3e-react: { WideNavigationRail, ModalWideNavigationRail } only (incl. react-aria press + WideNavigationRailLayout from m3e-elements)",
+    "path": "packages/m3e-react/dist/index.js",
+    "import": "{ WideNavigationRail, ModalWideNavigationRail }",
+    "limit": "20 KB"
+  },
+  {
     "name": "m3exp-web/react: { Icon } only",
     "path": "packages/m3exp-web/dist/react.js",
     "import": "{ Icon }",
@@ -396,10 +428,10 @@
     "limit": "1 KB"
   },
   {
-    "name": "m3exp-web (root): { Icon } (the root entry registers every custom element by design, ~34.4 kB with <m3e-menu>, <m3e-split-button>, <m3e-button-group>, the toolbars, the progress indicators and <m3e-search>; a leaked React component adds ~10 kB of react-aria. Raise with m3e-elements (all); D17)",
+    "name": "m3exp-web (root): { Icon } (the root entry registers every custom element by design, ~37.7 kB with <m3e-menu>, <m3e-split-button>, <m3e-button-group>, the toolbars, the progress indicators, <m3e-search> and the navigation bar / rails; a leaked React component adds ~10 kB of react-aria. Raise with m3e-elements (all); D17)",
     "path": "packages/m3exp-web/dist/index.js",
     "import": "{ Icon }",
     "ignore": ["react", "react-dom"],
-    "limit": "36 KB"
+    "limit": "40 KB"
   }
 ]

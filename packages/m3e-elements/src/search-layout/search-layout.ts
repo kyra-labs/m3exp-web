@@ -9,6 +9,7 @@ import {
   searchViewFrame,
 } from '@kyralabs/m3e-motion';
 import { attachRipple } from '../base/ripple.js';
+import { lockScroll, trapTab, unlockScroll } from '../base/modal.js';
 import { readSpringTokens } from '../base/scroll.js';
 
 export type { SearchViewVariant };
@@ -31,8 +32,6 @@ const VARIANTS: readonly SearchViewVariant[] = [
   'docked-with-gap',
   'docked',
 ];
-const FOCUSABLE =
-  'a[href],button:not([disabled]),input:not([disabled]),select:not([disabled]),textarea:not([disabled]),[tabindex]:not([tabindex="-1"])';
 
 const px = (v: number) => `${String(Math.round(v * 100) / 100)}px`;
 const num = (style: CSSStyleDeclaration, name: string) =>
@@ -49,27 +48,6 @@ const ms = (style: CSSStyleDeclaration, name: string) => {
   if (!Number.isFinite(value)) return 0;
   return raw.endsWith('ms') ? value : raw.endsWith('s') ? value * 1000 : value;
 };
-
-/** Document scroll lock while a full-screen view is open (Compose shows it in a modal dialog). */
-let locks = 0;
-let savedOverflow = '';
-let savedPadding = '';
-function lockScroll(doc: Document): void {
-  if (locks++ > 0) return;
-  const html = doc.documentElement;
-  const scrollbar = (doc.defaultView?.innerWidth ?? html.clientWidth) - html.clientWidth;
-  savedOverflow = html.style.overflow;
-  savedPadding = html.style.paddingRight;
-  html.style.overflow = 'hidden';
-  if (scrollbar > 0) html.style.paddingRight = `${String(scrollbar)}px`;
-}
-function unlockScroll(doc: Document): void {
-  if (--locks > 0) return;
-  const html = doc.documentElement;
-  html.style.overflow = savedOverflow;
-  html.style.paddingRight = savedPadding;
-  if (html.getAttribute('style') === '') html.removeAttribute('style');
-}
 
 /**
  * Behavior of a `.m3e-search` (COMPONENT_SPEC §12), shared by `<m3e-search>` and m3e-react's
@@ -509,21 +487,6 @@ export class SearchLayout {
 
   #trapTab(e: KeyboardEvent): void {
     const view = this.#view;
-    if (!view) return;
-    const focusables = [...view.querySelectorAll<HTMLElement>(FOCUSABLE)].filter(
-      (el) => el.getClientRects().length > 0 && !el.closest('[inert]'),
-    );
-    const first = focusables[0];
-    const last = focusables.at(-1);
-    if (!first || !last) return;
-    const active = this.root.ownerDocument.activeElement;
-    const outside = !active || !view.contains(active);
-    if (e.shiftKey && (active === first || outside)) {
-      e.preventDefault();
-      last.focus();
-    } else if (!e.shiftKey && (active === last || outside)) {
-      e.preventDefault();
-      first.focus();
-    }
+    if (view) trapTab(e, view);
   }
 }

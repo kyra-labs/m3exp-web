@@ -120,3 +120,14 @@ export {
   windowSizeClass,
   windowWidthSizeClass,
 } from './window-size-class.js';
+export {
+  MODAL_RAIL_EXPANDED_PROGRESS,
+  type WideNavigationRailAnimationOptions,
+  type WideNavigationRailMetrics,
+  type WideNavigationRailSample,
+  type WideNavigationRailSpecs,
+  type WideNavigationRailWidthInput,
+  WideNavigationRailAnimation,
+  wideNavigationRailItemWidth,
+  wideNavigationRailWidth,
+} from './wide-navigation-rail.js';
