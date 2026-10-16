@@ -1,0 +1,275 @@
+---
+import SearchPlayground from '../../islands/SearchPlayground.tsx';
+import Base from '../../layouts/Base.astro';
+
+const items = Array.from({ length: 30 }, (_, i) => `Text ${String(i)}`);
+/** SampleSearchResults (SearchBarSamples.kt): star icon, "Suggestion n", "Additional info". */
+const suggestions = Array.from({ length: 4 }, (_, i) => `Suggestion ${String(i)}`);
+
+const views = [
+  {
+    id: 'full-screen',
+    variant: 'full-screen',
+    title: 'Full-screen',
+    compose: 'ExpandedFullScreenSearchBar',
+    text: 'The bar grows into the window: its corners straighten, the input field moves to the top and widens, and the results fade in under a divider (slow spatial expand, default spatial collapse).',
+  },
+  {
+    id: 'contained',
+    variant: 'full-screen-contained',
+    title: 'Full-screen contained',
+    compose: 'ExpandedFullScreenContainedSearchBar',
+    text: 'The window surface fades in while the input field keeps its pill, moving to the top with 8dp at the sides; the results fade in on their own (fast spatial springs).',
+  },
+  {
+    id: 'docked',
+    variant: 'docked',
+    title: 'Docked',
+    compose: 'ExpandedDockedSearchBar',
+    text: 'One panel grows from the bar to fit the results: at least 240dp, at most two thirds of the window (slow spatial expand, default spatial collapse).',
+  },
+  {
+    id: 'docked-gap',
+    variant: 'docked-with-gap',
+    title: 'Docked with gap',
+    compose: 'ExpandedDockedSearchBarWithGap',
+    text: 'A scrim fades in and the results open in their own box 2dp under the bar, sliding in from half their height (default spatial expand, fast spatial collapse).',
+  },
+] as const;
+---
+
+<Base title="Search">
+  <link rel="stylesheet" href="/icons/docs-icons.css" slot="head" />
+  <h1>Search</h1>
+  <p>
+    Search (COMPONENT_SPEC §12): the search bar (Compose <code>SearchBar</code> with <code
+      >SearchBarDefaults.InputField</code
+    >), its four expanded views and <code>AppBarWithSearch</code>. The collapsed bar is plain HTML
+    with m3e-css classes; expanding needs <code>&lt;m3e-search&gt;</code> (m3e-elements) or <code
+      >&lt;SearchBar&gt;</code
+    > (m3e-react), which share one behavior: a <code>role="search"</code> landmark around an ARIA combobox
+    (the input keeps focus, ArrowDown / ArrowUp move through the results, Enter picks one, Escape collapses).
+  </p>
+
+  <section aria-labelledby="bar-heading">
+    <h2 id="bar-heading">Search bar</h2>
+    <p>
+      Collapsed bars (CSS only): 56dp tall, 360dp wide (narrower when the space is), a leading
+      icon 16dp from the edge, placeholder, trailing icon buttons or an avatar.
+    </p>
+    <div class="docs-search-bars" data-testid="bars">
+      <div class="m3e-search" role="search" aria-label="Search" data-testid="static-bar">
+        <div class="m3e-search__view">
+          <div class="m3e-search__field">
+            <span class="m3e-search__leading"
+              ><span class="m3e-icon" aria-hidden="true">search</span></span
+            >
+            <input
+              class="m3e-search__input"
+              type="text"
+              aria-label="Search"
+              placeholder="Search"
+              autocomplete="off"
+              enterkeyhint="search"
+            />
+            <span class="m3e-search__trailing">
+              <button type="button" class="m3e-icon-button" aria-label="Voice search">
+                <span class="m3e-icon" aria-hidden="true">mic</span>
+              </button>
+            </span>
+          </div>
+        </div>
+      </div>
+      <div class="m3e-search" role="search" aria-label="Search mail" data-testid="avatar-bar">
+        <div class="m3e-search__view">
+          <div class="m3e-search__field">
+            <span class="m3e-search__leading"
+              ><span class="m3e-icon" aria-hidden="true">search</span></span
+            >
+            <input
+              class="m3e-search__input"
+              type="text"
+              aria-label="Search mail"
+              placeholder="Search mail"
+              autocomplete="off"
+              enterkeyhint="search"
+            />
+            <span class="m3e-search__trailing">
+              <span class="m3e-search__avatar docs-avatar" role="img" aria-label="Account">A</span>
+            </span>
+          </div>
+        </div>
+      </div>
+      <div class="m3e-search" role="search" aria-label="Search (disabled)" data-testid="disabled-bar">
+        <div class="m3e-search__view">
+          <div class="m3e-search__field">
+            <span class="m3e-search__leading"
+              ><span class="m3e-icon" aria-hidden="true">search</span></span
+            >
+            <input
+              class="m3e-search__input"
+              type="text"
+              aria-label="Search (disabled)"
+              placeholder="Disabled"
+              disabled
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section aria-labelledby="views-heading">
+    <h2 id="views-heading">Expanded views</h2>
+    <p>
+      Click a bar, type, or press ArrowDown. The expanded view moves into the top layer; Escape, the
+      back button, a click outside (docked) or the scrim (with gap), Enter or a result collapse it.
+      Under reduced motion the spatial springs jump.
+    </p>
+    <div class="docs-search-views">
+      {
+        views.map((view) => (
+          <div class="docs-search-view">
+            <h3>
+              {view.title} (<code>{view.compose}</code>)
+            </h3>
+            <p>{view.text}</p>
+            <m3e-search
+              variant={view.variant}
+              placeholder="Search"
+              label={`Search (${view.title.toLowerCase()})`}
+              data-testid={view.id}
+            >
+              {suggestions.map((s) => (
+                <m3e-search-result icon="star" supporting-text="Additional info">
+                  {s}
+                </m3e-search-result>
+              ))}
+              <button type="button" class="m3e-icon-button" aria-label="Voice search">
+                <span class="m3e-icon" aria-hidden="true">
+                  mic
+                </span>
+              </button>
+            </m3e-search>
+          </div>
+        ))
+      }
+    </div>
+    <p>Last event: <output id="search-log" data-testid="search-log">none</output></p>
+  </section>
+
+  <section aria-labelledby="app-bar-heading">
+    <h2 id="app-bar-heading">AppBarWithSearch</h2>
+    <p>
+      A top app bar (<code>.m3e-top-app-bar--search</code>) holding the search bar between the
+      navigation icon and the actions: 64dp tall, the bar centered with 8dp beside and 4dp above and
+      below it. With enter-always (<code>attachTopAppBarScroll</code>) it hides on scroll down and
+      returns on any scroll up; once content scrolls under it the bar takes the on-scroll container
+      color (animated) and the search bar surface-container-highest (not animated).
+    </p>
+    <div class="docs-search-app-bars">
+      <header
+        class="m3e-top-app-bar m3e-top-app-bar--search docs-search-wide"
+        data-scrolled data-testid="app-bar-scrolled">
+        <div class="m3e-top-app-bar__navigation">
+          <button type="button" class="m3e-icon-button" aria-label="Menu">
+            <span class="m3e-icon" aria-hidden="true">menu</span>
+          </button>
+        </div>
+        <div class="m3e-search" role="search" aria-label="Search (scrolled bar)">
+          <div class="m3e-search__view">
+            <div class="m3e-search__field">
+              <span class="m3e-search__leading"
+                ><span class="m3e-icon" aria-hidden="true">search</span></span
+              >
+              <input
+                class="m3e-search__input"
+                type="text"
+                aria-label="Search (scrolled bar)"
+                placeholder="Scrolled (data-scrolled)"
+                autocomplete="off"
+              />
+            </div>
+          </div>
+        </div>
+        <div class="m3e-top-app-bar__actions">
+          <button type="button" class="m3e-icon-button" aria-label="Account">
+            <span class="m3e-icon" aria-hidden="true">account_circle</span>
+          </button>
+        </div>
+      </header>
+
+      <div
+        class="docs-scroll docs-search-scroll"
+        data-testid="app-bar-scroll"
+        tabindex="0"
+        role="region"
+        aria-label="AppBarWithSearch enter-always demo"
+      >
+        <header class="m3e-top-app-bar m3e-top-app-bar--search docs-sticky">
+          <div class="m3e-top-app-bar__navigation">
+            <button type="button" class="m3e-icon-button" aria-label="Menu">
+              <span class="m3e-icon" aria-hidden="true">menu</span>
+            </button>
+          </div>
+          <m3e-search variant="docked-with-gap" placeholder="Search" label="Search items">
+            {suggestions.map((s) => <m3e-search-result icon="star">{s}</m3e-search-result>)}
+          </m3e-search>
+          <div class="m3e-top-app-bar__actions">
+            <button type="button" class="m3e-icon-button" aria-label="Account">
+              <span class="m3e-icon" aria-hidden="true">account_circle</span>
+            </button>
+          </div>
+        </header>
+        <ul class="docs-scroll-list">
+          {items.map((item) => <li>{item}</li>)}
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section aria-labelledby="react-heading">
+    <h2 id="react-heading">React</h2>
+    <p>
+      <code
+        >&lt;AppBarWithSearch navigationIcon actions scrollBehavior="enter-always"&gt;&lt;SearchBar
+        variant value onChange onSearch onSelect&gt;&lt;SearchResult …/&gt;&lt;/SearchBar&gt;&lt;/AppBarWithSearch&gt;</code
+      >
+    </p>
+    <SearchPlayground client:only="react" />
+  </section>
+
+  <section aria-labelledby="sources-heading">
+    <h2 id="sources-heading">Sources</h2>
+    <p>
+      androidx Compose Material3 1.5.0-beta01 (<code>19991f2c</code>): <code>SearchBar.kt</code>{' '}
+      (<code>SearchBar</code>, <code>AppBarWithSearch</code>, the four <code>Expanded*SearchBar</code
+      > views, <code>SearchBarState</code> and its <code>remember*State</code> functions, <code
+        >SearchBarDefaults</code
+      >, the enter-always scroll behavior and the layouts), <code>SearchBarTokens.kt</code>, <code
+        >SearchViewTokens.kt</code
+      >, <code>internal/TextFieldImpl.kt</code> (the input field paddings), <code>ListItem.kt</code> /
+      <code>ListTokens.kt</code> (result rows), the values Compose renders in <code
+        >components/search-defaults.css</code
+      >, and <code>SearchBarSamples.kt</code> for the configurations above.
+    </p>
+  </section>
+</Base>
+
+<script>
+  import { attachTopAppBarScroll } from '@kyralabs/m3exp-web/elements';
+
+  const log = document.getElementById('search-log')!;
+  for (const type of ['search', 'select'] as const) {
+    document.addEventListener(type, (e) => {
+      const { detail } = e as CustomEvent<{ value: string }>;
+      log.textContent = `${type}: ${detail.value}`;
+    });
+  }
+  const scroller = document.querySelector<HTMLElement>('[data-testid="app-bar-scroll"]')!;
+  attachTopAppBarScroll(scroller.querySelector<HTMLElement>('.m3e-top-app-bar')!, {
+    behavior: 'enter-always',
+    target: scroller,
+    signal: new AbortController().signal,
+  });
+</script>

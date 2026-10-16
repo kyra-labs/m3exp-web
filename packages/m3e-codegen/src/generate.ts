@@ -27,6 +27,7 @@ import { extractDockedToolbarDefaults } from './docked-toolbar-defaults.js';
 import { extractCenteredPadding, extractNavigationDefaults } from './navigation-defaults.js';
 import { extractLoadingIndicatorMotion } from './loading-indicator-motion.js';
 import { extractMenuDefaults } from './menu-defaults.js';
+import { SEARCH_REDUCED_MOTION, extractSearchDefaults } from './search-defaults.js';
 import {
   PROGRESS_INDICATOR_REDUCED_MOTION,
   extractProgressIndicatorDefaults,
@@ -985,6 +986,38 @@ export function generate({
     ),
   });
 
+  // SearchBarDefaults values, SearchBar.kt measurement literals, state springs and fades, the
+  // InputField text paddings and the samples' result row padding (see search-defaults.ts).
+  const searchDefaults = extractSearchDefaults(
+    material3Sources,
+    Object.fromEntries(files.map((f) => [f.name, f.content])),
+  );
+  const searchDir = (file: string) =>
+    file === 'SearchBarSamples.kt'
+      ? MATERIAL3_SAMPLES_DIR
+      : file === 'TextFieldImpl.kt'
+        ? `${MATERIAL3_DIR}/internal`
+        : MATERIAL3_DIR;
+  components.set('search-defaults', {
+    object: 'SearchBarDefaults',
+    tokens: searchDefaults.map((d) => {
+      const e: Emitted = {
+        name: d.name,
+        value: d.value,
+        object: d.owner,
+        member: d.member,
+        raw: d.raw,
+        line: d.line,
+        cite: `${searchDir(d.file)}/${d.file}@${commit} L${String(d.line)}`,
+      };
+      if (d.note !== undefined) e.note = d.note;
+      return e;
+    }),
+    js: Object.fromEntries(
+      searchDefaults.map((d) => [camel(d.name.replace(/^--m3e-comp-/, '').split('-')), d.js]),
+    ),
+  });
+
   // SplitButtonDefaults values, optical centering and the samples' icon rotation (see
   // split-button-defaults.ts).
   const splitButtonDefaults = extractSplitButtonDefaults(
@@ -1185,21 +1218,34 @@ export function generate({
                                 ],
                                 `${MATERIAL3_DIR}/{SplitButton,HorizontalCenterOptically}.kt + ${MATERIAL3_SAMPLES_DIR}/SplitButtonSamples.kt + ${ANIMATION_CORE_DIR}/{AnimateAsState,AnimationSpec,VectorizedAnimationSpec}.kt`,
                               )
-                            : name === 'progress-indicator-defaults'
+                            : name === 'search-defaults'
                               ? cssFile(
-                                  'Compose progress indicator values that are not in *ProgressIndicatorTokens, and the indeterminate keyframes of the flat indicators (lines: PARITY.md).',
+                                  'Compose search values that are not in SearchBarTokens / SearchViewTokens (lines: PARITY.md).',
                                   c.tokens,
                                   [
                                     '@media (prefers-reduced-motion: reduce) {',
                                     '  :root {',
-                                    ...PROGRESS_INDICATOR_REDUCED_MOTION.map((l) => `    ${l}`),
+                                    ...SEARCH_REDUCED_MOTION.map((l) => `    ${l}`),
                                     '  }',
                                     '}',
-                                    ...progressIndicatorKeyframes(progressIndicator.timing),
                                   ],
-                                  `${MATERIAL3_DIR}/{ProgressIndicator,WavyProgressIndicator,internal/LinearWavyProgressModifiers,internal/CircularWavyProgressModifiers}.kt + ${MATERIAL3_SAMPLES_DIR}/ProgressIndicatorSamples.kt + m3.material.io token DB md.comp.progress-indicator`,
+                                  `${MATERIAL3_DIR}/{SearchBar,ListItem,ListItemDefaults,ComposeMaterial3Flags,InteractiveComponentSize,internal/TextFieldImpl}.kt + ${MATERIAL3_SAMPLES_DIR}/SearchBarSamples.kt`,
                                 )
-                              : cssFile(`Component tokens: ${c.object}.`, c.tokens),
+                              : name === 'progress-indicator-defaults'
+                                ? cssFile(
+                                    'Compose progress indicator values that are not in *ProgressIndicatorTokens, and the indeterminate keyframes of the flat indicators (lines: PARITY.md).',
+                                    c.tokens,
+                                    [
+                                      '@media (prefers-reduced-motion: reduce) {',
+                                      '  :root {',
+                                      ...PROGRESS_INDICATOR_REDUCED_MOTION.map((l) => `    ${l}`),
+                                      '  }',
+                                      '}',
+                                      ...progressIndicatorKeyframes(progressIndicator.timing),
+                                    ],
+                                    `${MATERIAL3_DIR}/{ProgressIndicator,WavyProgressIndicator,internal/LinearWavyProgressModifiers,internal/CircularWavyProgressModifiers}.kt + ${MATERIAL3_SAMPLES_DIR}/ProgressIndicatorSamples.kt + m3.material.io token DB md.comp.progress-indicator`,
+                                  )
+                                : cssFile(`Component tokens: ${c.object}.`, c.tokens),
     );
   }
   out.set(

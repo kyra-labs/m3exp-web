@@ -40,7 +40,8 @@
     .m3e-extended-fab,
     .m3e-navigation-item__state,
     .m3e-menu__item,
-    .m3e-fab-menu__item
+    .m3e-fab-menu__item,
+    .m3e-search__result
   ) {
     position: relative;
     isolation: isolate;
@@ -56,7 +57,8 @@
     .m3e-extended-fab,
     .m3e-navigation-item__state,
     .m3e-menu__item,
-    .m3e-fab-menu__item
+    .m3e-fab-menu__item,
+    .m3e-search__result
   )::before {
     --_m3e-state-layer-opacity: 0;
 
@@ -104,7 +106,8 @@
         .m3e-fab,
         .m3e-extended-fab,
         .m3e-menu__item,
-        .m3e-fab-menu__item
+        .m3e-fab-menu__item,
+        .m3e-search__result
       ):hover::before {
       --_m3e-state-layer-opacity: var(--m3e-sys-state-hover-state-layer-opacity);
     }
@@ -119,7 +122,8 @@
       .m3e-fab,
       .m3e-extended-fab,
       .m3e-menu__item,
-      .m3e-fab-menu__item
+      .m3e-fab-menu__item,
+      .m3e-search__result
     ):focus-visible::before {
     --_m3e-state-layer-opacity: var(--m3e-sys-state-focus-state-layer-opacity);
   }
@@ -133,7 +137,8 @@
       .m3e-fab,
       .m3e-extended-fab,
       .m3e-menu__item,
-      .m3e-fab-menu__item
+      .m3e-fab-menu__item,
+      .m3e-search__result
     )[data-dragged]::before {
     --_m3e-state-layer-opacity: var(--m3e-sys-state-dragged-state-layer-opacity);
   }
@@ -147,7 +152,8 @@
       .m3e-fab,
       .m3e-extended-fab,
       .m3e-menu__item,
-      .m3e-fab-menu__item
+      .m3e-fab-menu__item,
+      .m3e-search__result
     ):active::before,
   :where(
       .m3e-state-layer,
@@ -159,7 +165,8 @@
       .m3e-extended-fab,
       .m3e-navigation-item__state,
       .m3e-menu__item,
-      .m3e-fab-menu__item
+      .m3e-fab-menu__item,
+      .m3e-search__result
     )[data-pressed]::before {
     opacity: var(--m3e-sys-state-pressed-state-layer-opacity);
   }
@@ -173,7 +180,8 @@
       .m3e-fab,
       .m3e-extended-fab,
       .m3e-menu__item,
-      .m3e-fab-menu__item
+      .m3e-fab-menu__item,
+      .m3e-search__result
     ):is(:disabled, [aria-disabled='true'])::before {
     display: none;
   }
@@ -195,6 +203,14 @@
   }
 
   /*
+   * Search results are combobox options with virtual focus (aria-activedescendant, the input keeps
+   * DOM focus): the keyboard's current option carries data-focus-visible instead of :focus-visible.
+   */
+  :where(.m3e-search__result)[data-focus-visible]::before {
+    --_m3e-state-layer-opacity: var(--m3e-sys-state-focus-state-layer-opacity);
+  }
+
+  /*
    * Ripple: only while pressed. The circle (pressed layer composited over the resting one) grows
    * from 0% to the radius; outside it the resting layer keeps its own opacity. A re-press
    * restarts the animation (the attribute is removed in between). After the card proxies, which
@@ -210,7 +226,8 @@
       .m3e-extended-fab,
       .m3e-navigation-item__state,
       .m3e-menu__item,
-      .m3e-fab-menu__item
+      .m3e-fab-menu__item,
+      .m3e-search__result
     )[data-ripple][data-pressed]::before {
     --_m3e-ripple-opacity: calc(
       var(--_m3e-state-layer-opacity) + var(--m3e-sys-state-pressed-state-layer-opacity) -
@@ -248,7 +265,8 @@
       .m3e-extended-fab,
       .m3e-navigation-item__state,
       .m3e-menu__item,
-      .m3e-fab-menu__item
+      .m3e-fab-menu__item,
+      .m3e-search__result
     )::before {
       display: none;
     }

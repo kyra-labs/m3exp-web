@@ -48,6 +48,17 @@
     outline: none;
   }
 
+  /*
+   * Search: the input field draws the ripple's inset focus ring on its shape (SearchBar.kt
+   * InputField, SearchBarTokens.FocusIndicatorColor = secondary); results are combobox options
+   * with virtual focus, so the keyboard's current one carries data-focus-visible.
+   */
+  :where(.m3e-search__field):has(.m3e-search__input:focus-visible),
+  :where(.m3e-search__result)[data-focus-visible] {
+    outline: var(--m3e-sys-state-focus-indicator-thickness) solid var(--m3e-sys-color-secondary);
+    outline-offset: var(--m3e-sys-state-focus-indicator-inner-offset);
+  }
+
   :where(
       .m3e-focus-ring,
       .m3e-button,
@@ -72,7 +83,9 @@
     ):focus-visible,
     :where(.m3e-card--interactive):has(.m3e-card__action:focus-visible),
     :where(.m3e-navigation-item:focus-visible .m3e-navigation-item__state),
-    :where(.m3e-menu__item):focus-visible {
+    :where(.m3e-menu__item):focus-visible,
+    :where(.m3e-search__field):has(.m3e-search__input:focus-visible),
+    :where(.m3e-search__result)[data-focus-visible] {
       outline-color: Highlight;
     }
   }

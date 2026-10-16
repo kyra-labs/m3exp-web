@@ -1,7 +1,12 @@
 // Reference comparisons: values are re-read from the vendored androidx sources with simple,
 // independent regexes (not the parser) and compared with what the generator emits.
 import { fileURLToPath } from 'node:url';
-import { FAST_OUT_LINEAR_IN_EASING, TOP_TITLE_ALPHA_EASING } from '@kyralabs/m3e-motion';
+import {
+  FAST_OUT_LINEAR_IN_EASING,
+  SEARCH_BAR_EXPANDED_THRESHOLD,
+  SEARCH_DROPDOWN_VISIBLE_PROGRESS,
+  TOP_TITLE_ALPHA_EASING,
+} from '@kyralabs/m3e-motion';
 import { describe, expect, it } from 'vitest';
 import { generate } from './generate.js';
 import { parseTokenFile } from './kotlin.js';
@@ -1122,5 +1127,118 @@ describe('progress indicator literals (M6 Progress indicators)', () => {
     expect(reduced.get('--m3e-comp-progress-indicator-defaults-amplitude-increase-duration')).toBe(
       '0ms',
     );
+  });
+});
+
+describe('search literals (M6 Search, AppBarWithSearch)', () => {
+  const css = output.get('components/search-defaults.css')!;
+  const decl = declarations(css.slice(0, css.indexOf('@media')));
+  const get = (name: string) => decl.get(`--m3e-comp-search-${name}`);
+  const kt = (name: string) => inputs.material3Sources[name]!.replace(/\r\n/g, '\n');
+  const search = kt('SearchBar.kt');
+  const getter = (member: string) =>
+    `${new RegExp(`val ${member}(?:: Dp)?\\n\\s*get\\(\\) = (\\d+)\\.dp`).exec(search)![1]!}px`;
+
+  it('measurements come from the SearchBar.kt getters (360–720 wide, 8 / 4 / 4 / 8 paddings, 240 min)', () => {
+    expect(get('min-width')).toBe(getter('SearchBarMinWidth'));
+    expect(get('max-width')).toBe(getter('SearchBarMaxWidth'));
+    expect(get('vertical-padding')).toBe(getter('SearchBarVerticalPadding'));
+    expect(get('icon-offset')).toBe(getter('SearchBarIconOffsetX'));
+    expect(get('app-bar-horizontal-padding')).toBe(getter('AppBarWithSearchHorizontalPadding'));
+    expect(get('app-bar-vertical-padding')).toBe(getter('AppBarWithSearchVerticalPadding'));
+    expect(get('app-bar-search-padding')).toBe(getter('SearchBarAsTopBarPadding'));
+    expect(get('contained-horizontal-padding')).toBe(getter('FullScreenExpandedHorizontalPadding'));
+    expect(get('docked-min-height')).toBe(getter('DockedExpandedTableMinHeight'));
+    expect(
+      ['min-width', 'max-width', 'vertical-padding', 'icon-offset', 'docked-min-height'].map(get),
+    ).toEqual(['360px', '720px', '8px', '4px', '240px']);
+    expect(get('docked-max-height-ratio')).toBe('calc(2 / 3)');
+    expect(get('docked-with-gap-max-height-ratio')).toBe('calc(1 / 2)');
+  });
+
+  it('collapsed corner radius = InputFieldHeight / 2 = SearchBarTokens.ContainerHeight / 2', () => {
+    const height = /val ContainerHeight: [\w.]+\n\s*get\(\) = ([\d.]+)\.dp/.exec(
+      source('SearchBarTokens.kt').replace(/\r\n/g, '\n'),
+    );
+    expect(get('collapsed-corner-radius')).toBe(`${String(Number(height![1]) / 2)}px`);
+  });
+
+  it('SearchBarDefaults literals under upstream “TODO: replace with token”', () => {
+    expect(search).toContain(
+      'RoundedCornerShape(corner = CornerSize(12.dp)) // TODO: replace with token.',
+    );
+    expect(get('dropdown-corner-radius')).toBe('12px');
+    expect(search).toContain(
+      'public val dockedDropdownGapSize: Dp = 2.dp // TODO: replace with token.',
+    );
+    expect(get('dropdown-gap')).toBe('2px');
+    expect(get('scrim-color')).toBe('var(--m3e-sys-color-scrim)');
+    expect(get('scrim-opacity')).toBe('0.32');
+    expect(get('contained-container-color')).toBe('var(--m3e-sys-color-surface-container-low)');
+    expect(get('scrolled-container-color')).toBe('var(--m3e-sys-color-surface-container-highest)');
+    expect(get('shadow')).toBe('var(--m3e-sys-elevation-level0-shadow)');
+  });
+
+  it('state springs: full-screen / docked slow · default spatial, contained fast · fast, with gap default · fast', () => {
+    const spring = (fun: string, which: string) =>
+      new RegExp(
+        `public fun ${fun}\\([\\s\\S]*?animationSpecFor${which}: AnimationSpec<Float> = MotionSchemeKeyTokens\\.(\\w+)\\.value\\(\\)`,
+      ).exec(search)![1]!;
+    const cases: [string, string, string, string][] = [
+      ['expand', 'rememberSearchBarState', 'Expand', 'slow-spatial'],
+      ['collapse', 'rememberSearchBarState', 'Collapse', 'default-spatial'],
+      ['contained-expand', 'rememberContainedSearchBarState', 'Expand', 'fast-spatial'],
+      ['contained-collapse', 'rememberContainedSearchBarState', 'Collapse', 'fast-spatial'],
+      ['with-gap-expand', 'rememberSearchBarWithGapState', 'Expand', 'default-spatial'],
+      ['with-gap-collapse', 'rememberSearchBarWithGapState', 'Collapse', 'fast-spatial'],
+    ];
+    for (const [name, fun, which, key] of cases) {
+      const upstream = spring(fun, which)
+        .replace(/([a-z])([A-Z])/g, '$1-$2')
+        .toLowerCase();
+      expect(upstream, name).toBe(key);
+      for (const field of ['duration', 'easing', 'damping-ratio', 'stiffness'])
+        expect(get(`${name}-${field}`)).toBe(`var(--m3e-sys-motion-spring-${key}-${field})`);
+    }
+  });
+
+  it('content fades: 100ms after 50ms (standard accelerate) in, 100ms (standard decelerate) out', () => {
+    expect(search).toMatch(
+      /AnimationForContentFadeInSpec: FiniteAnimationSpec<Float> =\n\s*tween\(\n\s*durationMillis = MotionTokens\.DurationShort2\.toInt\(\),\n\s*delayMillis = MotionTokens\.DurationShort1\.toInt\(\),\n\s*easing = MotionTokens\.EasingStandardAccelerateCubicBezier,/,
+    );
+    expect(get('content-fade-in-duration')).toBe('var(--m3e-sys-motion-duration-short2)');
+    expect(get('content-fade-in-delay')).toBe('var(--m3e-sys-motion-duration-short1)');
+    expect(get('content-fade-in-easing')).toBe('var(--m3e-sys-motion-easing-standard-accelerate)');
+    expect(get('content-fade-out-duration')).toBe('var(--m3e-sys-motion-duration-short2)');
+    expect(get('content-fade-out-easing')).toBe('var(--m3e-sys-motion-easing-standard-decelerate)');
+  });
+
+  it('AppBarWithSearch: default effects color spring and enter-always snap (0ms under reduced motion)', () => {
+    expect(search).toContain('val animationSpec = MotionSchemeKeyTokens.DefaultEffects\n');
+    for (const field of ['duration', 'easing', 'damping-ratio', 'stiffness']) {
+      const value = `var(--m3e-sys-motion-spring-default-effects-${field})`;
+      expect(get(`app-bar-color-${field}`)).toBe(value);
+      expect(get(`app-bar-snap-${field}`)).toBe(value);
+    }
+    expect(css.slice(css.indexOf('@media'))).toContain(
+      '--m3e-comp-search-app-bar-snap-duration: 0ms;',
+    );
+  });
+
+  it('input field: 16dp text padding, 12dp icon padding = (48dp − 24dp) / 2', () => {
+    expect(kt('TextFieldImpl.kt')).toMatch(/internal val TextFieldPadding\n\s*get\(\) = 16\.dp/);
+    expect(get('input-padding')).toBe('16px');
+    expect(get('input-icon-padding')).toBe('12px');
+  });
+
+  it('result rows: the samples pad each ListItem by 16 / 4dp inside the clickable row', () => {
+    expect(kt('SearchBarSamples.kt')).toContain('.padding(horizontal = 16.dp, vertical = 4.dp),');
+    expect(get('result-padding-horizontal')).toBe('16px');
+    expect(get('result-padding-vertical')).toBe('4px');
+  });
+
+  it('the m3e-motion SearchBarState port uses the thresholds SearchBar.kt declares', () => {
+    expect(search).toContain(`val threshold = ${String(SEARCH_BAR_EXPANDED_THRESHOLD)}f`);
+    expect(search).toContain(`{ state.progress > ${String(SEARCH_DROPDOWN_VISIBLE_PROGRESS)}f }`);
   });
 });
