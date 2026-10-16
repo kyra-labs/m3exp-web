@@ -27,4 +27,25 @@ export function Save() {
 
 Peer dependencies: `react` and `react-dom` 18.3+ or 19.
 
+## Window size classes
+
+```tsx
+import { paneScaffoldDirective } from '@kyralabs/m3e-motion'; // or the umbrella / m3e-elements
+import { useWindowSizeClass } from '@kyralabs/m3e-react';
+
+export function Inbox() {
+  const sizeClass = useWindowSizeClass(); // the viewport, like @media
+  const panes = paneScaffoldDirective(sizeClass).maxHorizontalPartitions;
+  return panes > 1 ? <ListDetail /> : <List />;
+}
+```
+
+`useWindowSizeClass({ target?, largeAndExtraLargeWidth?, initial? })` returns `{ widthClass,
+heightClass, minWidth, minHeight }` and re-renders only when a class changes. Without `target`
+the first render already reads the viewport; with a `target` ref it classifies that element's
+content box (like `@container`) and returns `initial` (default compact × compact) until the
+element is measured. The classification helpers (`windowSizeClass`, `isWidthAtLeastBreakpoint`,
+`paneScaffoldDirective`, `navigationSuiteType`, …) come from `@kyralabs/m3e-motion`, a dependency
+of this package, and are re-exported by `@kyralabs/m3e-elements` and `@kyralabs/m3exp-web`.
+
 Apache-2.0; see `LICENSE` and `NOTICE`.

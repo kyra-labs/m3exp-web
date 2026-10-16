@@ -1,7 +1,8 @@
 // Spring math for m3exp-web (ROADMAP M3): Compose's SpringSimulation and duration estimate
 // (bit-exact ports), FloatSpringSpec helpers, damping conversion, the CSS linear() sampler, and the
 // top app bar scroll state (TopAppBarState) and the dropdown menu placement
-// (DropdownMenuPositionProvider) shared by m3e-elements and m3e-react.
+// (DropdownMenuPositionProvider) shared by m3e-elements and m3e-react, and the window size
+// classes (androidx window-core WindowSizeClass, material3-adaptive).
 export { type LinearEasing, type LinearEasingOptions, springToLinear } from './linear.js';
 export { SpringAnimatable } from './animatable.js';
 export { animatedInt, fabMenuItemVisible } from './fab-menu.js';
@@ -99,6 +100,26 @@ export {
   buttonGroupVisibleCount,
   buttonGroupWidths,
 } from './button-group.js';
+export {
+  type NavigationSuiteType,
+  type PaneScaffoldDirective,
+  WINDOW_HEIGHT_BREAKPOINTS,
+  WINDOW_WIDTH_BREAKPOINTS,
+  type WindowHeightSizeClass,
+  type WindowPostureOptions,
+  type WindowSizeClass,
+  type WindowSizeClassOptions,
+  type WindowWidthSizeClass,
+  isAtLeastBreakpoint,
+  isHeightAtLeastBreakpoint,
+  isWidthAtLeastBreakpoint,
+  navigationSuiteType,
+  paneScaffoldDirective,
+  sameWindowSizeClass,
+  windowHeightSizeClass,
+  windowSizeClass,
+  windowWidthSizeClass,
+} from './window-size-class.js';
 export {
   MODAL_RAIL_EXPANDED_PROGRESS,
   type WideNavigationRailAnimationOptions,

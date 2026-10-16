@@ -112,6 +112,8 @@ describe('licensing (D9)', () => {
     'AndroidX Compose Material3',
     'AndroidX Compose Animation',
     'AndroidX Compose UI Graphics',
+    'AndroidX Compose Material3 Adaptive',
+    'AndroidX WindowManager',
     'Material Web',
     'AndroidX graphics-shapes',
     'material-color-utilities',

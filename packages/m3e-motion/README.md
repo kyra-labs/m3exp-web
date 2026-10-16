@@ -19,4 +19,25 @@ springDurationMillis(spec, 0, 1); // settle time in ms
 springToLinear(spec); // CSS linear() easing plus its duration
 ```
 
+Window size classes (ports of androidx window-core `WindowSizeClass` and Compose Material3
+adaptive; sizes in CSS px):
+
+```ts
+import {
+  isWidthAtLeastBreakpoint,
+  navigationSuiteType,
+  paneScaffoldDirective,
+  windowSizeClass,
+} from '@kyralabs/m3e-motion';
+
+const sizeClass = windowSizeClass({ width: 1280, height: 800 });
+// { widthClass: 'large', heightClass: 'medium', minWidth: 1200, minHeight: 480 }
+isWidthAtLeastBreakpoint(sizeClass, 'expanded'); // true
+paneScaffoldDirective(sizeClass).maxHorizontalPartitions; // 3 (calculatePaneScaffoldDirective)
+navigationSuiteType(sizeClass); // 'wide-navigation-rail-collapsed'
+```
+
+`windowWidthSizeClass` / `windowHeightSizeClass` classify one axis; `{ largeAndExtraLargeWidth:
+false }` keeps Compose's V1 width set (every width from 840 is `expanded`).
+
 Apache-2.0; see `LICENSE` and `NOTICE`.

@@ -18,6 +18,7 @@ export * from './linear-progress/index.js';
 export * from './circular-progress/index.js';
 export * from './search-layout/index.js';
 export * from './search/index.js';
+export * from './window-size-class/index.js';
 export * from './navigation-item/index.js';
 export * from './short-navigation-bar/index.js';
 export * from './wide-navigation-rail-layout/index.js';

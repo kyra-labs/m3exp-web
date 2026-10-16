@@ -335,6 +335,20 @@ export const space = {
   space900: 72
 } as const;
 
+/** Window size class lower bounds in dp (= CSS px): min-width / min-height of each class. */
+export const windowBreakpoints = {
+  width: {
+    medium: 600,
+    expanded: 840,
+    large: 1200,
+    extraLarge: 1600
+  },
+  height: {
+    medium: 480,
+    expanded: 900
+  }
+} as const;
+
 export const motion = {
   defaultScheme: "expressive",
   springs: {

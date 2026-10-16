@@ -90,6 +90,28 @@ export const UI_PATH = 'compose/ui/ui/src/commonMain/kotlin/androidx/compose/ui/
 export const UI_SOURCES = ['GraphicsLayerScope.kt'] as const;
 
 /**
+ * Window size class breakpoints (`--m3e-sys-window-*`). material3-adaptive at the pin
+ * (`adaptive/build.gradle` L47) depends on `androidx.window:window-core:1.5.0`, whose sources jar
+ * carries a `WindowSizeClass.kt` byte-identical to this file at the pin commit.
+ */
+export const WINDOW_CORE_PATH =
+  'window/window-core/src/commonMain/kotlin/androidx/window/core/layout';
+export const WINDOW_CORE_SOURCES = ['WindowSizeClass.kt'] as const;
+
+/**
+ * Compose Material3 adaptive (1.4.0-alpha03 at the pin) as ported by m3e-motion's
+ * window-size-class.ts: currentWindowAdaptiveInfo(V2), the default width/height size class sets,
+ * calculatePaneScaffoldDirective and NavigationSuiteScaffoldDefaults.navigationSuiteType.
+ */
+export const MATERIAL3_ADAPTIVE_PATH = 'compose/material3';
+export const MATERIAL3_ADAPTIVE_SOURCES = [
+  'adaptive/adaptive/src/commonMain/kotlin/androidx/compose/material3/adaptive/WindowAdaptiveInfo.kt',
+  'adaptive/adaptive/src/commonMain/kotlin/androidx/compose/material3/adaptive/WindowSizeClassHelper.kt',
+  'adaptive/adaptive-layout/src/commonMain/kotlin/androidx/compose/material3/adaptive/layout/PaneScaffoldDirective.kt',
+  'material3-adaptive-navigation-suite/src/commonMain/kotlin/androidx/compose/material3/adaptive/navigationsuite/NavigationSuiteScaffold.kt',
+] as const;
+
+/**
  * Material Web (secondary source, CLAUDE.md) files read by the generator: the elevation shadow
  * table (Compose draws platform shadows, so no androidx value exists). From the npm tarball of the
  * SOURCE_PIN `material_web` version, verified against the registry's sha512 integrity.
