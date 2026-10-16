@@ -268,6 +268,11 @@
     "limit": "6 KB"
   },
   {
+    "name": "m3e-elements: window-size-class entry (observeWindowSizeClass + m3e-motion classification; registers nothing)",
+    "path": "packages/m3e-elements/dist/window-size-class/index.js",
+    "limit": "2 KB"
+  },
+  {
     "name": "m3e-shapes (all presets + Morph)",
     "path": "packages/m3e-shapes/dist/index.js",
     "limit": "14 KB"
@@ -375,6 +380,13 @@
     "import": "{ SearchBar, SearchResult, AppBarWithSearch }",
     "ignore": ["react", "react-dom"],
     "limit": "10 KB"
+  },
+  {
+    "name": "m3e-react: { useWindowSizeClass } only (incl. observeWindowSizeClass from m3e-elements)",
+    "path": "packages/m3e-react/dist/index.js",
+    "import": "{ useWindowSizeClass }",
+    "ignore": ["react", "react-dom"],
+    "limit": "2 KB"
   },
   {
     "name": "m3exp-web/react: { Icon } only",

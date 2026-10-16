@@ -3,4 +3,13 @@
 // `/components/<name>.css`; JS component tokens: `@kyralabs/m3e-tokens/components`;
 // seed-based theming: `@kyralabs/m3e-tokens/theme`.
 export { baselineColors } from './generated/baseline-colors.js';
-export { elevation, motion, shape, space, state, typeface, typescale } from './generated/sys.js';
+export {
+  elevation,
+  motion,
+  shape,
+  space,
+  state,
+  typeface,
+  typescale,
+  windowBreakpoints,
+} from './generated/sys.js';

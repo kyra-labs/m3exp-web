@@ -56,6 +56,46 @@ The CLI flags are `--secondary`, `--tertiary`, `--neutral`, `--neutral-variant` 
 With spec 2025 (the `tonalSpot`, `neutral`, `vibrant` and `expressive` variants) the outline and
 surface-variant roles come from the neutral palette, so `neutralVariant` has no effect there.
 
+## Window size classes
+
+The breakpoints come from androidx window-core `WindowSizeClass` (the lower bounds Compose
+Material3 adaptive classifies with) and match m3.material.io's Breakpoints page. Each value is the
+**min-width / min-height** of its class, in CSS px:
+
+| Class | Width | Height |
+|---|---|---|
+| compact | < 600 | < 480 |
+| medium | 600–839 (`--m3e-sys-window-width-medium: 600px`) | 480–899 (`--m3e-sys-window-height-medium: 480px`) |
+| expanded | 840–1199 (`--m3e-sys-window-width-expanded: 840px`) | ≥ 900 (`--m3e-sys-window-height-expanded: 900px`) |
+| large | 1200–1599 (`--m3e-sys-window-width-large: 1200px`) | — |
+| extra-large | ≥ 1600 (`--m3e-sys-window-width-extra-large: 1600px`) | — |
+
+CSS custom properties cannot appear in `@media` or `@container` conditions, so queries write the
+px value from the table; the variables are for sizes (`max-inline-size:
+var(--m3e-sys-window-width-expanded)`) and for reading from JS:
+
+```css
+@media (min-width: 840px) {
+  /* expanded and up */
+}
+.layout {
+  container-type: inline-size;
+}
+@container (min-width: 600px) {
+  /* the container is medium or wider */
+}
+```
+
+```ts
+import { windowBreakpoints } from '@kyralabs/m3e-tokens';
+
+windowBreakpoints.width.expanded; // 840
+```
+
+To classify a size or follow the window at runtime, use `windowSizeClass()` and
+`observeWindowSizeClass()` from `@kyralabs/m3e-elements` or `useWindowSizeClass()` from
+`@kyralabs/m3e-react`.
+
 ## Font profiles
 
 Import exactly one Google Sans Flex profile. Each registers the same `"Google Sans Flex"` family,

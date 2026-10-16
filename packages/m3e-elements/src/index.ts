@@ -18,5 +18,6 @@ export * from './linear-progress/index.js';
 export * from './circular-progress/index.js';
 export * from './search-layout/index.js';
 export * from './search/index.js';
+export * from './window-size-class/index.js';
 // Not `export *` from './ripple/index.js': that entry enables the ripple document-wide on import.
 export { attachAutoRipple } from './ripple/ripple.js';

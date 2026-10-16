@@ -1,0 +1,17 @@
+{
+  "repo": "https://android.googlesource.com/platform/frameworks/support",
+  "commit": "19991f2c0858aadfcb442ce02b2c8e4743c96898",
+  "path": "compose/material3",
+  "files": {
+    "PaneScaffoldDirective.kt": "b750e2e89d6907f4013e6cea0eb3fe7da0dbb57134c8f0187597cc22a508289d",
+    "WindowAdaptiveInfo.kt": "540de0f84c0f525acff56186894372c045207a537080c02e6745ea107e887781",
+    "WindowSizeClassHelper.kt": "4b2802d9c3afaa7c5138cc2ece790ce20dbeb8fac954adfb74de996936c0a26c",
+    "NavigationSuiteScaffold.kt": "12910e8ef7f40c87c6150c3cb33bf1a9f400258043177649bbeeeb0568a2e82d"
+  },
+  "upstream": {
+    "PaneScaffoldDirective.kt": "adaptive/adaptive-layout/src/commonMain/kotlin/androidx/compose/material3/adaptive/layout/PaneScaffoldDirective.kt",
+    "WindowAdaptiveInfo.kt": "adaptive/adaptive/src/commonMain/kotlin/androidx/compose/material3/adaptive/WindowAdaptiveInfo.kt",
+    "WindowSizeClassHelper.kt": "adaptive/adaptive/src/commonMain/kotlin/androidx/compose/material3/adaptive/WindowSizeClassHelper.kt",
+    "NavigationSuiteScaffold.kt": "material3-adaptive-navigation-suite/src/commonMain/kotlin/androidx/compose/material3/adaptive/navigationsuite/NavigationSuiteScaffold.kt"
+  }
+}

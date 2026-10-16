@@ -44,6 +44,7 @@ import {
   MATERIAL3_SAMPLES_PATH as MATERIAL3_SAMPLES_DIR,
 } from './vendor.js';
 import { boxShadow, parseElevationShadows } from './elevation.js';
+import { extractWindowBreakpoints } from './window-size-class.js';
 import { type Expr, type Member, type TokenFile, parseTokenFile } from './kotlin.js';
 import {
   FOCUS_INDICATOR,
@@ -74,6 +75,8 @@ export interface GenerateOptions {
   easingKt: string;
   /** Vendored compose/ui `GraphicsLayerScope.kt` (`DefaultShadowColor`). */
   graphicsLayerScopeKt: string;
+  /** Vendored window-core `WindowSizeClass.kt` (window size class breakpoints). */
+  windowSizeClassKt: string;
   /** Vendored Material Web `elevation/internal/_elevation.scss` (shadow geometry per level). */
   elevationScss: string;
   materialWebVersion: string;
@@ -164,6 +167,7 @@ export function generate({
   material3Sources,
   easingKt,
   graphicsLayerScopeKt,
+  windowSizeClassKt,
   elevationScss,
   materialWebVersion,
   iconAxes,
@@ -473,6 +477,24 @@ export function generate({
     cite: t.cite,
   });
   sys.push(...FOCUS_INDICATOR.map(supplementary), ...SPACE.map(supplementary));
+
+  // --- Window size class breakpoints (window-core WindowSizeClass.kt): min-width/min-height ---
+  // lower bounds. CSS cannot use custom properties in @media/@container conditions; these are
+  // for sizes and JS. Queries write the px value (m3e-tokens README).
+  const breakpoints = extractWindowBreakpoints(windowSizeClassKt, commit);
+  const windowBreakpoints: Record<string, Record<string, number>> = { width: {}, height: {} };
+  for (const b of breakpoints) {
+    sys.push({
+      name: `--m3e-sys-window-${b.axis}-${b.sizeClass}`,
+      value: px(b.dp),
+      object: 'WindowSizeClass.kt',
+      member: b.member,
+      raw: String(b.dp),
+      line: b.line,
+      cite: b.cite,
+    });
+    windowBreakpoints[b.axis]![camel(b.sizeClass.split('-'))] = b.dp;
+  }
 
   // --- DisabledAlpha (ColorScheme.kt): content alpha of disabled components without a token ----
   const disabledAlpha = /internal const val DisabledAlpha = ([\d.]+)f/.exec(
@@ -1302,6 +1324,9 @@ export function generate({
       `export const state = ${literal({ ...state, focusIndicator })} as const;`,
       '',
       `export const space = ${literal(space)} as const;`,
+      '',
+      '/** Window size class lower bounds in dp (= CSS px): min-width / min-height of each class. */',
+      `export const windowBreakpoints = ${literal(windowBreakpoints)} as const;`,
       '',
       `export const motion = ${literal({ defaultScheme: DEFAULT_MOTION_SCHEME, springs, css: motionCss, durations, easings })} as const;`,
       '',

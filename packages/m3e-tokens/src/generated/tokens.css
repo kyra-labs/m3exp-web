@@ -370,6 +370,12 @@
     --m3e-sys-space-700: 56px;
     --m3e-sys-space-800: 64px;
     --m3e-sys-space-900: 72px;
+    --m3e-sys-window-width-medium: 600px;
+    --m3e-sys-window-width-expanded: 840px;
+    --m3e-sys-window-width-large: 1200px;
+    --m3e-sys-window-width-extra-large: 1600px;
+    --m3e-sys-window-height-medium: 480px;
+    --m3e-sys-window-height-expanded: 900px;
     --m3e-sys-state-disabled-alpha: 0.38;
     --m3e-ref-typeface-icon-fill: 0;
     --m3e-ref-typeface-icon-grade: 0;

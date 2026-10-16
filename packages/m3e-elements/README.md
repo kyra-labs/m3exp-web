@@ -221,6 +221,36 @@ collapse it. Full-screen views trap Tab. Events: `expanded-change`, `search` and
 actions of a `.m3e-top-app-bar.m3e-top-app-bar--search` and call
 `attachTopAppBarScroll(bar, { behavior: 'enter-always' })` for its scroll behavior.
 
+## Window size classes
+
+```js
+import { observeWindowSizeClass, paneScaffoldDirective } from '@kyralabs/m3e-elements';
+
+const controller = new AbortController();
+observeWindowSizeClass(
+  (sizeClass) => {
+    // { widthClass: 'compact' | 'medium' | 'expanded' | 'large' | 'extra-large',
+    //   heightClass: 'compact' | 'medium' | 'expanded', minWidth, minHeight }
+    document.body.dataset.panes = String(paneScaffoldDirective(sizeClass).maxHorizontalPartitions);
+  },
+  { signal: controller.signal },
+);
+```
+
+`observeWindowSizeClass(callback, { signal, target?, largeAndExtraLargeWidth? })` calls back right
+away and then whenever the width or height class changes (FOUNDATIONS §9; androidx
+`WindowSizeClass`, Compose `currentWindowAdaptiveInfoV2()`). Without `target` it follows the
+viewport through one `matchMedia('(min-width: …px)')` query per breakpoint, so it classifies
+exactly like an `@media` rule and wakes only when a breakpoint is crossed; with `target` it
+follows that element's content box through a ResizeObserver, like an `@container` query.
+`currentWindowSizeClass(options?)` reads the class once. Both do nothing (`null`) without a DOM.
+The entry (`@kyralabs/m3e-elements/window-size-class.js`, registers nothing) also re-exports the
+m3e-motion classification: `windowSizeClass`, `windowWidthSizeClass`, `windowHeightSizeClass`,
+`isWidthAtLeastBreakpoint`, `isHeightAtLeastBreakpoint`, `isAtLeastBreakpoint`,
+`paneScaffoldDirective` (Compose `calculatePaneScaffoldDirective`), `navigationSuiteType`
+(`NavigationSuiteScaffoldDefaults.navigationSuiteType`) and `WINDOW_WIDTH_BREAKPOINTS` /
+`WINDOW_HEIGHT_BREAKPOINTS`. For CSS queries use the px values in the m3e-tokens README.
+
 ## Ripple for plain HTML
 
 m3e-css draws hover, focus and pressed overlays without JS; the press ripple needs a little.
