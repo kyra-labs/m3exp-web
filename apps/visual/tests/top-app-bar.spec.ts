@@ -487,17 +487,19 @@ test.describe('snap (frames driven by the Playwright clock)', () => {
     }
     expect(offsets.at(-1)).toBe(-72);
     // The frames are the spring from rest (Compose AnimationState(initialValue = heightOffset))
-    // sampled 16ms apart: find the first moving frame's time, then the next frames must follow.
+    // sampled frame by frame: every frame lies on that spring at a later time than the frame before,
+    // at most a few frames on (a browser may run two callbacks per frame or skip one).
     const at = (t: number) => springValue(spec, t, -40, -72);
     const first = offsets.findIndex((o) => o < -40);
-    const phase = Array.from({ length: 17 }, (_, t) => t).reduce((best, t) =>
-      Math.abs(at(t) - offsets[first]!) < Math.abs(at(best) - offsets[first]!) ? t : best,
-    );
-    for (let i = first; i < first + 8; i++)
-      expect(
-        Math.abs(offsets[i]! - at(phase + 16 * (i - first))),
-        `frame ${String(i)}`,
-      ).toBeLessThan(0.75);
+    let time = 0;
+    for (let i = first; i < first + 8; i++) {
+      const candidates = Array.from({ length: 49 }, (_, k) => time + k);
+      const best = candidates.reduce((b, t) =>
+        Math.abs(at(t) - offsets[i]!) < Math.abs(at(b) - offsets[i]!) ? t : b,
+      );
+      expect(Math.abs(at(best) - offsets[i]!), `frame ${String(i)}`).toBeLessThan(0.75);
+      time = best;
+    }
   });
 
   test('a scroll during the snap takes over (interruptible)', async ({ page }) => {
