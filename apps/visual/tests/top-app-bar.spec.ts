@@ -55,6 +55,8 @@ const AXE_TAGS = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa', 'best-
 const COLLAPSING = ['scroll-medium', 'scroll-large', 'scroll-two-rows'] as const;
 
 test('has no axe violations (expanded and collapsed)', async ({ page }) => {
+  // Two full-page axe runs: WebKit under load can need more than the default 30s.
+  test.slow();
   expect((await new AxeBuilder({ page }).withTags(AXE_TAGS).analyze()).violations).toEqual([]);
   for (const id of COLLAPSING) {
     const scroller = page.getByTestId(id);
