@@ -5,7 +5,7 @@ import { PRESS_KEYS, isRippleDisabled, pressRipple, releaseRipple } from '../bas
  * plus the two proxies (an interactive card's `.m3e-card__action`, a `.m3e-navigation-item`).
  */
 const TRIGGERS =
-  '.m3e-button,.m3e-icon-button,.m3e-assist-chip,.m3e-fab,.m3e-extended-fab,.m3e-fab-menu__item,.m3e-state-layer,.m3e-card__action,.m3e-navigation-item';
+  '.m3e-button,.m3e-icon-button,.m3e-assist-chip,.m3e-fab,.m3e-extended-fab,.m3e-fab-menu__item,.m3e-state-layer,.m3e-card__action,.m3e-navigation-item,.m3e-navigation-drawer-item';
 
 /** Pointer id of a keyboard press (real pointer ids are never negative). */
 const KEYBOARD = -1;

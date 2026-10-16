@@ -10,7 +10,8 @@ const ITEM = 'm3e-navigation-item';
  * `.m3e-navigation-item` contract): `value` (default: the label), `icon` (Material Symbols,
  * filled while selected), `href` (renders a link; otherwise a button that only selects),
  * `disabled`, `label-hidden` (icon only; the label becomes the accessible name). The label is the
- * text content.
+ * text content. In a `<m3e-navigation-drawer>` (Compose NavigationDrawerItem) the icon is
+ * optional and `badge` adds the trailing badge text.
  */
 export class M3eNavigationItem extends M3eElement {
   static override properties = {
@@ -20,6 +21,7 @@ export class M3eNavigationItem extends M3eElement {
     href: {},
     disabled: { type: Boolean },
     labelHidden: { type: Boolean },
+    badge: {},
   };
 
   declare value: string | null | undefined;
@@ -27,6 +29,7 @@ export class M3eNavigationItem extends M3eElement {
   declare href: string | null | undefined;
   declare disabled: boolean | undefined;
   declare labelHidden: boolean | undefined;
+  declare badge: string | null | undefined;
 
   /** The destination's key: `value`, else its label. */
   get key(): string {
@@ -43,7 +46,13 @@ export class M3eNavigationItem extends M3eElement {
   }
 }
 
-function span(doc: Document, className: string, text?: string, hidden = true): HTMLSpanElement {
+/** A `<span class>`, `aria-hidden` unless `hidden` is false. */
+export function span(
+  doc: Document,
+  className: string,
+  text?: string,
+  hidden = true,
+): HTMLSpanElement {
   const el = doc.createElement('span');
   el.className = className;
   if (hidden) el.setAttribute('aria-hidden', 'true');
@@ -51,10 +60,30 @@ function span(doc: Document, className: string, text?: string, hidden = true): H
   return el;
 }
 
-const setAttr = (el: Element, name: string, value: string | null) => {
+/** Sets (or, for null, removes) an attribute, touching the DOM only when it changes. */
+export const setAttr = (el: Element, name: string, value: string | null): void => {
   if (value === null) el.removeAttribute(name);
   else if (el.getAttribute(name) !== value) el.setAttribute(name, value);
 };
+
+/**
+ * React Aria's link / button attributes for an item element: useLink keeps href (tabindex 0)
+ * unless disabled; useButton disables the button. Plus `aria-current="page"` when selected.
+ */
+export function setItemAttributes(
+  el: HTMLElement,
+  item: M3eNavigationItem,
+  selected: boolean,
+): void {
+  const disabled = Boolean(item.disabled);
+  const link = el.localName === 'a';
+  setAttr(el, 'href', link && !disabled ? (item.href ?? '') : null);
+  setAttr(el, 'tabindex', disabled ? null : '0');
+  setAttr(el, 'type', link ? null : 'button');
+  setAttr(el, 'disabled', !link && disabled ? '' : null);
+  setAttr(el, 'aria-disabled', disabled ? 'true' : null);
+  setAttr(el, 'aria-current', selected ? 'page' : null);
+}
 
 /**
  * Base of the navigation bar / rail elements: renders their `<m3e-navigation-item>` children as
@@ -107,12 +136,27 @@ export abstract class M3eNavigationContainer extends M3eElement {
     );
   }
 
+  /** The `<m3e-navigation-item>` children, in order. */
+  protected items(): M3eNavigationItem[] {
+    return [...this.children].filter((c): c is M3eNavigationItem => c instanceof M3eNavigationItem);
+  }
+
   /** Renders the items into `nav` after `after` (the header) and wires their presses. */
   protected renderItems(nav: HTMLElement, after: Element | null): void {
+    const rows = this.renderItemElements(this.items());
+    const expected = after ? [after, ...rows] : rows;
+    const current = [...nav.children];
+    if (current.length !== expected.length || expected.some((e, i) => current[i] !== e)) {
+      nav.replaceChildren(...expected);
+    }
+  }
+
+  /**
+   * Renders (creating or reusing) one element per item, drops the ones of removed items and
+   * returns them in order. The DOM comes from {@link createItemElement} / {@link fillItemElement}.
+   */
+  protected renderItemElements(items: readonly M3eNavigationItem[]): HTMLElement[] {
     const doc = this.ownerDocument;
-    const items = [...this.children].filter(
-      (c): c is M3eNavigationItem => c instanceof M3eNavigationItem,
-    );
     for (const [item, el] of [...this.#rendered]) {
       if (!items.includes(item)) {
         this.#ripples.get(el)?.abort();
@@ -120,7 +164,7 @@ export abstract class M3eNavigationContainer extends M3eElement {
       }
     }
     const selected = this.selected ?? null;
-    const rows = items.map((item) => {
+    return items.map((item) => {
       const link = Boolean(item.href);
       let el = this.#rendered.get(item);
       if (el && (el.localName === 'a') !== link) {
@@ -129,39 +173,37 @@ export abstract class M3eNavigationContainer extends M3eElement {
       }
       if (!el) {
         el = doc.createElement(link ? 'a' : 'button');
-        el.className = ITEM;
-        const content = span(doc, `${ITEM}__content`, undefined, false);
-        const state = span(doc, `${ITEM}__state`);
-        content.append(span(doc, `${ITEM}__indicator`), state);
-        el.append(content);
         const abort = new AbortController();
-        attachRipple(state, abort.signal, el);
+        this.createItemElement(doc, el, abort.signal);
         this.#ripples.set(el, abort);
         el.addEventListener('click', this.#onClick);
         this.#rendered.set(item, el);
       }
-      this.#renderItem(doc, item, el, item.key === selected);
+      this.fillItemElement(doc, item, el, item.key === selected);
       this.#keys.set(el, item.key);
       return el;
     });
-    const expected = after ? [after, ...rows] : rows;
-    const current = [...nav.children];
-    if (current.length !== expected.length || expected.some((e, i) => current[i] !== e)) {
-      nav.replaceChildren(...expected);
-    }
   }
 
-  #renderItem(doc: Document, item: M3eNavigationItem, el: HTMLElement, selected: boolean): void {
-    const disabled = Boolean(item.disabled);
+  /** Builds a new item's fixed DOM inside `el` (`<a>` or `<button>`) and its ripple. */
+  protected createItemElement(doc: Document, el: HTMLElement, signal: AbortSignal): void {
+    el.className = ITEM;
+    const content = span(doc, `${ITEM}__content`, undefined, false);
+    const state = span(doc, `${ITEM}__state`);
+    content.append(span(doc, `${ITEM}__indicator`), state);
+    el.append(content);
+    attachRipple(state, signal, el);
+  }
+
+  /** Writes an item's attributes (React Aria's link / button attributes) and content. */
+  protected fillItemElement(
+    doc: Document,
+    item: M3eNavigationItem,
+    el: HTMLElement,
+    selected: boolean,
+  ): void {
     const label = item.textContent.trim();
-    const link = el.localName === 'a';
-    // React Aria: useLink keeps href (tabindex 0) unless disabled; useButton disables the button.
-    setAttr(el, 'href', link && !disabled ? (item.href ?? '') : null);
-    setAttr(el, 'tabindex', disabled ? null : '0');
-    setAttr(el, 'type', link ? null : 'button');
-    setAttr(el, 'disabled', !link && disabled ? '' : null);
-    setAttr(el, 'aria-disabled', disabled ? 'true' : null);
-    setAttr(el, 'aria-current', selected ? 'page' : null);
+    setItemAttributes(el, item, selected);
     setAttr(el, 'aria-label', item.labelHidden ? label : null);
     const content = el.firstElementChild;
     if (!content) return;
