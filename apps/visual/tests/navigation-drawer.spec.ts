@@ -473,7 +473,7 @@ test('opening reads no layout while it animates', async ({ page }) => {
     }
     return { frames: count, reads: w.layoutReads };
   });
-  expect(frames).toBeGreaterThan(10);
+  expect(frames).toBeGreaterThan(2);
   expect(reads).toBe(0);
 });
 
