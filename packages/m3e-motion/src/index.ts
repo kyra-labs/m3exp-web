@@ -6,6 +6,19 @@ export { type LinearEasing, type LinearEasingOptions, springToLinear } from './l
 export { SpringAnimatable } from './animatable.js';
 export { animatedInt, fabMenuItemVisible } from './fab-menu.js';
 export { menuNavigationTarget } from './menu-navigation.js';
+export { type Easing, cubicBezier, parseCubicBezier } from './cubic-bezier.js';
+export {
+  AmplitudeAnimation,
+  type AmplitudeTween,
+  type CircularIndeterminateFrame,
+  type CircularIndeterminateTiming,
+  type LinearIndeterminateTiming,
+  circularIndeterminateFrame,
+  indicatorAmplitude,
+  linearIndeterminateFractions,
+  waveOffset,
+  waveTravelMillis,
+} from './progress-indicator.js';
 export {
   type IndeterminateFrame,
   type LoadingIndicatorTiming,
