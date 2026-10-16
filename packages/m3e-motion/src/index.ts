@@ -52,12 +52,17 @@ export {
 export {
   type AppBarScrollBehavior,
   type AppBarScrollState,
+  type TwoRowsFrame,
+  FAST_OUT_LINEAR_IN_EASING,
+  TOP_TITLE_ALPHA_EASING,
   appBarScrollState,
   collapsedFraction,
+  cubicBezierEasing,
   isScrolledUnder,
   overlappedFraction,
   scrollAppBar,
   settleTarget,
+  twoRowsFrame,
   withHeight,
   withHeightOffset,
 } from './app-bar-scroll.js';
