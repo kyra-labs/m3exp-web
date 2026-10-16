@@ -479,6 +479,57 @@ describe('navigation layout literals (M4 navigation bar + rail)', () => {
   });
 });
 
+describe('animated / modal wide navigation rail values (M7)', () => {
+  const decl = declarations(output.get('components/navigation-defaults.css')!);
+  const src = (file: string) => inputs.material3Sources[file]!.replace(/\r\n/g, '\n');
+  const spring = (name: string, key: string) => {
+    for (const field of ['duration', 'easing', 'damping-ratio', 'stiffness']) {
+      expect(decl.get(`${name}-${field}`), `${name}-${field}`).toBe(
+        `var(--m3e-sys-motion-spring-${key}-${field})`,
+      );
+    }
+  };
+
+  it('reads the springs WideNavigationRail.kt, NavigationItem.kt and the state use', () => {
+    const rail = src('WideNavigationRail.kt');
+    expect(rail).toContain('val animationSpec = MotionSchemeKeyTokens.DefaultSpatial.value<Dp>()');
+    expect(rail).toContain(
+      'val modalAnimationSpec = MotionSchemeKeyTokens.FastSpatial.value<Dp>()',
+    );
+    expect(rail).toContain(
+      'val modalStateAnimationSpec = MotionSchemeKeyTokens.DefaultSpatial.value<Float>()',
+    );
+    // The modal window shows while positionProgress > 0 and the rail expands from 0.3.
+    expect(rail).toContain(
+      'val modalExpanded: Boolean by remember { derivedStateOf { positionProgress.value >= 0.3f } }',
+    );
+    spring('--m3e-comp-wide-navigation-rail-width', 'default-spatial');
+    spring('--m3e-comp-wide-navigation-rail-modal-width', 'fast-spatial');
+    spring('--m3e-comp-wide-navigation-rail-icon-position', 'default-spatial');
+    spring('--m3e-comp-wide-navigation-rail-label-color', 'default-effects');
+    spring('--m3e-comp-wide-navigation-rail-state', 'default-spatial');
+    spring('--m3e-comp-modal-wide-navigation-rail-position', 'default-effects');
+    spring('--m3e-comp-modal-wide-navigation-rail-scrim', 'default-effects');
+    spring('--m3e-comp-modal-wide-navigation-rail-slide', 'default-spatial');
+  });
+
+  it('resolves the modal colors, shape and header padding default', () => {
+    expect(decl.get('--m3e-comp-modal-wide-navigation-rail-container-color')).toBe(
+      'var(--m3e-sys-color-surface-container)',
+    );
+    expect(decl.get('--m3e-comp-modal-wide-navigation-rail-container-shape')).toBe(
+      'var(--m3e-sys-shape-corner-large)',
+    );
+    expect(decl.get('--m3e-comp-modal-wide-navigation-rail-scrim-color')).toBe(
+      'var(--m3e-sys-color-scrim)',
+    );
+    expect(decl.get('--m3e-comp-modal-wide-navigation-rail-scrim-opacity')).toBe('0.32');
+    expect(decl.get('--m3e-comp-modal-wide-navigation-rail-expanded-header-top-padding')).toBe(
+      '0px',
+    );
+  });
+});
+
 describe('TopAppBar layout literals (M4 Top app bar, M6 flexible / two-rows bars)', () => {
   const css = output.get('components/top-app-bar-defaults.css')!;
   const decl = declarations(css.slice(0, css.indexOf('@media')));

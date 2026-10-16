@@ -23,6 +23,8 @@ export const MATERIAL3_SOURCES = [
   'NavigationRail.kt',
   'ShortNavigationBar.kt',
   'WideNavigationRail.kt',
+  'WideNavigationRailState.kt',
+  'NavigationItem.kt',
   'AppBar.kt',
   'LoadingIndicator.kt',
   'FloatingActionButton.kt',
@@ -54,6 +56,7 @@ export const MATERIAL3_SAMPLE_SOURCES = [
   'SplitButtonSamples.kt',
   'ProgressIndicatorSamples.kt',
   'SearchBarSamples.kt',
+  'NavigationRailSamples.kt',
 ] as const;
 
 /** Android `actual`s the generator reads (DropdownMenu's popup margins, AndroidMenu.android.kt). */

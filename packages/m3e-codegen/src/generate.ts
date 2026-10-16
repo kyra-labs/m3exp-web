@@ -24,7 +24,11 @@ import {
   extractFloatingToolbarDefaults,
 } from './floating-toolbar-defaults.js';
 import { extractDockedToolbarDefaults } from './docked-toolbar-defaults.js';
-import { extractCenteredPadding, extractNavigationDefaults } from './navigation-defaults.js';
+import {
+  extractCenteredPadding,
+  extractNavigationDefaults,
+  extractWideRailDefaults,
+} from './navigation-defaults.js';
 import { extractLoadingIndicatorMotion } from './loading-indicator-motion.js';
 import { extractMenuDefaults } from './menu-defaults.js';
 import { SEARCH_REDUCED_MOTION, extractSearchDefaults } from './search-defaults.js';
@@ -824,6 +828,10 @@ export function generate({
   // Navigation bar / rail layout literals and the Centered arrangement (see navigation-defaults.ts).
   const navigationDefaults = extractNavigationDefaults(material3Sources);
   const centeredPadding = extractCenteredPadding(material3Sources);
+  const wideRailDefaults = extractWideRailDefaults(
+    material3Sources,
+    Object.fromEntries(files.map((f) => [f.name, f.content])),
+  );
   components.set('navigation-defaults', {
     object: 'NavigationDefaults',
     tokens: [
@@ -850,6 +858,19 @@ export function generate({
         cite: `${MATERIAL3_DIR}/${p.file}@${commit} L${String(p.line)}`,
         note: 'of the bar width (Centered arrangement); EqualWeight above the largest item count',
       })),
+      ...wideRailDefaults.map((d) => {
+        const e: Emitted = {
+          name: d.name,
+          value: d.value,
+          object: d.owner,
+          member: d.member,
+          raw: d.raw,
+          line: d.line,
+          cite: `${MATERIAL3_DIR}/${d.file}@${commit} L${String(d.line)}`,
+        };
+        if (d.note !== undefined) e.note = d.note;
+        return e;
+      }),
     ],
     js: Object.fromEntries([
       ...navigationDefaults.map((d): [string, number | string] => [
@@ -859,6 +880,10 @@ export function generate({
       ...centeredPadding.map((p): [string, number | string] => [
         camel(p.name.replace(/^--m3e-comp-/, '').split('-')),
         `${num(p.percent)}%`,
+      ]),
+      ...wideRailDefaults.map((d): [string, number | string] => [
+        camel(d.name.replace(/^--m3e-comp-/, '').split('-')),
+        d.value,
       ]),
     ]),
   });
@@ -1186,10 +1211,10 @@ export function generate({
                       )
                     : name === 'navigation-defaults'
                       ? cssFile(
-                          'Compose navigation bar / rail layout values that are not in Navigation*Tokens (lines: PARITY.md).',
+                          'Compose navigation bar / rail values that are not in Navigation*Tokens: layout literals and the animated / modal wide rail springs, colors and shapes (lines: PARITY.md).',
                           c.tokens,
                           [],
-                          `${MATERIAL3_DIR}/{NavigationBar,NavigationRail,ShortNavigationBar,WideNavigationRail}.kt`,
+                          `${MATERIAL3_DIR}/{NavigationBar,NavigationRail,ShortNavigationBar,WideNavigationRail,WideNavigationRailState,NavigationItem}.kt`,
                         )
                       : name === 'button-group-defaults'
                         ? cssFile(
