@@ -1,0 +1,309 @@
+/*
+ * Linear progress indicator: flat (CSS only) and wavy (drawn by <m3e-linear-progress> /
+ * m3e-react <LinearProgress>), determinate and indeterminate (COMPONENT_SPEC §8).
+ *
+ * Determinate ([aria-valuenow]; the value, 0–1, is --m3e-comp-progress-indicator-value):
+ *
+ *   <div class="m3e-linear-progress" role="progressbar" aria-label="Loading news article"
+ *        aria-valuemin="0" aria-valuemax="100" aria-valuenow="40"
+ *        style="--m3e-comp-progress-indicator-value: 0.4">
+ *     <span class="m3e-linear-progress__track"></span>
+ *     <span class="m3e-linear-progress__indicator"></span>
+ *     <span class="m3e-linear-progress__stop"></span>
+ *   </div>
+ *
+ * Indeterminate (no aria-valuenow): the parts in drawing order — track, line, track, line, track:
+ *
+ *   <div class="m3e-linear-progress" role="progressbar" aria-label="Loading my episodes">
+ *     <span class="m3e-linear-progress__track"></span>
+ *     <span class="m3e-linear-progress__indicator"></span>
+ *     <span class="m3e-linear-progress__track"></span>
+ *     <span class="m3e-linear-progress__indicator"></span>
+ *     <span class="m3e-linear-progress__track"></span>
+ *   </div>
+ *
+ * Wavy (--wavy): the root holds an <svg class="m3e-linear-progress__wave"> whose paths
+ * (__wave-track, __wave-indicator, and the __wave-stop circle) the element / React component draw
+ * every frame; without JS it shows nothing. Modifiers: --wavy, --thick. JS layers set [data-driven]
+ * and animate the value themselves (Compose's spring, velocity kept); without it a value change
+ * transitions on the same spring as a linear() curve (no velocity carry-over).
+ *
+ * Sources (compose/material3 @ 19991f2c; generated values in linear-progress-indicator.css,
+ * progress-indicator.css, progress-indicator-defaults.css; lines in PARITY.md):
+ * - ProgressIndicator.kt LinearProgressIndicator (L138–335): 240dp × Height (4dp) by default; the
+ *   stroke is the height with round caps, every part's ends clamped to [cap, width − cap] (cap =
+ *   half the stroke) and drawn only when it has length (drawLinearIndicator, L397–434). The track
+ *   starts at progress + min(progress, gap + stroke) (the gap measured between the caps), so
+ *   gap = min(progress length, TrackActiveSpace). Stop indicator (drawStopIndicator, L879–926): a
+ *   min(StopSize, height) dot at min((height − size) / 2, 6dp) from the end, drawn over the rest.
+ *   Indeterminate: track before line 1, line 1, track between, line 2, track after line 2, each
+ *   with its condition (L294–333); the four head / tail values run Compose's keyframes
+ *   (@keyframes m3e-progress-* in progress-indicator-defaults.css). RTL mirrors (logical insets).
+ * - Wavy: WavyProgressIndicatorDefaults.LinearContainerHeight = WaveHeight (10dp); the element
+ *   draws LinearWavyProgressModifiers.kt (m3e-shapes LinearWavyPathCache) and rotates it 180° in
+ *   RTL like Compose.
+ * - Thick: 8dp strokes; flat height 8dp (m3.material.io token DB), wavy container 14dp
+ *   (LinearThickWavyProgressIndicatorSample).
+ * - Forced colors: the indicator and stop draw in CanvasText, the track in GrayText.
+ */
+@import '@kyralabs/m3e-tokens/components/linear-progress-indicator.css';
+@import '@kyralabs/m3e-tokens/components/progress-indicator.css';
+@import '@kyralabs/m3e-tokens/components/progress-indicator-defaults.css';
+
+/* The determinate value (0–1), animatable; shared with circular-progress.css. */
+@property --m3e-comp-progress-indicator-value {
+  syntax: '<number>';
+  inherits: true;
+  initial-value: 0;
+}
+
+/* Indeterminate head and tail fractions, run by the generated @keyframes m3e-progress-*. */
+@property --_m3e-progress-first-head {
+  syntax: '<number>';
+  inherits: true;
+  initial-value: 0;
+}
+
+@property --_m3e-progress-first-tail {
+  syntax: '<number>';
+  inherits: true;
+  initial-value: 0;
+}
+
+@property --_m3e-progress-second-head {
+  syntax: '<number>';
+  inherits: true;
+  initial-value: 0;
+}
+
+@property --_m3e-progress-second-tail {
+  syntax: '<number>';
+  inherits: true;
+  initial-value: 0;
+}
+
+@layer m3e.components {
+  .m3e-linear-progress {
+    /* Stroke and track stroke (the flat stroke is the height), gap, stop, wavelength. */
+    --_m3e-progress-thickness: var(--m3e-comp-linear-progress-indicator-active-thickness);
+    --_m3e-progress-track-thickness: var(--m3e-comp-linear-progress-indicator-track-thickness);
+    --_m3e-progress-gap: var(--m3e-comp-linear-progress-indicator-track-active-space);
+    --_m3e-progress-stop-size: var(--m3e-comp-linear-progress-indicator-stop-size);
+    --_m3e-progress-wavelength: var(--m3e-comp-linear-progress-indicator-active-wave-wavelength);
+    --_m3e-lp-height: var(--m3e-comp-linear-progress-indicator-height);
+    --_m3e-lp-cap: calc(var(--_m3e-lp-height) / 2);
+
+    position: relative;
+    display: block;
+    box-sizing: border-box;
+    inline-size: var(--m3e-comp-progress-indicator-defaults-linear-width);
+    block-size: var(--_m3e-lp-height);
+    container-type: inline-size;
+    color: var(--m3e-comp-progress-indicator-active-indicator-color);
+  }
+
+  .m3e-linear-progress:not([data-driven]) {
+    transition: --m3e-comp-progress-indicator-value
+      var(--m3e-comp-progress-indicator-defaults-progress-duration)
+      var(--m3e-comp-progress-indicator-defaults-progress-easing);
+  }
+
+  .m3e-linear-progress--thick {
+    --_m3e-progress-thickness: var(--m3e-comp-progress-indicator-defaults-thick-thickness);
+    --_m3e-progress-track-thickness: var(--m3e-comp-progress-indicator-defaults-thick-thickness);
+    --_m3e-lp-height: var(--m3e-comp-progress-indicator-defaults-linear-thick-height);
+  }
+
+  .m3e-linear-progress:not([aria-valuenow]) {
+    --_m3e-progress-wavelength: var(
+      --m3e-comp-linear-progress-indicator-indeterminate-active-wave-wavelength
+    );
+  }
+
+  .m3e-linear-progress--wavy {
+    block-size: var(--m3e-comp-linear-progress-indicator-wave-height);
+  }
+
+  .m3e-linear-progress--wavy.m3e-linear-progress--thick {
+    block-size: var(--m3e-comp-progress-indicator-defaults-linear-thick-wavy-height);
+  }
+
+  /*
+   * A flat part from --_a to --_b (lengths from the start edge, either order), shown while --_v
+   * is 1: its ends clamp to [cap, width − cap] and the round caps extend it by half the stroke.
+   */
+  .m3e-linear-progress__track,
+  .m3e-linear-progress__indicator {
+    --_s: clamp(var(--_m3e-lp-cap), min(var(--_a), var(--_b)), 100cqi - var(--_m3e-lp-cap));
+    --_e: clamp(var(--_m3e-lp-cap), max(var(--_a), var(--_b)), 100cqi - var(--_m3e-lp-cap));
+
+    position: absolute;
+    inset-block: 0;
+    inset-inline-start: calc(var(--_s) - var(--_m3e-lp-cap));
+    inline-size: calc((var(--_e) - var(--_s) + var(--_m3e-lp-height)) * var(--_v));
+    border-radius: var(--m3e-comp-progress-indicator-active-shape);
+    background-color: currentcolor;
+  }
+
+  .m3e-linear-progress__track {
+    border-radius: var(--m3e-comp-progress-indicator-track-shape);
+    background-color: var(--m3e-comp-progress-indicator-track-color);
+  }
+
+  /* Determinate: the indicator from 0 to the value; the track after the gap. */
+  .m3e-linear-progress[aria-valuenow] {
+    --_p: clamp(0, var(--m3e-comp-progress-indicator-value), 1);
+    --_m3e-lp-head: calc(var(--_p) * 100cqi);
+  }
+
+  .m3e-linear-progress[aria-valuenow] > .m3e-linear-progress__indicator {
+    --_a: 0cqi;
+    --_b: var(--_m3e-lp-head);
+    --_v: max(0, sign(var(--_p)));
+  }
+
+  .m3e-linear-progress[aria-valuenow] > .m3e-linear-progress__track {
+    --_a: calc(
+      var(--_m3e-lp-head) +
+        min(var(--_m3e-lp-head), var(--_m3e-progress-gap) + var(--_m3e-lp-height))
+    );
+    --_b: 100cqi;
+    --_v: max(0, sign(100cqi - var(--_a)));
+  }
+
+  .m3e-linear-progress__stop {
+    --_d: min(var(--_m3e-progress-stop-size), var(--_m3e-lp-height));
+
+    position: absolute;
+    inset-block: 0;
+    inset-inline-end: min(
+      calc((var(--_m3e-lp-height) - var(--_d)) / 2),
+      var(--m3e-comp-progress-indicator-defaults-linear-stop-trailing-space-max)
+    );
+    inline-size: var(--_d);
+    block-size: var(--_d);
+    margin-block: auto;
+    border-radius: var(--m3e-comp-progress-indicator-stop-shape);
+    background-color: var(--m3e-comp-progress-indicator-stop-color);
+  }
+
+  /*
+   * Indeterminate (ProgressIndicator.kt L294–333), with the gap measured between the caps
+   * (G = gap + stroke) and the animated fractions h1, t1, h2, t2:
+   * 1. track before line 1, while h1 < 1 − G: from (h1 > 0 ? h1 + G : 0) to the end;
+   * 2. line 1 from t1 to h1, while h1 > t1;
+   * 3. track between, while t1 > G: from (h2 > 0 ? h2 + G : 0) to (t1 < 1 ? t1 − G : the end);
+   * 4. line 2 from t2 to h2, while h2 > t2;
+   * 5. track after line 2, while t2 > G: from the start to (t2 < 1 ? t2 − G : the end).
+   */
+  .m3e-linear-progress:not([aria-valuenow], .m3e-linear-progress--wavy) {
+    --_m3e-lp-g: calc(var(--_m3e-progress-gap) + var(--_m3e-lp-height));
+    --_m3e-lp-h1: calc(var(--_m3e-progress-first-head) * 100cqi);
+    --_m3e-lp-t1: calc(var(--_m3e-progress-first-tail) * 100cqi);
+    --_m3e-lp-h2: calc(var(--_m3e-progress-second-head) * 100cqi);
+    --_m3e-lp-t2: calc(var(--_m3e-progress-second-tail) * 100cqi);
+
+    animation-name:
+      m3e-progress-first-head, m3e-progress-first-tail, m3e-progress-second-head,
+      m3e-progress-second-tail;
+    animation-duration: var(--m3e-comp-progress-indicator-defaults-linear-indeterminate-duration);
+    animation-timing-function: var(--m3e-sys-motion-easing-linear);
+    animation-iteration-count: infinite;
+  }
+
+  .m3e-linear-progress:not([aria-valuenow], .m3e-linear-progress--wavy) > :nth-child(1) {
+    --_a: calc((var(--_m3e-lp-h1) + var(--_m3e-lp-g)) * sign(var(--_m3e-progress-first-head)));
+    --_b: 100cqi;
+    --_v: max(0, sign(100cqi - var(--_m3e-lp-g) - var(--_m3e-lp-h1)));
+  }
+
+  .m3e-linear-progress:not([aria-valuenow], .m3e-linear-progress--wavy) > :nth-child(2) {
+    --_a: var(--_m3e-lp-t1);
+    --_b: var(--_m3e-lp-h1);
+    --_v: max(0, sign(var(--_m3e-progress-first-head) - var(--_m3e-progress-first-tail)));
+  }
+
+  .m3e-linear-progress:not([aria-valuenow], .m3e-linear-progress--wavy) > :nth-child(3) {
+    --_a: calc((var(--_m3e-lp-h2) + var(--_m3e-lp-g)) * sign(var(--_m3e-progress-second-head)));
+    --_b: calc(
+      var(--_m3e-lp-t1) - var(--_m3e-lp-g) + var(--_m3e-lp-g) *
+        (1 - sign(1 - var(--_m3e-progress-first-tail)))
+    );
+    --_v: max(0, sign(var(--_m3e-lp-t1) - var(--_m3e-lp-g)));
+  }
+
+  .m3e-linear-progress:not([aria-valuenow], .m3e-linear-progress--wavy) > :nth-child(4) {
+    --_a: var(--_m3e-lp-t2);
+    --_b: var(--_m3e-lp-h2);
+    --_v: max(0, sign(var(--_m3e-progress-second-head) - var(--_m3e-progress-second-tail)));
+  }
+
+  .m3e-linear-progress:not([aria-valuenow], .m3e-linear-progress--wavy) > :nth-child(5) {
+    --_a: 0cqi;
+    --_b: calc(
+      var(--_m3e-lp-t2) - var(--_m3e-lp-g) + var(--_m3e-lp-g) *
+        (1 - sign(1 - var(--_m3e-progress-second-tail)))
+    );
+    --_v: max(0, sign(var(--_m3e-lp-t2) - var(--_m3e-lp-g)));
+  }
+
+  /* Wavy: the SVG fills the container; Compose rotates the drawing 180° in RTL. */
+  .m3e-linear-progress__wave {
+    position: absolute;
+    inset: 0;
+    display: block;
+    inline-size: 100%;
+    block-size: 100%;
+    overflow: hidden;
+    fill: none;
+    stroke-linecap: round;
+  }
+
+  .m3e-linear-progress__wave:dir(rtl) {
+    rotate: 0.5turn;
+  }
+
+  .m3e-linear-progress__wave-track {
+    stroke: var(--m3e-comp-progress-indicator-track-color);
+    stroke-width: var(--_m3e-progress-track-thickness);
+  }
+
+  .m3e-linear-progress__wave-indicator {
+    stroke: currentcolor;
+    stroke-width: var(--_m3e-progress-thickness);
+  }
+
+  .m3e-linear-progress__wave-stop {
+    fill: var(--m3e-comp-progress-indicator-stop-color);
+  }
+
+  @media (forced-colors: active) {
+    .m3e-linear-progress {
+      forced-color-adjust: none;
+      color: CanvasText;
+    }
+
+    .m3e-linear-progress__track {
+      background-color: GrayText;
+    }
+
+    .m3e-linear-progress__stop {
+      background-color: CanvasText;
+    }
+
+    .m3e-linear-progress__wave-track {
+      stroke: GrayText;
+    }
+
+    .m3e-linear-progress__wave-stop {
+      fill: CanvasText;
+    }
+  }
+}
+
+@layer m3e.base {
+  /* <m3e-linear-progress> renders the contract inside itself. */
+  :where(m3e-linear-progress) {
+    display: contents;
+  }
+}

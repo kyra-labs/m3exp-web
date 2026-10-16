@@ -1,0 +1,214 @@
+/*
+ * Circular progress indicator: flat (CSS only) and wavy (drawn by <m3e-circular-progress> /
+ * m3e-react <CircularProgress>), determinate and indeterminate (COMPONENT_SPEC §8).
+ *
+ *   <div class="m3e-circular-progress" role="progressbar" aria-label="Downloading"
+ *        aria-valuemin="0" aria-valuemax="100" aria-valuenow="40"
+ *        style="--m3e-comp-progress-indicator-value: 0.4">
+ *     <svg class="m3e-circular-progress__svg" aria-hidden="true" focusable="false">
+ *       <circle class="m3e-circular-progress__track"></circle>
+ *       <circle class="m3e-circular-progress__indicator"></circle>
+ *     </svg>
+ *   </div>
+ *
+ * Indeterminate: the same markup without aria-valuenow (and without the value). Wavy (--wavy):
+ * the parts are <path>s the element / React component draw every frame (no geometry from CSS);
+ * without JS it shows nothing. Modifiers: --wavy, --thick. JS layers set [data-driven] and animate
+ * the value themselves (Compose's spring, velocity kept); without it a value change transitions on
+ * the same spring as a linear() curve (no velocity carry-over).
+ *
+ * Sources (compose/material3 @ 19991f2c; generated values in circular-progress-indicator.css,
+ * progress-indicator.css, progress-indicator-defaults.css; lines in PARITY.md):
+ * - ProgressIndicator.kt CircularProgressIndicator (L516–676): Size (40dp) square; arcs of
+ *   diameter size − stroke with round caps, from 12 o'clock clockwise. The track starts
+ *   min(sweep, gap) after the progress and sweeps 360° − sweep − 2 × min(sweep, gap), where the gap
+ *   angle is (gap + stroke) / (π × size) of a turn; near 100% that sweep turns negative and, as
+ *   Skia draws negative sweeps, runs backwards from its start. A zero sweep draws nothing.
+ *   TODO(verify): both against a device capture (SOURCES register #64).
+ *   Indeterminate: no track (circularIndeterminateTrackColor = Transparent), the arc starts at
+ *   3 o'clock and the whole drawing turns by the global + additional rotation, its sweep animated
+ *   (@keyframes m3e-progress-* in progress-indicator-defaults.css).
+ * - Wavy: WavyProgressIndicatorDefaults.CircularContainerSize = WaveSize (48dp); the element
+ *   draws CircularWavyProgressModifiers.kt (m3e-shapes CircularWavyPathCache).
+ * - Thick: 8dp strokes in a 52dp box (CircularThickWavyProgressIndicatorSample; the m3.material.io
+ *   token DB's circular thick size, used for flat ones too).
+ * - Circular indicators are not mirrored in RTL (m3.material.io › Guidelines › Right-to-left).
+ * - Forced colors: the indicator draws in CanvasText, the track in GrayText.
+ */
+@import '@kyralabs/m3e-tokens/components/circular-progress-indicator.css';
+@import '@kyralabs/m3e-tokens/components/progress-indicator.css';
+@import '@kyralabs/m3e-tokens/components/progress-indicator-defaults.css';
+
+/* The determinate value (0–1), animatable; shared with linear-progress.css. */
+@property --m3e-comp-progress-indicator-value {
+  syntax: '<number>';
+  inherits: true;
+  initial-value: 0;
+}
+
+/* Indeterminate rotations and sweep, run by the generated @keyframes m3e-progress-*. */
+@property --_m3e-progress-rotation {
+  syntax: '<angle>';
+  inherits: true;
+  initial-value: 0deg;
+}
+
+@property --_m3e-progress-additional-rotation {
+  syntax: '<angle>';
+  inherits: true;
+  initial-value: 0deg;
+}
+
+@property --_m3e-progress-sweep {
+  syntax: '<number>';
+  inherits: true;
+  initial-value: 0;
+}
+
+@layer m3e.components {
+  .m3e-circular-progress {
+    /* Stroke and track stroke, gap and the preferred wavelength (wavy). */
+    --_m3e-progress-thickness: var(--m3e-comp-circular-progress-indicator-active-thickness);
+    --_m3e-progress-track-thickness: var(--m3e-comp-circular-progress-indicator-track-thickness);
+    --_m3e-progress-gap: var(--m3e-comp-circular-progress-indicator-track-active-space);
+    --_m3e-progress-wavelength: var(--m3e-comp-circular-progress-indicator-active-wave-wavelength);
+    --_m3e-cp-size: var(--m3e-comp-circular-progress-indicator-size);
+
+    display: inline-block;
+    flex: none;
+    box-sizing: border-box;
+    inline-size: var(--_m3e-cp-size);
+    block-size: var(--_m3e-cp-size);
+    container-type: inline-size;
+    color: var(--m3e-comp-progress-indicator-active-indicator-color);
+    vertical-align: middle;
+  }
+
+  .m3e-circular-progress:not([data-driven]) {
+    transition: --m3e-comp-progress-indicator-value
+      var(--m3e-comp-progress-indicator-defaults-progress-duration)
+      var(--m3e-comp-progress-indicator-defaults-progress-easing);
+  }
+
+  .m3e-circular-progress--wavy {
+    --_m3e-cp-size: var(--m3e-comp-circular-progress-indicator-wave-size);
+  }
+
+  .m3e-circular-progress--thick {
+    --_m3e-progress-thickness: var(--m3e-comp-progress-indicator-defaults-thick-thickness);
+    --_m3e-progress-track-thickness: var(--m3e-comp-progress-indicator-defaults-thick-thickness);
+    --_m3e-cp-size: var(--m3e-comp-progress-indicator-defaults-circular-thick-size);
+  }
+
+  .m3e-circular-progress__svg {
+    display: block;
+    inline-size: 100%;
+    block-size: 100%;
+    overflow: visible;
+    fill: none;
+    stroke-linecap: round;
+  }
+
+  .m3e-circular-progress__track {
+    stroke: var(--m3e-comp-progress-indicator-track-color);
+    stroke-width: var(--_m3e-progress-track-thickness);
+  }
+
+  .m3e-circular-progress__indicator {
+    stroke: currentcolor;
+    stroke-width: var(--_m3e-progress-thickness);
+  }
+
+  /*
+   * Flat: both arcs on one circle of diameter size − stroke. Lengths along it: the circumference
+   * C, the progress (value × C) and the gap ((gap + stroke) × (size − stroke) / size, Compose's gap
+   * angle on this circle). The SVG circle starts at 3 o'clock and runs clockwise.
+   */
+  .m3e-circular-progress:not(.m3e-circular-progress--wavy) {
+    --_m3e-cp-c: calc(pi * (100cqi - var(--_m3e-progress-thickness)));
+  }
+
+  .m3e-circular-progress:not(.m3e-circular-progress--wavy) :is(circle) {
+    cx: 50%;
+    cy: 50%;
+    r: calc(50cqi - var(--_m3e-progress-thickness) / 2);
+  }
+
+  /* Indeterminate: no track; the arc turns from 3 o'clock. */
+  .m3e-circular-progress:not([aria-valuenow], .m3e-circular-progress--wavy) {
+    animation-name: m3e-progress-rotation, m3e-progress-additional-rotation, m3e-progress-sweep;
+    animation-duration: var(--m3e-comp-progress-indicator-defaults-circular-indeterminate-duration);
+    animation-timing-function: var(--m3e-sys-motion-easing-linear);
+    animation-iteration-count: infinite;
+  }
+
+  .m3e-circular-progress:not([aria-valuenow], .m3e-circular-progress--wavy)
+    > .m3e-circular-progress__svg {
+    rotate: calc(var(--_m3e-progress-rotation) + var(--_m3e-progress-additional-rotation));
+  }
+
+  .m3e-circular-progress:not([aria-valuenow], .m3e-circular-progress--wavy)
+    .m3e-circular-progress__indicator {
+    stroke-dasharray: calc(var(--_m3e-progress-sweep) * var(--_m3e-cp-c)) var(--_m3e-cp-c);
+  }
+
+  .m3e-circular-progress:not([aria-valuenow], .m3e-circular-progress--wavy)
+    .m3e-circular-progress__track {
+    stroke: var(--m3e-comp-progress-indicator-defaults-circular-indeterminate-track-color);
+  }
+
+  /* Determinate: from 12 o'clock. */
+  .m3e-circular-progress[aria-valuenow]:not(.m3e-circular-progress--wavy) {
+    --_p: clamp(0, var(--m3e-comp-progress-indicator-value), 1);
+    --_m3e-cp-len: calc(var(--_p) * var(--_m3e-cp-c));
+    --_m3e-cp-gap: calc(
+      (var(--_m3e-progress-gap) + var(--_m3e-progress-thickness)) *
+        tan(atan2(100cqi - var(--_m3e-progress-thickness), 100cqi))
+    );
+    --_m3e-cp-m: min(var(--_m3e-cp-len), var(--_m3e-cp-gap));
+    --_m3e-cp-track: calc(
+      var(--_m3e-cp-c) - var(--_m3e-cp-len) - var(--_m3e-cp-m) - var(--_m3e-cp-m)
+    );
+  }
+
+  .m3e-circular-progress[aria-valuenow]:not(.m3e-circular-progress--wavy)
+    > .m3e-circular-progress__svg {
+    rotate: -0.25turn;
+  }
+
+  .m3e-circular-progress[aria-valuenow]:not(.m3e-circular-progress--wavy)
+    .m3e-circular-progress__indicator {
+    opacity: max(0, sign(var(--_p)));
+    stroke-dasharray: var(--_m3e-cp-len) var(--_m3e-cp-c);
+  }
+
+  .m3e-circular-progress[aria-valuenow]:not(.m3e-circular-progress--wavy)
+    .m3e-circular-progress__track {
+    stroke-dasharray: abs(var(--_m3e-cp-track)) var(--_m3e-cp-c);
+    stroke-dashoffset: calc(
+      -1 * (var(--_m3e-cp-len) + var(--_m3e-cp-m) + min(var(--_m3e-cp-track), 0cqi))
+    );
+  }
+
+  @media (forced-colors: active) {
+    .m3e-circular-progress {
+      forced-color-adjust: none;
+      color: CanvasText;
+    }
+
+    .m3e-circular-progress--wavy .m3e-circular-progress__track {
+      stroke: GrayText;
+    }
+
+    .m3e-circular-progress[aria-valuenow] .m3e-circular-progress__track {
+      stroke: GrayText;
+    }
+  }
+}
+
+@layer m3e.base {
+  /* <m3e-circular-progress> renders the contract inside itself. */
+  :where(m3e-circular-progress) {
+    display: contents;
+  }
+}

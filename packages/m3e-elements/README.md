@@ -170,6 +170,29 @@ deprecated `<BottomAppBar>` use too. Dock it yourself (`position: fixed` / `stic
 `absolute`, `inset-block-end: 0`): the exit offset uses `translate`. The deprecated legacy bottom
 app bar (D4) has no element; use m3e-css `bottom-app-bar.css` or m3e-react `<BottomAppBar>`.
 
+## Progress indicators
+
+```js
+import '@kyralabs/m3e-elements/linear-progress.js';
+import '@kyralabs/m3e-elements/circular-progress.js';
+```
+
+```html
+<m3e-linear-progress value="0.4" aria-label="Loading news article"></m3e-linear-progress>
+<m3e-linear-progress shape="wavy" aria-label="Loading my episodes"></m3e-linear-progress>
+<m3e-circular-progress shape="wavy" thickness="thick" value="0.7" aria-label="Downloading">
+</m3e-circular-progress>
+```
+
+`<m3e-linear-progress>` and `<m3e-circular-progress>` render the `.m3e-linear-progress` /
+`.m3e-circular-progress` contracts (load m3e-css `linear-progress.css` / `circular-progress.css`).
+`value` (0–1) makes them determinate (`aria-valuenow` 0–100); without it they are indeterminate.
+`shape="wavy"` draws Compose's wave every frame (it holds still with `prefers-reduced-motion`);
+`thickness="thick"` is the 8dp sample configuration; `amplitude` (0–1), `wavelength` (px) and
+`wave-speed` (px/s) override the wave. Value changes spring on Compose's progress spring. The
+host's `aria-label` (or `label`) names the progress bar. Flat indicators also work without JS
+(markup in the m3e-css files).
+
 ## Ripple for plain HTML
 
 m3e-css draws hover, focus and pressed overlays without JS; the press ripple needs a little.

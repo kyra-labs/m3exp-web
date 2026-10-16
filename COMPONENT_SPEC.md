@@ -220,18 +220,32 @@
 - **Sources:** LoadingIndicator.kt, LoadingIndicatorTokens.kt, MaterialShapes.kt.
 
 ## 8. Progress indicators (linear, circular; flat, wavy)
-- **Variants:** linear/circular × flat/wavy × determinate/indeterminate; thick track.
-- **Tokens:** track thickness 4, gap 4 (MDC-Android). Wavy: `WavyProgressIndicatorDefaults` values `TODO(verify)` in WavyProgressIndicator.kt. Circular sizes flat 40/44, wavy 48/52 (`TODO(verify)`). Colors indicator primary, track secondary-container (`TODO(verify)`).
-- **Motion:** wave speed one wavelength per second (Compose `waveSpeed = wavelength`). Progress animates (`TODO(verify)` ProgressAnimationSpec). Amplitude ramps to 0 near 0% and 100%.
-- **Keyboard/ARIA:** `role="progressbar"` with value attributes.
-- **Layers:** css (flat) + elements/react (wavy path generation).
-- **API:** `<LinearProgress value? shape:'flat'|'wavy' thickness? />`, `<CircularProgress …/>`; `.m3e-linear-progress--wavy`.
+- **Variants:** linear/circular × flat/wavy × determinate/indeterminate; default (4dp) and thick (8dp, "a sample configuration in code": Compose `LinearThickWavyProgressIndicatorSample` / `CircularThickWavyProgressIndicatorSample`; the m3.material.io token DB keeps the thick values as deprecated tokens).
+- **Tokens (verified, generated):** `{Linear,Circular}ProgressIndicatorTokens.kt`, `ProgressIndicatorTokens.kt`@19991f2c plus the `ProgressIndicatorDefaults` / `WavyProgressIndicatorDefaults` values Compose renders (`components/progress-indicator-defaults.css`; SOURCES register #26). Corrects the earlier MDC-Android / secondary values:
+
+  | | linear | circular |
+  |---|---|---|
+  | stroke = track | 4 (thick 8) | 4 (thick 8) |
+  | gap | 4 (TrackActiveSpace; the flat gap is measured between the round caps: gap + stroke) | 4 |
+  | container | 240 × 4 flat (`LinearIndicatorWidth` literal, height = stroke); 240 × 10 wavy (WaveHeight); thick 8 flat (token DB `linear.thick.height`), 14 wavy (sample) | 40 flat (Size), 48 wavy (WaveSize); thick 52 for both (sample; token DB `circular.thick.size`, not 44) |
+  | stop indicator | 4 (StopSize), at min((height − size) / 2, 6dp) from the end (flat); wavy: shrinks away as the progress reaches it | none |
+  | wavelength | 40 determinate, 20 indeterminate | 15 (actual: whatever fits a whole number of waves, ≥ 5) |
+  | amplitude | (container − stroke) / 2 = ActiveWaveAmplitude 3 | a star (inner radius 0.75, rounding 0.35 / smoothing 0.4, inner 0.5) morphed from the track circle; `ActiveWaveAmplitude` 1.6 is not read by Compose |
+
+  Colors: indicator and stop primary, track secondary-container; the flat indeterminate circular indicator has no track (`circularIndeterminateTrackColor = Transparent`), the wavy one keeps it.
+- **Motion (verified):** determinate value changes spring on `ProgressIndicatorDefaults.ProgressAnimationSpec` (damping 1, stiffness 50, visibility threshold 0.001; every sample uses it, wavy ones too; `WavyProgressIndicatorDefaults.ProgressAnimationSpec` is used by none). The wave moves one wavelength per second (`waveSpeed = wavelength`; the offset tween takes wavelength / speed × 1000ms, × the vertex count for one full circular turn, ≥ 50ms); it moves toward the start (the segment is cut further along the wave, then shifted back). Determinate amplitude: 0 at ≤ 10% and ≥ 95% (`indicatorAmplitude`), tweening up on DurationLong2 + EasingStandard and down on DurationLong2 + EasingEmphasizedAccelerate, a running tween never retargeted. Indeterminate linear: per 1750ms cycle, line heads/tails run `0 at delay → 1 at delay + duration` on EmphasizedAccelerate (first head 0 + 1000, first tail 250 + 1000, second head 650 + 850, second tail 900 + 850). Indeterminate circular: per 6000ms, 1080° linear rotation, plus a 90° step every 1500ms moving linearly over 300ms (the EmphasizedDecelerate `using` is attached to the holds), and the sweep 10% → 87% linearly then back on EasingStandard; wavy ones start 90° further.
+- **Behavior:** gap = min(progress length, gap). At 0% the flat linear and flat circular indicators draw no indicator (zero sweep); the wavy circular one draws a dot (zero-length segment with round caps), the wavy linear one none. Near 100% the flat circular track's sweep turns negative and, as Skia draws negative sweeps, runs backwards from its start (fills the closing gap; register #64). RTL: linear indicators mirror (wavy ones rotate 180° like Compose); circular ones do not (m3.material.io). Reduced motion (project choice, FOUNDATIONS §4): the decorative wave holds still, value changes and amplitude tweens jump (spatial), indeterminate lines and arcs keep moving: the motion is the only cue that the wait goes on (WCAG 2.2.2 treats such motion as essential), unlike the loading indicator's decorative morph. Forced colors: indicator and stop CanvasText, track GrayText.
+- **Keyboard/ARIA:** `role="progressbar"` with an accessible name (`aria-label` / `label`); determinate `aria-valuemin="0" aria-valuemax="100" aria-valuenow` (rounded percent). Not focusable.
+- **Layers:** css (flat, determinate and indeterminate; registered properties driven by the generated keyframes) + elements/react (value spring, wavy SVG paths every frame; one shared driver in `@kyralabs/m3e-elements/progress-indicator.js`).
+- **API:** CSS `.m3e-linear-progress(--wavy|--thick)` > `__track`, `__indicator`, `__stop` (determinate) or track/indicator/track/indicator/track (indeterminate); wavy `> svg.__wave` > `path.__wave-track`, `path.__wave-indicator`, `circle.__wave-stop`. `.m3e-circular-progress(--wavy|--thick)` > `svg.__svg` > `__track`, `__indicator` (`<circle>` flat, `<path>` wavy). Value `--m3e-comp-progress-indicator-value` (0–1); JS layers set `[data-driven]`. React `<LinearProgress value? shape:'flat'|'wavy' thickness:'default'|'thick' amplitude?: number | (progress) => number wavelength? waveSpeed? aria-label />`, `<CircularProgress …/>`. Elements `<m3e-linear-progress value shape thickness amplitude wavelength wave-speed label>`, `<m3e-circular-progress …>`.
 - **Acceptance:**
-  - [ ] Gap = min(progress length, 4px).
-  - [ ] Wave scrolls at one wavelength per second.
-  - [ ] RTL mirrors direction.
-  - [ ] Plus CAC.
-- **Sources:** ProgressIndicator.kt, WavyProgressIndicator.kt.
+  - [x] Gap = min(progress length, 4px).
+  - [x] Wave scrolls at one wavelength per second.
+  - [x] Amplitude ramps to 0 at ≤ 10% and ≥ 95% (tweened).
+  - [x] Determinate progress animates on ProgressAnimationSpec (velocity kept in the JS layers).
+  - [x] RTL mirrors direction (linear).
+  - [x] Plus CAC.
+- **Sources:** ProgressIndicator.kt, WavyProgressIndicator.kt, internal/LinearWavyProgressModifiers.kt, internal/CircularWavyProgressModifiers.kt, ProgressIndicatorSamples.kt, *ProgressIndicatorTokens.kt, MotionTokens.kt (vendored); animation-core AnimationSpec.kt (keyframes `using`), VectorizedAnimationSpec.kt (Spring constants); m3.material.io Progress indicators (overview, specs, guidelines, accessibility; token DB thick values).
 
 ## 9. Floating toolbar (horizontal, vertical)
 - **Variants:** horizontal/vertical; standard/vibrant (`FloatingToolbarDefaults.standardFloatingToolbarColors` / `vibrantFloatingToolbarColors`); with FAB (FAB at the end or the start); expanded/collapsed; scroll behaviors `exitAlways` (`FloatingToolbarDefaults.exitAlwaysScrollBehavior`) and collapse-on-scroll (`floatingToolbarVerticalNestedScroll`).

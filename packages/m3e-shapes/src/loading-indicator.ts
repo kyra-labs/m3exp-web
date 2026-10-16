@@ -118,6 +118,14 @@ export function processPath(
       case 'M':
       case 'L':
         return [command[0], f(command[1] + dx), f(command[2] + dy)];
+      case 'Q':
+        return [
+          'Q',
+          f(command[1] + dx),
+          f(command[2] + dy),
+          f(command[3] + dx),
+          f(command[4] + dy),
+        ];
       case 'C':
         return [
           'C',

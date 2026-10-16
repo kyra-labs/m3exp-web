@@ -5,6 +5,7 @@ import type { Matrix } from './matrix.js';
 export type PathCommand =
   | readonly ['M', number, number]
   | readonly ['L', number, number]
+  | readonly ['Q', number, number, number, number]
   | readonly ['C', number, number, number, number, number, number]
   | readonly ['Z'];
 
@@ -16,6 +17,8 @@ const mapPoints = (
     case 'M':
     case 'L':
       return [command[0], ...f(command[1], command[2])];
+    case 'Q':
+      return ['Q', ...f(command[1], command[2]), ...f(command[3], command[4])];
     case 'C':
       return [
         'C',
