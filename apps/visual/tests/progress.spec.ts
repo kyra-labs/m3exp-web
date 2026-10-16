@@ -25,6 +25,16 @@ const freezeCss = (page: Page, ms: number) =>
     }
   }, ms);
 
+/**
+ * A page screenshot clipped to a section: element screenshots wait for the element to be stable
+ * over animation frames, which never come while page.clock is paused.
+ */
+async function region(page: Page, testId: string) {
+  const box = (await page.getByTestId(testId).boundingBox())!;
+  const y = await page.evaluate(() => window.scrollY);
+  return { fullPage: true, clip: { ...box, y: box.y + y } };
+}
+
 const d = (page: Page, label: string, part = 'indicator') =>
   bar(page, label)
     .locator(`[class$="__wave-${part}"], [class$="__${part}"]`)
@@ -75,7 +85,8 @@ test('matches the indeterminate baseline at 1500ms', async ({ page }) => {
   await freezeCss(page, 1500);
   await page.clock.runFor(1500 - 16);
   for (const id of ['linear-flat', 'circular-flat', 'wavy-linear', 'wavy-circular']) {
-    await expect(page.getByTestId(id)).toHaveScreenshot(`progress-${id}-1500.png`, {
+    await expect(page).toHaveScreenshot(`progress-${id}-1500.png`, {
+      ...(await region(page, id)),
       animations: 'allow',
       maxDiffPixels: id.startsWith('wavy') ? 600 : 0,
     });
@@ -215,6 +226,8 @@ test.describe('forced colors', () => {
     expect(await color('Wavy 30%', '.m3e-linear-progress__wave-track', 'stroke')).not.toMatch(
       transparent,
     );
-    await expect(page.getByTestId('linear-flat')).toHaveScreenshot('progress-forced-colors.png');
+    await expect(page).toHaveScreenshot('progress-forced-colors.png', {
+      ...(await region(page, 'linear-flat')),
+    });
   });
 });
