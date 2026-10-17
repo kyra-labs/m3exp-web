@@ -66,8 +66,7 @@
     -webkit-tap-highlight-color: transparent;
   }
 
-  /* The target: the whole switch (at least 52 × 48dp), invisible, over the track (the label
-   * text sits above it). */
+  /* The target: the whole switch (at least 52 × 48dp), invisible; the label text sits above it. */
   .m3e-switch__input {
     appearance: none;
     position: absolute;

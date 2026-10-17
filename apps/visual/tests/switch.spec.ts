@@ -21,11 +21,13 @@ const handle = (label: Locator) =>
     const track = root.querySelector('.m3e-switch__track')!.getBoundingClientRect();
     const h = root.querySelector('.m3e-switch__handle')!.getBoundingClientRect();
     const rtl = getComputedStyle(root).direction === 'rtl';
+    // Rounded to 0.1px: Firefox lays out at sub-pixel precision (51.99998…).
+    const r = (v: number) => Math.round(v * 10) / 10;
     return {
-      offset: rtl ? track.right - h.right : h.left - track.left,
-      top: h.top - track.top,
-      size: h.width,
-      height: h.height,
+      offset: r(rtl ? track.right - h.right : h.left - track.left),
+      top: r(h.top - track.top),
+      size: r(h.width),
+      height: r(h.height),
     };
   });
 
@@ -107,11 +109,11 @@ test('52 × 32dp track in a 48dp target, 2dp outline, handle 16 / 24dp (checked,
     const label = sw(page, id);
     const input = await box(label.locator('.m3e-switch__input'));
     const track = await box(label.locator('.m3e-switch__track'));
-    expect(input.height).toBe(48);
+    expect(input.height).toBeCloseTo(48, 1);
     expect(input.width).toBeGreaterThanOrEqual(52);
-    expect(track.width).toBe(52);
-    expect(track.height).toBe(32);
-    expect(track.y - input.y).toBe(8);
+    expect(track.width).toBeCloseTo(52, 1);
+    expect(track.height).toBeCloseTo(32, 1);
+    expect(track.y - input.y).toBeCloseTo(8, 1);
     const outline = await label
       .locator('.m3e-switch__track')
       .evaluate((el) => getComputedStyle(el, '::after').borderTopWidth);
@@ -136,8 +138,8 @@ test('52 × 32dp track in a 48dp target, 2dp outline, handle 16 / 24dp (checked,
   const icon = sw(page, 'static-both-checked').locator('.m3e-switch__icon--checked');
   const iconBox = await box(icon);
   const handleBox = await box(sw(page, 'static-both-checked').locator('.m3e-switch__handle'));
-  expect(iconBox.width).toBe(16);
-  expect(iconBox.x - handleBox.x).toBe(4);
+  expect(iconBox.width).toBeCloseTo(16, 1);
+  expect(iconBox.x - handleBox.x).toBeCloseTo(4, 1);
   await expect(
     sw(page, 'static-both-checked').locator('.m3e-switch__icon--unchecked'),
   ).toBeHidden();
@@ -148,7 +150,7 @@ test('52 × 32dp track in a 48dp target, 2dp outline, handle 16 / 24dp (checked,
   for (const id of ['static-enabled-unchecked', 'static-enabled-checked']) {
     const s = await box(sw(page, id).locator('.m3e-switch__state'));
     const h = await box(sw(page, id).locator('.m3e-switch__handle'));
-    expect(s.width).toBe(40);
+    expect(s.width).toBeCloseTo(40, 1);
     expect(s.x + s.width / 2).toBeCloseTo(h.x + h.width / 2, 1);
     expect(s.y + s.height / 2).toBeCloseTo(h.y + h.height / 2, 1);
   }
@@ -190,7 +192,10 @@ test('the handle grows to 28dp on press (no animation) and springs back on relea
     expect(running.length).toBeGreaterThan(0);
     for (const r of running) {
       expect(r.duration, r.prop).toBeCloseTo(ms, 0);
-      if (/width|inline-size|height|block-size/.test(r.prop)) expect(r.from, r.prop).toBe('28px');
+      // From the pressed 28dp (Firefox flushes the release before the click's toggle, so its
+      // toggle transition retargets from just under 28).
+      if (/width|inline-size|height|block-size/.test(r.prop))
+        expect(Number.parseFloat(r.from), r.prop).toBeGreaterThan(27);
     }
     await expect.poll(() => handle(label)).toMatchObject({ size: wasChecked ? 16 : 24 });
   }
