@@ -27,9 +27,12 @@ const label = (s: State) => s[0]!.toUpperCase() + s.slice(1);
   <p class="docs-note">
     Compose 1.5.0-beta01 has two checkbox stylings behind <code>ComposeMaterial3Flags.isCheckboxStylingFixEnabled</code>. This library uses the flag-on
     one, which matches the token file and m3.material.io: an 18dp box, the check corner at 65%, a
-    surface checkmark when disabled and a ripple in the box color (none while unchecked). Compose
+    surface checkmark when disabled and a ripple in the box color. Compose
     defaults to the flag off (20dp, 70%, on-primary, content-color ripple); <code>--m3e-comp-checkbox-styling-fix: 0</code> switches to it. Error is not a Compose
-    parameter; its colors come from <code>CheckboxTokens</code>.
+    parameter; its colors come from <code>CheckboxTokens</code>. While unchecked, Compose's flag-on ripple is
+    transparent, so it shows no hover, focus or press; this library instead uses the m3.material.io
+    state layer colors there: on-surface for hover and focus, primary when pressed, and error
+    for all three with an error.
   </p>
 
   <section aria-labelledby="static-heading" id="static-checkboxes">
