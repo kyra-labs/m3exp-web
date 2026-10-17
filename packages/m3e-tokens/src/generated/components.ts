@@ -2572,6 +2572,36 @@ export const radioButtonTokens = {
   iconColorUnselectedPressed: "var(--m3e-sys-color-on-surface)"
 } as const;
 
+/** RadioButtonDefaults */
+export const radioButtonDefaults = {
+  radioButtonPadding: 2,
+  radioButtonDotSize: 12,
+  radioButtonStrokeWidth: 2,
+  radioButtonDotDuration: "var(--m3e-sys-motion-spring-fast-spatial-duration)",
+  radioButtonDotEasing: "var(--m3e-sys-motion-spring-fast-spatial-easing)",
+  radioButtonDotDampingRatio: "var(--m3e-sys-motion-spring-fast-spatial-damping-ratio)",
+  radioButtonDotStiffness: "var(--m3e-sys-motion-spring-fast-spatial-stiffness)",
+  radioButtonColorDuration: "var(--m3e-sys-motion-spring-default-effects-duration)",
+  radioButtonColorEasing: "var(--m3e-sys-motion-spring-default-effects-easing)",
+  radioButtonColorDampingRatio: "var(--m3e-sys-motion-spring-default-effects-damping-ratio)",
+  radioButtonColorStiffness: "var(--m3e-sys-motion-spring-default-effects-stiffness)",
+  radioButtonColorSelected: "var(--m3e-sys-color-primary)",
+  radioButtonColorUnselected: "var(--m3e-sys-color-on-surface-variant)",
+  radioButtonColorSelectedDisabled: "var(--m3e-sys-color-on-surface)",
+  radioButtonOpacitySelectedDisabled: "0.38",
+  radioButtonColorUnselectedDisabled: "var(--m3e-sys-color-on-surface)",
+  radioButtonOpacityUnselectedDisabled: "0.38",
+  radioButtonStateLayerColor: "currentcolor",
+  radioButtonStateLayerShape: "var(--m3e-sys-shape-corner-full)",
+  radioButtonGroupRowHeight: 56,
+  radioButtonLabelSpace: 16,
+  radioButtonLabelTextFont: "var(--m3e-sys-typescale-body-large-font)",
+  radioButtonLabelTextWeight: "var(--m3e-sys-typescale-body-large-weight)",
+  radioButtonLabelTextSize: "var(--m3e-sys-typescale-body-large-size)",
+  radioButtonLabelTextLineHeight: "var(--m3e-sys-typescale-body-large-line-height)",
+  radioButtonLabelTextTracking: "var(--m3e-sys-typescale-body-large-tracking)"
+} as const;
+
 /** ReorderListTokens */
 export const reorderListTokens = {
   itemContainerColor: "var(--m3e-sys-color-tertiary-container)",

@@ -109,6 +109,12 @@
     "limit": "3 KB"
   },
   {
+    "name": "m3e-css: radio button (ring, dot, state layer, group layout)",
+    "path": "packages/m3e-css/dist/radio-button.css",
+    "rolldown": false,
+    "limit": "2 KB"
+  },
+  {
     "name": "m3e-css: legacy navigation bar + rail (D4)",
     "path": [
       "packages/m3e-css/dist/navigation-bar.css",
@@ -559,6 +565,12 @@
     "path": "packages/m3e-react/dist/index.js",
     "import": "{ Checkbox }",
     "limit": "16 KB"
+  },
+  {
+    "name": "m3e-react: { RadioGroup, Radio } only (incl. react-aria useRadioGroup / useRadio press/focus/keyboard + react-stately radio group state)",
+    "path": "packages/m3e-react/dist/index.js",
+    "import": "{ RadioGroup, Radio }",
+    "limit": "17 KB"
   },
   {
     "name": "m3exp-web/react: { Icon } only",

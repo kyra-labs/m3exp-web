@@ -613,9 +613,11 @@
   - [ ] Plus CAC.
 
 ## 23. Radio button
-- **Tokens:** `TODO(verify)` RadioButtonTokens.
-- **ARIA:** native radios in `radiogroup`.
-- **Layers:** css + react.
+- **Tokens (verified, generated):** `RadioButtonTokens.kt@19991f2c` plus the `RadioButton.kt` / `RadioButtonDefaults` values Compose renders (`components/radio-button-defaults.css`; SOURCES register #40): a 20dp ring (`IconSize`, 2dp `RadioStrokeWidth`) inside 2dp padding (`RadioButtonPadding`), centred in the 48dp minimum interactive size; the dot radius 6dp when selected (`RadioButtonDotSize / 2`), drawn at radius − stroke / 2 (a 10dp dot), nothing while the radius is ≤ 0; 40dp state layer circle (`StateLayerSize`, unbounded ripple of radius 20dp from the centre, `CircleShape` focus ring). Colors (`defaultRadioButtonColors`), ring and dot alike: selected primary, unselected on-surface-variant, disabled on-surface at 0.38. Hover, focus and press change no color: the tokens' `{Selected,Unselected}{Hover,Focus,Pressed}IconColor` are never rendered by Compose, so only the state layer shows, in the content color whether or not the radio is selected (Compose's ripple color; owner decisions M8). Label and group: Compose's RadioGroupSample, 56dp option rows in a column, the label 16dp after the (24dp) radio, body large, content color; the whole label selects and shows the radio's ripple.
+- **Motion (RadioButton.kt L137-152):** the dot radius on **fast spatial** (it overshoots under the expressive scheme: the dot grows past 10dp and settles; a shrinking dot passes 0 and disappears); ring and dot color on default effects, snapping while disabled. Reduced motion: the dot jumps.
+- **ARIA:** native `<input type="radio">`s sharing a `name` in a `role="radiogroup"` (or a `<fieldset>`), so arrow keys move the selection (wrapping in Chromium and Firefox; WebKit stops at the ends, a UA difference; skipping disabled radios), Tab enters at the selected radio and Space selects, with no JavaScript (m3.material.io; Compose has no arrow-key handling). Enter does not select. React: React Aria's roving tab stop and arrow keys, the same behavior.
+- **Layers:** css + react (`useRadioGroup` / `useRadio`). No element: native radios already cover selection, forms and keyboarding; the press ripple for plain HTML comes from `ripple.js` (label and input triggers, Space only).
+- **API:** CSS `.m3e-radio-group` (`role="radiogroup"`, or a `fieldset`; `aria-orientation="horizontal"` or `--horizontal` for a row) > `label.m3e-radio-button` > `input.m3e-radio-button__input`, `.m3e-radio-button__icon` (the ring; the dot is its `::before`), `.m3e-radio-button__state`, optional `.m3e-radio-button__label`. React `<RadioGroup value defaultValue onChange orientation isDisabled isReadOnly isRequired name aria-label>` > `<Radio value isDisabled aria-label>`.
 - **Acceptance:**
   - [ ] Arrow keys move selection.
   - [ ] Plus CAC.

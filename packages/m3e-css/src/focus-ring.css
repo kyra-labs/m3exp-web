@@ -35,8 +35,14 @@
     outline-offset: var(--m3e-sys-state-focus-indicator-outer-offset);
   }
 
-  /* Proxy host: a checkbox rings its 40dp state layer circle for the focused input. */
-  :where(.m3e-checkbox__input:focus-visible ~ .m3e-checkbox__state) {
+  /*
+   * Proxy host: a checkbox or radio button rings its 40dp state layer circle for the focused
+   * input (a radio's ripple focusRingShape is CircleShape).
+   */
+  :where(
+    .m3e-checkbox__input:focus-visible ~ .m3e-checkbox__state,
+    .m3e-radio-button__input:focus-visible ~ .m3e-radio-button__state
+  ) {
     outline: var(--m3e-sys-state-focus-indicator-thickness) solid var(--m3e-sys-color-secondary);
     outline-offset: var(--m3e-sys-state-focus-indicator-outer-offset);
   }
@@ -111,6 +117,7 @@
     :where(.m3e-card--interactive):has(.m3e-card__action:focus-visible),
     :where(.m3e-navigation-item:focus-visible .m3e-navigation-item__state),
     :where(.m3e-checkbox__input:focus-visible ~ .m3e-checkbox__state),
+    :where(.m3e-radio-button__input:focus-visible ~ .m3e-radio-button__state),
     :where(
       .m3e-menu__item,
       .m3e-navigation-drawer-item,

@@ -1,0 +1,123 @@
+---
+import RadioButtonPlayground from '../../islands/RadioButtonPlayground.tsx';
+import Base from '../../layouts/Base.astro';
+
+// Static radio buttons in the m3e-css contract (radio-button.css). Each row is its own group (one
+// radio per group can be selected): selected and unselected × enabled / disabled.
+const ROWS = [
+  { id: 'enabled', title: 'Enabled', disabled: false },
+  { id: 'disabled', title: 'Disabled', disabled: true },
+];
+const STATES = ['selected', 'unselected'] as const;
+const OPTIONS = ['Calls', 'Missed', 'Friends'];
+---
+
+<Base title="Radio button">
+  <h1>Radio button</h1>
+  <p>
+    Radio buttons (COMPONENT_SPEC §23; Compose <code>RadioButton</code>) on native <code>&lt;input type="radio"&gt;</code>s: a 48dp target around a 20dp ring. Selecting grows the dot on the fast spatial spring, which overshoots
+    under the expressive motion scheme, while the ring and dot fade to primary; the radio that loses
+    the selection shrinks its dot the same way. Radios that share a <code>name</code> inside a <code>role="radiogroup"</code> (or a <code>fieldset</code>) need no JavaScript: arrow keys move the
+    selection and wrap, Tab enters the group at the selected radio, Space selects.
+  </p>
+
+  <section aria-labelledby="static-heading" id="static-radios">
+    <h2 id="static-heading">Static (m3e-css)</h2>
+    <p>
+      <code>&lt;label class="m3e-radio-button"&gt;</code> around the <code>.m3e-radio-button__input</code>, the <code>__icon</code> ring (its dot is drawn by CSS), the <code>__state</code> circle and an optional <code>__label</code>, inside a <code>.m3e-radio-group</code>. The label selects the radio and shows its hover and press, as in Compose's radio group sample, whose option rows
+      are 56dp high. The ripple needs <code>@kyralabs/m3e-elements/ripple.js</code> (this section uses <code>attachAutoRipple</code>).
+    </p>
+    <div
+      class="m3e-radio-group"
+      role="radiogroup"
+      aria-label="Notifications"
+      data-testid="static-group"
+    >
+      {
+        OPTIONS.map((o, i) => (
+          <label class="m3e-radio-button" data-testid={`static-group-${o.toLowerCase()}`}>
+            <input
+              class="m3e-radio-button__input"
+              type="radio"
+              name="notifications"
+              value={o}
+              checked={i === 0}
+            />
+            <span class="m3e-radio-button__icon" aria-hidden="true" />
+            <span class="m3e-radio-button__state" aria-hidden="true" />
+            <span class="m3e-radio-button__label">{o}</span>
+          </label>
+        ))
+      }
+    </div>
+    {
+      ROWS.map((row) => (
+        <div
+          class="m3e-radio-group docs-radio-row"
+          role="radiogroup"
+          aria-orientation="horizontal"
+          aria-label={row.title}
+          data-testid={`static-${row.id}`}
+        >
+          {STATES.map((s) => (
+            <label class="m3e-radio-button" data-testid={`static-${row.id}-${s}`}>
+              <input
+                class="m3e-radio-button__input"
+                type="radio"
+                name={`static-${row.id}`}
+                value={s}
+                checked={s === 'selected'}
+                disabled={row.disabled}
+              />
+              <span class="m3e-radio-button__icon" aria-hidden="true" />
+              <span class="m3e-radio-button__state" aria-hidden="true" />
+              <span class="m3e-radio-button__label">
+                {row.title} {s}
+              </span>
+            </label>
+          ))}
+        </div>
+      ))
+    }
+    <fieldset class="m3e-radio-group m3e-radio-group--horizontal docs-radio-row" data-testid="static-fieldset">
+      <legend class="docs-radio-legend">Without visible labels</legend>
+      <label class="m3e-radio-button" data-testid="static-no-label">
+        <input class="m3e-radio-button__input" type="radio" name="bare" value="a" aria-label="First" />
+        <span class="m3e-radio-button__icon" aria-hidden="true"></span>
+        <span class="m3e-radio-button__state" aria-hidden="true"></span>
+      </label>
+      <label class="m3e-radio-button">
+        <input class="m3e-radio-button__input" type="radio" name="bare" value="b" aria-label="Second" />
+        <span class="m3e-radio-button__icon" aria-hidden="true"></span>
+        <span class="m3e-radio-button__state" aria-hidden="true"></span>
+      </label>
+    </fieldset>
+  </section>
+
+  <section aria-labelledby="element-heading">
+    <h2 id="element-heading">Element</h2>
+    <p>
+      There is no <code>&lt;m3e-radio-button&gt;</code>: native radios already select one at a time,
+      take part in forms and move the selection with arrow keys, so the plain markup above is the
+      element-layer API. Load <code>@kyralabs/m3e-elements/ripple.js</code> for the press ripple.
+    </p>
+  </section>
+
+  <section aria-labelledby="react-heading">
+    <h2 id="react-heading">React</h2>
+    <p>
+      <code>&lt;RadioGroup value defaultValue onChange orientation isDisabled isReadOnly isRequired
+      name aria-label&gt;</code> around <code>&lt;Radio value isDisabled&gt;</code> (React Aria <code>useRadioGroup</code> / <code>useRadio</code>); the same DOM as the static markup. Below,
+      Compose's radio group sample and a horizontal group with a disable switch.
+    </p>
+    <RadioButtonPlayground client:only="react" />
+  </section>
+</Base>
+
+<script>
+  import { attachAutoRipple } from '@kyralabs/m3exp-web/elements';
+
+  // The ripple for the static radios (React drives its own).
+  const statics = document.querySelector<HTMLElement>('#static-radios');
+  if (statics) attachAutoRipple(statics, new AbortController().signal);
+</script>
