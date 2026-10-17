@@ -414,8 +414,8 @@ import '@kyralabs/m3e-elements/list-detail-layout.js'; // or supporting-pane-lay
 `<m3e-list-detail-layout>` and `<m3e-supporting-pane-layout>` (Compose `ListDetailPaneScaffold` /
 `SupportingPaneScaffold` with their navigators) render the `.m3e-layout > .m3e-pane-scaffold`
 contract (load `layout.css`) and size themselves by their own width: one pane below 840px, two
-from 840px, three (with an extra pane) from 1200px — `pane-rule="recommended"` keeps two until
-1600px. `navigateTo(pane, contentKey?)` (`list` / `detail` / `extra`, `main` / `supporting` /
+from 840px, three (with an extra pane) from 1600px (m3.material.io) — `pane-rule="compose"`
+shows three from 1200px (Compose's `calculatePaneScaffoldDirective`). `navigateTo(pane, contentKey?)` (`list` / `detail` / `extra`, `main` / `supporting` /
 `extra`), `navigateBack(behavior?)`, `canNavigateBack()` and the `navigator` property (an m3e-motion
 `ThreePaneScaffoldNavigator`) drive them; a click on `[data-pane-navigate]` does too, and
 `[data-pane-navigate="back"]` hides while there is nothing to go back to. Panes move on Compose's

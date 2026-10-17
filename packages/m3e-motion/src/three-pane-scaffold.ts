@@ -200,9 +200,10 @@ export function expandedPanes(
 // --- Directive ----------------------------------------------------------------------------------
 
 /**
- * How many panes may sit side by side: `compose` = calculatePaneScaffoldDirective (1 / 1 / 2 / 3 / 3
- * by width class); `recommended` = m3.material.io Breakpoints (1 / 1 / 2 / 2 / 3: two panes at
- * large, three at extra-large), never more than Compose allows.
+ * How many panes may sit side by side: `recommended` (the default, owner decision 2026-10-18) =
+ * m3.material.io Breakpoints (1 / 1 / 2 / 2 / 3: two panes at large, three at extra-large), never
+ * more than Compose allows; `compose` = calculatePaneScaffoldDirective (1 / 1 / 2 / 3 / 3 by width
+ * class: three panes from large).
  */
 export type PaneRule = 'compose' | 'recommended';
 
@@ -217,17 +218,21 @@ export const RECOMMENDED_MAX_PANES: Readonly<Record<WindowWidthSizeClass, number
   });
 
 export interface ThreePaneScaffoldDirectiveOptions {
+  /** Default `recommended`; `compose` keeps calculatePaneScaffoldDirective's counts. */
   paneRule?: PaneRule | undefined;
   isTabletop?: boolean | undefined;
 }
 
-/** paneScaffoldDirective (calculatePaneScaffoldDirective) with the `paneRule` cap applied. */
+/**
+ * paneScaffoldDirective (calculatePaneScaffoldDirective) with the `paneRule` cap applied: capped by
+ * RECOMMENDED_MAX_PANES unless `paneRule` is `compose`.
+ */
 export function threePaneScaffoldDirective(
   sizeClass: WindowSizeClass,
   options: ThreePaneScaffoldDirectiveOptions = {},
 ): PaneScaffoldDirective {
   const directive = paneScaffoldDirective(sizeClass, options);
-  if (options.paneRule !== 'recommended') return directive;
+  if (options.paneRule === 'compose') return directive;
   return {
     ...directive,
     maxHorizontalPartitions: Math.min(

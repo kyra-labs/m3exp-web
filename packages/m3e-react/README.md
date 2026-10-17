@@ -94,7 +94,7 @@ const navigator = useListDetailPaneScaffoldNavigator<number>();
 `ListDetailPaneScaffold` / `SupportingPaneScaffold` (Compose's names) with
 `useListDetailPaneScaffoldNavigator` / `useSupportingPaneScaffoldNavigator` (Compose
 `remember…PaneScaffoldNavigator`): one pane below 840px of the layout's own width, two from 840px,
-three from 1200px (`paneRule="recommended"`: from 1600px). The navigator re-renders on each
+three from 1600px (m3.material.io; `paneRule="compose"`: from 1200px, as Compose). The navigator re-renders on each
 change (`scaffoldValue`, `currentDestination`, `isExpanded(pane)`, `canNavigateBack()`). `FeedLayout`
 is the CSS-only feed grid.
 

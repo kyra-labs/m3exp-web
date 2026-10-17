@@ -42,20 +42,28 @@ describe('element / React DOM parity (CLAUDE.md "Done means" #8)', () => {
     (host as unknown as { preferredWidths: object }).preferredWidths = { secondary: 200 };
     await renderElement('<i></i>'); // let the property's batched render run
     expect(canonical(scaffold(host))).toBe(canonical(scaffold(react)));
+    // Default pane rule: m3.material.io's recommendation, no modifier class.
+    expect(scaffold(react).querySelector('.m3e-pane-scaffold')!.className).toBe(
+      'm3e-pane-scaffold m3e-pane-scaffold--list-detail',
+    );
   });
 
-  it('SupportingPaneScaffold, recommended pane rule, default labels', async () => {
+  it.each([
+    ['compose', 'm3e-pane-scaffold m3e-pane-scaffold--supporting-pane m3e-pane-scaffold--compose'],
+    ['recommended', 'm3e-pane-scaffold m3e-pane-scaffold--supporting-pane'],
+  ] as const)('SupportingPaneScaffold, %s pane rule, default labels', async (rule, className) => {
     const react = await renderReact(
       <SupportingPaneScaffold
-        paneRule="recommended"
+        paneRule={rule}
         mainPane={<p>Main</p>}
         supportingPane={<p slot="supporting">Supporting</p>}
       />,
     );
     const host = await renderElement(
-      `<m3e-supporting-pane-layout pane-rule="recommended"><p>Main</p><p slot="supporting">Supporting</p></m3e-supporting-pane-layout>`,
+      `<m3e-supporting-pane-layout pane-rule="${rule}"><p>Main</p><p slot="supporting">Supporting</p></m3e-supporting-pane-layout>`,
     );
     expect(canonical(scaffold(host))).toBe(canonical(scaffold(react)));
+    expect(scaffold(react).querySelector('.m3e-pane-scaffold')!.className).toBe(className);
     expect(
       scaffold(react)
         .querySelector('.m3e-pane-scaffold__pane--primary')!

@@ -5,11 +5,12 @@ import { M3ePaneScaffoldElement } from '../pane-scaffold-layout/pane-scaffold-el
  * rememberListDetailPaneScaffoldNavigator): children with `slot="list"`, `slot="detail"` (also
  * every child without a slot) and `slot="extra"` become the list, detail and extra panes. One pane
  * below 840px of the layout's own width (the list until something navigates to the detail), list
- * and detail from 840px, all three from 1200px (`pane-rule="recommended"`: from 1600px).
+ * and detail from 840px, all three from 1600px (m3.material.io; `pane-rule="compose"`: from
+ * 1200px, Compose's calculatePaneScaffoldDirective).
  *
  * - Attributes: `list-label`, `detail-label`, `extra-label` (the panes' region names; default
- *   Compose's "Secondary pane" / "Primary pane" / "Tertiary pane"), `pane-rule` (`compose` |
- *   `recommended`), `drag-handle` (a pane expansion handle between two panes).
+ *   Compose's "Secondary pane" / "Primary pane" / "Tertiary pane"), `pane-rule` (`recommended`,
+ *   the default, | `compose`), `drag-handle` (a pane expansion handle between two panes).
  * - Properties: `navigator` (m3e-motion ThreePaneScaffoldNavigator; created on first use),
  *   `anchors` (drag handle anchors), `preferredWidths` (px per role), read-only `scaffoldValue`,
  *   `currentDestination`.
