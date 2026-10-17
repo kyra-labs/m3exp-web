@@ -43,7 +43,8 @@
     .m3e-tab,
     .m3e-menu__item,
     .m3e-fab-menu__item,
-    .m3e-search__result
+    .m3e-search__result,
+    .m3e-checkbox__state
   ) {
     position: relative;
     isolation: isolate;
@@ -62,7 +63,8 @@
     .m3e-tab,
     .m3e-menu__item,
     .m3e-fab-menu__item,
-    .m3e-search__result
+    .m3e-search__result,
+    .m3e-checkbox__state
   )::before {
     --_m3e-state-layer-opacity: 0;
 
@@ -97,6 +99,28 @@
   }
 
   :where(.m3e-navigation-item[aria-disabled='true'] .m3e-navigation-item__state)::before {
+    display: none;
+  }
+
+  /*
+   * Checkboxes: the label takes the pointer (Compose's CheckboxWithTextSample row shares the
+   * checkbox's interaction source) and the input the focus; the 40dp circle shows them.
+   */
+  @media (hover: hover) {
+    :where(.m3e-checkbox:hover .m3e-checkbox__state)::before {
+      --_m3e-state-layer-opacity: var(--m3e-sys-state-hover-state-layer-opacity);
+    }
+  }
+
+  :where(.m3e-checkbox__input:focus-visible ~ .m3e-checkbox__state)::before {
+    --_m3e-state-layer-opacity: var(--m3e-sys-state-focus-state-layer-opacity);
+  }
+
+  :where(.m3e-checkbox:active .m3e-checkbox__state)::before {
+    opacity: var(--m3e-sys-state-pressed-state-layer-opacity);
+  }
+
+  :where(.m3e-checkbox__input:disabled ~ .m3e-checkbox__state)::before {
     display: none;
   }
 
@@ -180,7 +204,8 @@
       .m3e-tab,
       .m3e-menu__item,
       .m3e-fab-menu__item,
-      .m3e-search__result
+      .m3e-search__result,
+      .m3e-checkbox__state
     )[data-pressed]::before {
     opacity: var(--m3e-sys-state-pressed-state-layer-opacity);
   }
@@ -245,7 +270,8 @@
       .m3e-tab,
       .m3e-menu__item,
       .m3e-fab-menu__item,
-      .m3e-search__result
+      .m3e-search__result,
+      .m3e-checkbox__state
     )[data-ripple][data-pressed]::before {
     --_m3e-ripple-opacity: calc(
       var(--_m3e-state-layer-opacity) + var(--m3e-sys-state-pressed-state-layer-opacity) -
@@ -286,7 +312,8 @@
       .m3e-tab,
       .m3e-menu__item,
       .m3e-fab-menu__item,
-      .m3e-search__result
+      .m3e-search__result,
+      .m3e-checkbox__state
     )::before {
       display: none;
     }

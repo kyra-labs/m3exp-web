@@ -35,6 +35,12 @@
     outline-offset: var(--m3e-sys-state-focus-indicator-outer-offset);
   }
 
+  /* Proxy host: a checkbox rings its 40dp state layer circle for the focused input. */
+  :where(.m3e-checkbox__input:focus-visible ~ .m3e-checkbox__state) {
+    outline: var(--m3e-sys-state-focus-indicator-thickness) solid var(--m3e-sys-color-secondary);
+    outline-offset: var(--m3e-sys-state-focus-indicator-outer-offset);
+  }
+
   :where(.m3e-focus-ring--inward):focus-visible {
     outline-offset: var(--m3e-sys-state-focus-indicator-inner-offset);
   }
@@ -104,6 +110,7 @@
     ):focus-visible,
     :where(.m3e-card--interactive):has(.m3e-card__action:focus-visible),
     :where(.m3e-navigation-item:focus-visible .m3e-navigation-item__state),
+    :where(.m3e-checkbox__input:focus-visible ~ .m3e-checkbox__state),
     :where(
       .m3e-menu__item,
       .m3e-navigation-drawer-item,

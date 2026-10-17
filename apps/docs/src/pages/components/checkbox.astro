@@ -1,0 +1,147 @@
+---
+import CheckboxPlayground from '../../islands/CheckboxPlayground.tsx';
+import Base from '../../layouts/Base.astro';
+
+// Static checkboxes in the m3e-css contract (checkbox.css): every state × enabled / error /
+// disabled. HTML cannot declare `indeterminate`, so the script below sets it on the inputs that
+// carry data-indeterminate.
+type State = 'unchecked' | 'checked' | 'indeterminate';
+const STATES: State[] = ['unchecked', 'checked', 'indeterminate'];
+const ROWS = [
+  { id: 'enabled', title: 'Enabled', disabled: false, invalid: false },
+  { id: 'error', title: 'Error', disabled: false, invalid: true },
+  { id: 'disabled', title: 'Disabled', disabled: true, invalid: false },
+];
+const label = (s: State) => s[0]!.toUpperCase() + s.slice(1);
+---
+
+<Base title="Checkbox">
+  <h1>Checkbox</h1>
+  <p>
+    Checkboxes (COMPONENT_SPEC §22; Compose <code>Checkbox</code> and <code>TriStateCheckbox</code>)
+    on a native <code>&lt;input type="checkbox"&gt;</code>: a 48dp target around an 18dp box. Checking
+    draws the check along its path on the default spatial spring while the box fills; unchecking
+    fades it and snaps it away after 100ms. Indeterminate draws a dash; between checked and
+    indeterminate the check's corner slides to the centre (Compose's cross-centre gravitation).
+  </p>
+  <p class="docs-note">
+    Compose 1.5.0-beta01 has two checkbox stylings behind <code>ComposeMaterial3Flags.isCheckboxStylingFixEnabled</code>. This library uses the flag-on
+    one, which matches the token file and m3.material.io: an 18dp box, the check corner at 65%, a
+    surface checkmark when disabled and a ripple in the box color (none while unchecked). Compose
+    defaults to the flag off (20dp, 70%, on-primary, content-color ripple); <code>--m3e-comp-checkbox-styling-fix: 0</code> switches to it. Error is not a Compose
+    parameter; its colors come from <code>CheckboxTokens</code>.
+  </p>
+
+  <section aria-labelledby="static-heading" id="static-checkboxes">
+    <h2 id="static-heading">Static (m3e-css)</h2>
+    <p>
+      <code>&lt;label class="m3e-checkbox"&gt;</code> around the <code>.m3e-checkbox__input</code>,
+      the <code>__box</code> (with its <code>__mark</code> SVG of two <code>__stroke</code> paths),
+      the <code>__state</code> circle and an optional <code>__label</code>. Error: <code>aria-invalid="true"</code> on the input. The label
+      toggles the checkbox and shows its hover and press, as in Compose's checkbox-with-text sample.
+      The ripple needs <code>@kyralabs/m3e-elements/ripple.js</code> (this section uses <code>attachAutoRipple</code>).
+    </p>
+    {
+      ROWS.map((row) => (
+        <div class="docs-checkbox-row" role="group" aria-label={row.title} data-testid={`static-${row.id}`}>
+          {STATES.map((s) => (
+            <label class="m3e-checkbox" data-testid={`static-${row.id}-${s}`}>
+              <input
+                class="m3e-checkbox__input"
+                type="checkbox"
+                checked={s === 'checked'}
+                disabled={row.disabled}
+                aria-invalid={row.invalid ? 'true' : undefined}
+                data-indeterminate={s === 'indeterminate' ? '' : undefined}
+              />
+              <span class="m3e-checkbox__box" aria-hidden="true">
+                <svg class="m3e-checkbox__mark" focusable="false">
+                  <path class="m3e-checkbox__stroke" d="M0 0H48" />
+                  <path class="m3e-checkbox__stroke" d="M0 0H48" />
+                </svg>
+              </span>
+              <span class="m3e-checkbox__state" aria-hidden="true" />
+              <span class="m3e-checkbox__label">
+                {row.title} {label(s).toLowerCase()}
+              </span>
+            </label>
+          ))}
+        </div>
+      ))
+    }
+    <div class="docs-checkbox-row">
+      <label class="m3e-checkbox" data-testid="static-no-label">
+        <input class="m3e-checkbox__input" type="checkbox" aria-label="Without a visible label" />
+        <span class="m3e-checkbox__box" aria-hidden="true">
+          <svg class="m3e-checkbox__mark" focusable="false">
+            <path class="m3e-checkbox__stroke" d="M0 0H48" />
+            <path class="m3e-checkbox__stroke" d="M0 0H48" />
+          </svg>
+        </span>
+        <span class="m3e-checkbox__state" aria-hidden="true"></span>
+      </label>
+    </div>
+  </section>
+
+  <section aria-labelledby="element-heading">
+    <h2 id="element-heading">Element</h2>
+    <p>
+      <code>&lt;m3e-checkbox checked indeterminate disabled invalid required name value label&gt;</code> renders the same contract around a native input (forms and the native <code>change</code> event work as usual). It adds what HTML cannot declare: the <code>indeterminate</code> attribute, the previous state that makes a dash entered from unchecked draw instead of morph,
+      and the ripple. Below, Compose's tri-state sample: the parent reflects its two children.
+    </p>
+    <div class="docs-checkbox-tree" data-testid="element-tree">
+      <m3e-checkbox id="tree-parent" checked>Receive emails</m3e-checkbox>
+      <div class="docs-checkbox-children">
+        <m3e-checkbox id="tree-daily" class="docs-tree-child" checked>Daily</m3e-checkbox>
+        <m3e-checkbox id="tree-weekly" class="docs-tree-child" checked>Weekly</m3e-checkbox>
+      </div>
+    </div>
+    <div class="docs-checkbox-row" data-testid="element-row">
+      <m3e-checkbox id="element-indeterminate" indeterminate>Indeterminate</m3e-checkbox>
+      <m3e-checkbox invalid>Error</m3e-checkbox>
+      <m3e-checkbox checked disabled>Disabled</m3e-checkbox>
+    </div>
+  </section>
+
+  <section aria-labelledby="react-heading">
+    <h2 id="react-heading">React</h2>
+    <p>
+      <code>&lt;Checkbox isSelected defaultSelected onChange isIndeterminate isDisabled isInvalid
+      isRequired name value&gt;</code> (React Aria <code>useCheckbox</code>); the same DOM as the
+      element. There is no checkbox group: Compose has none, and a group of checkboxes is a <code>fieldset</code> or a <code>role="group"</code>.
+    </p>
+    <CheckboxPlayground client:only="react" />
+  </section>
+</Base>
+
+<script>
+  import { attachAutoRipple } from '@kyralabs/m3exp-web/elements';
+
+  // The ripple for the static checkboxes (the elements and React drive their own).
+  const statics = document.querySelector<HTMLElement>('#static-checkboxes');
+  if (statics) attachAutoRipple(statics, new AbortController().signal);
+
+  // Static: the one state HTML cannot declare (data-from: it comes from unchecked, so the dash
+  // draws instead of morphing from a check).
+  for (const input of document.querySelectorAll<HTMLInputElement>('input[data-indeterminate]')) {
+    input.closest('.m3e-checkbox')?.setAttribute('data-from', 'unchecked');
+    input.indeterminate = true;
+  }
+
+  // Compose's TriStateCheckboxSample: the parent is on, off or indeterminate from its children;
+  // pressing it sets both children to "not all on".
+  const parent = document.querySelector<HTMLElementTagNameMap['m3e-checkbox']>('#tree-parent');
+  const children = [...document.querySelectorAll<HTMLElementTagNameMap['m3e-checkbox']>('.docs-tree-child')];
+  const sync = () => {
+    if (!parent) return;
+    const on = children.filter((c) => c.checked).length;
+    parent.checked = on === children.length;
+    parent.indeterminate = on > 0 && on < children.length;
+  };
+  for (const child of children) child.addEventListener('change', sync);
+  parent?.addEventListener('change', () => {
+    const all = children.every((c) => c.checked);
+    for (const child of children) child.checked = !all;
+    sync();
+  });
+</script>

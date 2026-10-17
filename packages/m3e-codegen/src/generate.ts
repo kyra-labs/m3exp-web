@@ -54,6 +54,7 @@ import {
   extractSplitButtonDefaults,
 } from './split-button-defaults.js';
 import { extractTabsDefaults } from './tabs-defaults.js';
+import { extractCheckboxDefaults } from './checkbox-defaults.js';
 import {
   ANIMATION_CORE_PATH as ANIMATION_CORE_DIR,
   MATERIAL3_ADAPTIVE_PATH,
@@ -1219,6 +1220,35 @@ export function generate({
     ),
   });
 
+  // Checkbox.kt values Compose renders with ComposeMaterial3Flags.isCheckboxStylingFixEnabled
+  // off (the pin's default): box size / padding / corners, stroke, check path points, colors and
+  // springs, plus the CheckboxWithTextSample label (see checkbox-defaults.ts). CheckboxTokens
+  // references resolve to their generated values, as for the tabs.
+  const checkboxDefaults = extractCheckboxDefaults(material3Sources).map((d) => ({
+    ...d,
+    value: resolveComponentRef(d.value),
+    js: typeof d.js === 'string' ? resolveComponentRef(d.js) : d.js,
+  }));
+  components.set('checkbox-defaults', {
+    object: 'CheckboxDefaults',
+    tokens: checkboxDefaults.map((d) => {
+      const e: Emitted = {
+        name: d.name,
+        value: d.value,
+        object: d.owner,
+        member: d.member,
+        raw: d.raw,
+        line: d.line,
+        cite: `${d.file === 'CheckboxSamples.kt' ? MATERIAL3_SAMPLES_DIR : MATERIAL3_DIR}/${d.file}@${commit} L${String(d.line)}`,
+      };
+      if (d.note !== undefined) e.note = d.note;
+      return e;
+    }),
+    js: Object.fromEntries(
+      checkboxDefaults.map((d) => [camel(d.name.replace(/^--m3e-comp-/, '').split('-')), d.js]),
+    ),
+  });
+
   // SplitButtonDefaults values, optical centering and the samples' icon rotation (see
   // split-button-defaults.ts).
   const splitButtonDefaults = extractSplitButtonDefaults(
@@ -1445,30 +1475,37 @@ export function generate({
                                     ],
                                     `${MATERIAL3_DIR}/{SearchBar,ListItem,ListItemDefaults,ComposeMaterial3Flags,InteractiveComponentSize,internal/TextFieldImpl}.kt + ${MATERIAL3_SAMPLES_DIR}/SearchBarSamples.kt`,
                                   )
-                                : name === 'tabs-defaults'
+                                : name === 'checkbox-defaults'
                                   ? cssFile(
-                                      'Compose tab row / tab values that are not in Primary/SecondaryNavigationTabTokens (lines: PARITY.md).',
+                                      'Compose Checkbox / TriStateCheckbox values that are not in CheckboxTokens, or that pick one of them (isCheckboxStylingFixEnabled off; lines: PARITY.md).',
                                       c.tokens,
                                       [],
-                                      `${MATERIAL3_DIR}/{TabRow,Tab}.kt + ${MATERIAL3_SAMPLES_DIR}/TabSamples.kt`,
+                                      `${MATERIAL3_DIR}/{Checkbox,ComposeMaterial3Flags}.kt + ${MATERIAL3_SAMPLES_DIR}/CheckboxSamples.kt`,
                                     )
-                                  : name === 'progress-indicator-defaults'
+                                  : name === 'tabs-defaults'
                                     ? cssFile(
-                                        'Compose progress indicator values that are not in *ProgressIndicatorTokens, and the indeterminate keyframes of the flat indicators (lines: PARITY.md).',
+                                        'Compose tab row / tab values that are not in Primary/SecondaryNavigationTabTokens (lines: PARITY.md).',
                                         c.tokens,
-                                        [
-                                          '@media (prefers-reduced-motion: reduce) {',
-                                          '  :root {',
-                                          ...PROGRESS_INDICATOR_REDUCED_MOTION.map(
-                                            (l) => `    ${l}`,
-                                          ),
-                                          '  }',
-                                          '}',
-                                          ...progressIndicatorKeyframes(progressIndicator.timing),
-                                        ],
-                                        `${MATERIAL3_DIR}/{ProgressIndicator,WavyProgressIndicator,internal/LinearWavyProgressModifiers,internal/CircularWavyProgressModifiers}.kt + ${MATERIAL3_SAMPLES_DIR}/ProgressIndicatorSamples.kt + m3.material.io token DB md.comp.progress-indicator`,
+                                        [],
+                                        `${MATERIAL3_DIR}/{TabRow,Tab}.kt + ${MATERIAL3_SAMPLES_DIR}/TabSamples.kt`,
                                       )
-                                    : cssFile(`Component tokens: ${c.object}.`, c.tokens),
+                                    : name === 'progress-indicator-defaults'
+                                      ? cssFile(
+                                          'Compose progress indicator values that are not in *ProgressIndicatorTokens, and the indeterminate keyframes of the flat indicators (lines: PARITY.md).',
+                                          c.tokens,
+                                          [
+                                            '@media (prefers-reduced-motion: reduce) {',
+                                            '  :root {',
+                                            ...PROGRESS_INDICATOR_REDUCED_MOTION.map(
+                                              (l) => `    ${l}`,
+                                            ),
+                                            '  }',
+                                            '}',
+                                            ...progressIndicatorKeyframes(progressIndicator.timing),
+                                          ],
+                                          `${MATERIAL3_DIR}/{ProgressIndicator,WavyProgressIndicator,internal/LinearWavyProgressModifiers,internal/CircularWavyProgressModifiers}.kt + ${MATERIAL3_SAMPLES_DIR}/ProgressIndicatorSamples.kt + m3.material.io token DB md.comp.progress-indicator`,
+                                        )
+                                      : cssFile(`Component tokens: ${c.object}.`, c.tokens),
     );
   }
   out.set(

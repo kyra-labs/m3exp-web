@@ -678,6 +678,87 @@ describe('tabs values (M7)', () => {
   });
 });
 
+describe('checkbox values (M8)', () => {
+  const css = output.get('components/checkbox-defaults.css')!;
+  const decl = declarations(css);
+  const kt = inputs.material3Sources['Checkbox.kt']!.replace(/\r\n/g, '\n');
+  const flags = inputs.material3Sources['ComposeMaterial3Flags.kt']!.replace(/\r\n/g, '\n');
+  const t = (name: string) => decl.get(`--m3e-comp-checkbox-${name}`);
+
+  it('the flag defaults to false upstream; the owner decision emits the flag-on branch (1)', () => {
+    expect(flags).toContain('public var isCheckboxStylingFixEnabled: Boolean = false');
+    expect(t('styling-fix')).toBe('1');
+    expect(output.get('PARITY.md')).toMatch(/--m3e-comp-checkbox-styling-fix.*owner decision/);
+  });
+
+  it('both branches: box size, padding, check points (flag off / -styling-fix)', () => {
+    expect(kt).toMatch(/private val CheckboxSize\n\s*get\(\) = 20\.dp/);
+    expect(t('box-size')).toBe('20px');
+    expect(source('CheckboxTokens.kt')).toMatch(
+      /val ContainerSize: [\w.]+\n\s*get\(\) = 18\.0\.dp/,
+    );
+    expect(t('box-size-styling-fix')).toBe('18px');
+    expect(t('box-padding')).toBe('2px');
+    expect(t('box-padding-styling-fix')).toBe('0px');
+    expect(t('box-corner-radius')).toBe('2px');
+    expect(t('stroke-width')).toBe('2px');
+    expect(kt).toContain('val checkCrossY = if (isCheckboxStylingFixEnabled) 0.65f else 0.7f');
+    expect(kt).toContain('val leftX = if (isCheckboxStylingFixEnabled) 0.25f else 0.2f');
+    expect(kt).toContain('val rightX = if (isCheckboxStylingFixEnabled) 0.75f else 0.8f');
+    const points: [string, string][] = [
+      ['check-cross-x', '0.4'],
+      ['check-cross-y', '0.7'],
+      ['check-cross-y-styling-fix', '0.65'],
+      ['check-left-x', '0.2'],
+      ['check-left-x-styling-fix', '0.25'],
+      ['check-left-y', '0.5'],
+      ['check-right-x', '0.8'],
+      ['check-right-x-styling-fix', '0.75'],
+      ['check-right-y', '0.3'],
+      ['check-gravitation-center', '0.5'],
+    ];
+    for (const [name, value] of points) expect(t(name), name).toBe(value);
+  });
+
+  it('colors: defaultCheckboxColors, the disabled checkmark per branch and the ripple', () => {
+    expect(t('checkmark-color')).toBe('var(--m3e-sys-color-on-primary)');
+    expect(t('checkmark-color-disabled')).toBe('var(--m3e-sys-color-on-primary)');
+    expect(t('checkmark-color-disabled-styling-fix')).toBe('var(--m3e-sys-color-surface)');
+    expect(t('box-color-checked')).toBe('var(--m3e-sys-color-primary)');
+    expect(t('border-color-checked')).toBe('var(--m3e-sys-color-primary)');
+    expect(t('border-color-unchecked')).toBe('var(--m3e-sys-color-on-surface-variant)');
+    expect(t('box-color-checked-disabled')).toBe('var(--m3e-sys-color-on-surface)');
+    expect(t('box-opacity-checked-disabled')).toBe('0.38');
+    expect(t('border-color-unchecked-disabled')).toBe('var(--m3e-sys-color-on-surface)');
+    expect(t('border-opacity-unchecked-disabled')).toBe('0.38');
+    expect(t('state-layer-color')).toBe('currentcolor');
+    expect(t('state-layer-color-checked-styling-fix')).toBe(t('box-color-checked'));
+    expect(t('state-layer-color-unchecked-styling-fix')).toBe('transparent');
+  });
+
+  it('motion: check DefaultSpatial, 100ms snap, colors DefaultEffects in / FastEffects out', () => {
+    expect(kt).toContain('private const val SnapAnimationDelay = 100');
+    expect(t('snap-delay')).toBe('100ms');
+    const springs: [string, string][] = [
+      ['check', 'default-spatial'],
+      ['color-in', 'default-effects'],
+      ['color-out', 'fast-effects'],
+    ];
+    for (const [name, key] of springs) {
+      for (const field of ['duration', 'easing', 'damping-ratio', 'stiffness']) {
+        expect(t(`${name}-${field}`), `${name}-${field}`).toBe(
+          `var(--m3e-sys-motion-spring-${key}-${field})`,
+        );
+      }
+    }
+  });
+
+  it('the CheckboxWithTextSample label: 16dp, bodyLarge', () => {
+    expect(t('label-space')).toBe('16px');
+    expect(t('label-text-size')).toBe('var(--m3e-sys-typescale-body-large-size)');
+  });
+});
+
 describe('navigation suite scaffold values (M7)', () => {
   const css = output.get('components/navigation-suite-defaults.css')!;
   const decl = declarations(css.slice(0, css.indexOf('@media')));

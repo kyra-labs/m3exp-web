@@ -103,6 +103,12 @@
     "limit": "4 KB"
   },
   {
+    "name": "m3e-css: checkbox (box, SVG check mark, state layer)",
+    "path": "packages/m3e-css/dist/checkbox.css",
+    "rolldown": false,
+    "limit": "3 KB"
+  },
+  {
     "name": "m3e-css: legacy navigation bar + rail (D4)",
     "path": [
       "packages/m3e-css/dist/navigation-bar.css",
@@ -153,9 +159,9 @@
     "limit": "6 KB"
   },
   {
-    "name": "m3e-elements: ripple entry (plain-HTML press ripple, delegated on document)",
+    "name": "m3e-elements: ripple entry (plain-HTML press ripple, delegated on document; raised 1 → 1.1 KB for the checkbox label / input triggers, M8)",
     "path": "packages/m3e-elements/dist/ripple/index.js",
-    "limit": "1 KB"
+    "limit": "1.1 KB"
   },
   {
     "name": "m3e-elements (all) — D17: reported, 100 KB sanity cap (not a budget)",
@@ -379,6 +385,11 @@
     "limit": "8 KB"
   },
   {
+    "name": "m3e-elements: <m3e-checkbox> entry (native input + indeterminate sync, data-from, ripple)",
+    "path": "packages/m3e-elements/dist/checkbox/index.js",
+    "limit": "3 KB"
+  },
+  {
     "name": "m3e-elements: tabs-layout entry (TabsLayout, used by m3e-react <Tabs>)",
     "path": "packages/m3e-elements/dist/tabs-layout/index.js",
     "limit": "6 KB"
@@ -542,6 +553,12 @@
     "path": "packages/m3e-react/dist/index.js",
     "import": "{ Tabs, TabPanel }",
     "limit": "20 KB"
+  },
+  {
+    "name": "m3e-react: { Checkbox } only (incl. react-aria useCheckbox press/focus/validation + react-stately toggle state)",
+    "path": "packages/m3e-react/dist/index.js",
+    "import": "{ Checkbox }",
+    "limit": "16 KB"
   },
   {
     "name": "m3exp-web/react: { Icon } only",

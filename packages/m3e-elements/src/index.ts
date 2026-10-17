@@ -30,6 +30,7 @@ export * from './navigation-suite-layout/index.js';
 export * from './navigation-suite/index.js';
 export * from './tabs-layout/index.js';
 export * from './tabs/index.js';
+export * from './checkbox/index.js';
 export * from './pane-scaffold-layout/index.js';
 export * from './list-detail-layout/index.js';
 export * from './supporting-pane-layout/index.js';

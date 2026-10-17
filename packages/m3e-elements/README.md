@@ -373,6 +373,26 @@ scrollable row scrolls the selected tab to the centre. Event: `selection-change`
 (`detail: { value }`, cancelable). The behavior lives in the `tabs-layout.js` entry
 (`TabsLayout`), which m3e-react's `<Tabs>` uses too.
 
+## Checkbox
+
+```js
+import '@kyralabs/m3e-elements/checkbox.js';
+```
+
+```html
+<m3e-checkbox name="mail" value="daily" checked>Daily</m3e-checkbox>
+<m3e-checkbox indeterminate>Receive emails</m3e-checkbox>
+```
+
+`<m3e-checkbox>` renders the m3e-css `.m3e-checkbox` contract around a native
+`<input type="checkbox">`, which submits with its form and fires the native `input` / `change`
+events. It exists for what plain HTML cannot declare: the `indeterminate` attribute sets the input
+property, `data-from` keeps the previous state (a dash entered from unchecked draws instead of
+morphing from a check, as Compose does) and the ripple presses on Space or a pointer on the label.
+Attributes: `checked`, `indeterminate`, `disabled`, `invalid` (`aria-invalid`, error colors),
+`required` (`aria-required`), `name`, `value`, `label` (the input's `aria-label` when there is no
+text). A user toggle updates `checked` and clears `indeterminate`.
+
 ## Ripple for plain HTML
 
 m3e-css draws hover, focus and pressed overlays without JS; the press ripple needs a little.

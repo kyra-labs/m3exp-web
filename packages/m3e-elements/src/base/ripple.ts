@@ -52,15 +52,18 @@ export function releaseRipple(host: HTMLElement): void {
  * Tracks presses on `host` until `signal` aborts. Disabled hosts (`:disabled`,
  * `aria-disabled="true"`) are ignored. A `trigger` takes the presses for a host that only draws
  * them (a navigation item's indicator pill, as m3e-react's `useStateLayer(hostRef)`); links press
- * on Enter only, since Space does not activate them.
+ * on Enter only, since Space does not activate them. `keys` overrides the keys that press (a
+ * checkbox: Space only).
  */
 export function attachRipple(
   host: HTMLElement,
   signal: AbortSignal,
   trigger: HTMLElement = host,
+  keys: ReadonlySet<string> = trigger.matches('a[href], [role="link"]')
+    ? new Set(['Enter'])
+    : PRESS_KEYS,
 ): void {
   host.setAttribute('data-ripple', '');
-  const keys = trigger.matches('a[href], [role="link"]') ? new Set(['Enter']) : PRESS_KEYS;
   const press = (point: { x: number; y: number } | null) => {
     if (!isRippleDisabled(host) && !isRippleDisabled(trigger)) pressRipple(host, point);
   };
