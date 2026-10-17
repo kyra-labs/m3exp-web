@@ -27,7 +27,8 @@ npm install @kyralabs/m3e-css @kyralabs/m3e-tokens
 
 Canonical layouts (`layout.css`): `.m3e-layout` is a size container; inside it
 `.m3e-pane-scaffold--list-detail` / `--supporting-pane` show one, two or three panes by its width
-(`data-destination` picks the single pane) and `.m3e-feed` is the feed grid.
+(m3.material.io's counts: three from 1600px; add `--compose` for Compose's, three from 1200px;
+`data-destination` picks the single pane) and `.m3e-feed` is the feed grid.
 
 Import a single component with `@kyralabs/m3e-css/<component>.css` (for example `button.css`).
 Classes follow `.m3e-<component>`, `__<part>` and `--<modifier>`.

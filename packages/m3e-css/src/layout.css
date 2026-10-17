@@ -23,14 +23,15 @@
  * Sizing is the layout's own: `.m3e-layout` is an inline-size container and the queries below
  * read its width, so a layout inside a navigation suite's content area (or any pane) adapts to
  * the room it has, not to the window. Compose reads the window size class
- * (calculatePaneScaffoldDirective); the breakpoints and pane counts are the same:
+ * (calculatePaneScaffoldDirective); the breakpoints are the same, the pane counts by default
+ * m3.material.io's (Breakpoints; owner decision 2026-10-18, COMPONENT_SPEC §16a):
  * - below 840px (compact, medium): one pane, the destination (data-destination: `primary`,
  *   `secondary` or `tertiary`; default the list / the main pane);
- * - from 840px (expanded): two panes, the destination plus the highest-priority other pane
- *   (primary, then secondary, then tertiary), 24dp apart;
- * - from 1200px (large): all three panes (Compose's directive allows three from large);
- *   --recommended keeps two until 1600px (m3.material.io Breakpoints: two panes at large, three
- *   at extra-large).
+ * - from 840px (expanded) and at large (1200px): two panes, the destination plus the
+ *   highest-priority other pane (primary, then secondary, then tertiary), 24dp apart;
+ * - from 1600px (extra-large): all three panes;
+ * - --compose follows Compose's calculatePaneScaffoldDirective instead: all three panes from
+ *   1200px (large).
  * Each pane starts at its preferred width (360dp, 412dp from large; a pane's own
  * --m3e-comp-pane-scaffold-pane-preferred-width overrides it), the primary pane takes the rest,
  * and every pane shrinks by the same ratio when they do not fit (ThreePaneScaffold's measure
@@ -127,14 +128,15 @@
       );
     }
 
-    .m3e-pane-scaffold:not([data-managed], .m3e-pane-scaffold--recommended)
-      > .m3e-pane-scaffold__pane {
+    /* Compose's directive allows three panes from large. */
+    .m3e-pane-scaffold--compose:not([data-managed]) > .m3e-pane-scaffold__pane {
       display: flex;
     }
   }
 
   @container m3e-layout (width >= 1600px) {
-    .m3e-pane-scaffold--recommended:not([data-managed]) > .m3e-pane-scaffold__pane {
+    /* m3.material.io: three panes at extra-large. */
+    .m3e-pane-scaffold:not([data-managed]) > .m3e-pane-scaffold__pane {
       display: flex;
     }
   }

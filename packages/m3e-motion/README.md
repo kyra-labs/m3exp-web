@@ -49,7 +49,8 @@ false }` keeps Compose's V1 width set (every width from 840 is `expanded`).
 Three-pane scaffolds (ports of Compose Material3 adaptive `ThreePaneScaffold`, the list-detail and
 supporting-pane scaffolds and their navigator): `calculateThreePaneScaffoldValue`,
 `ThreePaneScaffoldNavigator` (`navigateTo`, `navigateBack` with the four back behaviors),
-`threePaneScaffoldDirective` (`paneRule: 'recommended'` caps large at two panes),
+`threePaneScaffoldDirective` (m3.material.io's pane counts by default, two at large;
+`paneRule: 'compose'` keeps Compose's three),
 `threePaneScaffoldLayout` (pane bounds), `calculatePaneMotion` / `paneTransitions` /
 `ThreePaneScaffoldAnimation` (pane motion) and the pane expansion anchors.
 

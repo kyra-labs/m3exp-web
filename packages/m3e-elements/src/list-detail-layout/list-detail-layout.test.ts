@@ -146,21 +146,35 @@ describe('<m3e-list-detail-layout>', () => {
     expect(pane(host, 'secondary').hasAttribute('data-grow')).toBe(true);
   });
 
-  it('three panes from 1200px with an extra pane; pane-rule="recommended" keeps two until 1600px', async () => {
+  it('two panes at large with an extra pane, three from 1600px; pane-rule="compose" shows three from 1200px', async () => {
     const html = (rule = '') =>
       `<m3e-list-detail-layout ${rule}><p slot="list">L</p><p slot="detail">D</p><p slot="extra">E</p></m3e-list-detail-layout>`;
+    // Default: m3.material.io's recommendation (owner decision 2026-10-18).
     const host = await mount(html());
+    expect(host.querySelector('.m3e-pane-scaffold')!.className).toBe(
+      'm3e-pane-scaffold m3e-pane-scaffold--list-detail',
+    );
     resize(host, 1300);
+    expect(values(host)).toEqual(['expanded', 'expanded', 'hidden']);
+    resize(host, 1700);
     expect(values(host)).toEqual(['expanded', 'expanded', 'expanded']);
     document.body.innerHTML = '';
-    const recommended = await mount(html('pane-rule="recommended"'));
-    expect(recommended.querySelector('.m3e-pane-scaffold')!.className).toContain(
-      'm3e-pane-scaffold--recommended',
+    // Opt-in: Compose's calculatePaneScaffoldDirective.
+    const compose = await mount(html('pane-rule="compose"'));
+    expect(compose.querySelector('.m3e-pane-scaffold')!.className).toBe(
+      'm3e-pane-scaffold m3e-pane-scaffold--list-detail m3e-pane-scaffold--compose',
     );
-    resize(recommended, 1300);
-    expect(values(recommended)).toEqual(['expanded', 'expanded', 'hidden']);
-    resize(recommended, 1700);
-    expect(values(recommended)).toEqual(['expanded', 'expanded', 'expanded']);
+    resize(compose, 1000);
+    expect(values(compose)).toEqual(['expanded', 'expanded', 'hidden']);
+    resize(compose, 1300);
+    expect(values(compose)).toEqual(['expanded', 'expanded', 'expanded']);
+    // Switching the attribute back re-applies the default.
+    compose.removeAttribute('pane-rule');
+    await settle();
+    expect(compose.querySelector('.m3e-pane-scaffold')!.className).toBe(
+      'm3e-pane-scaffold m3e-pane-scaffold--list-detail',
+    );
+    expect(values(compose)).toEqual(['expanded', 'expanded', 'hidden']);
   });
 
   it('animates navigation on the pane motion spring, writing only the pane bounds', async () => {

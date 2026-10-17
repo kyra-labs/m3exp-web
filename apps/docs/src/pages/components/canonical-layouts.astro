@@ -26,19 +26,25 @@ const feed = ['Mountains', 'Coast', 'Forest', 'Desert', 'City', 'Lakes', 'Island
     its own width (a container query on <code>.m3e-layout</code>), so it adapts inside a navigation
     suite's content area or any pane. Pick a frame width below, or resize the window.
   </p>
+  <p>
+    Pane counts follow m3.material.io's Breakpoints by default (owner decision, 2026-10-18): two
+    panes at large, three from extra-large. Compose's <code>calculatePaneScaffoldDirective</code>{' '}
+    allows three from large; opt into it with <code>pane-rule="compose"</code> (elements),{' '}
+    <code>paneRule="compose"</code> (React) or <code>.m3e-pane-scaffold--compose</code> (CSS).
+  </p>
   <table class="docs-table">
     <caption>Panes side by side by the layout's width</caption>
     <thead>
       <tr>
         <th scope="col">Width</th>
-        <th scope="col">Compose (default)</th>
-        <th scope="col">m3.material.io (<code>pane-rule="recommended"</code>)</th>
+        <th scope="col">m3.material.io (default)</th>
+        <th scope="col">Compose (<code>pane-rule="compose"</code>)</th>
       </tr>
     </thead>
     <tbody>
       <tr><td>compact, medium (&lt; 840px)</td><td>1</td><td>1</td></tr>
       <tr><td>expanded (840–1199px)</td><td>2</td><td>2</td></tr>
-      <tr><td>large (1200–1599px)</td><td>3</td><td>2</td></tr>
+      <tr><td>large (1200–1599px)</td><td>2</td><td>3</td></tr>
       <tr><td>extra-large (≥ 1600px)</td><td>3</td><td>3</td></tr>
     </tbody>
   </table>
@@ -260,7 +266,8 @@ const feed = ['Mountains', 'Coast', 'Forest', 'Desert', 'City', 'Lakes', 'Island
     <p>
       <code>.m3e-layout &gt; .m3e-pane-scaffold--list-detail</code> with the panes as regions; the
       container queries show the destination (<code>data-destination</code>, here the detail) below
-      840px, two panes from 840px and three from 1200px.
+      840px, two panes from 840px and three from 1600px (<code>.m3e-pane-scaffold--compose</code>:
+      from 1200px).
     </p>
     <div class="docs-layout-scroll">
       <div class="docs-layout-frame" data-testid="static-frame" style="inline-size: 1000px">
@@ -292,7 +299,7 @@ const feed = ['Mountains', 'Coast', 'Forest', 'Desert', 'City', 'Lakes', 'Island
             >
               <div class="docs-layout-screen">
                 <div class="docs-layout-bar"><h3>Notes</h3></div>
-                <div class="docs-layout-card docs-layout-card--extra"><p>From 1200px.</p></div>
+                <div class="docs-layout-card docs-layout-card--extra"><p>From 1600px.</p></div>
               </div>
             </div>
           </div>

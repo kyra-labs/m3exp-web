@@ -135,7 +135,7 @@ export abstract class M3ePaneScaffoldElement extends M3eElement {
   }
 
   #paneRule(): PaneRule {
-    return this.paneRule === 'recommended' ? 'recommended' : 'compose';
+    return this.paneRule === 'compose' ? 'compose' : 'recommended';
   }
 
   protected override update(): void {
@@ -145,7 +145,7 @@ export abstract class M3ePaneScaffoldElement extends M3eElement {
     const layoutRoot = (this.#layoutRoot ??= doc.createElement('div'));
     layoutRoot.className = 'm3e-layout';
     const scaffold = (this.#scaffold ??= doc.createElement('div'));
-    scaffold.className = [S, `${S}--${variant}`, rule === 'recommended' ? `${S}--recommended` : '']
+    scaffold.className = [S, `${S}--${variant}`, rule === 'compose' ? `${S}--compose` : '']
       .filter(Boolean)
       .join(' ');
     const names = Object.entries(PANE_SCAFFOLD_PANE_NAMES[variant]);

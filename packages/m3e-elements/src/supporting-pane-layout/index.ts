@@ -6,7 +6,8 @@ import { M3ePaneScaffoldElement } from '../pane-scaffold-layout/pane-scaffold-el
  * a slot), `slot="supporting"` and `slot="extra"` become the main, supporting and extra panes.
  * One pane below 840px of the layout's own width (the main pane; the supporting pane reflows
  * under it when the layout is at least 900px tall), main and supporting from 840px, all three
- * from 1200px (`pane-rule="recommended"`: from 1600px).
+ * from 1600px (m3.material.io; `pane-rule="compose"`: from 1200px, Compose's
+ * calculatePaneScaffoldDirective).
  *
  * Attributes `main-label`, `supporting-label`, `extra-label`, `pane-rule`, `drag-handle`; the
  * properties, methods (`navigateTo('supporting')`, …), declarative `data-pane-navigate` controls

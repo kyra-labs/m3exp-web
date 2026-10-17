@@ -111,7 +111,10 @@ export function createPaneScaffoldNavigator<T = unknown>(
 
 export interface PaneScaffoldLayoutOptions {
   variant: PaneScaffoldVariant;
-  /** `compose` (default: three panes from large) or `recommended` (two at large, three from 1600). */
+  /**
+   * `recommended` (default: m3.material.io, two panes at large, three from 1600px) or `compose`
+   * (Compose's calculatePaneScaffoldDirective: three panes from large, 1200px).
+   */
   paneRule?: PaneRule | undefined;
   /** Anchors the drag handle snaps to (default: the samples' 0 %, 240dp, 50 %, −240dp, 100 %). */
   anchors?: readonly PaneExpansionAnchor[] | undefined;
@@ -154,8 +157,9 @@ const BOUNDS = ['x', 'y', 'w', 'h'] as const;
  * step with a ThreePaneScaffoldNavigator (m3e-motion):
  *
  * - Size: the layout's own (observeWindowSizeClass on the `.m3e-layout`), through
- *   threePaneScaffoldDirective (Compose's calculatePaneScaffoldDirective, optionally capped by
- *   m3.material.io's recommendation). A size class change snaps, as Compose's navigator does.
+ *   threePaneScaffoldDirective (Compose's calculatePaneScaffoldDirective, capped by
+ *   m3.material.io's recommendation unless `paneRule` is `compose`). A size class change snaps,
+ *   as Compose's navigator does.
  * - Navigation (navigateTo / navigateBack, from the navigator or `[data-pane-navigate]` clicks):
  *   panes move on Compose's pane motion (calculatePaneMotion, the default enter / exit
  *   transitions, spring 0.8 / 380 — `--m3e-comp-pane-scaffold-motion-*`, jumps under reduced

@@ -24,15 +24,19 @@ const WIDTHS = {
   'extra-large': 1700,
 } as const;
 type WidthClass = keyof typeof WIDTHS;
-/** Panes side by side with an extra pane present, Compose's directive (and m3.material.io's). */
+/**
+ * Panes side by side with an extra pane present: by default m3.material.io's Breakpoints (owner
+ * decision 2026-10-18); `pane-rule="compose"` / `--compose` follows Compose's
+ * calculatePaneScaffoldDirective (three from large).
+ */
 const PANES: Record<WidthClass, number> = {
   compact: 1,
   medium: 1,
   expanded: 2,
-  large: 3,
+  large: 2,
   'extra-large': 3,
 };
-const RECOMMENDED: Record<WidthClass, number> = { ...PANES, large: 2 };
+const COMPOSE: Record<WidthClass, number> = { ...PANES, large: 3 };
 
 // Wide enough for the widest frame: the layouts follow their frames, not the window.
 test.use({ viewport: { width: 1800, height: 1000 } });
@@ -88,13 +92,22 @@ for (const [name, width] of Object.entries(WIDTHS) as [WidthClass, number][]) {
         expect(await visiblePanes(page, 'react-frame')).toEqual(['secondary']);
         expect(await visiblePanes(page, 'static-frame')).toEqual(['primary']);
       }
-      // Recommended: two panes at large.
+      // Compose's rule (opt-in): three panes from large, element and CSS-only alike.
       await page.getByTestId('list-detail').evaluate((host) => {
-        host.setAttribute('pane-rule', 'recommended');
+        host.setAttribute('pane-rule', 'compose');
       });
-      await expect
-        .poll(async () => (await visiblePanes(page, 'list-detail-frame')).length)
-        .toBe(RECOMMENDED[name]);
+      await expect(scaffoldOf(page, 'list-detail')).toHaveClass(/\bm3e-pane-scaffold--compose\b/);
+      await page
+        .getByTestId('static-frame')
+        .locator('.m3e-pane-scaffold')
+        .evaluate((el) => {
+          el.classList.add('m3e-pane-scaffold--compose');
+        });
+      for (const frame of ['list-detail-frame', 'static-frame']) {
+        await expect
+          .poll(async () => (await visiblePanes(page, frame)).length, frame)
+          .toBe(COMPOSE[name]);
+      }
     });
 
     test('pane widths: preferred 360 / 412dp, the detail takes the rest, 24dp apart', async ({
@@ -108,14 +121,11 @@ for (const [name, width] of Object.entries(WIDTHS) as [WidthClass, number][]) {
       const [list, detail] = await Promise.all(
         [0, 1].map((i) => box(panesOf(page, 'list-detail-frame').nth(i))),
       );
-      if (name === 'expanded') {
-        expect(list!.width).toBeCloseTo(360, 0);
-        expect(detail!.width).toBeCloseTo(width - 360 - 24, 0);
-      } else {
-        // 412dp from large; the detail takes what is left.
-        expect(list!.width).toBeCloseTo(412, 0);
-        expect(detail!.width).toBeCloseTo(width - 2 * 412 - 48, 0);
-      }
+      // 360dp, 412dp from large; the detail takes what is left beside the other panes.
+      const preferred = name === 'expanded' ? 360 : 412;
+      const others = PANES[name] - 1;
+      expect(list!.width).toBeCloseTo(preferred, 0);
+      expect(detail!.width).toBeCloseTo(width - others * (preferred + 24), 0);
       expect(detail!.x - (list!.x + list!.width)).toBeCloseTo(24, 0);
     });
 

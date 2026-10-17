@@ -169,12 +169,29 @@ describe('threePaneScaffoldDirective', () => {
     [1000, 2, 2],
     [1300, 3, 2],
     [1700, 3, 3],
-  ])('%ipx: compose %i, recommended %i', (width, compose, recommended) => {
+  ])('%ipx: compose %i, recommended (default) %i', (width, compose, recommended) => {
     const sizeClass = windowSizeClass({ width, height: 800 });
-    expect(threePaneScaffoldDirective(sizeClass).maxHorizontalPartitions).toBe(compose);
+    // Default: m3.material.io's recommendation (owner decision 2026-10-18).
+    expect(threePaneScaffoldDirective(sizeClass).maxHorizontalPartitions).toBe(recommended);
     expect(
       threePaneScaffoldDirective(sizeClass, { paneRule: 'recommended' }).maxHorizontalPartitions,
     ).toBe(recommended);
+    // Opt-in: Compose's calculatePaneScaffoldDirective, unchanged.
+    const composeDirective = threePaneScaffoldDirective(sizeClass, { paneRule: 'compose' });
+    expect(composeDirective).toEqual(paneScaffoldDirective(sizeClass));
+    expect(composeDirective.maxHorizontalPartitions).toBe(compose);
+  });
+
+  it('a navigator at large shows two panes by default, three with the compose rule', () => {
+    const large = windowSizeClass({ width: 1300, height: 800 });
+    const nav = (paneRule?: 'compose' | 'recommended') =>
+      new ThreePaneScaffoldNavigator({
+        scaffoldDirective: threePaneScaffoldDirective(large, { paneRule }),
+        adaptStrategies: LIST_DETAIL_ADAPT_STRATEGIES,
+        initialDestinationHistory: [dest('secondary'), dest('primary'), dest('tertiary')],
+      });
+    expect(strip(nav().scaffoldValue)).toEqual(['expanded', 'hidden', 'expanded']);
+    expect(strip(nav('compose').scaffoldValue)).toEqual(['expanded', 'expanded', 'expanded']);
   });
 });
 

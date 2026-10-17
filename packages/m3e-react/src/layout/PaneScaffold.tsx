@@ -125,7 +125,10 @@ interface PaneScaffoldBaseProps<Pane extends string> extends Omit<
 > {
   /** Pane region names (default Compose's "Primary pane" / "Secondary pane" / "Tertiary pane"). */
   paneLabels?: Partial<Record<Pane, string>> | undefined;
-  /** `compose` (default: three panes from large) or `recommended` (two at large, three from 1600). */
+  /**
+   * `recommended` (default: m3.material.io, two panes at large, three from 1600px) or `compose`
+   * (Compose's calculatePaneScaffoldDirective: three panes from large, 1200px).
+   */
   paneRule?: PaneRule | undefined;
   /** A pane expansion drag handle between two expanded panes (Compose paneExpansionDragHandle). */
   hasDragHandle?: boolean | undefined;
@@ -149,7 +152,7 @@ const PaneScaffold = /* @__PURE__ */ forwardRef(function PaneScaffold<Pane exten
     navigator: handle,
     panes,
     paneLabels,
-    paneRule = 'compose',
+    paneRule = 'recommended',
     hasDragHandle = false,
     anchors,
     preferredWidths,
@@ -198,7 +201,7 @@ const PaneScaffold = /* @__PURE__ */ forwardRef(function PaneScaffold<Pane exten
     <div {...rest} ref={ref} className={cx('m3e-layout', className)}>
       <div
         ref={scaffoldRef}
-        className={cx(S, `${S}--${variant}`, paneRule === 'recommended' && `${S}--recommended`)}
+        className={cx(S, `${S}--${variant}`, paneRule === 'compose' && `${S}--compose`)}
       >
         {roles.map((role) => {
           const name = nameOf(role);
@@ -255,8 +258,8 @@ export interface ListDetailPaneScaffoldProps extends PaneScaffoldBaseProps<ListD
 /**
  * List-detail canonical layout (COMPONENT_SPEC §16a; Compose `ListDetailPaneScaffold`): the list
  * alone below 840px of the layout's own width (the detail after `navigateTo('detail')`, back
- * with `navigateBack()`), list and detail from 840px, list, detail and extra from 1200px
- * (`paneRule="recommended"`: from 1600px). Panes move on Compose's pane motion and focus follows
+ * with `navigateBack()`), list and detail from 840px, list, detail and extra from 1600px
+ * (m3.material.io; `paneRule="compose"`: from 1200px, Compose's calculatePaneScaffoldDirective). Panes move on Compose's pane motion and focus follows
  * the destination (m3e-elements' PaneScaffoldLayout, the code `<m3e-list-detail-layout>` runs).
  * Elements with `data-pane-navigate="detail"` / `"back"` inside navigate on click. Other props go
  * to the `.m3e-layout` root (the size container); give it a height.
@@ -290,8 +293,8 @@ export interface SupportingPaneScaffoldProps extends PaneScaffoldBaseProps<Suppo
 /**
  * Supporting-pane canonical layout (COMPONENT_SPEC §16a; Compose `SupportingPaneScaffold`): the
  * main pane alone below 840px (the supporting pane reflows under it when the layout is at least
- * 900px tall), main and supporting from 840px, all three from 1200px. Same behavior as
- * `ListDetailPaneScaffold`.
+ * 900px tall), main and supporting from 840px, all three from 1600px (`paneRule="compose"`:
+ * from 1200px). Same behavior as `ListDetailPaneScaffold`.
  */
 export const SupportingPaneScaffold = /* @__PURE__ */ forwardRef(function SupportingPaneScaffold(
   { navigator, mainPane, supportingPane, extraPane, ...rest }: SupportingPaneScaffoldProps,
