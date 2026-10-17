@@ -764,6 +764,59 @@ describe('checkbox values (M8)', () => {
   });
 });
 
+describe('radio button values (M8)', () => {
+  const css = output.get('components/radio-button-defaults.css')!;
+  const decl = declarations(css);
+  const kt = inputs.material3Sources['RadioButton.kt']!.replace(/\r\n/g, '\n');
+  const t = (name: string) => decl.get(`--m3e-comp-radio-button-${name}`);
+
+  it('geometry: 2dp padding, 12dp dot (drawn at radius − stroke / 2), 2dp ring', () => {
+    expect(kt).toMatch(/private val RadioButtonPadding\n\s*get\(\) = 2\.dp/);
+    expect(t('padding')).toBe('2px');
+    expect(t('dot-size')).toBe('12px');
+    expect(t('stroke-width')).toBe('2px');
+    expect(kt).toContain('dotRadius = if (selected) RadioButtonDotSize / 2 else 0.dp');
+    expect(kt).toContain(
+      'drawCircle(animatedColor, animatedDotRadius.toPx() - strokeWidth / 2, style = Fill)',
+    );
+    expect(source('RadioButtonTokens.kt')).toMatch(/val IconSize: [\w.]+\n\s*get\(\) = 20\.0\.dp/);
+  });
+
+  it('colors: defaultRadioButtonColors; the ripple in the content color, a circle', () => {
+    expect(t('color-selected')).toBe('var(--m3e-sys-color-primary)');
+    expect(t('color-unselected')).toBe('var(--m3e-sys-color-on-surface-variant)');
+    expect(t('color-selected-disabled')).toBe('var(--m3e-sys-color-on-surface)');
+    expect(t('opacity-selected-disabled')).toBe('0.38');
+    expect(t('color-unselected-disabled')).toBe('var(--m3e-sys-color-on-surface)');
+    expect(t('opacity-unselected-disabled')).toBe('0.38');
+    expect(t('state-layer-color')).toBe('currentcolor');
+    expect(t('state-layer-shape')).toBe('var(--m3e-sys-shape-corner-full)');
+  });
+
+  it('motion: the dot on FastSpatial, the color on DefaultEffects', () => {
+    const springs: [string, string][] = [
+      ['dot', 'fast-spatial'],
+      ['color', 'default-effects'],
+    ];
+    for (const [name, key] of springs) {
+      for (const field of ['duration', 'easing', 'damping-ratio', 'stiffness']) {
+        expect(t(`${name}-${field}`), `${name}-${field}`).toBe(
+          `var(--m3e-sys-motion-spring-${key}-${field})`,
+        );
+      }
+    }
+  });
+
+  it('the RadioGroupSample rows: 56dp, label 16dp after the radio, bodyLarge', () => {
+    expect(t('group-row-height')).toBe('56px');
+    expect(t('label-space')).toBe('16px');
+    expect(t('label-text-size')).toBe('var(--m3e-sys-typescale-body-large-size)');
+    expect(output.get('PARITY.md')).toMatch(
+      /RadioButtonSamples\.kt@\w+ L\d+ \| `--m3e-comp-radio-button-label-space`/,
+    );
+  });
+});
+
 describe('navigation suite scaffold values (M7)', () => {
   const css = output.get('components/navigation-suite-defaults.css')!;
   const decl = declarations(css.slice(0, css.indexOf('@media')));

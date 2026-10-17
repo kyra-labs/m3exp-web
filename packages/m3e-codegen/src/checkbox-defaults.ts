@@ -20,26 +20,14 @@
 // - the CheckboxWithTextSample label (Compose catalog): 16dp after the 48dp checkbox, bodyLarge.
 // Each value is read with a targeted regex and cited by line; CHECKS throw when the wiring
 // checkbox.css assumes (flag branches, path, draw order, transitions) changes upstream.
-import { compVar, kebabName } from './names.js';
+import {
+  type ComposeLiteral,
+  type LiteralCheck,
+  type LiteralRule,
+  extractLiterals,
+} from './compose-literals.js';
 
-export interface CheckboxDefault {
-  /** CSS variable emitted. */
-  name: string;
-  /** CSS value. */
-  value: string;
-  /** JS value for components.ts (dp / fraction number or the CSS string). */
-  js: number | string;
-  /** Source expression as written upstream. */
-  raw: string;
-  owner: string;
-  member: string;
-  /** Vendored file name. */
-  file: string;
-  line: number;
-  /** Citation for a value that does not come from an androidx file. */
-  cite?: string;
-  note?: string;
-}
+export type CheckboxDefault = ComposeLiteral;
 
 const KT = 'Checkbox.kt';
 const FLAGS = 'ComposeMaterial3Flags.kt';
@@ -48,29 +36,9 @@ const SAMPLES = 'CheckboxSamples.kt';
 export const CHECKBOX_DEFAULTS_SOURCES = [KT, FLAGS, SAMPLES];
 
 const P = '--m3e-comp-checkbox';
-const SPRING_FIELDS = ['duration', 'easing', 'damping-ratio', 'stiffness'] as const;
-const TYPE_FIELDS = ['font', 'weight', 'size', 'line-height', 'tracking'] as const;
-
-type Kind = 'dp' | 'fraction' | 'ms' | 'motion' | 'token' | 'type' | 'alias' | 'flag' | 'keyword';
-
-interface Rule {
-  kind: Kind;
-  name: string;
-  owner: string;
-  member: string;
-  file: string;
-  /** First capture group: a literal, a motion key, a `CheckboxTokens.<Member>` reference. */
-  pattern: RegExp;
-  /** `flag`: the value emitted instead of the upstream default (an owner decision). */
-  enabled?: boolean;
-  /** `alias`: the emitted variable whose value this one repeats. */
-  alias?: string;
-  note?: string;
-}
-
 const FLAG_OFF = 'isCheckboxStylingFixEnabled false (Compose’s default; not the M8 default)';
 
-const RULES: readonly Rule[] = [
+const RULES: readonly LiteralRule[] = [
   {
     kind: 'flag',
     name: `${P}-styling-fix`,
@@ -408,7 +376,7 @@ const RULES: readonly Rule[] = [
 ];
 
 /** Wiring checkbox.css assumes. */
-const CHECKS: readonly [string, string, RegExp][] = [
+const CHECKS: readonly LiteralCheck[] = [
   [
     FLAGS,
     'isCheckboxStylingFixEnabled defaults to false',
@@ -471,37 +439,17 @@ const CHECKS: readonly [string, string, RegExp][] = [
   ],
 ];
 
-/** Compose values with a fixed CSS meaning. */
-const KEYWORDS: Readonly<Record<string, string>> = {
-  'Color.Transparent': 'transparent',
-  'Color.Unspecified': 'currentcolor',
-  'Dp.Unspecified': '0px',
-  'snap(delayMillis = SnapAnimationDelay)': 'steps(1, jump-end)',
-};
-
-const normalize = (text: string | undefined, file: string) => {
-  if (text === undefined) throw new Error(`${file} is not vendored`);
-  return text.replace(/\r\n/g, '\n');
-};
-
-/** `CheckboxTokens.SelectedIconColor` → `var(--m3e-comp-checkbox-icon-color-selected)`. */
-const tokenVar = (ref: string) => {
-  const [object, member] = ref.split('.') as [string, string];
-  return `var(${compVar(object, member)})`;
-};
-
 /** `sources`: vendored Material3 files and samples by name (Checkbox.kt, CheckboxSamples.kt, …). */
 export function extractCheckboxDefaults(
   sources: Readonly<Record<string, string>>,
 ): CheckboxDefault[] {
-  const texts = Object.fromEntries(
-    CHECKBOX_DEFAULTS_SOURCES.map((file) => [file, normalize(sources[file], file)]),
+  const out = extractLiterals(
+    'checkbox-defaults',
+    CHECKBOX_DEFAULTS_SOURCES,
+    RULES,
+    CHECKS,
+    sources,
   );
-  for (const [file, what, pattern] of CHECKS) {
-    if (!pattern.test(texts[file]!)) throw new Error(`${file}: ${what} (changed upstream?)`);
-  }
-  const out: CheckboxDefault[] = [];
-  for (const rule of RULES) out.push(...extractRule(rule, texts, out));
   // Not a design value: WebKit repaints an SVG stroke whose dash / transform come from a
   // transitioned custom property only while those properties have a transition of their own, so
   // checkbox.css gives them this one (it follows the computed value within a frame).
@@ -518,79 +466,4 @@ export function extractCheckboxDefaults(
     note: 'a transition on stroke-dashoffset / stroke-dasharray / transform / opacity of each check stroke, so WebKit repaints them while the draw fraction and gravitation animate',
   });
   return out;
-}
-
-function extractRule(
-  rule: Rule,
-  texts: Readonly<Record<string, string>>,
-  previous: readonly CheckboxDefault[],
-): CheckboxDefault[] {
-  const text = texts[rule.file]!;
-  const match = rule.pattern.exec(text);
-  const at = match?.indices?.[1]?.[0];
-  if (!match || at === undefined)
-    throw new Error(
-      `${rule.file}: ${rule.owner}.${rule.member} not found (pattern changed upstream?)`,
-    );
-  const captured = match[1]!;
-  const base = {
-    name: rule.name,
-    owner: rule.owner,
-    member: rule.member,
-    file: rule.file,
-    line: text.slice(0, at).split('\n').length,
-    ...(rule.note === undefined ? {} : { note: rule.note }),
-  };
-  switch (rule.kind) {
-    case 'dp':
-      return [{ ...base, value: `${captured}px`, js: Number(captured), raw: `${captured}.dp` }];
-    case 'fraction':
-      return [{ ...base, value: captured, js: Number(captured), raw: `${captured}f` }];
-    case 'ms':
-      return [
-        { ...base, value: `${captured}ms`, js: Number(captured), raw: `${captured} (millis)` },
-      ];
-    case 'token':
-      return [{ ...base, value: tokenVar(captured), js: tokenVar(captured), raw: captured }];
-    case 'type': {
-      // `bodyLarge` → `body-large`.
-      const style = kebabName(captured[0]!.toUpperCase() + captured.slice(1));
-      return TYPE_FIELDS.map((field) => ({
-        ...base,
-        name: `${rule.name}-${field}`,
-        value: `var(--m3e-sys-typescale-${style}-${field})`,
-        js: `var(--m3e-sys-typescale-${style}-${field})`,
-        raw: `MaterialTheme.typography.${captured}`,
-      }));
-    }
-    case 'motion':
-      return SPRING_FIELDS.map((field) => ({
-        ...base,
-        name: `${rule.name}-${field}`,
-        value: `var(--m3e-sys-motion-spring-${kebabName(captured)}-${field})`,
-        js: `var(--m3e-sys-motion-spring-${kebabName(captured)}-${field})`,
-        raw: `MotionSchemeKeyTokens.${captured}`,
-      }));
-    case 'flag':
-      return [
-        {
-          ...base,
-          value: (rule.enabled ?? captured === 'true') ? '1' : '0',
-          js: (rule.enabled ?? captured === 'true') ? 1 : 0,
-          raw: `${captured} (upstream default)`,
-        },
-      ];
-    case 'keyword': {
-      const keyword = KEYWORDS[captured];
-      if (keyword === undefined) throw new Error(`checkbox-defaults: no CSS for ${captured}`);
-      return [{ ...base, value: keyword, js: keyword, raw: captured }];
-    }
-    case 'alias': {
-      const target = previous.find((d) => d.name === rule.alias);
-      if (!target) throw new Error(`checkbox-defaults: ${String(rule.alias)} must come first`);
-      return [
-        { ...base, value: target.value, js: target.js, raw: `${captured}(state) = ${target.raw}` },
-      ];
-    }
-  }
 }

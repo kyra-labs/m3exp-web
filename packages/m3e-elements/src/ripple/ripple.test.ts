@@ -151,6 +151,37 @@ describe('attachAutoRipple', () => {
     });
   });
 
+  it('draws a radio button press (label or input) on its state circle; Space only; not disabled', () => {
+    const html =
+      '<label class="m3e-radio-button"><input class="m3e-radio-button__input" type="radio"%>' +
+      '<span class="m3e-radio-button__icon"></span><span class="m3e-radio-button__state"></span>' +
+      '<span class="m3e-radio-button__label">A</span></label>';
+    const root = mount(html.replace('%', ''));
+    const input = root.querySelector('input')!;
+    const state = root.querySelector('.m3e-radio-button__state')!;
+    box(state, 4, 4, 40, 40);
+    down(root.querySelector('.m3e-radio-button__label')!, 100, 24);
+    expect(ripple(state)).toMatchObject({ ripple: true, pressed: true });
+    up(root);
+    down(input, 24, 24, 2);
+    expect(ripple(state)).toMatchObject({ ripple: true, pressed: true, x: '20px', y: '20px' });
+    up(input, 2);
+    key(input, 'keydown', 'Enter');
+    expect(state.hasAttribute('data-pressed')).toBe(false);
+    key(input, 'keydown', ' ');
+    expect(state.hasAttribute('data-pressed')).toBe(true);
+    key(input, 'keyup', ' ');
+    expect(state.hasAttribute('data-pressed')).toBe(false);
+
+    const disabled = mount(html.replace('%', ' disabled'));
+    down(disabled.querySelector('.m3e-radio-button__label')!);
+    down(disabled.querySelector('input')!, 0, 0, 3);
+    expect(ripple(disabled.querySelector('.m3e-radio-button__state')!)).toMatchObject({
+      ripple: false,
+      pressed: false,
+    });
+  });
+
   it('ignores disabled triggers and hosts', () => {
     const disabled = mount('<button class="m3e-button" disabled></button>');
     down(disabled);

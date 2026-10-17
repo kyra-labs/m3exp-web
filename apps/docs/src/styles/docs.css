@@ -523,6 +523,19 @@ button.docs-tile {
   padding-inline-start: var(--m3e-sys-space-300);
 }
 
+/* Radio button: horizontal demo groups get space between options (the library adds none). */
+.docs-radio-row {
+  gap: var(--m3e-sys-space-100) var(--m3e-sys-space-300);
+  margin: var(--m3e-sys-space-150) 0;
+}
+
+.docs-radio-legend {
+  inline-size: 100%;
+  padding: 0;
+  font: var(--m3e-sys-typescale-label-large-weight) var(--m3e-sys-typescale-label-large-size) /
+    var(--m3e-sys-typescale-label-large-line-height) var(--m3e-sys-typescale-label-large-font);
+}
+
 .docs-note {
   padding: var(--m3e-sys-space-150) var(--m3e-sys-space-200);
   border-radius: var(--m3e-sys-shape-corner-medium);
