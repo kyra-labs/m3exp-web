@@ -36,6 +36,8 @@ export interface CheckboxDefault {
   /** Vendored file name. */
   file: string;
   line: number;
+  /** Citation for a value that does not come from an androidx file. */
+  cite?: string;
   note?: string;
 }
 
@@ -193,6 +195,15 @@ const RULES: readonly Rule[] = [
     file: KT,
     pattern: /private const val SnapAnimationDelay = (\d+)/d,
     note: 'towards unchecked both fractions snap(delayMillis = this): the check stays drawn while its color fades out',
+  },
+  {
+    kind: 'keyword',
+    name: `${P}-snap-easing`,
+    owner: 'CheckboxImpl',
+    member: 'snap(delayMillis = SnapAnimationDelay)',
+    file: KT,
+    pattern: /targetState == ToggleableState\.Off -> (snap\(delayMillis = SnapAnimationDelay\))/d,
+    note: 'a snap after the delay = a one-step easing over snap-delay (CSS transitions need a non-zero duration in every browser)',
   },
   {
     kind: 'motion',
@@ -465,6 +476,7 @@ const KEYWORDS: Readonly<Record<string, string>> = {
   'Color.Transparent': 'transparent',
   'Color.Unspecified': 'currentcolor',
   'Dp.Unspecified': '0px',
+  'snap(delayMillis = SnapAnimationDelay)': 'steps(1, jump-end)',
 };
 
 const normalize = (text: string | undefined, file: string) => {
@@ -490,6 +502,21 @@ export function extractCheckboxDefaults(
   }
   const out: CheckboxDefault[] = [];
   for (const rule of RULES) out.push(...extractRule(rule, texts, out));
+  // Not a design value: WebKit repaints an SVG stroke whose dash / transform come from a
+  // transitioned custom property only while those properties have a transition of their own, so
+  // checkbox.css gives them this one (it follows the computed value within a frame).
+  out.push({
+    name: `${P}-follow-duration`,
+    value: '1ms',
+    js: 1,
+    raw: 'engine workaround (WebKit)',
+    owner: 'checkbox.css',
+    member: 'stroke follow transitions',
+    file: 'checkbox.css',
+    line: 0,
+    cite: 'packages/m3e-css/src/checkbox.css (WebKit repaint workaround; not from androidx)',
+    note: 'a transition on stroke-dashoffset / stroke-dasharray / transform / opacity of each check stroke, so WebKit repaints them while the draw fraction and gravitation animate',
+  });
   return out;
 }
 

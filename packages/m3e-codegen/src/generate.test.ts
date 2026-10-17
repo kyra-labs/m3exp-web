@@ -739,6 +739,11 @@ describe('checkbox values (M8)', () => {
   it('motion: check DefaultSpatial, 100ms snap, colors DefaultEffects in / FastEffects out', () => {
     expect(kt).toContain('private const val SnapAnimationDelay = 100');
     expect(t('snap-delay')).toBe('100ms');
+    // snap(delayMillis) = one step at the end of the delay; the follow duration is a WebKit
+    // repaint workaround, cited as such.
+    expect(t('snap-easing')).toBe('steps(1, jump-end)');
+    expect(t('follow-duration')).toBe('1ms');
+    expect(output.get('PARITY.md')).toMatch(/--m3e-comp-checkbox-follow-duration.*WebKit/);
     const springs: [string, string][] = [
       ['check', 'default-spatial'],
       ['color-in', 'default-effects'],

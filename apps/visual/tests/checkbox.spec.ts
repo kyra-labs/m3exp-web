@@ -37,19 +37,52 @@ const segments = (label: Locator) =>
     });
   });
 
-/** Freezes every running transition under `root` at `ms` (they stay paused). */
+/**
+ * Freezes the checkbox's transitions under `root` at `ms` (they stay paused); not the strokes'
+ * 1ms follow transitions (the WebKit repaint workaround), which must keep running to show it.
+ */
 const freeze = (label: Locator, ms: number) =>
   label.evaluate((root, t) => {
     for (const a of root.getAnimations({ subtree: true })) {
+      const target = (a.effect as KeyframeEffect).target!;
+      const follow = /^(stroke-|transform|opacity)/.exec((a as CSSTransition).transitionProperty);
+      if (follow && target.matches('.m3e-checkbox__stroke')) continue;
       a.pause();
       a.currentTime = t;
     }
   }, ms);
 
+/**
+ * Clicks `selector` and, in the same task (after the elements' microtask renders), pauses the
+ * checkbox transitions the change started under `root`, so a slow runner cannot miss them.
+ */
+const clickAndPause = (root: Locator, selector: string, ms?: number) =>
+  root.evaluate(
+    async (node, [sel, t]) => {
+      document.querySelector<HTMLElement>(sel)!.click();
+      for (let i = 0; i < 3; i++) await Promise.resolve();
+      getComputedStyle(node.querySelector('.m3e-checkbox__stroke')!).getPropertyValue('opacity');
+      for (const a of node.getAnimations({ subtree: true })) {
+        const target = (a.effect as KeyframeEffect).target!;
+        const follow = /^(stroke-|transform|opacity)/.exec((a as CSSTransition).transitionProperty);
+        // A frame for a screenshot: seek every transition in this task, the strokes' follow
+        // transitions too (WebKit repaints a frozen fraction only so).
+        if (t !== undefined) {
+          a.pause();
+          a.currentTime = t;
+          continue;
+        }
+        if (follow && target.matches('.m3e-checkbox__stroke')) continue;
+        a.pause();
+      }
+    },
+    [selector, ms] as const,
+  );
+
 const fraction = (label: Locator) =>
   label.evaluate((root) =>
     Number(
-      getComputedStyle(root.querySelector('.m3e-checkbox__box')!).getPropertyValue(
+      getComputedStyle(root.querySelector('.m3e-checkbox__stroke')!).getPropertyValue(
         '--_m3e-checkbox-fraction',
       ),
     ),
@@ -146,7 +179,7 @@ test('checking draws the check along its path on the default spatial spring', as
     dampingRatio: await num(page, '--m3e-sys-motion-spring-default-spatial-damping-ratio'),
     stiffness: await num(page, '--m3e-sys-motion-spring-default-spatial-stiffness'),
   };
-  await label.locator('.m3e-checkbox__input').check();
+  await clickAndPause(label, '[data-testid="static-enabled-unchecked"] input');
   for (const t of [16, 48, 96, 160, 320]) {
     await freeze(label, t);
     // The CSS spring is a sampled linear() easing of the same spring (Compose SpringSimulation).
@@ -161,66 +194,79 @@ test('checking draws the check along its path on the default spatial spring', as
   expect(a!.drawn).toBeLessThanOrEqual(Math.hypot(0.15, 0.15) * s + 0.01);
 });
 
-test('mid-animation frames: drawing the check, morphing it into the dash', async ({ page }) => {
+// WebKit animates the check live but paints a seeked, paused transition of it at its end value,
+// so the frozen frames are captured in Chromium and Firefox only.
+test('mid-animation frames: drawing the check, morphing it into the dash', async ({
+  page,
+  browserName,
+}) => {
+  const frames = browserName !== 'webkit';
   const label = checkbox(page, 'static-enabled-unchecked');
-  await label.locator('.m3e-checkbox__input').check();
-  await freeze(label, 40);
+  await clickAndPause(label, '[data-testid="static-enabled-unchecked"] input', 40);
   const clip = await box(label.locator('.m3e-checkbox__state'));
-  await expect(page).toHaveScreenshot('checkbox-drawing.png', { clip, animations: 'allow' });
+  if (frames) {
+    await expect(page).toHaveScreenshot('checkbox-drawing.png', { clip, animations: 'allow' });
+  }
 
-  const parent = page.locator('#tree-parent');
-  await page.locator('#tree-daily input').click();
-  await expect(parent.locator('.m3e-checkbox')).toHaveAttribute('data-from', 'checked');
-  const root = parent.locator('.m3e-checkbox');
-  await freeze(root, 80);
+  const root = page.locator('#tree-parent .m3e-checkbox');
+  await root.scrollIntoViewIfNeeded();
+  await clickAndPause(root, '#tree-daily input', 80);
+  await expect(root).toHaveAttribute('data-from', 'checked');
   const g = await root.evaluate((el) =>
     Number(
-      getComputedStyle(el.querySelector('.m3e-checkbox__box')!).getPropertyValue(
+      getComputedStyle(el.querySelector('.m3e-checkbox__stroke')!).getPropertyValue(
         '--_m3e-checkbox-gravitation',
       ),
     ),
   );
   expect(g).toBeGreaterThan(0.1);
   expect(g).toBeLessThan(0.9);
-  await expect(page).toHaveScreenshot('checkbox-morphing.png', {
-    clip: await box(root.locator('.m3e-checkbox__state')),
-    animations: 'allow',
-  });
+  if (frames)
+    await expect(page).toHaveScreenshot('checkbox-morphing.png', {
+      clip: await box(root.locator('.m3e-checkbox__state')),
+      animations: 'allow',
+    });
 });
 
 test('unchecking fades the check and snaps it away after 100ms; from unchecked the dash draws', async ({
   page,
 }) => {
   const label = checkbox(page, 'static-enabled-checked');
-  await label.locator('.m3e-checkbox__input').uncheck();
+  await clickAndPause(label, '[data-testid="static-enabled-checked"] input');
   const timing = await label.evaluate((root) =>
     root
       .getAnimations({ subtree: true })
-      .map((a) => [(a as CSSTransition).transitionProperty, a.effect!.getTiming().delay]),
+      .map((a) => [(a as CSSTransition).transitionProperty, a.effect!.getTiming().duration]),
   );
+  // snap(delayMillis = 100): one step at the end of 100ms.
   expect(timing).toContainEqual(['--_m3e-checkbox-fraction', 100]);
   await freeze(label, 99);
   expect(await fraction(label)).toBe(1);
   await freeze(label, 101);
   expect(await fraction(label)).toBe(0);
 
-  // <m3e-checkbox>: unchecked → indeterminate snaps the gravitation (the dash draws, no morph).
+  // <m3e-checkbox>: unchecked -> indeterminate snaps the gravitation (the dash draws, no morph).
   const el = page.locator('#element-indeterminate');
   await el.evaluate((host) => {
     (host as CheckboxHost).indeterminate = false;
   });
   await expect(el.locator('.m3e-checkbox')).toHaveAttribute('data-from', 'indeterminate');
-  await page.waitForTimeout(600);
-  await el.evaluate((host) => {
-    (host as CheckboxHost).indeterminate = true;
-  });
-  await expect(el.locator('.m3e-checkbox')).toHaveAttribute('data-from', 'unchecked');
-  const running = await el.evaluate((host) =>
-    host
-      .getAnimations({ subtree: true })
-      .filter((a) => a.playState === 'running')
-      .map((a) => (a as CSSTransition).transitionProperty),
+  await page.waitForFunction(() =>
+    document.getAnimations().every((a) => a.playState !== 'running'),
   );
+  const running = await el.evaluate(async (host) => {
+    (host as CheckboxHost).indeterminate = true;
+    for (let i = 0; i < 3; i++) await Promise.resolve();
+    getComputedStyle(host.querySelector('.m3e-checkbox__stroke')!).getPropertyValue('opacity');
+    return [
+      host.firstElementChild!.getAttribute('data-from'),
+      ...host
+        .getAnimations({ subtree: true })
+        .filter((a) => a.playState === 'running')
+        .map((a) => (a as CSSTransition).transitionProperty),
+    ];
+  });
+  expect(running[0]).toBe('unchecked');
   expect(running).toContain('--_m3e-checkbox-fraction');
   expect(running).not.toContain('--_m3e-checkbox-gravitation');
 });

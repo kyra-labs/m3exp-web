@@ -1239,7 +1239,9 @@ export function generate({
         member: d.member,
         raw: d.raw,
         line: d.line,
-        cite: `${d.file === 'CheckboxSamples.kt' ? MATERIAL3_SAMPLES_DIR : MATERIAL3_DIR}/${d.file}@${commit} L${String(d.line)}`,
+        cite:
+          d.cite ??
+          `${d.file === 'CheckboxSamples.kt' ? MATERIAL3_SAMPLES_DIR : MATERIAL3_DIR}/${d.file}@${commit} L${String(d.line)}`,
       };
       if (d.note !== undefined) e.note = d.note;
       return e;

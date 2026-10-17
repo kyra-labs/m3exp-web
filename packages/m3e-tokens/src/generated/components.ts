@@ -440,6 +440,7 @@ export const checkboxDefaults = {
   checkboxCheckDampingRatio: "var(--m3e-sys-motion-spring-default-spatial-damping-ratio)",
   checkboxCheckStiffness: "var(--m3e-sys-motion-spring-default-spatial-stiffness)",
   checkboxSnapDelay: 100,
+  checkboxSnapEasing: "steps(1, jump-end)",
   checkboxColorInDuration: "var(--m3e-sys-motion-spring-default-effects-duration)",
   checkboxColorInEasing: "var(--m3e-sys-motion-spring-default-effects-easing)",
   checkboxColorInDampingRatio: "var(--m3e-sys-motion-spring-default-effects-damping-ratio)",
@@ -471,7 +472,8 @@ export const checkboxDefaults = {
   checkboxLabelTextWeight: "var(--m3e-sys-typescale-body-large-weight)",
   checkboxLabelTextSize: "var(--m3e-sys-typescale-body-large-size)",
   checkboxLabelTextLineHeight: "var(--m3e-sys-typescale-body-large-line-height)",
-  checkboxLabelTextTracking: "var(--m3e-sys-typescale-body-large-tracking)"
+  checkboxLabelTextTracking: "var(--m3e-sys-typescale-body-large-tracking)",
+  checkboxFollowDuration: 1
 } as const;
 
 /** ChipsTokens */

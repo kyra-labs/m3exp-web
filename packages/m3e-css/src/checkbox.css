@@ -40,8 +40,10 @@
  *   CLAUDE.md's Icon rule does not apply. It is not mirrored in RTL (Compose draws it in canvas
  *   coordinates).
  * - Motion (L595-631): draw fraction and gravitation on DefaultSpatial (registered properties
- *   transitioned with the spring's linear() easing); towards unchecked both snap after
- *   SnapAnimationDelay; leaving unchecked the gravitation snaps (data-from='unchecked' here).
+ *   on each stroke, transitioned with the spring's linear() easing); towards unchecked both snap
+ *   after SnapAnimationDelay (a one-step easing over the delay); leaving unchecked the gravitation
+ *   snaps (data-from='unchecked' here). The strokes' 1ms "follow" transitions only make WebKit
+ *   repaint them while the fractions animate (checkbox-defaults.css follow-duration).
  *   Colors (L633-650, L1040-1049): DefaultEffects in, FastEffects out; box and border snap while
  *   disabled. The checkmark color goes from Color.Transparent to its color and back, so it fades
  *   by opacity here (one layer: the two segments overlap at the joint).
@@ -64,6 +66,34 @@
 }
 
 @property --_m3e-checkbox-gravitation {
+  syntax: '<number>';
+  inherits: true;
+  initial-value: 0;
+}
+
+/*
+ * Segment lengths and their drawn parts, computed to plain numbers on each stroke: Firefox mis-simplifies
+ * a negated hypot() (it subtracted as if added) when the raw expressions are substituted further.
+ */
+@property --_m3e-checkbox-length1 {
+  syntax: '<number>';
+  inherits: true;
+  initial-value: 0;
+}
+
+@property --_m3e-checkbox-length2 {
+  syntax: '<number>';
+  inherits: true;
+  initial-value: 0;
+}
+
+@property --_m3e-checkbox-drawn1 {
+  syntax: '<number>';
+  inherits: true;
+  initial-value: 0;
+}
+
+@property --_m3e-checkbox-drawn2 {
   syntax: '<number>';
   inherits: true;
   initial-value: 0;
@@ -152,21 +182,63 @@
   }
 
   .m3e-checkbox__box {
-    /* Unchecked (and the transitions towards it). */
-    --_m3e-checkbox-fraction: 0;
-    --_m3e-checkbox-gravitation: 0;
+    /* Unchecked (and the transitions towards it). The strokes animate the fractions. */
     --_m3e-checkbox-fill: transparent;
     --_m3e-checkbox-outline: var(--m3e-comp-checkbox-border-color-unchecked);
     --_m3e-checkbox-mark-color: var(--m3e-comp-checkbox-checkmark-color);
     --_m3e-checkbox-mark-opacity: 0;
     --_m3e-checkbox-zero: calc(var(--m3e-comp-checkbox-snap-delay) * 0);
-    --_m3e-checkbox-check-duration: var(--_m3e-checkbox-zero);
-    --_m3e-checkbox-check-delay: var(--m3e-comp-checkbox-snap-delay);
-    --_m3e-checkbox-gravitation-duration: var(--_m3e-checkbox-zero);
-    --_m3e-checkbox-gravitation-delay: var(--m3e-comp-checkbox-snap-delay);
+
+    /* snap(delayMillis = SnapAnimationDelay): one step at the end of the delay. */
+    --_m3e-checkbox-check-duration: var(--m3e-comp-checkbox-snap-delay);
+    --_m3e-checkbox-check-easing: var(--m3e-comp-checkbox-snap-easing);
+    --_m3e-checkbox-gravitation-duration: var(--m3e-comp-checkbox-snap-delay);
+    --_m3e-checkbox-gravitation-easing: var(--m3e-comp-checkbox-snap-easing);
     --_m3e-checkbox-color-duration: var(--m3e-comp-checkbox-color-out-duration);
     --_m3e-checkbox-color-easing: var(--m3e-comp-checkbox-color-out-easing);
     --_m3e-checkbox-fill-duration: var(--_m3e-checkbox-color-duration);
+
+    inset-inline-start: calc(
+      (var(--m3e-comp-minimum-interactive-component-size) - var(--_m3e-checkbox-size)) / 2
+    );
+    box-sizing: border-box;
+    inline-size: var(--_m3e-checkbox-size);
+    block-size: var(--_m3e-checkbox-size);
+    border: var(--m3e-comp-checkbox-stroke-width) solid var(--_m3e-checkbox-outline);
+    border-radius: var(--m3e-comp-checkbox-box-corner-radius);
+    background-color: var(--_m3e-checkbox-fill);
+    background-clip: padding-box;
+    transition:
+      background-color var(--_m3e-checkbox-fill-duration) var(--_m3e-checkbox-color-easing),
+      border-color var(--_m3e-checkbox-fill-duration) var(--_m3e-checkbox-color-easing);
+  }
+
+  /*
+   * The check mark: an inline SVG (no viewBox: user units are px) over the whole box, faded as one
+   * layer. Each of its two paths is one segment of drawCheck's path, a straight "M0 0H48" moved to
+   * the segment's start and turned to its angle, drawn up to its part of length × fraction by
+   * stroke-dashoffset (dash = the segment's length, gap = 48px, which no segment reaches).
+   */
+  .m3e-checkbox__mark {
+    position: absolute;
+    inset: calc(var(--m3e-comp-checkbox-stroke-width) * -1);
+    inline-size: var(--_m3e-checkbox-size);
+    block-size: var(--_m3e-checkbox-size);
+    overflow: visible;
+    color: var(--_m3e-checkbox-mark-color);
+    opacity: var(--_m3e-checkbox-mark-opacity);
+    transition:
+      opacity var(--_m3e-checkbox-color-duration) var(--_m3e-checkbox-color-easing),
+      color var(--_m3e-checkbox-color-duration) var(--_m3e-checkbox-color-easing);
+  }
+
+  /*
+   * Each stroke animates the fractions itself (WebKit does not repaint SVG strokes whose values
+   * come from a custom property animated on an ancestor).
+   */
+  .m3e-checkbox__stroke {
+    --_m3e-checkbox-fraction: 0;
+    --_m3e-checkbox-gravitation: 0;
 
     /* drawCheck: the gravitated points (fractions of the box), segment lengths and angles. */
     --_m3e-checkbox-center: var(--m3e-comp-checkbox-check-gravitation-center);
@@ -204,47 +276,6 @@
     );
     --_m3e-checkbox-drawn1: min(var(--_m3e-checkbox-drawn), var(--_m3e-checkbox-length1));
     --_m3e-checkbox-drawn2: max(0, var(--_m3e-checkbox-drawn) - var(--_m3e-checkbox-length1));
-
-    inset-inline-start: calc(
-      (var(--m3e-comp-minimum-interactive-component-size) - var(--_m3e-checkbox-size)) / 2
-    );
-    box-sizing: border-box;
-    inline-size: var(--_m3e-checkbox-size);
-    block-size: var(--_m3e-checkbox-size);
-    border: var(--m3e-comp-checkbox-stroke-width) solid var(--_m3e-checkbox-outline);
-    border-radius: var(--m3e-comp-checkbox-box-corner-radius);
-    background-color: var(--_m3e-checkbox-fill);
-    background-clip: padding-box;
-    transition:
-      --_m3e-checkbox-fraction var(--_m3e-checkbox-check-duration)
-        var(--m3e-comp-checkbox-check-easing) var(--_m3e-checkbox-check-delay),
-      --_m3e-checkbox-gravitation var(--_m3e-checkbox-gravitation-duration)
-        var(--m3e-comp-checkbox-check-easing) var(--_m3e-checkbox-gravitation-delay),
-      background-color var(--_m3e-checkbox-fill-duration) var(--_m3e-checkbox-color-easing),
-      border-color var(--_m3e-checkbox-fill-duration) var(--_m3e-checkbox-color-easing);
-  }
-
-  /*
-   * The check mark: an inline SVG (no viewBox: user units are px) over the whole box, faded as one
-   * layer. Each of its two paths is one segment of drawCheck's path, a straight "M0 0H48" moved to
-   * the segment's start and turned to its angle (transform-box: view-box, so the translation is a
-   * fraction of the box), drawn up to its part of length × fraction by stroke-dashoffset (dash =
-   * the segment's length, gap = 48px, which no segment reaches).
-   */
-  .m3e-checkbox__mark {
-    position: absolute;
-    inset: calc(var(--m3e-comp-checkbox-stroke-width) * -1);
-    inline-size: var(--_m3e-checkbox-size);
-    block-size: var(--_m3e-checkbox-size);
-    overflow: visible;
-    color: var(--_m3e-checkbox-mark-color);
-    opacity: var(--_m3e-checkbox-mark-opacity);
-    transition:
-      opacity var(--_m3e-checkbox-color-duration) var(--_m3e-checkbox-color-easing),
-      color var(--_m3e-checkbox-color-duration) var(--_m3e-checkbox-color-easing);
-  }
-
-  .m3e-checkbox__stroke {
     --_m3e-checkbox-segment: calc(var(--_m3e-checkbox-length1) * var(--_m3e-checkbox-size));
     --_m3e-checkbox-segment-drawn: calc(var(--_m3e-checkbox-drawn1) * var(--_m3e-checkbox-size));
 
@@ -259,12 +290,20 @@
     /* A zero-length dash would still draw its square cap. */
     opacity: round(up, var(--_m3e-checkbox-drawn1), 1);
     transform: translate(
-        calc(var(--_m3e-checkbox-point-left-x) * 100%),
-        calc(var(--_m3e-checkbox-left-y) * 100%)
+        calc(var(--_m3e-checkbox-point-left-x) * var(--_m3e-checkbox-size)),
+        calc(var(--_m3e-checkbox-left-y) * var(--_m3e-checkbox-size))
       )
       rotate(atan2(var(--_m3e-checkbox-dy1), var(--_m3e-checkbox-dx1)));
-    transform-box: view-box;
     transform-origin: 0 0;
+    transition:
+      --_m3e-checkbox-fraction var(--_m3e-checkbox-check-duration) var(--_m3e-checkbox-check-easing),
+      --_m3e-checkbox-gravitation var(--_m3e-checkbox-gravitation-duration)
+        var(--_m3e-checkbox-gravitation-easing),
+      /* WebKit repaints the stroke from the fractions only while these transition too. */
+        stroke-dashoffset var(--m3e-comp-checkbox-follow-duration),
+      stroke-dasharray var(--m3e-comp-checkbox-follow-duration),
+      transform var(--m3e-comp-checkbox-follow-duration),
+      opacity var(--m3e-comp-checkbox-follow-duration);
   }
 
   /* cross → right (the first path: left → cross). */
@@ -274,27 +313,34 @@
 
     opacity: round(up, var(--_m3e-checkbox-drawn2), 1);
     transform: translate(
-        calc(var(--_m3e-checkbox-cross-x) * 100%),
-        calc(var(--_m3e-checkbox-cross-y) * 100%)
+        calc(var(--_m3e-checkbox-cross-x) * var(--_m3e-checkbox-size)),
+        calc(var(--_m3e-checkbox-cross-y) * var(--_m3e-checkbox-size))
       )
       rotate(atan2(var(--_m3e-checkbox-dy2), var(--_m3e-checkbox-dx2)));
   }
 
   /* --- Checked and indeterminate ----------------------------------------------------------- */
   .m3e-checkbox__input:is(:checked, :indeterminate) ~ .m3e-checkbox__box {
-    --_m3e-checkbox-fraction: 1;
     --_m3e-checkbox-fill: var(--m3e-comp-checkbox-box-color-checked);
     --_m3e-checkbox-outline: var(--m3e-comp-checkbox-border-color-checked);
     --_m3e-checkbox-mark-opacity: 1;
     --_m3e-checkbox-check-duration: var(--m3e-comp-checkbox-check-duration);
-    --_m3e-checkbox-check-delay: var(--_m3e-checkbox-zero);
+    --_m3e-checkbox-check-easing: var(--m3e-comp-checkbox-check-easing);
     --_m3e-checkbox-gravitation-duration: var(--m3e-comp-checkbox-check-duration);
-    --_m3e-checkbox-gravitation-delay: var(--_m3e-checkbox-zero);
+    --_m3e-checkbox-gravitation-easing: var(--m3e-comp-checkbox-check-easing);
     --_m3e-checkbox-color-duration: var(--m3e-comp-checkbox-color-in-duration);
     --_m3e-checkbox-color-easing: var(--m3e-comp-checkbox-color-in-easing);
+
+    /* The box fills under its border (one fill when both are the box color, as drawBox). */
+    background-clip: border-box;
   }
 
-  .m3e-checkbox__input:indeterminate ~ .m3e-checkbox__box {
+  /* Declared on the strokes themselves (WebKit transitions a value set through var() poorly). */
+  .m3e-checkbox__input:is(:checked, :indeterminate) ~ .m3e-checkbox__box .m3e-checkbox__stroke {
+    --_m3e-checkbox-fraction: 1;
+  }
+
+  .m3e-checkbox__input:indeterminate ~ .m3e-checkbox__box .m3e-checkbox__stroke {
     --_m3e-checkbox-gravitation: 1;
   }
 
@@ -335,7 +381,9 @@
         calc(var(--m3e-comp-checkbox-box-opacity-checked-disabled) * 100%),
       transparent
     );
-    --_m3e-checkbox-outline: var(--_m3e-checkbox-fill);
+
+    /* Translucent: a transparent border, so the fill is not doubled under it. */
+    --_m3e-checkbox-outline: transparent;
     --_m3e-checkbox-mark-color: var(--_m3e-checkbox-mark-disabled);
   }
 

@@ -22,6 +22,7 @@
     --m3e-comp-checkbox-check-damping-ratio: var(--m3e-sys-motion-spring-default-spatial-damping-ratio);
     --m3e-comp-checkbox-check-stiffness: var(--m3e-sys-motion-spring-default-spatial-stiffness);
     --m3e-comp-checkbox-snap-delay: 100ms;
+    --m3e-comp-checkbox-snap-easing: steps(1, jump-end);
     --m3e-comp-checkbox-color-in-duration: var(--m3e-sys-motion-spring-default-effects-duration);
     --m3e-comp-checkbox-color-in-easing: var(--m3e-sys-motion-spring-default-effects-easing);
     --m3e-comp-checkbox-color-in-damping-ratio: var(--m3e-sys-motion-spring-default-effects-damping-ratio);
@@ -54,5 +55,6 @@
     --m3e-comp-checkbox-label-text-size: var(--m3e-sys-typescale-body-large-size);
     --m3e-comp-checkbox-label-text-line-height: var(--m3e-sys-typescale-body-large-line-height);
     --m3e-comp-checkbox-label-text-tracking: var(--m3e-sys-typescale-body-large-tracking);
+    --m3e-comp-checkbox-follow-duration: 1ms;
   }
 }
