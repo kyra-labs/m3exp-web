@@ -194,7 +194,10 @@ test('a flat filter chip rises to Level1 on hover, selected or not (owner decisi
   await chip(page, 'filter-flat-unselected').hover();
   await expect(page).toHaveScreenshot('chips-filter-hovered.png', { clip: clip(b) });
   // Input and flat suggestion chips stay flat.
-  for (const el of [inputChips(page, 'input-baseline').nth(3), chip(page, 'suggestion-flat-plain')]) {
+  for (const el of [
+    inputChips(page, 'input-baseline').nth(3),
+    chip(page, 'suggestion-flat-plain'),
+  ]) {
     await el.hover();
     await page.waitForTimeout(300);
     expect(await style(el, 'box-shadow')).toContain('inset');
@@ -207,7 +210,8 @@ test('colors: baseline unselected leading icon primary, expressive (tonal) on-su
 }) => {
   const primary = await resolved(page, 'var(--m3e-sys-color-primary)');
   const variant = await resolved(page, 'var(--m3e-sys-color-on-surface-variant)');
-  const icon = (id: string) => chip(page, id).locator('.m3e-filter-chip__leading > .m3e-icon').nth(1);
+  const icon = (id: string) =>
+    chip(page, id).locator('.m3e-filter-chip__leading > .m3e-icon').nth(1);
   expect(await style(icon('filter-flat-leading'), 'color')).toBe(primary);
   expect(await style(icon('filter-expressive-leading'), 'color')).toBe(variant);
   expect(await style(chip(page, 'suggestion-flat-plain'), 'color')).toBe(variant);
@@ -235,7 +239,9 @@ test('keyboard: one tab stop per chip set, arrows move, Space toggles a filter c
   await page.keyboard.press('Shift+Tab');
   await page.keyboard.press('Tab');
   expect(await style(filter, 'outline-style')).toBe('solid');
-  await expect(page).toHaveScreenshot('chips-filter-focused.png', { clip: clip(await box(filter)) });
+  await expect(page).toHaveScreenshot('chips-filter-focused.png', {
+    clip: clip(await box(filter)),
+  });
   const row = inputChips(page, 'input-expressive').first();
   await row.focus();
   await page.keyboard.press('ArrowRight');
