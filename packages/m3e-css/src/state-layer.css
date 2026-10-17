@@ -36,6 +36,9 @@
     .m3e-icon-button,
     .m3e-card--interactive,
     .m3e-assist-chip,
+    .m3e-filter-chip,
+    .m3e-input-chip,
+    .m3e-suggestion-chip,
     .m3e-fab,
     .m3e-extended-fab,
     .m3e-navigation-item__state,
@@ -58,6 +61,9 @@
     .m3e-icon-button,
     .m3e-card--interactive,
     .m3e-assist-chip,
+    .m3e-filter-chip,
+    .m3e-input-chip,
+    .m3e-suggestion-chip,
     .m3e-fab,
     .m3e-extended-fab,
     .m3e-navigation-item__state,
@@ -152,6 +158,9 @@
         .m3e-icon-button,
         .m3e-card--interactive,
         .m3e-assist-chip,
+        .m3e-filter-chip,
+        .m3e-input-chip,
+        .m3e-suggestion-chip,
         .m3e-fab,
         .m3e-extended-fab,
         .m3e-navigation-drawer-item,
@@ -170,6 +179,9 @@
       .m3e-icon-button,
       .m3e-card--interactive,
       .m3e-assist-chip,
+      .m3e-filter-chip,
+      .m3e-input-chip,
+      .m3e-suggestion-chip,
       .m3e-fab,
       .m3e-extended-fab,
       .m3e-navigation-drawer-item,
@@ -187,6 +199,9 @@
       .m3e-icon-button,
       .m3e-card--interactive,
       .m3e-assist-chip,
+      .m3e-filter-chip,
+      .m3e-input-chip,
+      .m3e-suggestion-chip,
       .m3e-fab,
       .m3e-extended-fab,
       .m3e-navigation-drawer-item,
@@ -204,6 +219,9 @@
       .m3e-icon-button,
       .m3e-card--interactive,
       .m3e-assist-chip,
+      .m3e-filter-chip,
+      .m3e-input-chip,
+      .m3e-suggestion-chip,
       .m3e-fab,
       .m3e-extended-fab,
       .m3e-navigation-drawer-item,
@@ -218,6 +236,9 @@
       .m3e-icon-button,
       .m3e-card--interactive,
       .m3e-assist-chip,
+      .m3e-filter-chip,
+      .m3e-input-chip,
+      .m3e-suggestion-chip,
       .m3e-fab,
       .m3e-extended-fab,
       .m3e-navigation-item__state,
@@ -239,6 +260,9 @@
       .m3e-icon-button,
       .m3e-card--interactive,
       .m3e-assist-chip,
+      .m3e-filter-chip,
+      .m3e-input-chip,
+      .m3e-suggestion-chip,
       .m3e-fab,
       .m3e-extended-fab,
       .m3e-navigation-drawer-item,
@@ -267,6 +291,17 @@
   }
 
   /*
+   * Filter chips: the label is the host; the native checkbox inside takes the focus.
+   */
+  :where(.m3e-filter-chip):has(> .m3e-filter-chip__input:focus-visible)::before {
+    --_m3e-state-layer-opacity: var(--m3e-sys-state-focus-state-layer-opacity);
+  }
+
+  :where(.m3e-filter-chip):has(> .m3e-filter-chip__input:disabled)::before {
+    display: none;
+  }
+
+  /*
    * Search results are combobox options with virtual focus (aria-activedescendant, the input keeps
    * DOM focus): the keyboard's current option carries data-focus-visible instead of :focus-visible.
    */
@@ -286,6 +321,9 @@
       .m3e-icon-button,
       .m3e-card--interactive,
       .m3e-assist-chip,
+      .m3e-filter-chip,
+      .m3e-input-chip,
+      .m3e-suggestion-chip,
       .m3e-fab,
       .m3e-extended-fab,
       .m3e-navigation-item__state,
@@ -330,6 +368,9 @@
       .m3e-icon-button,
       .m3e-card--interactive,
       .m3e-assist-chip,
+      .m3e-filter-chip,
+      .m3e-input-chip,
+      .m3e-suggestion-chip,
       .m3e-fab,
       .m3e-extended-fab,
       .m3e-navigation-item__state,

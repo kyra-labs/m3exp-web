@@ -899,6 +899,118 @@ describe('switch values (M8)', () => {
   });
 });
 
+describe('filter / input / suggestion chip values (M8)', () => {
+  const decl = declarations(output.get('components/chips-defaults.css')!);
+  const kt = inputs.material3Sources['Chip.kt']!.replace(/\r\n/g, '\n');
+  const samples = inputs.material3Sources['ChipSamples.kt']!.replace(/\r\n/g, '\n');
+  const t = (name: string) => decl.get(`--m3e-comp-${name}`);
+  const tok = (file: string, name: string) =>
+    declarations(output.get(`components/${file}.css`)!).get(`--m3e-comp-${name}`);
+  const member = (object: string, pattern: RegExp) =>
+    pattern.exec(kt.slice(kt.indexOf(`public object ${object} {`)))?.[1];
+
+  it('spacing: 8dp default arrangement, 4dp compact next to icons (expressive)', () => {
+    expect(t('chip-default-horizontal-spacing')).toBe(
+      `${member('SuggestionChipDefaults', /HorizontalSpacing: Dp = (\d+)\.dp/)!}px`,
+    );
+    expect(t('filter-chip-horizontal-spacing')).toBe('8px');
+    expect(t('filter-chip-compact-horizontal-spacing')).toBe(
+      `${member('FilterChipDefaults', /CompactHorizontalSpacing: Dp = (\d+)\.dp/)!}px`,
+    );
+    expect(t('input-chip-compact-horizontal-spacing')).toBe('4px');
+    expect(t('filter-chip-content-padding-horizontal')).toBe('8px');
+    expect(t('suggestion-chip-content-padding-horizontal')).toBe('8px');
+  });
+
+  it('input chip padding: start 4dp with an avatar or no leading icon (8dp with one), end 8dp with a trailing icon (else 4dp)', () => {
+    expect(kt).toContain('val start = if (hasAvatar || !hasLeadingIcon) 4.dp else 8.dp');
+    expect(kt).toContain('val end = if (hasTrailingIcon) 8.dp else 4.dp');
+    expect(t('input-chip-content-padding-start')).toBe('4px');
+    expect(t('input-chip-content-padding-start-icon')).toBe('8px');
+    expect(t('input-chip-content-padding-end')).toBe('4px');
+    expect(t('input-chip-content-padding-end-icon')).toBe('8px');
+  });
+
+  it('flat filter chip hover is Level1 selected or not (owner decision M8 #11)', () => {
+    expect(t('filter-chip-flat-shadow-hover')).toBe('var(--m3e-sys-elevation-level1-shadow)');
+    expect(tok('filter-chip', 'filter-chip-flat-container-shadow-unselected-hover')).toBe(
+      'var(--m3e-sys-elevation-level0-shadow)',
+    );
+    expect(t('filter-chip-flat-shadow')).toBe('var(--m3e-sys-elevation-level0-shadow)');
+    expect(t('filter-chip-flat-shadow-pressed')).toBe('var(--m3e-sys-elevation-level0-shadow)');
+    expect(t('filter-chip-flat-shadow-dragged')).toBe('var(--m3e-sys-elevation-level4-shadow)');
+    expect(t('filter-chip-flat-shadow-disabled')).toBe(t('filter-chip-flat-shadow'));
+    expect(kt).toContain(
+      'hoveredElevation: Dp = FilterChipTokens.FlatSelectedHoverContainerElevation',
+    );
+  });
+
+  it('expressive overloads: tonal leading icon, ChipsTokens shapes, FastSpatial morph', () => {
+    expect(t('filter-chip-leading-icon-color-tonal')).toBe(
+      'var(--m3e-sys-color-on-surface-variant)',
+    );
+    expect(tok('filter-chip', 'filter-chip-leading-icon-color-unselected')).toBe(
+      'var(--m3e-sys-color-primary)',
+    );
+    expect(t('input-chip-leading-icon-color-tonal')).toBe(
+      'var(--m3e-sys-color-on-surface-variant)',
+    );
+    expect(tok('chips', 'chips-shape-unselected')).toBe('var(--m3e-sys-shape-corner-medium)');
+    expect(tok('chips', 'chips-shape-selected')).toBe('var(--m3e-sys-shape-corner-full)');
+    expect(tok('chips', 'chips-shape-pressed')).toBe('var(--m3e-sys-shape-corner-small)');
+    expect(tok('filter-chip', 'filter-chip-container-shape')).toBe(
+      'var(--m3e-sys-shape-corner-small)',
+    );
+    for (const field of ['duration', 'easing', 'damping-ratio', 'stiffness']) {
+      expect(t(`selectable-chip-shape-${field}`)).toBe(
+        `var(--m3e-sys-motion-spring-fast-spatial-${field})`,
+      );
+    }
+  });
+
+  it('icon slot motion: baseline slow/fast effects fades, fast spatial expand, default effects shrink; expressive default effects fades, fast spatial both ways', () => {
+    const spring = (name: string) => t(`selectable-chip-${name}-duration`);
+    expect(spring('icon-fade-in')).toBe('var(--m3e-sys-motion-spring-slow-effects-duration)');
+    expect(spring('icon-fade-out')).toBe('var(--m3e-sys-motion-spring-fast-effects-duration)');
+    expect(spring('icon-expand')).toBe('var(--m3e-sys-motion-spring-fast-spatial-duration)');
+    expect(spring('icon-shrink')).toBe('var(--m3e-sys-motion-spring-default-effects-duration)');
+    expect(spring('expressive-icon-fade-in')).toBe(
+      'var(--m3e-sys-motion-spring-default-effects-duration)',
+    );
+    expect(spring('expressive-icon-fade-out')).toBe(
+      'var(--m3e-sys-motion-spring-default-effects-duration)',
+    );
+    expect(spring('expressive-icon-expand')).toBe(
+      'var(--m3e-sys-motion-spring-fast-spatial-duration)',
+    );
+    expect(spring('expressive-icon-shrink')).toBe(
+      'var(--m3e-sys-motion-spring-fast-spatial-duration)',
+    );
+  });
+
+  it('elevated suggestion chip disabled colors read AssistChipTokens', () => {
+    expect(t('suggestion-chip-elevated-disabled-container-color')).toBe(
+      'color-mix(in srgb, var(--m3e-sys-color-on-surface) calc(0.12 * 100%), transparent)',
+    );
+    expect(t('suggestion-chip-elevated-disabled-icon-color')).toBe(
+      'color-mix(in srgb, var(--m3e-sys-color-on-surface) calc(0.38 * 100%), transparent)',
+    );
+  });
+
+  it('chip groups: ChipGroupReflowSample pads every chip 4dp on both sides', () => {
+    expect(samples).toContain('Modifier.padding(horizontal = 4.dp)');
+    expect(t('chip-set-chip-padding-horizontal')).toBe('4px');
+    expect(output.get('PARITY.md')).toMatch(
+      /ChipSamples\.kt@\w+ L\d+ \| `--m3e-comp-chip-set-chip-padding-horizontal`/,
+    );
+  });
+
+  it('roles: assist / suggestion Role.Button, filter / input Role.Checkbox', () => {
+    expect(kt).toContain('modifier = modifier.semantics { role = Role.Button },');
+    expect(kt.split('modifier = modifier.semantics { role = Role.Checkbox },')).toHaveLength(3);
+  });
+});
+
 describe('navigation suite scaffold values (M7)', () => {
   const css = output.get('components/navigation-suite-defaults.css')!;
   const decl = declarations(css.slice(0, css.indexOf('@media')));

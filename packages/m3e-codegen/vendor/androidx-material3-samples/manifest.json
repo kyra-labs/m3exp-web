@@ -5,6 +5,7 @@
   "files": {
     "AppBarSamples.kt": "b1654eee22e20d0bfdd5a62245f34dd46a7cfe71ad0d3287b20eca48677cad7f",
     "CheckboxSamples.kt": "ec5deba4b7ea2e284e7603ea6f4ec4ce539a80d26c54ea874dcbe503f6369384",
+    "ChipSamples.kt": "e4dac57378aac854a2a9ed896eeedbb55a5f23fb26b8d7dd9343ff22b882fe45",
     "DrawerSamples.kt": "bd7c71e125306512739fb5866e0259e7fad0a5fb701acdf778b63dee46355cf7",
     "NavigationRailSamples.kt": "a37c29e08cccae0bb2b1f50484475b7a9d7393c15d4d9bef87f7d17f405b70ed",
     "ProgressIndicatorSamples.kt": "fecf5ba818ccc681f361354c69e259a14a6bf8646c17bea1f661c2c402171f74",

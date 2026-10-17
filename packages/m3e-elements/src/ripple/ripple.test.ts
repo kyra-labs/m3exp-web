@@ -210,6 +210,37 @@ describe('attachAutoRipple', () => {
     });
   });
 
+  it('draws a filter chip press (its input) on the chip; Space only; not disabled; input chips and suggestion chips too', () => {
+    const html =
+      '<label class="m3e-filter-chip"><input class="m3e-filter-chip__input" type="checkbox"%>' +
+      '<span class="m3e-filter-chip__label">A</span></label>';
+    const root = mount(html.replace('%', ''));
+    const input = root.querySelector('input')!;
+    box(root, 0, 0, 80, 32);
+    down(input, 10, 16);
+    expect(ripple(root)).toMatchObject({ ripple: true, pressed: true });
+    up(root);
+    key(input, 'keydown', 'Enter');
+    expect(root.hasAttribute('data-pressed')).toBe(false);
+    key(input, 'keydown', ' ');
+    expect(root.hasAttribute('data-pressed')).toBe(true);
+    key(input, 'keyup', ' ');
+    const disabled = mount(html.replace('%', ' disabled'));
+    down(disabled.querySelector('input')!);
+    expect(ripple(disabled)).toMatchObject({ ripple: false, pressed: false });
+
+    const input2 = mount(
+      '<div class="m3e-input-chip" tabindex="0"><div class="m3e-input-chip__cell"><span class="m3e-input-chip__label">B</span><button class="m3e-input-chip__remove"></button></div></div>',
+    );
+    down(input2.querySelector('button')!);
+    expect(ripple(input2)).toMatchObject({ ripple: true, pressed: true });
+    up(input2);
+    const suggestion = mount('<button class="m3e-suggestion-chip"></button>');
+    down(suggestion);
+    expect(ripple(suggestion)).toMatchObject({ ripple: true, pressed: true });
+    up(suggestion);
+  });
+
   it('ignores disabled triggers and hosts', () => {
     const disabled = mount('<button class="m3e-button" disabled></button>');
     down(disabled);

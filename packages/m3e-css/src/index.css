@@ -26,7 +26,11 @@
 @import './navigation-bar.css'; /* @deprecated (D4) */
 @import './navigation-rail.css'; /* @deprecated (D4) */
 @import './top-app-bar.css';
-@import './assist-chip.css';
+@import './assist-chip.css'; /* the chip files share chip.css */
+@import './filter-chip.css';
+@import './input-chip.css';
+@import './suggestion-chip.css';
+@import './chip-set.css';
 @import './loading-indicator.css';
 @import './fab.css';
 @import './floating-toolbar.css'; /* before fab-menu.css: esbuild keeps the last @import of fab.css */

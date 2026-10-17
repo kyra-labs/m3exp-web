@@ -1,0 +1,288 @@
+---
+import ChipsPlayground from '../../islands/ChipsPlayground.tsx';
+import Base from '../../layouts/Base.astro';
+
+// Filter chips in the m3e-css contract (filter-chip.css): flat / elevated × baseline / expressive
+// (owner decision M8 #9), each with Compose's sample states.
+const FILTER_ROWS = [
+  { id: 'flat', title: 'Flat', mods: '' },
+  { id: 'elevated', title: 'Elevated', mods: ' m3e-filter-chip--elevated' },
+  { id: 'expressive', title: 'Flat, expressive', mods: ' m3e-filter-chip--expressive' },
+  {
+    id: 'elevated-expressive',
+    title: 'Elevated, expressive',
+    mods: ' m3e-filter-chip--elevated m3e-filter-chip--expressive',
+  },
+];
+const FILTER_CHIPS = [
+  { id: 'unselected', label: 'Filter', checked: false },
+  { id: 'selected', label: 'Selected', checked: true },
+  { id: 'leading', label: 'Home', checked: false, leading: 'home' },
+  { id: 'trailing', label: 'Sort', checked: true, trailing: 'arrow_drop_down' },
+  { id: 'disabled', label: 'Disabled', checked: false, disabled: true },
+  { id: 'disabled-selected', label: 'Disabled', checked: true, disabled: true },
+  { id: 'dragged', label: 'Dragged', checked: false, dragged: true },
+];
+
+// Input chips: the <m3e-chip-set> grid (owner decision M8 #10); avatar, leading icon, plain.
+const INPUT_ROWS = [
+  { id: 'baseline', title: 'Baseline', mods: '' },
+  { id: 'expressive', title: 'Expressive', mods: ' m3e-input-chip--expressive' },
+];
+
+const SUGGESTION_ROWS = [
+  { id: 'flat', title: 'Flat', mods: '' },
+  { id: 'elevated', title: 'Elevated', mods: ' m3e-suggestion-chip--elevated' },
+];
+---
+
+<Base title="Chips">
+  <link rel="stylesheet" href="/icons/docs-icons.css" slot="head" />
+  <h1>Chips</h1>
+  <p>
+    Filter, input and suggestion chips (COMPONENT_SPEC §18; Compose <code>FilterChip</code>, <code>InputChip</code>, <code>SuggestionChip</code> and their elevated variants). They share the <a
+      href="/components/assist-chip/">assist chip</a
+    >'s base: 32dp high, label large, Level0 flat with a 1dp outline or Level1 elevated, a ≥ 48dp
+    target.
+  </p>
+
+  <section aria-labelledby="filter-heading" id="static-filter-chips">
+    <h2 id="filter-heading">Filter chips (m3e-css)</h2>
+    <p>
+      A <code>&lt;label class="m3e-filter-chip"&gt;</code> around a native checkbox (<code>.m3e-filter-chip__input</code>; Compose's Role.Checkbox), the <code>__leading</code> slot with the <code>check</code> icon and the <code>__label</code>. Space toggles it with no JavaScript, and the check
+      expands in when it is selected. An icon in the leading slot shows while unselected (the check
+      replaces it). Hovering a flat chip raises it to Level1, selected or not, as Compose's <code>filterChipElevation</code>.
+      With <code>--expressive</code> a chip opts into Compose's <code>shapes</code> overload: 12dp corners, full when
+      selected and 8dp while pressed, morphing on the fast spatial spring; tonal colors and 4dp
+      spacing next to icons.
+    </p>
+    {
+      FILTER_ROWS.map((row) => (
+        <div class="docs-button-row" data-testid={`filter-${row.id}`}>
+          {FILTER_CHIPS.map((chip) => (
+            <label
+              class={`m3e-filter-chip${row.mods}`}
+              data-dragged={chip.dragged ? '' : undefined}
+              data-testid={`filter-${row.id}-${chip.id}`}
+            >
+              <input
+                class="m3e-filter-chip__input"
+                type="checkbox"
+                checked={chip.checked}
+                disabled={chip.disabled}
+              />
+              <span class="m3e-filter-chip__leading" aria-hidden="true">
+                <span class="m3e-icon m3e-filter-chip__check" data-fill>
+                  check
+                </span>
+                {chip.leading ? (
+                  <span class="m3e-icon" data-fill>
+                    {chip.leading}
+                  </span>
+                ) : null}
+              </span>
+              <span class="m3e-filter-chip__label">
+                {chip.label}
+              </span>
+              {chip.trailing ? (
+                <span class="m3e-icon" aria-hidden="true">
+                  {chip.trailing}
+                </span>
+              ) : null}
+            </label>
+          ))}
+        </div>
+      ))
+    }
+  </section>
+
+  <section aria-labelledby="input-heading">
+    <h2 id="input-heading">Input chips (&lt;m3e-chip-set&gt;)</h2>
+    <p>
+      Input chips are rows of a grid. <code>&lt;m3e-chip-set&gt;</code> renders the <code>.m3e-chip-set</code> around its chips and wires them as React Aria's TagGroup does: one tab stop, arrow keys between the
+      chips, and Backspace or Delete on a focused chip (or its remove button, labelled
+      "Remove&nbsp;<i>name</i>") emits <code>remove</code>; unless canceled, the chip goes and the focus moves to the
+      next one. An avatar (<code>.m3e-input-chip__avatar</code>: an image or content) takes precedence
+      over a leading icon.
+    </p>
+    {
+      INPUT_ROWS.map((row) => (
+        <m3e-chip-set label={`${row.title} recipients`} data-testid={`input-${row.id}`}>
+          <div class={`m3e-input-chip${row.mods}`} data-value="ada">
+            <div class="m3e-input-chip__cell">
+              <span class="m3e-input-chip__avatar">
+                <span class="m3e-icon" aria-hidden="true">
+                  person
+                </span>
+              </span>
+              <span class="m3e-input-chip__label">Ada Lovelace</span>
+              <button class="m3e-input-chip__remove">
+                <span class="m3e-icon" aria-hidden="true">
+                  close
+                </span>
+              </button>
+            </div>
+          </div>
+          <div class={`m3e-input-chip${row.mods}`} data-value="mail">
+            <div class="m3e-input-chip__cell">
+              <span class="m3e-icon" aria-hidden="true">
+                mail
+              </span>
+              <span class="m3e-input-chip__label">grace@example.com</span>
+              <button class="m3e-input-chip__remove">
+                <span class="m3e-icon" aria-hidden="true">
+                  close
+                </span>
+              </button>
+            </div>
+          </div>
+          <div class={`m3e-input-chip${row.mods}`} data-value="alan" aria-selected="true">
+            <div class="m3e-input-chip__cell">
+              <span class="m3e-input-chip__label">Alan (selected)</span>
+              <button class="m3e-input-chip__remove">
+                <span class="m3e-icon" aria-hidden="true">
+                  close
+                </span>
+              </button>
+            </div>
+          </div>
+          <div class={`m3e-input-chip${row.mods}`} data-value="plain">
+            <div class="m3e-input-chip__cell">
+              <span class="m3e-input-chip__label">Plain</span>
+            </div>
+          </div>
+          <div class={`m3e-input-chip${row.mods}`} data-value="off" aria-disabled="true">
+            <div class="m3e-input-chip__cell">
+              <span class="m3e-input-chip__avatar">
+                <span class="m3e-icon" aria-hidden="true">
+                  person
+                </span>
+              </span>
+              <span class="m3e-input-chip__label">Disabled</span>
+              <button class="m3e-input-chip__remove">
+                <span class="m3e-icon" aria-hidden="true">
+                  close
+                </span>
+              </button>
+            </div>
+          </div>
+          <div class={`m3e-input-chip${row.mods}`} data-value="dragged" data-dragged>
+            <div class="m3e-input-chip__cell">
+              <span class="m3e-input-chip__label">Dragged</span>
+              <button class="m3e-input-chip__remove">
+                <span class="m3e-icon" aria-hidden="true">
+                  close
+                </span>
+              </button>
+            </div>
+          </div>
+        </m3e-chip-set>
+      ))
+    }
+    <p aria-live="polite" id="input-removed">Removed: none.</p>
+  </section>
+
+  <section aria-labelledby="suggestion-heading" id="static-suggestion-chips">
+    <h2 id="suggestion-heading">Suggestion chips (m3e-css)</h2>
+    <p>
+      Buttons (or links) like the assist chip, with one optional icon before the label; the label is <code>on-surface-variant</code>.
+    </p>
+    {
+      SUGGESTION_ROWS.map((row) => (
+        <div class="docs-button-row" data-testid={`suggestion-${row.id}`}>
+          <button
+            type="button"
+            class={`m3e-suggestion-chip${row.mods}`}
+            data-testid={`suggestion-${row.id}-plain`}
+          >
+            <span class="m3e-suggestion-chip__label">Sounds good</span>
+          </button>
+          <button
+            type="button"
+            class={`m3e-suggestion-chip${row.mods}`}
+            data-testid={`suggestion-${row.id}-icon`}
+          >
+            <span class="m3e-icon" aria-hidden="true">
+              chat
+            </span>
+            <span class="m3e-suggestion-chip__label">Reply</span>
+          </button>
+          <button
+            type="button"
+            class={`m3e-suggestion-chip${row.mods}`}
+            disabled
+            data-testid={`suggestion-${row.id}-disabled`}
+          >
+            <span class="m3e-icon" aria-hidden="true">
+              chat
+            </span>
+            <span class="m3e-suggestion-chip__label">Disabled</span>
+          </button>
+          <span
+            class={`m3e-suggestion-chip${row.mods}`}
+            data-dragged
+            data-testid={`suggestion-${row.id}-dragged`}
+          >
+            <span class="m3e-suggestion-chip__label">Dragged</span>
+          </span>
+        </div>
+      ))
+    }
+  </section>
+
+  <section aria-labelledby="set-heading">
+    <h2 id="set-heading">Chip sets</h2>
+    <p>
+      <code>.m3e-chip-set</code> wraps chips onto 48dp rows, 8dp apart (Compose's
+      ChipGroupReflowSample); <code>--single-line</code> (the <code>single-line</code> attribute) keeps
+      one scrolling row (ChipGroupSingleLineSample). In <code>&lt;m3e-chip-set&gt;</code> the set is one
+      tab stop with arrow keys between its chips.
+    </p>
+    <m3e-chip-set label="Cuisine" single-line data-testid="set-single-line">
+      {
+        ['Italian', 'Indian', 'Japanese', 'Mexican', 'Ethiopian', 'Thai', 'Greek', 'Korean'].map(
+          (label, i) => (
+            <label class="m3e-filter-chip">
+              <input class="m3e-filter-chip__input" type="checkbox" checked={i === 1} />
+              <span class="m3e-filter-chip__leading" aria-hidden="true">
+                <span class="m3e-icon m3e-filter-chip__check" data-fill>
+                  check
+                </span>
+              </span>
+              <span class="m3e-filter-chip__label">{label}</span>
+            </label>
+          ),
+        )
+      }
+    </m3e-chip-set>
+  </section>
+
+  <section aria-labelledby="react-heading">
+    <h2 id="react-heading">React</h2>
+    <p>
+      <code>&lt;FilterChip variant isExpressive isSelected defaultSelected onChange leadingIcon trailingIcon isDisabled name value&gt;</code> (React Aria <code>useCheckbox</code>), <code>&lt;InputChipGroup onRemove selectionMode isExpressive&gt;</code> with <code>&lt;InputChip id avatar leadingIcon isDisabled&gt;</code> children (React Aria <code>useTagGroup</code>), <code>&lt;SuggestionChip variant icon onPress href&gt;</code> and <code>&lt;ChipSet singleLine&gt;</code>; the same DOM as the markup above.
+    </p>
+    <ChipsPlayground client:only="react" />
+  </section>
+</Base>
+
+<script>
+  // Registers the elements (<m3e-chip-set>) as well.
+  import { attachAutoRipple } from '@kyralabs/m3exp-web/elements';
+
+  // The ripple for the plain-HTML chips (React drives its own).
+  for (const id of ['static-filter-chips', 'static-suggestion-chips']) {
+    const section = document.getElementById(id);
+    if (section) attachAutoRipple(section, new AbortController().signal);
+  }
+  for (const set of document.querySelectorAll('m3e-chip-set')) {
+    attachAutoRipple(set as HTMLElement, new AbortController().signal);
+  }
+
+  // Input chips: report removals (the element removes the chip unless the event is canceled).
+  const removed = document.getElementById('input-removed');
+  document.addEventListener('remove', (e) => {
+    const detail = (e as CustomEvent<{ value: string }>).detail;
+    if (removed) removed.textContent = `Removed: ${detail.value}.`;
+  });
+</script>

@@ -13,6 +13,11 @@ export interface ShapeSpringOptions {
    * fast effects spring, spatial springs jump.
    */
   spring: 'default-effects' | 'fast-spatial';
+  /**
+   * False leaves the corners to m3e-css (a chip without the expressive morph): no inline radius
+   * is written, and one written earlier is removed. Default true.
+   */
+  enabled?: boolean;
 }
 
 /**
@@ -22,13 +27,21 @@ export interface ShapeSpringOptions {
  */
 export function useShapeSpring(
   ref: RefObject<HTMLElement | null>,
-  { shapeVar, spring }: ShapeSpringOptions,
+  { shapeVar, spring, enabled = true }: ShapeSpringOptions,
   stateKey: string,
 ): void {
   const springRef = useRef<LengthSpring | null>(null);
   useLayoutEffect(() => {
     const el = ref.current;
     if (!el) return;
+    if (!enabled) {
+      if (springRef.current) {
+        springRef.current.stop();
+        springRef.current = null;
+        el.style.borderRadius = '';
+      }
+      return;
+    }
     const radius = (springRef.current ??= new LengthSpring(el, 'borderRadius'));
     const resolved = Number.parseFloat(getComputedStyle(el).getPropertyValue(shapeVar));
     if (!Number.isFinite(resolved)) return;
@@ -38,7 +51,7 @@ export function useShapeSpring(
     const token =
       spring === 'fast-spatial' ? spring : reducedMotion() ? 'fast-effects' : 'default-effects';
     radius.to(target, radius.value === null ? null : readSpring(el, token));
-  }, [ref, shapeVar, spring, stateKey]);
+  }, [ref, shapeVar, spring, enabled, stateKey]);
 
   useLayoutEffect(
     () => () => {

@@ -1,0 +1,50 @@
+/*
+ * Chip set (COMPONENT_SPEC §18): a group of chips that wraps onto more lines (Compose's
+ * ChipGroupReflowSample, a FlowRow) or, with --single-line, scrolls sideways
+ * (ChipGroupSingleLineSample, a Row with horizontalScroll).
+ *
+ *   <div class="m3e-chip-set" role="group" aria-label="Filters">…chips…</div>
+ *   <div class="m3e-chip-set" role="grid" aria-label="Recipients">…input chips…</div>
+ *
+ * Layout only; keyboarding (one tab stop, arrow keys between chips, Backspace / Delete removing
+ * the focused input chip) comes from `<m3e-chip-set>` (m3e-elements) or m3e-react.
+ *
+ * Sources (compose/material3 @ 19991f2c): ChipSamples.kt ChipGroupReflowSample /
+ * ChipGroupSingleLineSample pad every chip 4dp on both sides (chips-defaults.css), so chips are
+ * 8dp apart and the first one 4dp in; each chip is laid out at the minimum interactive size
+ * (Chip.kt Surface → minimumInteractiveComponentSize), so the 32dp chips sit centred in 48dp rows.
+ */
+@import '@kyralabs/m3e-tokens/components/chips.css';
+@import '@kyralabs/m3e-tokens/components/chips-defaults.css';
+@import '@kyralabs/m3e-tokens/components/button-defaults.css';
+
+@layer m3e.components {
+  .m3e-chip-set {
+    /* 48dp rows: the space a 32dp chip leaves, above and below it. */
+    --_m3e-chip-set-row-gap: calc(
+      var(--m3e-comp-minimum-interactive-component-size) - var(--m3e-comp-chips-height)
+    );
+
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--_m3e-chip-set-row-gap)
+      calc(
+        var(--m3e-comp-chip-set-chip-padding-horizontal) +
+          var(--m3e-comp-chip-set-chip-padding-horizontal)
+      );
+    box-sizing: border-box;
+    padding-block: calc(var(--_m3e-chip-set-row-gap) / 2);
+    padding-inline: var(--m3e-comp-chip-set-chip-padding-horizontal);
+  }
+
+  .m3e-chip-set--single-line {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .m3e-chip-set--single-line > * {
+    flex: none;
+  }
+}

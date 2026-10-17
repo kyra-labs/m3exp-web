@@ -1,0 +1,105 @@
+/*
+ * Suggestion chip: flat (default) and elevated (COMPONENT_SPEC §18). No JavaScript needed;
+ * m3e-react adds React Aria behavior on the same classes. A button (or a link) that suggests a
+ * response or a search, e.g. a smart reply.
+ *
+ *   <button type="button" class="m3e-suggestion-chip">
+ *     <span class="m3e-icon" aria-hidden="true">lightbulb</span>
+ *     <span class="m3e-suggestion-chip__label">Suggestion</span>
+ *   </button>
+ *   <button type="button" class="m3e-suggestion-chip m3e-suggestion-chip--elevated">…</button>
+ *
+ * Compose gives a suggestion chip one optional icon, before the label. The label element is
+ * required (spaced from both sides, as the assist chip's).
+ *
+ * Sources (compose/material3 @ 19991f2c, Chip.kt; values in chips-defaults.css, lines in
+ * PARITY.md):
+ * - SuggestionChip / ElevatedSuggestionChip L1528-1559 / L1761-1790 → Chip() L3186-3231 (role
+ *   Button, minimum interactive size), SuggestionChipTokens shape, height and label type style;
+ *   `icon` is the leading icon, there is no trailing one.
+ * - Colors: defaultSuggestionChipColors L3971-3989 (flat: transparent container, label
+ *   on-surface-variant, icon primary) and defaultElevatedSuggestionChipColors L3091-3111, whose
+ *   disabled container and icon read AssistChipTokens (the same values). Disabled colors are the
+ *   token color at its opacity (Color.copy(alpha)). Hover, focus and press change no color.
+ * - Elevation: suggestionChipElevation L2985-3000 (flat: Level0 but dragged Level4) and
+ *   elevatedSuggestionChipElevation L3125-3140; the ElevationDefaults tweens (chip.css).
+ * - Border: suggestionChipBorder L3011-3019 (flat only; ElevatedSuggestionChip passes null).
+ * - Layout: SuggestionChipDefaults.ContentPadding (8dp) and DefaultHorizontalArrangement
+ *   (SuggestionChipDefaults.HorizontalSpacing, 8dp), the assist chip's.
+ */
+@import './chip.css';
+@import '@kyralabs/m3e-tokens/components/suggestion-chip.css';
+@import '@kyralabs/m3e-tokens/components/chips-defaults.css';
+
+@layer m3e.components {
+  .m3e-suggestion-chip {
+    --_m3e-chip-height: var(--m3e-comp-suggestion-chip-container-height);
+    --_m3e-chip-padding-start: var(--m3e-comp-suggestion-chip-content-padding-horizontal);
+    --_m3e-chip-padding-end: var(--m3e-comp-suggestion-chip-content-padding-horizontal);
+    --_m3e-chip-label-start: var(--m3e-comp-chip-default-horizontal-spacing);
+    --_m3e-chip-label-end: var(--m3e-comp-chip-default-horizontal-spacing);
+    --_m3e-chip-shape: var(--m3e-comp-suggestion-chip-container-shape);
+    --_m3e-chip-icon-size: var(--m3e-comp-suggestion-chip-leading-icon-size);
+    --_m3e-chip-font: var(--m3e-comp-suggestion-chip-label-text-font);
+    --_m3e-chip-font-size: var(--m3e-comp-suggestion-chip-label-text-size);
+    --_m3e-chip-font-weight: var(--m3e-comp-suggestion-chip-label-text-weight);
+    --_m3e-chip-line-height: var(--m3e-comp-suggestion-chip-label-text-line-height);
+    --_m3e-chip-tracking: var(--m3e-comp-suggestion-chip-label-text-tracking);
+
+    /* Variant: flat. */
+    --_m3e-chip-outline-width: var(--m3e-comp-suggestion-chip-flat-outline-width);
+    --_m3e-chip-outline-color: var(--m3e-comp-suggestion-chip-flat-outline-color);
+    --_m3e-chip-container: transparent;
+    --_m3e-chip-shadow: var(--_m3e-chip-outline);
+    --_m3e-chip-shadow-hovered: var(--_m3e-chip-outline);
+    --_m3e-chip-shadow-focused: var(--_m3e-chip-outline);
+    --_m3e-chip-shadow-pressed: var(--_m3e-chip-outline);
+    --_m3e-chip-shadow-dragged:
+      var(--m3e-comp-suggestion-chip-container-shadow-dragged), var(--_m3e-chip-outline);
+    --_m3e-chip-shadow-disabled: inset 0 0 0 var(--m3e-comp-suggestion-chip-flat-outline-width)
+      color-mix(
+        in srgb,
+        var(--m3e-comp-suggestion-chip-flat-outline-color-disabled)
+          calc(var(--m3e-comp-suggestion-chip-flat-outline-opacity-disabled) * 100%),
+        transparent
+      );
+    --_m3e-chip-container-disabled: transparent;
+
+    /* Content colors. */
+    --_m3e-chip-label: var(--m3e-comp-suggestion-chip-label-text-color);
+
+    /* Ripple: contentColorFor(transparent / surface-container-low) = on-surface. */
+    --_m3e-chip-state-layer: var(--m3e-sys-color-on-surface);
+    --_m3e-chip-leading: var(--m3e-comp-suggestion-chip-leading-icon-color);
+    --_m3e-chip-trailing: var(--m3e-comp-suggestion-chip-leading-icon-color);
+    --_m3e-chip-label-disabled: color-mix(
+      in srgb,
+      var(--m3e-comp-suggestion-chip-label-text-color-disabled)
+        calc(var(--m3e-comp-suggestion-chip-label-text-opacity-disabled) * 100%),
+      transparent
+    );
+    --_m3e-chip-leading-disabled: color-mix(
+      in srgb,
+      var(--m3e-comp-suggestion-chip-leading-icon-color-disabled)
+        calc(var(--m3e-comp-suggestion-chip-leading-icon-opacity-disabled) * 100%),
+      transparent
+    );
+    --_m3e-chip-trailing-disabled: var(--_m3e-chip-leading-disabled);
+  }
+
+  /* --- Variant: elevated (no border) ------------------------------------------------------- */
+  .m3e-suggestion-chip--elevated {
+    --_m3e-chip-container: var(--m3e-comp-suggestion-chip-elevated-container-color);
+    --_m3e-chip-shadow: var(--m3e-comp-suggestion-chip-elevated-container-shadow);
+    --_m3e-chip-shadow-hovered: var(--m3e-comp-suggestion-chip-elevated-container-shadow-hover);
+    --_m3e-chip-shadow-focused: var(--m3e-comp-suggestion-chip-elevated-container-shadow-focus);
+    --_m3e-chip-shadow-pressed: var(--m3e-comp-suggestion-chip-elevated-container-shadow-pressed);
+    --_m3e-chip-shadow-dragged: var(--m3e-comp-suggestion-chip-container-shadow-dragged);
+    --_m3e-chip-shadow-disabled: var(--m3e-comp-suggestion-chip-elevated-container-shadow-disabled);
+    --_m3e-chip-container-disabled: var(
+      --m3e-comp-suggestion-chip-elevated-disabled-container-color
+    );
+    --_m3e-chip-leading-disabled: var(--m3e-comp-suggestion-chip-elevated-disabled-icon-color);
+    --_m3e-chip-trailing-disabled: var(--m3e-comp-suggestion-chip-elevated-disabled-icon-color);
+  }
+}

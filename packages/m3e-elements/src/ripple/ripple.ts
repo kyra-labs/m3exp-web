@@ -3,10 +3,10 @@ import { PRESS_KEYS, isRippleDisabled, pressRipple, releaseRipple } from '../bas
 /**
  * Press targets m3e-css draws a ripple for: the hosts in the state-layer.css `:where()` lists,
  * plus the proxies (an interactive card's `.m3e-card__action`, a `.m3e-navigation-item`, a
- * checkbox's, radio button's or switch's label or input).
+ * checkbox's, radio button's or switch's label or input, a filter chip's input).
  */
 const TRIGGERS =
-  '.m3e-button,.m3e-icon-button,.m3e-assist-chip,.m3e-fab,.m3e-extended-fab,.m3e-fab-menu__item,.m3e-state-layer,.m3e-card__action,.m3e-navigation-item,.m3e-navigation-drawer-item,.m3e-tab,.m3e-checkbox,.m3e-checkbox__input,.m3e-radio-button,.m3e-radio-button__input,.m3e-switch,.m3e-switch__input';
+  '.m3e-button,.m3e-icon-button,.m3e-assist-chip,.m3e-filter-chip,.m3e-filter-chip__input,.m3e-input-chip,.m3e-suggestion-chip,.m3e-fab,.m3e-extended-fab,.m3e-fab-menu__item,.m3e-state-layer,.m3e-card__action,.m3e-navigation-item,.m3e-navigation-drawer-item,.m3e-tab,.m3e-checkbox,.m3e-checkbox__input,.m3e-radio-button,.m3e-radio-button__input,.m3e-switch,.m3e-switch__input';
 
 /** Pointer id of a keyboard press (real pointer ids are never negative). */
 const KEYBOARD = -1;
@@ -29,6 +29,9 @@ function rippleHost(trigger: Element): HTMLElement | null {
   if (trigger.matches('.m3e-navigation-item')) {
     return trigger.querySelector<HTMLElement>('.m3e-navigation-item__state');
   }
+  // A filter chip (a label around its native checkbox) draws the ripple itself.
+  const chip = trigger.closest<HTMLElement>('.m3e-filter-chip');
+  if (chip) return chip.querySelector(':disabled') ? null : chip;
   // A selection control's 40dp circle (checkbox, radio button; a switch's around its handle),
   // unless its input is disabled.
   const control = trigger.closest('.m3e-checkbox,.m3e-radio-button,.m3e-switch');
@@ -58,7 +61,7 @@ function rippleHost(trigger: Element): HTMLElement | null {
  * - Disabled triggers or hosts (`:disabled`, `aria-disabled="true"`) are ignored.
  * - Keyboard: Enter and Space on the focused trigger press from the center, like `attachRipple`;
  *   links (`a[href]`, `role="link"`) only press on Enter, since Space does not activate them, and
- *   checkboxes, radio buttons and switches only on Space.
+ *   checkboxes (filter chips too), radio buttons and switches only on Space.
  * - Reduced motion and forced colors are handled by m3e-css (motion tokens, hidden overlay).
  *
  * Runs until `signal` aborts, which removes `data-ripple`, `data-pressed` and the ripple variables

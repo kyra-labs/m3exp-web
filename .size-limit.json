@@ -73,6 +73,30 @@
     "limit": "4 KB"
   },
   {
+    "name": "m3e-css: filter chip (incl. the shared chip base)",
+    "path": "packages/m3e-css/dist/filter-chip.css",
+    "rolldown": false,
+    "limit": "2.5 KB"
+  },
+  {
+    "name": "m3e-css: input chip (incl. the shared chip base)",
+    "path": "packages/m3e-css/dist/input-chip.css",
+    "rolldown": false,
+    "limit": "2 KB"
+  },
+  {
+    "name": "m3e-css: suggestion chip (incl. the shared chip base)",
+    "path": "packages/m3e-css/dist/suggestion-chip.css",
+    "rolldown": false,
+    "limit": "2 KB"
+  },
+  {
+    "name": "m3e-css: chip set",
+    "path": "packages/m3e-css/dist/chip-set.css",
+    "rolldown": false,
+    "limit": "1 KB"
+  },
+  {
     "name": "m3e-css: short navigation bar (incl. navigation item)",
     "path": "packages/m3e-css/dist/short-navigation-bar.css",
     "rolldown": false,
@@ -402,6 +426,16 @@
     "limit": "3 KB"
   },
   {
+    "name": "m3e-elements: <m3e-chip-set> entry (ChipSetLayout, RovingFocus; input chip grid wiring and Backspace / Delete removal)",
+    "path": "packages/m3e-elements/dist/chip-set/index.js",
+    "limit": "4 KB"
+  },
+  {
+    "name": "m3e-elements: chip-set-layout entry (ChipSetLayout, used by m3e-react <ChipSet>)",
+    "path": "packages/m3e-elements/dist/chip-set-layout/index.js",
+    "limit": "3 KB"
+  },
+  {
     "name": "m3e-elements: tabs-layout entry (TabsLayout, used by m3e-react <Tabs>)",
     "path": "packages/m3e-elements/dist/tabs-layout/index.js",
     "limit": "6 KB"
@@ -585,6 +619,30 @@
     "limit": "16 KB"
   },
   {
+    "name": "m3e-react: { FilterChip } only (incl. react-aria useCheckbox press/focus + react-stately toggle state, Icon, motion shape spring)",
+    "path": "packages/m3e-react/dist/index.js",
+    "import": "{ FilterChip }",
+    "limit": "18 KB"
+  },
+  {
+    "name": "m3e-react: { InputChipGroup, InputChip } only (incl. react-aria useTagGroup / useTag grid list, button, press, Icon, motion shape spring)",
+    "path": "packages/m3e-react/dist/index.js",
+    "import": "{ InputChipGroup, InputChip }",
+    "limit": "38 KB"
+  },
+  {
+    "name": "m3e-react: { SuggestionChip } only (incl. react-aria press/focus/hover button and link)",
+    "path": "packages/m3e-react/dist/index.js",
+    "import": "{ SuggestionChip }",
+    "limit": "14 KB"
+  },
+  {
+    "name": "m3e-react: { ChipSet } only (incl. ChipSetLayout + RovingFocus from m3e-elements)",
+    "path": "packages/m3e-react/dist/index.js",
+    "import": "{ ChipSet }",
+    "limit": "6 KB"
+  },
+  {
     "name": "m3exp-web/react: { Icon } only",
     "path": "packages/m3exp-web/dist/react.js",
     "import": "{ Icon }",
@@ -592,10 +650,10 @@
     "limit": "1 KB"
   },
   {
-    "name": "m3exp-web (root): { Icon } (the root entry registers every custom element by design, with <m3e-menu>, <m3e-split-button>, <m3e-button-group>, the toolbars, the progress indicators, <m3e-search>, the navigation bar / rails, <m3e-navigation-drawer>, <m3e-navigation-suite>, the window size class observer, <m3e-tabs> and the canonical layouts (~51.8 kB with their lazily imported pane-motion / pane-expansion entries); a leaked React component adds ~10 kB of react-aria. Raise with m3e-elements (all); D17)",
+    "name": "m3exp-web (root): { Icon } (the root entry registers every custom element by design, with <m3e-menu>, <m3e-split-button>, <m3e-button-group>, the toolbars, the progress indicators, <m3e-search>, the navigation bar / rails, <m3e-navigation-drawer>, <m3e-navigation-suite>, the window size class observer, <m3e-tabs>, <m3e-checkbox>, <m3e-chip-set> and the canonical layouts (~52.6 kB with their lazily imported pane-motion / pane-expansion entries); a leaked React component adds ~10 kB of react-aria. Raised 53 → 54 kB for <m3e-chip-set> (M8). Raise with m3e-elements (all); D17)",
     "path": "packages/m3exp-web/dist/index.js",
     "import": "{ Icon }",
     "ignore": ["react", "react-dom"],
-    "limit": "53 KB"
+    "limit": "54 KB"
   }
 ]
