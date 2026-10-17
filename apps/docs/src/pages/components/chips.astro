@@ -52,7 +52,7 @@ const SUGGESTION_ROWS = [
       A <code>&lt;label class="m3e-filter-chip"&gt;</code> around a native checkbox (<code>.m3e-filter-chip__input</code>; Compose's Role.Checkbox), the <code>__leading</code> slot with the <code>check</code> icon and the <code>__label</code>. Space toggles it with no JavaScript, and the check
       expands in when it is selected. An icon in the leading slot shows while unselected (the check
       replaces it). Hovering a flat chip raises it to Level1, selected or not, as Compose's <code>filterChipElevation</code>.
-      <code>--expressive</code> opts into Compose's <code>shapes</code> overload: 12dp corners, full when
+      With <code>--expressive</code> a chip opts into Compose's <code>shapes</code> overload: 12dp corners, full when
       selected and 8dp while pressed, morphing on the fast spatial spring; tonal colors and 4dp
       spacing next to icons.
     </p>
@@ -100,8 +100,8 @@ const SUGGESTION_ROWS = [
     <h2 id="input-heading">Input chips (&lt;m3e-chip-set&gt;)</h2>
     <p>
       Input chips are rows of a grid. <code>&lt;m3e-chip-set&gt;</code> renders the <code>.m3e-chip-set</code> around its chips and wires them as React Aria's TagGroup does: one tab stop, arrow keys between the
-      chips, and Backspace or Delete on a focused chip (or its remove button, labelled "Remove
-      <i>name</i>") emits <code>remove</code>; unless canceled, the chip goes and the focus moves to the
+      chips, and Backspace or Delete on a focused chip (or its remove button, labelled
+      "Remove&nbsp;<i>name</i>") emits <code>remove</code>; unless canceled, the chip goes and the focus moves to the
       next one. An avatar (<code>.m3e-input-chip__avatar</code>: an image or content) takes precedence
       over a leading icon.
     </p>
