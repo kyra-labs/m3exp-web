@@ -425,6 +425,34 @@ chip. Attributes: `label` (the set's accessible name), `single-line` (one scroll
 assist and suggestion chips need no element: a filter chip is a native checkbox. The behavior
 lives in the `chip-set-layout.js` entry (`ChipSetLayout`), which m3e-react's `<ChipSet>` uses too.
 
+## Slider
+
+```js
+import '@kyralabs/m3e-elements/slider.js';
+```
+
+```html
+<m3e-slider label="Volume" value="0.4"></m3e-slider>
+<m3e-slider label="Percent" max="100" step="10" value="40" size="m" icon="volume_up"></m3e-slider>
+<m3e-slider label="Price" range max="100" start-value="20" end-value="80"></m3e-slider>
+<m3e-slider label="Balance" centered min="-50" max="50"></m3e-slider>
+<m3e-slider label="Brightness" vertical style="block-size: 200px"></m3e-slider>
+```
+
+`<m3e-slider>` renders the m3e-css `.m3e-slider` (load `slider.css`) inside itself, one native
+`<input type="range">` per thumb (its role, value, labels and form `name`), and adds pointer
+presses and drags on the track (a range slider moves the closer thumb; the thumbs meet but never
+cross), the keyboard (arrows by one `step`, or 1 % of the range without one; Shift + arrow and
+Page Up / Page Down by a page; Home / End; horizontal arrows mirror in RTL, and a vertical slider's
+minimum is at the bottom), the handle shrink and value indicator while dragged (`data-dragging`),
+and `input` / `change` events (`detail: { value }`, a range `{ start, end }`; `change` when a drag,
+press or key ends). Attributes: `min` (0), `max` (1), `step`, `value`, `range` with `start-value` /
+`end-value` (thumbs labelled `start-label` / `end-label`, default "Range start" / "Range end"),
+`centered`, `vertical`, `size` (`xs` default, `s`, `m`, `l`, `xl`), `icon` (an inset icon, M–XL),
+`disabled`, `label`, `name`. The value math is m3e-motion's port of Compose's `Slider.kt`; the
+`slider-layout.js` entry (class names, custom properties, input attributes, value text) is shared
+with m3e-react's `<Slider>` / `<RangeSlider>`, which render the same DOM.
+
 ## Ripple for plain HTML
 
 m3e-css draws hover, focus and pressed overlays without JS; the press ripple needs a little.

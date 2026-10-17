@@ -1,8 +1,9 @@
 // Spring math for m3exp-web (ROADMAP M3): Compose's SpringSimulation and duration estimate
 // (bit-exact ports), FloatSpringSpec helpers, damping conversion, the CSS linear() sampler, and the
 // top app bar scroll state (TopAppBarState) and the dropdown menu placement
-// (DropdownMenuPositionProvider) shared by m3e-elements and m3e-react, and the window size
-// classes (androidx window-core WindowSizeClass, material3-adaptive).
+// (DropdownMenuPositionProvider) shared by m3e-elements and m3e-react, the window size
+// classes (androidx window-core WindowSizeClass, material3-adaptive) and the slider's value and
+// track math (Slider.kt).
 export { type LinearEasing, type LinearEasingOptions, springToLinear } from './linear.js';
 export { SpringAnimatable } from './animatable.js';
 export { animatedInt, fabMenuItemVisible } from './fab-menu.js';
@@ -150,6 +151,32 @@ export {
   drawerSettlesOpen,
   exponentialDecayTarget,
 } from './navigation-drawer.js';
+export {
+  SLIDER_KEY_DIVISIONS,
+  SLIDER_PAGE_DIVISOR,
+  SLIDER_PAGE_MAX_STEPS,
+  type SliderKeyAction,
+  type SliderKeyOptions,
+  type SliderThumbBounds,
+  type SliderTick,
+  type SliderTrackGeometry,
+  type SliderTrackInput,
+  type SliderTrackPart,
+  type SliderTrackPartKind,
+  sliderClosestThumb,
+  sliderFraction,
+  sliderKeyAction,
+  sliderKeyDelta,
+  sliderKeyValue,
+  sliderPageSteps,
+  sliderSnap,
+  sliderSteps,
+  sliderThumbBounds,
+  sliderThumbValue,
+  sliderTickFractions,
+  sliderTrackGeometry,
+  sliderValueAt,
+} from './slider.js';
 export {
   TAB_INDICATOR_MIN_WIDTH,
   type TabIndicatorSample,

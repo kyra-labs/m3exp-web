@@ -3,6 +3,9 @@
 import { fileURLToPath } from 'node:url';
 import {
   DRAWER_POSITIONAL_THRESHOLD,
+  SLIDER_KEY_DIVISIONS,
+  SLIDER_PAGE_DIVISOR,
+  SLIDER_PAGE_MAX_STEPS,
   DRAWER_SETTLE_MILLIS,
   DRAWER_VELOCITY_THRESHOLD,
   FAST_OUT_LINEAR_IN_EASING,
@@ -896,6 +899,104 @@ describe('switch values (M8)', () => {
     expect(output.get('PARITY.md')).toMatch(
       /ListItem\.kt@\w+ L\d+ \| `--m3e-comp-switch-label-space`/,
     );
+  });
+});
+
+describe('slider values (M8)', () => {
+  const decl = declarations(output.get('components/slider-defaults.css')!);
+  const kt = inputs.material3Sources['Slider.kt']!.replace(/\r\n/g, '\n');
+  const samples = inputs.material3Sources['SliderSamples.kt']!.replace(/\r\n/g, '\n');
+  const t = (name: string) => decl.get(`--m3e-comp-slider-${name}`);
+  const tok = (name: string) =>
+    declarations(output.get('components/slider.css')!).get(`--m3e-comp-slider-${name}`);
+
+  it('thumb and track: SliderTokens via TrackHeight / ThumbWidth / ThumbHeight / ThumbTrackGapSize', () => {
+    expect(t('track-height')).toBe(tok('inactive-track-height'));
+    expect(t('thumb-width')).toBe(tok('handle-width'));
+    expect(t('thumb-height')).toBe(tok('handle-height'));
+    expect(t('thumb-track-gap-size')).toBe(tok('active-handle-leading-space'));
+    expect(t('thumb-track-gap-size')).toBe('6px');
+    expect(t('track-inside-corner-size')).toBe(
+      `${/private val TrackInsideCornerSize: Dp\n\s*get\(\) = (\d+)\.dp/.exec(kt)![1]!}px`,
+    );
+    expect(t('track-stop-indicator-size')).toBe(tok('stop-indicator-size'));
+    expect(t('tick-size')).toBe('4px');
+    // ThumbContent halves the handle (slider.css: calc(width / 2)).
+    expect(kt).toContain('thumbSize.copy(width = thumbSize.width / 2)');
+  });
+
+  it('colors: defaultSliderColors; ticks swap the track colors; the stop is the active track color', () => {
+    expect(t('thumb-color')).toBe('var(--m3e-sys-color-primary)');
+    expect(t('track-color-active')).toBe('var(--m3e-sys-color-primary)');
+    expect(t('track-color-inactive')).toBe('var(--m3e-sys-color-secondary-container)');
+    expect(t('tick-color-active')).toBe('var(--m3e-sys-color-secondary-container)');
+    expect(t('tick-color-inactive')).toBe('var(--m3e-sys-color-primary)');
+    expect(t('track-stop-indicator-color')).toBe(t('track-color-active'));
+    expect(t('track-stop-indicator-color-disabled')).toBe(t('track-color-active-disabled'));
+    expect(t('thumb-color-disabled')).toBe(
+      'color-mix(in srgb, var(--m3e-sys-color-on-surface) calc(0.38 * 100%), var(--m3e-sys-color-surface))',
+    );
+    const alpha = (a: string) =>
+      `color-mix(in srgb, var(--m3e-sys-color-on-surface) calc(${a} * 100%), transparent)`;
+    expect(t('track-color-active-disabled')).toBe(alpha('0.38'));
+    expect(t('track-color-inactive-disabled')).toBe(alpha('0.12'));
+    expect(t('tick-color-active-disabled')).toBe(alpha('0.12'));
+    expect(t('tick-color-inactive-disabled')).toBe(alpha('0.38'));
+    expect(t('icon-color-active')).toBe(t('tick-color-active'));
+    expect(t('icon-color-inactive')).toBe(t('tick-color-inactive'));
+    expect(samples).toContain('val activeIconColor = SliderDefaults.colors().activeTickColor');
+  });
+
+  it('sizes XS–XL from the m3.material.io token DB (owner decision M8 #16); XS = SliderTokens', () => {
+    const sizes: [string, number, number, number][] = [
+      ['x-small', 16, 44, 8],
+      ['small', 24, 44, 8],
+      ['medium', 40, 44, 12],
+      ['large', 56, 68, 16],
+      ['x-large', 96, 108, 28],
+    ];
+    for (const [size, track, thumb, corner] of sizes) {
+      expect(t(`${size}-track-height`)).toBe(`${String(track)}px`);
+      expect(t(`${size}-thumb-height`)).toBe(`${String(thumb)}px`);
+      expect(t(`${size}-track-corner-size`)).toBe(`${String(corner)}px`);
+    }
+    expect(t('x-small-track-height')).toBe(t('track-height'));
+    expect(t('x-small-thumb-height')).toBe(t('thumb-height'));
+    expect(output.get('PARITY.md')).toMatch(/TODO\(verify\) SOURCES register #68/);
+  });
+
+  it('inset icon M / L / XL 24 / 24 / 32dp, padding 6 / 6 / 8dp (owner decision M8 #18)', () => {
+    expect([t('medium-icon-size'), t('large-icon-size'), t('x-large-icon-size')]).toEqual([
+      '24px',
+      '24px',
+      '32px',
+    ]);
+    expect([t('medium-icon-padding'), t('large-icon-padding'), t('x-large-icon-padding')]).toEqual([
+      '6px',
+      '6px',
+      '8px',
+    ]);
+    expect(t('small-icon-size')).toBeUndefined();
+  });
+
+  it('value indicator: SliderTokens colors and type, 48 × 44dp, shape TODO(verify) (M8 #19)', () => {
+    expect(tok('value-indicator-container-color')).toBe('var(--m3e-sys-color-inverse-surface)');
+    expect(tok('value-indicator-label-text-size')).toBe(
+      'var(--m3e-sys-typescale-label-large-size)',
+    );
+    expect(tok('value-indicator-active-bottom-space')).toBe('12px');
+    expect(t('value-indicator-container-width')).toBe('48px');
+    expect(t('value-indicator-container-height')).toBe('44px');
+    expect(t('value-indicator-container-shape')).toBe('var(--m3e-sys-shape-corner-full)');
+    expect(output.get('PARITY.md')).toMatch(/TODO\(verify\) SOURCES register #69/);
+  });
+
+  it('keys: m3e-motion steps and pages match slideOnKeyEvents', () => {
+    const steps = /val actualSteps = if \(steps > 0\) steps \+ 1 else (\d+)/.exec(kt)![1];
+    expect(Number(steps)).toBe(SLIDER_KEY_DIVISIONS);
+    const page = /val page = \(actualSteps \/ (\d+)\)\.coerceIn\(1, (\d+)\)/.exec(kt)!;
+    expect(Number(page[1])).toBe(SLIDER_PAGE_DIVISOR);
+    expect(Number(page[2])).toBe(SLIDER_PAGE_MAX_STEPS);
   });
 });
 

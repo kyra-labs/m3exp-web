@@ -56,6 +56,7 @@ import {
 import { extractTabsDefaults } from './tabs-defaults.js';
 import { extractCheckboxDefaults } from './checkbox-defaults.js';
 import { extractRadioButtonDefaults } from './radio-button-defaults.js';
+import { checkSliderXSmallAgainstCompose, extractSliderDefaults } from './slider-defaults.js';
 import { extractSwitchDefaults } from './switch-defaults.js';
 import type { ComposeLiteral } from './compose-literals.js';
 import {
@@ -1278,6 +1279,12 @@ export function generate({
   // shape and icon motion, plus the ChipGroupReflowSample spacing (see chip-defaults.ts).
   setLiterals('chips-defaults', 'FilterChipDefaults', extractChipsDefaults(material3Sources));
 
+  // Slider.kt values Compose renders: track / thumb geometry, gaps, stop and tick sizes, colors (and
+  // the SliderWithTrackIconsSample icon colors), plus the m3.material.io sizes XS–XL, inset icon
+  // and value indicator container (owner decisions M8 #16, #18, #19; see slider-defaults.ts).
+  checkSliderXSmallAgainstCompose((name) => componentValues.get(name));
+  setLiterals('slider-defaults', 'SliderDefaults', extractSliderDefaults(material3Sources));
+
   // SplitButtonDefaults values, optical centering and the samples' icon rotation (see
   // split-button-defaults.ts).
   const splitButtonDefaults = extractSplitButtonDefaults(
@@ -1511,53 +1518,60 @@ export function generate({
                                       [],
                                       `${MATERIAL3_DIR}/Chip.kt + ${MATERIAL3_SAMPLES_DIR}/ChipSamples.kt`,
                                     )
-                                  : name === 'switch-defaults'
+                                  : name === 'slider-defaults'
                                     ? cssFile(
-                                        'Compose Switch values that are not in SwitchTokens, or that pick one of them, and the inline label from the expressive ListItem (lines: PARITY.md).',
+                                        'Compose Slider values that are not in SliderTokens, or that pick one of them, and the m3.material.io sizes XS–XL, inset icon and value indicator container (lines: PARITY.md).',
                                         c.tokens,
                                         [],
-                                        `${MATERIAL3_DIR}/{Switch,ListItem}.kt + ${MATERIAL3_SAMPLES_DIR}/SwitchSamples.kt`,
+                                        `${MATERIAL3_DIR}/Slider.kt + ${MATERIAL3_SAMPLES_DIR}/SliderSamples.kt + m3.material.io TOKEN_TABLE.0045edb815f2325e`,
                                       )
-                                    : name === 'radio-button-defaults'
+                                    : name === 'switch-defaults'
                                       ? cssFile(
-                                          'Compose RadioButton values that are not in RadioButtonTokens, or that pick one of them (lines: PARITY.md).',
+                                          'Compose Switch values that are not in SwitchTokens, or that pick one of them, and the inline label from the expressive ListItem (lines: PARITY.md).',
                                           c.tokens,
                                           [],
-                                          `${MATERIAL3_DIR}/RadioButton.kt + ${MATERIAL3_SAMPLES_DIR}/RadioButtonSamples.kt`,
+                                          `${MATERIAL3_DIR}/{Switch,ListItem}.kt + ${MATERIAL3_SAMPLES_DIR}/SwitchSamples.kt`,
                                         )
-                                      : name === 'checkbox-defaults'
+                                      : name === 'radio-button-defaults'
                                         ? cssFile(
-                                            'Compose Checkbox / TriStateCheckbox values that are not in CheckboxTokens, or that pick one of them (isCheckboxStylingFixEnabled off; lines: PARITY.md), and the m3.material.io unchecked state layer colors.',
+                                            'Compose RadioButton values that are not in RadioButtonTokens, or that pick one of them (lines: PARITY.md).',
                                             c.tokens,
                                             [],
-                                            `${MATERIAL3_DIR}/{Checkbox,ComposeMaterial3Flags}.kt + ${MATERIAL3_SAMPLES_DIR}/CheckboxSamples.kt + m3.material.io TOKEN_TABLE.31f16b44fe03b0c0`,
+                                            `${MATERIAL3_DIR}/RadioButton.kt + ${MATERIAL3_SAMPLES_DIR}/RadioButtonSamples.kt`,
                                           )
-                                        : name === 'tabs-defaults'
+                                        : name === 'checkbox-defaults'
                                           ? cssFile(
-                                              'Compose tab row / tab values that are not in Primary/SecondaryNavigationTabTokens (lines: PARITY.md).',
+                                              'Compose Checkbox / TriStateCheckbox values that are not in CheckboxTokens, or that pick one of them (isCheckboxStylingFixEnabled off; lines: PARITY.md), and the m3.material.io unchecked state layer colors.',
                                               c.tokens,
                                               [],
-                                              `${MATERIAL3_DIR}/{TabRow,Tab}.kt + ${MATERIAL3_SAMPLES_DIR}/TabSamples.kt`,
+                                              `${MATERIAL3_DIR}/{Checkbox,ComposeMaterial3Flags}.kt + ${MATERIAL3_SAMPLES_DIR}/CheckboxSamples.kt + m3.material.io TOKEN_TABLE.31f16b44fe03b0c0`,
                                             )
-                                          : name === 'progress-indicator-defaults'
+                                          : name === 'tabs-defaults'
                                             ? cssFile(
-                                                'Compose progress indicator values that are not in *ProgressIndicatorTokens, and the indeterminate keyframes of the flat indicators (lines: PARITY.md).',
+                                                'Compose tab row / tab values that are not in Primary/SecondaryNavigationTabTokens (lines: PARITY.md).',
                                                 c.tokens,
-                                                [
-                                                  '@media (prefers-reduced-motion: reduce) {',
-                                                  '  :root {',
-                                                  ...PROGRESS_INDICATOR_REDUCED_MOTION.map(
-                                                    (l) => `    ${l}`,
-                                                  ),
-                                                  '  }',
-                                                  '}',
-                                                  ...progressIndicatorKeyframes(
-                                                    progressIndicator.timing,
-                                                  ),
-                                                ],
-                                                `${MATERIAL3_DIR}/{ProgressIndicator,WavyProgressIndicator,internal/LinearWavyProgressModifiers,internal/CircularWavyProgressModifiers}.kt + ${MATERIAL3_SAMPLES_DIR}/ProgressIndicatorSamples.kt + m3.material.io token DB md.comp.progress-indicator`,
+                                                [],
+                                                `${MATERIAL3_DIR}/{TabRow,Tab}.kt + ${MATERIAL3_SAMPLES_DIR}/TabSamples.kt`,
                                               )
-                                            : cssFile(`Component tokens: ${c.object}.`, c.tokens),
+                                            : name === 'progress-indicator-defaults'
+                                              ? cssFile(
+                                                  'Compose progress indicator values that are not in *ProgressIndicatorTokens, and the indeterminate keyframes of the flat indicators (lines: PARITY.md).',
+                                                  c.tokens,
+                                                  [
+                                                    '@media (prefers-reduced-motion: reduce) {',
+                                                    '  :root {',
+                                                    ...PROGRESS_INDICATOR_REDUCED_MOTION.map(
+                                                      (l) => `    ${l}`,
+                                                    ),
+                                                    '  }',
+                                                    '}',
+                                                    ...progressIndicatorKeyframes(
+                                                      progressIndicator.timing,
+                                                    ),
+                                                  ],
+                                                  `${MATERIAL3_DIR}/{ProgressIndicator,WavyProgressIndicator,internal/LinearWavyProgressModifiers,internal/CircularWavyProgressModifiers}.kt + ${MATERIAL3_SAMPLES_DIR}/ProgressIndicatorSamples.kt + m3.material.io token DB md.comp.progress-indicator`,
+                                                )
+                                              : cssFile(`Component tokens: ${c.object}.`, c.tokens),
     );
   }
   out.set(

@@ -64,6 +64,15 @@
     outline-offset: var(--m3e-sys-state-focus-indicator-outer-offset);
   }
 
+  /*
+   * Proxy host: a slider rings the handle of the thumb whose input has focus. The ring does not
+   * widen the track gaps (Compose's inset-ring mode pads them by 4dp; owner decision M8 #23).
+   */
+  :where(.m3e-slider__input:focus-visible + .m3e-slider__handle) {
+    outline: var(--m3e-sys-state-focus-indicator-thickness) solid var(--m3e-sys-color-secondary);
+    outline-offset: var(--m3e-sys-state-focus-indicator-outer-offset);
+  }
+
   :where(.m3e-focus-ring--inward):focus-visible {
     outline-offset: var(--m3e-sys-state-focus-indicator-inner-offset);
   }
@@ -141,6 +150,7 @@
     :where(.m3e-checkbox__input:focus-visible ~ .m3e-checkbox__state),
     :where(.m3e-radio-button__input:focus-visible ~ .m3e-radio-button__state),
     :where(.m3e-switch__input:focus-visible ~ .m3e-switch__track),
+    :where(.m3e-slider__input:focus-visible + .m3e-slider__handle),
     :where(
       .m3e-menu__item,
       .m3e-navigation-drawer-item,
