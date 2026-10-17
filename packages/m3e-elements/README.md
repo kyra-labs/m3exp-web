@@ -393,10 +393,42 @@ Attributes: `checked`, `indeterminate`, `disabled`, `invalid` (`aria-invalid`, e
 `required` (`aria-required`), `name`, `value`, `label` (the input's `aria-label` when there is no
 text). A user toggle updates `checked` and clears `indeterminate`.
 
+## Chip set
+
+```js
+import '@kyralabs/m3e-elements/chip-set.js';
+```
+
+```html
+<m3e-chip-set label="Recipients">
+  <div class="m3e-input-chip" data-value="ada">
+    <div class="m3e-input-chip__cell">
+      <img class="m3e-input-chip__avatar" src="ada.jpg" alt="" />
+      <span class="m3e-input-chip__label">Ada Lovelace</span>
+      <button class="m3e-input-chip__remove">
+        <span class="m3e-icon" aria-hidden="true">close</span>
+      </button>
+    </div>
+  </div>
+</m3e-chip-set>
+```
+
+`<m3e-chip-set>` renders the m3e-css `.m3e-chip-set` (load `chip-set.css` and the chip files)
+inside itself and moves its children, chips in the m3e-css markup, into it. The set is one tab
+stop with the arrow keys (mirrored in RTL), Home and End between its chips (a filter chip's native
+checkbox, an assist or suggestion chip, an input chip). With input chips it is a `role="grid"` of
+`role="row"` chips wired as React Aria's TagGroup (m3e-react `<InputChipGroup>` renders the same
+DOM): Backspace or Delete on a focused input chip, or a press on its remove button (labelled
+"Remove <label>"), emits `remove` (`detail: { value, chip }`, cancelable; `value` is
+`data-value`, else the label); unless canceled, the chip is removed and the focus moves to the next
+chip. Attributes: `label` (the set's accessible name), `single-line` (one scrolling row). Filter,
+assist and suggestion chips need no element: a filter chip is a native checkbox. The behavior
+lives in the `chip-set-layout.js` entry (`ChipSetLayout`), which m3e-react's `<ChipSet>` uses too.
+
 ## Ripple for plain HTML
 
 m3e-css draws hover, focus and pressed overlays without JS; the press ripple needs a little.
-One import adds it to every plain-HTML button, icon button, assist chip, FAB, extended FAB, FAB menu item, `.m3e-state-layer`,
+One import adds it to every plain-HTML button, icon button, chip (assist, filter, input, suggestion), FAB, extended FAB, FAB menu item, `.m3e-state-layer`,
 interactive card (pressed through `.m3e-card__action`, drawn on the card), navigation item
 (drawn on `.m3e-navigation-item__state`), navigation drawer item, tab, checkbox, radio button and
 switch (pressed through the label or the input, drawn on the 40dp `__state` circle; a switch's
@@ -411,8 +443,8 @@ It uses one set of delegated pointer and keyboard listeners on `document` and wr
 contract as `attachRipple`: the first press on a host sets `data-ripple`, which stays, and each
 press toggles `data-pressed` and writes `--_m3e-ripple-x/-y/-radius`. Hosts carrying a
 `data-ripple` it did not set (m3e-react components and `attachRipple` hosts) are skipped, as are
-disabled ones. Enter and Space press from the center (links: Enter only; checkboxes, radio
-buttons and switches: Space only, as they toggle or select). To scope it or stop it,
+disabled ones. Enter and Space press from the center (links: Enter only; checkboxes, filter
+chips, radio buttons and switches: Space only, as they toggle or select). To scope it or stop it,
 call `attachAutoRipple(root, signal)` from the package root instead; that import has no side
 effect, and aborting the signal removes the attributes and variables it wrote.
 

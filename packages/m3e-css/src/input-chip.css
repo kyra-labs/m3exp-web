@@ -1,0 +1,242 @@
+/*
+ * Input chip: baseline (default) and expressive (COMPONENT_SPEC §18). Input chips are rows of a
+ * grid (a `.m3e-chip-set` with role="grid"; owner decision M8 #10): arrow keys move between them
+ * and Backspace / Delete removes the focused one. That needs JavaScript: `<m3e-chip-set>`
+ * (m3e-elements) or m3e-react's <InputChipGroup> (React Aria TagGroup) render the same DOM.
+ *
+ *   <div class="m3e-chip-set" role="grid" aria-label="Recipients">
+ *     <div class="m3e-input-chip" role="row" tabindex="0">
+ *       <div class="m3e-input-chip__cell" role="gridcell">
+ *         <img class="m3e-input-chip__avatar" src="ada.jpg" alt="" />
+ *         <span class="m3e-input-chip__label">Ada Lovelace</span>
+ *         <button class="m3e-input-chip__remove" type="button" tabindex="-1" aria-label="Remove">
+ *           <span class="m3e-icon" aria-hidden="true">close</span>
+ *         </button>
+ *       </div>
+ *     </div>
+ *   </div>
+ *
+ * - Leading: an avatar (`.m3e-input-chip__avatar`, any element: an image, initials, an icon) or a
+ *   `.m3e-icon`; the avatar takes precedence. Trailing: the remove button (or an icon).
+ * - States: `aria-selected="true"` (a TagGroup with selection), `aria-disabled="true"`.
+ * - Modifier: --expressive (the `shapes` overload: ChipsTokens shapes morphing on fast spatial,
+ *   4dp spacing next to the avatar / icons; owner decision M8 #9).
+ *
+ * Sources (compose/material3 @ 19991f2c, Chip.kt; values in input-chip.css / chips.css /
+ * chips-defaults.css, lines in PARITY.md):
+ * - InputChip L1184-1242 (baseline: InputChipDefaults.shape = InputChipTokens.ContainerShape,
+ *   inputChipColors, horizontalArrangement() = DefaultHorizontalArrangement) and L1298-1361
+ *   (`shapes`: tonalInputChipColors, horizontalArrangement(avatar, leading, trailing)
+ *   L2650-2661) → SelectableChip L3234-3346 (Role.Checkbox; here a grid row, owner decision
+ *   M8 #10, as m3.material.io's web column "gridcell").
+ * - Padding: InputChipDefaults.contentPadding L2678-2686: start 4dp with an avatar or without a
+ *   leading icon, 8dp with a leading icon; end 8dp with a trailing icon, else 4dp. With the
+ *   baseline 8dp arrangement an icon-less label sits 12dp from both edges.
+ * - Avatar (L1202-1221): clipped to InputChipTokens.AvatarShape (full), AvatarSize 24dp, at
+ *   DisabledAvatarOpacity (0.38) when disabled.
+ * - Colors: defaultInputChipColors L2755-2784 (transparent container, label on-surface-variant,
+ *   leading on-surface-variant, selected: secondary-container, label on-secondary-container,
+ *   leading primary, trailing on-secondary-container); tonal L2786-2792 (the same unselected
+ *   leading color). By (enabled, selected) only: no hover / focus / press colors.
+ * - Elevation: inputChipElevation L2806-2821, Level0 but dragged Level4; ElevationDefaults tweens.
+ * - Border: inputChipBorder L2839-2859 (outline-variant 1dp; selected transparent, 0 width).
+ * - Remove: Compose's trailing icon is plain content with no action of its own; m3.material.io
+ *   (Chips › Accessibility) gives the remove icon its own 48 × 48dp target and the label
+ *   "Remove <chip>", and Backspace / Delete removes the focused chip. The `close` Material Symbol
+ *   at InputChipTokens.TrailingIconSize (18dp).
+ */
+@import './chip.css';
+@import '@kyralabs/m3e-tokens/components/input-chip.css';
+@import '@kyralabs/m3e-tokens/components/chips-defaults.css';
+
+@layer m3e.components {
+  .m3e-input-chip {
+    --_m3e-chip-height: var(--m3e-comp-input-chip-container-height);
+    --_m3e-chip-padding-start: var(--m3e-comp-input-chip-content-padding-start);
+    --_m3e-chip-padding-end: var(--m3e-comp-input-chip-content-padding-end);
+    --_m3e-chip-label-start: var(--m3e-comp-chip-default-horizontal-spacing);
+    --_m3e-chip-label-end: var(--m3e-comp-chip-default-horizontal-spacing);
+    --_m3e-chip-shape: var(--m3e-comp-input-chip-container-shape);
+    --_m3e-chip-icon-size: var(--m3e-comp-input-chip-leading-icon-size);
+    --_m3e-chip-font: var(--m3e-comp-input-chip-label-text-font);
+    --_m3e-chip-font-size: var(--m3e-comp-input-chip-label-text-size);
+    --_m3e-chip-font-weight: var(--m3e-comp-input-chip-label-text-weight);
+    --_m3e-chip-line-height: var(--m3e-comp-input-chip-label-text-line-height);
+    --_m3e-chip-tracking: var(--m3e-comp-input-chip-label-text-tracking);
+
+    /* Unselected. Every state but dragged is Level0: the outline alone. */
+    --_m3e-chip-outline-width: var(--m3e-comp-input-chip-outline-width-unselected);
+    --_m3e-chip-outline-color: var(--m3e-comp-input-chip-outline-color-unselected);
+    --_m3e-chip-container: transparent;
+    --_m3e-chip-shadow: var(--_m3e-chip-outline);
+    --_m3e-chip-shadow-hovered: var(--_m3e-chip-outline);
+    --_m3e-chip-shadow-focused: var(--_m3e-chip-outline);
+    --_m3e-chip-shadow-pressed: var(--_m3e-chip-outline);
+    --_m3e-chip-shadow-dragged:
+      var(--m3e-comp-input-chip-container-shadow-dragged), var(--_m3e-chip-outline);
+    --_m3e-chip-shadow-disabled: inset 0 0 0 var(--_m3e-chip-outline-width)
+      color-mix(
+        in srgb,
+        var(--m3e-comp-input-chip-outline-color-disabled-unselected)
+          calc(var(--m3e-comp-input-chip-outline-opacity-disabled-unselected) * 100%),
+        transparent
+      );
+    --_m3e-chip-container-disabled: transparent;
+
+    /* Content colors. */
+    --_m3e-chip-label: var(--m3e-comp-input-chip-label-text-color-unselected);
+
+    /* Ripple: contentColorFor(transparent) = the ambient content color (on-surface). */
+    --_m3e-chip-state-layer: var(--m3e-sys-color-on-surface);
+    --_m3e-chip-leading: var(--m3e-comp-input-chip-leading-icon-color-unselected);
+    --_m3e-chip-trailing: var(--m3e-comp-input-chip-trailing-icon-color-unselected);
+    --_m3e-chip-label-disabled: color-mix(
+      in srgb,
+      var(--m3e-comp-input-chip-label-text-color-disabled)
+        calc(var(--m3e-comp-input-chip-label-text-opacity-disabled) * 100%),
+      transparent
+    );
+    --_m3e-chip-leading-disabled: color-mix(
+      in srgb,
+      var(--m3e-comp-input-chip-leading-icon-color-disabled)
+        calc(var(--m3e-comp-input-chip-leading-icon-opacity-disabled) * 100%),
+      transparent
+    );
+    --_m3e-chip-trailing-disabled: color-mix(
+      in srgb,
+      var(--m3e-comp-input-chip-trailing-icon-color-disabled)
+        calc(var(--m3e-comp-input-chip-trailing-icon-opacity-disabled) * 100%),
+      transparent
+    );
+  }
+
+  /* contentPadding(hasAvatar, hasLeadingIcon, hasTrailingIcon). */
+  .m3e-input-chip:has(> .m3e-input-chip__cell > .m3e-input-chip__label ~ *) {
+    --_m3e-chip-padding-end: var(--m3e-comp-input-chip-content-padding-end-icon);
+  }
+
+  .m3e-input-chip:has(> .m3e-input-chip__cell > .m3e-icon + .m3e-input-chip__label):not(
+      :has(> .m3e-input-chip__cell > .m3e-input-chip__avatar)
+    ) {
+    --_m3e-chip-padding-start: var(--m3e-comp-input-chip-content-padding-start-icon);
+  }
+
+  /* --- Avatar and remove button ------------------------------------------------------------ */
+  .m3e-input-chip__avatar {
+    --_m3e-chip-icon-size: var(--m3e-comp-input-chip-avatar-size);
+
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    inline-size: var(--m3e-comp-input-chip-avatar-size);
+    block-size: var(--m3e-comp-input-chip-avatar-size);
+    overflow: hidden;
+    border-radius: min(
+      var(--m3e-comp-input-chip-avatar-shape),
+      calc(var(--m3e-comp-input-chip-avatar-size) / 2)
+    );
+    object-fit: cover;
+  }
+
+  /*
+   * An icon avatar keeps the content (label) color: Compose passes the avatar through untinted
+   * (leadingContent L3521-3537), under the chip's LocalContentColor. Specific enough to beat the
+   * shared icon colors in chip.css.
+   */
+  .m3e-input-chip .m3e-input-chip__cell .m3e-input-chip__avatar .m3e-icon {
+    color: inherit;
+  }
+
+  .m3e-input-chip[aria-disabled='true'] .m3e-input-chip__avatar {
+    opacity: var(--m3e-comp-input-chip-avatar-opacity-disabled);
+  }
+
+  .m3e-input-chip__remove {
+    --_m3e-chip-icon-size: var(--m3e-comp-input-chip-trailing-icon-size);
+
+    /* Above the chip's own target (its ::after), so presses on the icon reach the button. */
+    position: relative;
+    z-index: 1;
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: inherit;
+    font: inherit;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* The remove icon's own 48 × 48dp target (m3.material.io Chips › Accessibility). */
+  .m3e-input-chip__remove::after {
+    content: '';
+    position: absolute;
+    inset: calc(
+      (
+          var(--m3e-comp-input-chip-trailing-icon-size) -
+            var(--m3e-comp-minimum-interactive-component-size)
+        ) /
+        2
+    );
+  }
+
+  .m3e-input-chip__remove:disabled {
+    cursor: default;
+  }
+
+  /* --- Selected ---------------------------------------------------------------------------- */
+  .m3e-input-chip[aria-selected='true'] {
+    --_m3e-chip-outline-width: var(--m3e-comp-input-chip-outline-width-selected);
+    --_m3e-chip-outline-color: transparent;
+    --_m3e-chip-container: var(--m3e-comp-input-chip-container-color-selected);
+    --_m3e-chip-container-disabled: color-mix(
+      in srgb,
+      var(--m3e-comp-input-chip-container-color-disabled-selected)
+        calc(var(--m3e-comp-input-chip-container-opacity-disabled-selected) * 100%),
+      transparent
+    );
+    --_m3e-chip-label: var(--m3e-comp-input-chip-label-text-color-selected);
+    --_m3e-chip-state-layer: var(--m3e-comp-input-chip-label-text-color-selected);
+    --_m3e-chip-leading: var(--m3e-comp-input-chip-leading-icon-color-selected);
+    --_m3e-chip-trailing: var(--m3e-comp-input-chip-trailing-icon-color-selected);
+  }
+
+  /* --- Expressive: the `shapes` overload (owner decision M8 #9) ----------------------------- */
+  .m3e-input-chip--expressive {
+    --_m3e-chip-shape: min(
+      var(--m3e-comp-chips-shape-unselected),
+      calc(var(--_m3e-chip-height) / 2)
+    );
+    --_m3e-chip-leading: var(--m3e-comp-input-chip-leading-icon-color-tonal);
+  }
+
+  .m3e-input-chip--expressive[aria-selected='true'] {
+    --_m3e-chip-shape: min(var(--m3e-comp-chips-shape-selected), calc(var(--_m3e-chip-height) / 2));
+    --_m3e-chip-leading: var(--m3e-comp-input-chip-leading-icon-color-selected);
+  }
+
+  .m3e-input-chip--expressive:is(:active, [data-pressed]):not([aria-disabled='true']) {
+    --_m3e-chip-shape: min(var(--m3e-comp-chips-shape-pressed), calc(var(--_m3e-chip-height) / 2));
+  }
+
+  /* Compact spacing (horizontalArrangement(hasAvatar, hasLeadingIcon, hasTrailingIcon)). */
+  .m3e-input-chip--expressive:has(
+    > .m3e-input-chip__cell > :is(.m3e-input-chip__avatar, .m3e-icon) + .m3e-input-chip__label,
+    > .m3e-input-chip__cell > .m3e-input-chip__label ~ *
+  ) {
+    --_m3e-chip-label-start: var(--m3e-comp-input-chip-compact-horizontal-spacing);
+    --_m3e-chip-label-end: var(--m3e-comp-input-chip-horizontal-spacing);
+  }
+
+  .m3e-input-chip--expressive:has(
+      > .m3e-input-chip__cell > :is(.m3e-input-chip__avatar, .m3e-icon) + .m3e-input-chip__label
+    ):has(> .m3e-input-chip__cell > .m3e-input-chip__label ~ *) {
+    --_m3e-chip-label-end: var(--m3e-comp-input-chip-compact-horizontal-spacing);
+  }
+}

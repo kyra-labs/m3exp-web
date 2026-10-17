@@ -1,5 +1,5 @@
 // Shared engine for the selection controls' `*-defaults` generators (checkbox-defaults.ts,
-// radio-button-defaults.ts, switch-defaults.ts): the literals a composable renders that are not in its token file,
+// radio-button-defaults.ts, switch-defaults.ts, chip-defaults.ts): the literals a composable renders that are not in its token file,
 // each read from a vendored file with a targeted regex and cited by line, plus wiring CHECKS that
 // throw when what the component CSS assumes changes upstream.
 import { compVar, kebabName } from './names.js';
@@ -32,6 +32,8 @@ export type LiteralKind =
   | 'type'
   | 'typeToken'
   | 'composite'
+  | 'alpha'
+  | 'shadow'
   | 'alias'
   | 'flag'
   | 'keyword';
@@ -46,7 +48,9 @@ export interface LiteralRule {
    * First capture group: a literal, a motion key, a `<Object>Tokens.<Member>` reference (`type`:
    * a `MaterialTheme.typography` style; `typeToken`: a TypographyToken). `composite`: the color
    * token, then its alpha token, then the ColorScheme role it is composited over
-   * (`fromToken(<color>).copy(alpha = <alpha>).compositeOver(<role>)`).
+   * (`fromToken(<color>).copy(alpha = <alpha>).compositeOver(<role>)`). `alpha`: the color token,
+   * then its alpha token (`fromToken(<color>).copy(alpha = <alpha>)`, translucent). `shadow`: an
+   * elevation token (`<Object>Tokens.<Member>Elevation`), emitted as its generated shadow.
    */
   pattern: RegExp;
   /** `flag`: the value emitted instead of the upstream default (an owner decision). */
@@ -179,6 +183,23 @@ function extractRule(
           raw: `${captured}.copy(alpha = ${alpha}).compositeOver(${role})`,
         },
       ];
+    }
+    case 'alpha': {
+      // Color.copy(alpha): translucent, drawn over whatever is behind (not composited).
+      const alpha = match[2];
+      if (alpha === undefined) throw new Error(`${label}: ${rule.name} needs the alpha capture`);
+      const value = `color-mix(in srgb, ${tokenVar(captured)} calc(${tokenVar(alpha)} * 100%), transparent)`;
+      return [{ ...base, value, js: value, raw: `${captured}.copy(alpha = ${alpha})` }];
+    }
+    case 'shadow': {
+      // `FilterChipTokens.FlatSelectedHoverContainerElevation` → the generated
+      // `--m3e-comp-filter-chip-flat-container-shadow-selected-hover` (the token generator emits
+      // a shadow beside each elevation token).
+      const elevation = tokenVar(captured);
+      if (!elevation.includes('-elevation'))
+        throw new Error(`${label}: ${captured} is not an elevation token`);
+      const value = elevation.replace('-elevation', '-shadow');
+      return [{ ...base, value, js: value, raw: captured }];
     }
     case 'motion':
       return SPRING_FIELDS.map((field) => ({

@@ -70,6 +70,7 @@ export const MATERIAL3_SAMPLE_SOURCES = [
   'CheckboxSamples.kt',
   'RadioButtonSamples.kt',
   'SwitchSamples.kt',
+  'ChipSamples.kt',
 ] as const;
 
 /** Android `actual`s the generator reads (DropdownMenu's popup margins, AndroidMenu.android.kt). */

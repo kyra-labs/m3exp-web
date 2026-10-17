@@ -14,6 +14,8 @@
     .m3e-button,
     .m3e-icon-button,
     .m3e-assist-chip,
+    .m3e-input-chip,
+    .m3e-suggestion-chip,
     .m3e-fab,
     .m3e-extended-fab,
     .m3e-fab-menu__item,
@@ -25,6 +27,12 @@
 
   /* Proxy host: the card draws the ring for its stretched action. */
   :where(.m3e-card--interactive):has(.m3e-card__action:focus-visible) {
+    outline: var(--m3e-sys-state-focus-indicator-thickness) solid var(--m3e-sys-color-secondary);
+    outline-offset: var(--m3e-sys-state-focus-indicator-outer-offset);
+  }
+
+  /* Proxy host: a filter chip (a label) rings itself for its focused native checkbox. */
+  :where(.m3e-filter-chip):has(> .m3e-filter-chip__input:focus-visible) {
     outline: var(--m3e-sys-state-focus-indicator-thickness) solid var(--m3e-sys-color-secondary);
     outline-offset: var(--m3e-sys-state-focus-indicator-outer-offset);
   }
@@ -104,6 +112,8 @@
       .m3e-button,
       .m3e-icon-button,
       .m3e-assist-chip,
+      .m3e-input-chip,
+      .m3e-suggestion-chip,
       .m3e-fab,
       .m3e-extended-fab,
       .m3e-fab-menu__item,
@@ -118,12 +128,15 @@
       .m3e-button,
       .m3e-icon-button,
       .m3e-assist-chip,
+      .m3e-input-chip,
+      .m3e-suggestion-chip,
       .m3e-fab,
       .m3e-extended-fab,
       .m3e-fab-menu__item,
       .m3e-pane-scaffold__drag-handle
     ):focus-visible,
     :where(.m3e-card--interactive):has(.m3e-card__action:focus-visible),
+    :where(.m3e-filter-chip):has(> .m3e-filter-chip__input:focus-visible),
     :where(.m3e-navigation-item:focus-visible .m3e-navigation-item__state),
     :where(.m3e-checkbox__input:focus-visible ~ .m3e-checkbox__state),
     :where(.m3e-radio-button__input:focus-visible ~ .m3e-radio-button__state),

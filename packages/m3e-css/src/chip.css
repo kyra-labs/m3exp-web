@@ -1,0 +1,249 @@
+/*
+ * Shared chip base (COMPONENT_SPEC §18): the layout, label and icon slots, elevation tweens,
+ * outline, touch target, state machinery and forced colors of every chip. It has no class of its
+ * own: assist-chip.css, filter-chip.css, input-chip.css and suggestion-chip.css import it and
+ * map their tokens onto its private properties.
+ *
+ * Contract between the files (so their order in a bundle does not matter):
+ * - The chip files set private custom properties (--_m3e-chip-*) on the root, its modifiers and
+ *   its selected states, and real properties only on their own parts (or, for one rule, with a
+ *   higher specificity than this file's); never a real property this file sets on the root.
+ * - This file sets the real properties from them, and its state rules (hover, focus, pressed,
+ *   dragged, disabled) set only real properties and the elevation timing it owns.
+ *
+ * Private properties each chip defines:
+ *   --_m3e-chip-height, --_m3e-chip-padding-start / -end, --_m3e-chip-label-start / -end (the
+ *   label's spacing to the slots: Compose's ChipArrangement), --_m3e-chip-shape,
+ *   --_m3e-chip-container, --_m3e-chip-container-disabled, --_m3e-chip-outline-width /
+ *   -outline-color (the flat border, drawn inside the shape), --_m3e-chip-shadow / -hovered /
+ *   -focused / -pressed / -dragged / -disabled, --_m3e-chip-label, --_m3e-chip-leading,
+ *   --_m3e-chip-trailing (content colors) and their -disabled colors, --_m3e-chip-state-layer,
+ *   --_m3e-chip-icon-size and the label type style (--_m3e-chip-font / -font-size /
+ *   -font-weight / -line-height / -tracking).
+ *
+ * Sources (compose/material3 @ 19991f2c, Chip.kt; lines in each chip file and PARITY.md):
+ * - Chip() L3186-3231 / SelectableChip() L3234-3346: a clickable Surface with the minimum
+ *   interactive size (≥ 48dp target via ::after; ::before is the state layer), the chip's shape,
+ *   container color, shadow elevation (animated by ChipElevation / SelectableChipElevation with
+ *   the ElevationDefaults tweens, elevation-motion.css; disabled snaps) and border, drawn inside
+ *   the shape (an inset shadow here, so it takes no layout space).
+ * - ChipContent L3355-3416 / AnimatingChipContent L3423-3520: [leading | label | trailing] in a
+ *   Row with ChipArrangement L3147-3181 inside the content padding; icons and avatars centred.
+ * - The state layer is Compose's ripple color: the Surface's content color, contentColorFor(its
+ *   container) (owner decision M8 #4). Selected (secondary-container): on-secondary-container;
+ *   elevated (surface-container-low): on-surface; flat (transparent): the ambient
+ *   LocalContentColor, on-surface inside Material surfaces. The m3.material.io token DB gives the
+ *   label color instead (on-surface-variant unselected).
+ */
+@import '@kyralabs/m3e-tokens/components/chips.css';
+@import '@kyralabs/m3e-tokens/components/chips-defaults.css';
+@import '@kyralabs/m3e-tokens/components/button-defaults.css';
+@import '@kyralabs/m3e-tokens/components/elevation-motion.css';
+
+/* Registered so the resolved shape is a length (m3e-react reads it as its spring target). */
+@property --_m3e-chip-shape {
+  syntax: '<length-percentage>';
+  inherits: false;
+  initial-value: 0%;
+}
+
+@layer m3e.components {
+  :is(.m3e-assist-chip, .m3e-filter-chip, .m3e-input-chip, .m3e-suggestion-chip) {
+    --_m3e-chip-outline: inset 0 0 0 var(--_m3e-chip-outline-width) var(--_m3e-chip-outline-color);
+
+    /* Elevation tweens (ElevationDefaults): outgoing here, incoming in the state rules. */
+    --_m3e-chip-shadow-duration: var(--m3e-comp-elevation-outgoing-duration-hovered);
+    --_m3e-chip-shadow-easing: var(--m3e-comp-elevation-outgoing-easing);
+    --m3e-comp-state-layer-color: var(--_m3e-chip-state-layer);
+
+    display: inline-flex;
+    align-items: center;
+    box-sizing: border-box;
+    min-block-size: var(--_m3e-chip-height);
+    margin: 0;
+    padding-block: 0;
+    padding-inline: var(--_m3e-chip-padding-start) var(--_m3e-chip-padding-end);
+    border: none;
+    border-radius: var(--_m3e-chip-shape);
+    background-color: var(--_m3e-chip-container);
+    box-shadow: var(--_m3e-chip-shadow);
+    color: var(--_m3e-chip-label);
+    font-family: var(--_m3e-chip-font);
+    font-size: var(--_m3e-chip-font-size);
+    font-weight: var(--_m3e-chip-font-weight);
+    line-height: var(--_m3e-chip-line-height);
+    letter-spacing: var(--_m3e-chip-tracking);
+    text-align: start;
+    text-decoration: none;
+    vertical-align: middle;
+    cursor: pointer;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    transition: box-shadow var(--_m3e-chip-shadow-duration) var(--_m3e-chip-shadow-easing);
+  }
+
+  /* The expressive selection morph (shapeByInteraction): the corners on fast spatial. */
+  :is(.m3e-filter-chip--expressive, .m3e-input-chip--expressive) {
+    transition:
+      box-shadow var(--_m3e-chip-shadow-duration) var(--_m3e-chip-shadow-easing),
+      border-radius var(--m3e-comp-selectable-chip-shape-duration)
+        var(--m3e-comp-selectable-chip-shape-easing);
+  }
+
+  /* m3e-react springs the corners itself (inline style, interruptible). */
+  :is(.m3e-filter-chip--expressive, .m3e-input-chip--expressive)[data-spring] {
+    transition-property: box-shadow;
+  }
+
+  /* The input chip's row holds one gridcell, which lays out the content. */
+  .m3e-input-chip__cell {
+    display: flex;
+    flex: 1 1 auto;
+    align-items: center;
+    align-self: stretch;
+    min-inline-size: 0;
+  }
+
+  :is(
+    .m3e-assist-chip__label,
+    .m3e-filter-chip__label,
+    .m3e-input-chip__label,
+    .m3e-suggestion-chip__label
+  ) {
+    flex: 1 1 auto;
+    padding-inline: var(--_m3e-chip-label-start) var(--_m3e-chip-label-end);
+  }
+
+  /* Icons: leading before the label, trailing after it. */
+  :is(.m3e-assist-chip, .m3e-filter-chip, .m3e-input-chip__cell, .m3e-suggestion-chip) .m3e-icon {
+    --m3e-comp-icon-size: var(--_m3e-chip-icon-size);
+
+    color: var(--_m3e-chip-leading);
+  }
+
+  :is(
+      .m3e-assist-chip__label,
+      .m3e-filter-chip__label,
+      .m3e-input-chip__label,
+      .m3e-suggestion-chip__label
+    )
+    ~ .m3e-icon,
+  :is(
+      .m3e-assist-chip__label,
+      .m3e-filter-chip__label,
+      .m3e-input-chip__label,
+      .m3e-suggestion-chip__label
+    )
+    ~ *
+    .m3e-icon {
+    color: var(--_m3e-chip-trailing);
+  }
+
+  /* Touch target ≥ the Material minimum (the chip is 32dp tall). */
+  :is(.m3e-assist-chip, .m3e-filter-chip, .m3e-input-chip, .m3e-suggestion-chip)::after {
+    content: '';
+    position: absolute;
+    inset-block: min(
+      0%,
+      calc((var(--_m3e-chip-height) - var(--m3e-comp-minimum-interactive-component-size)) / 2)
+    );
+    inset-inline: min(0%, calc((100% - var(--m3e-comp-minimum-interactive-component-size)) / 2));
+  }
+
+  /* --- Interaction states (real properties only) ------------------------------------------- */
+  @media (hover: hover) {
+    :is(.m3e-assist-chip, .m3e-filter-chip, .m3e-input-chip, .m3e-suggestion-chip):hover {
+      --_m3e-chip-shadow-duration: var(--m3e-comp-elevation-incoming-duration);
+      --_m3e-chip-shadow-easing: var(--m3e-comp-elevation-incoming-easing);
+
+      box-shadow: var(--_m3e-chip-shadow-hovered);
+    }
+  }
+
+  :is(.m3e-assist-chip, .m3e-input-chip, .m3e-suggestion-chip):focus-visible,
+  .m3e-filter-chip:has(> .m3e-filter-chip__input:focus-visible) {
+    --_m3e-chip-shadow-duration: var(--m3e-comp-elevation-incoming-duration);
+    --_m3e-chip-shadow-easing: var(--m3e-comp-elevation-incoming-easing);
+
+    box-shadow: var(--_m3e-chip-shadow-focused);
+  }
+
+  :is(.m3e-assist-chip, .m3e-filter-chip, .m3e-input-chip, .m3e-suggestion-chip):is(
+    :active,
+    [data-pressed]
+  ) {
+    --_m3e-chip-shadow-duration: var(--m3e-comp-elevation-incoming-duration);
+    --_m3e-chip-shadow-easing: var(--m3e-comp-elevation-incoming-easing);
+
+    box-shadow: var(--_m3e-chip-shadow-pressed);
+  }
+
+  :is(.m3e-assist-chip, .m3e-filter-chip, .m3e-input-chip, .m3e-suggestion-chip)[data-dragged] {
+    --_m3e-chip-shadow-duration: var(--m3e-comp-elevation-incoming-duration);
+    --_m3e-chip-shadow-easing: var(--m3e-comp-elevation-incoming-easing);
+
+    box-shadow: var(--_m3e-chip-shadow-dragged);
+  }
+
+  /* Disabled: Compose snaps the elevation (no transition) and draws the disabled colors. */
+  :is(.m3e-assist-chip, .m3e-input-chip, .m3e-suggestion-chip):is(
+    :disabled,
+    [aria-disabled='true']
+  ),
+  .m3e-filter-chip:has(> .m3e-filter-chip__input:disabled) {
+    background-color: var(--_m3e-chip-container-disabled);
+    box-shadow: var(--_m3e-chip-shadow-disabled);
+    color: var(--_m3e-chip-label-disabled);
+    cursor: default;
+    transition: none;
+  }
+
+  :is(.m3e-assist-chip, .m3e-input-chip, .m3e-suggestion-chip):is(:disabled, [aria-disabled='true'])
+    .m3e-icon,
+  .m3e-filter-chip:has(> .m3e-filter-chip__input:disabled) .m3e-icon {
+    color: var(--_m3e-chip-leading-disabled);
+  }
+
+  :is(.m3e-assist-chip, .m3e-input-chip, .m3e-suggestion-chip):is(:disabled, [aria-disabled='true'])
+    :is(.m3e-assist-chip__label, .m3e-input-chip__label, .m3e-suggestion-chip__label)
+    ~ *
+    .m3e-icon,
+  :is(.m3e-assist-chip, .m3e-input-chip, .m3e-suggestion-chip):is(:disabled, [aria-disabled='true'])
+    :is(.m3e-assist-chip__label, .m3e-input-chip__label, .m3e-suggestion-chip__label)
+    ~ .m3e-icon,
+  .m3e-filter-chip:has(> .m3e-filter-chip__input:disabled) .m3e-filter-chip__label ~ .m3e-icon {
+    color: var(--_m3e-chip-trailing-disabled);
+  }
+
+  @media (forced-colors: active) {
+    :is(.m3e-assist-chip, .m3e-filter-chip, .m3e-input-chip, .m3e-suggestion-chip) {
+      border: var(--m3e-comp-chips-outline-width-unselected) solid ButtonText;
+    }
+
+    :is(.m3e-assist-chip, .m3e-filter-chip, .m3e-input-chip__cell, .m3e-suggestion-chip) .m3e-icon {
+      color: ButtonText;
+    }
+
+    /* Selected filter / input chips (their container color is lost). */
+    .m3e-filter-chip:has(> .m3e-filter-chip__input:checked),
+    .m3e-input-chip[aria-selected='true'] {
+      border-color: Highlight;
+      outline: var(--m3e-comp-chips-outline-width-unselected) solid Highlight;
+    }
+
+    :is(.m3e-assist-chip, .m3e-input-chip, .m3e-suggestion-chip):is(
+      :disabled,
+      [aria-disabled='true']
+    ),
+    :is(.m3e-assist-chip, .m3e-input-chip, .m3e-suggestion-chip):is(
+        :disabled,
+        [aria-disabled='true']
+      )
+      .m3e-icon,
+    .m3e-filter-chip:has(> .m3e-filter-chip__input:disabled),
+    .m3e-filter-chip:has(> .m3e-filter-chip__input:disabled) .m3e-icon {
+      border-color: GrayText;
+      color: GrayText;
+    }
+  }
+}
