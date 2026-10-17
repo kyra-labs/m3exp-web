@@ -17,7 +17,11 @@
 //   leaving unchecked); box, border and checkmark colors on DefaultEffects (to checked /
 //   indeterminate) and FastEffects (to unchecked), box and border snapping while disabled (all
 //   under upstream "TODO Load the motionScheme tokens from the component tokens file");
-// - the CheckboxWithTextSample label (Compose catalog): 16dp after the 48dp checkbox, bodyLarge.
+// - the CheckboxWithTextSample label (Compose catalog): 16dp after the 48dp checkbox, bodyLarge;
+// - from m3.material.io (source priority 2; owner decision 2026-10-17, amending M8 checkbox #4 for
+//   unchecked checkboxes only): the unselected and error hover / focus / pressed state layer
+//   colors of the token DB. With the flag, Compose's unchecked ripple is Color.Transparent (no
+//   layer at all); CheckboxTokens has no state layer colors.
 // Each value is read with a targeted regex and cited by line; CHECKS throw when the wiring
 // checkbox.css assumes (flag branches, path, draw order, transitions) changes upstream.
 import {
@@ -352,7 +356,7 @@ const RULES: readonly LiteralRule[] = [
     member: 'indicatorColor(Off) = uncheckedBoxColor (flag on)',
     file: KT,
     pattern: /uncheckedBoxColor = (Color\.Transparent),/d,
-    note: 'ripple color with the flag, unchecked: Color.Transparent is a specified color, so no hover / focus / press layer shows while unchecked',
+    note: 'ripple color with the flag, unchecked: Color.Transparent is a specified color, so Compose shows no hover / focus / press layer while unchecked. Not applied: owner decision 2026-10-17 uses the m3.material.io state-layer-color-unselected-* / -error-* colors instead (checkbox.css)',
   },
   {
     kind: 'dp',
@@ -374,6 +378,42 @@ const RULES: readonly LiteralRule[] = [
     note: 'Text color: LocalContentColor (inherited)',
   },
 ];
+
+/** m3.material.io page and token DB the unchecked state layer colors come from. */
+export const CHECKBOX_M3IO_TOKENS =
+  'm3.material.io Checkbox › Specs (_dsm/content/m3/2026-10-13_06-10-19/c0332583-8417-4b80-a0a1-e283781d31c6.json, updated 2026-08-12), token DB "Google Material 3" v38.2.9 rev 7989 (_dsm/data/dsdb-m3/2026-10-13_06-10-19/TOKEN_TABLE.31f16b44fe03b0c0.json, md.comp.checkbox)';
+
+/**
+ * The m3.material.io state layer colors applied while unchecked (owner decision 2026-10-17).
+ * Compose (flag on) ripples in indicatorColor(Off) = Color.Transparent; m3.material.io gives each
+ * state its own color. Selected keeps Compose's box-colored ripple (the DB's selected hover /
+ * focus = primary agree with it; its selected pressed = on-surface does not and is not applied).
+ * Opacities: the shared md.sys.state values (the DB's state-layer.opacity tokens reference them).
+ */
+const M3IO_STATE_LAYER: readonly (readonly [name: string, token: string, role: string])[] = [
+  ['unselected-hover', 'md.comp.checkbox.unselected.hover.state-layer.color', 'on-surface'],
+  ['unselected-focus', 'md.comp.checkbox.unselected.focus.state-layer.color', 'on-surface'],
+  ['unselected-pressed', 'md.comp.checkbox.unselected.pressed.state-layer.color', 'primary'],
+  ['error-hover', 'md.comp.checkbox.error.hover.state-layer.color', 'error'],
+  ['error-focus', 'md.comp.checkbox.error.focus.state-layer.color', 'error'],
+  ['error-pressed', 'md.comp.checkbox.error.pressed.state-layer.color', 'error'],
+];
+
+const m3ioStateLayer = (): CheckboxDefault[] =>
+  M3IO_STATE_LAYER.map(([state, token, role]) => ({
+    name: `${P}-state-layer-color-${state}`,
+    value: `var(--m3e-sys-color-${role})`,
+    js: `var(--m3e-sys-color-${role})`,
+    raw: `${token} = md.sys.color.${role}`,
+    owner: 'm3.material.io',
+    member: token,
+    file: 'm3.material.io',
+    line: 0,
+    cite: CHECKBOX_M3IO_TOKENS,
+    note: state.startsWith('error')
+      ? 'unchecked with aria-invalid (owner decision 2026-10-17; checked error keeps the error box color, the same role)'
+      : 'unchecked (owner decision 2026-10-17, amending M8 checkbox #4: Compose shows no layer here)',
+  }));
 
 /** Wiring checkbox.css assumes. */
 const CHECKS: readonly LiteralCheck[] = [
@@ -450,6 +490,7 @@ export function extractCheckboxDefaults(
     CHECKS,
     sources,
   );
+  out.push(...m3ioStateLayer());
   // Not a design value: WebKit repaints an SVG stroke whose dash / transform come from a
   // transitioned custom property only while those properties have a transition of their own, so
   // checkbox.css gives them this one (it follows the computed value within a frame).

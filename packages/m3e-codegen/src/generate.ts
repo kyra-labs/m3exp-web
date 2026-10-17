@@ -1255,7 +1255,8 @@ export function generate({
 
   // Checkbox.kt values Compose renders with ComposeMaterial3Flags.isCheckboxStylingFixEnabled
   // off (the pin's default): box size / padding / corners, stroke, check path points, colors and
-  // springs, plus the CheckboxWithTextSample label (see checkbox-defaults.ts).
+  // springs, plus the CheckboxWithTextSample label and the m3.material.io unchecked state layer
+  // colors (see checkbox-defaults.ts).
   setLiterals('checkbox-defaults', 'CheckboxDefaults', extractCheckboxDefaults(material3Sources));
 
   // RadioButton.kt values Compose renders: padding, dot size, stroke, colors, springs and the
@@ -1501,10 +1502,10 @@ export function generate({
                                     )
                                   : name === 'checkbox-defaults'
                                     ? cssFile(
-                                        'Compose Checkbox / TriStateCheckbox values that are not in CheckboxTokens, or that pick one of them (isCheckboxStylingFixEnabled off; lines: PARITY.md).',
+                                        'Compose Checkbox / TriStateCheckbox values that are not in CheckboxTokens, or that pick one of them (isCheckboxStylingFixEnabled off; lines: PARITY.md), and the m3.material.io unchecked state layer colors.',
                                         c.tokens,
                                         [],
-                                        `${MATERIAL3_DIR}/{Checkbox,ComposeMaterial3Flags}.kt + ${MATERIAL3_SAMPLES_DIR}/CheckboxSamples.kt`,
+                                        `${MATERIAL3_DIR}/{Checkbox,ComposeMaterial3Flags}.kt + ${MATERIAL3_SAMPLES_DIR}/CheckboxSamples.kt + m3.material.io TOKEN_TABLE.31f16b44fe03b0c0`,
                                       )
                                     : name === 'tabs-defaults'
                                       ? cssFile(

@@ -271,7 +271,12 @@ test('unchecking fades the check and snaps it away after 100ms; from unchecked t
   expect(running).not.toContain('--_m3e-checkbox-gravitation');
 });
 
-for (const id of ['static-enabled-unchecked', 'static-enabled-checked', 'static-error-checked']) {
+for (const id of [
+  'static-enabled-unchecked',
+  'static-enabled-checked',
+  'static-error-unchecked',
+  'static-error-checked',
+]) {
   test(`${id}: hover, focus (ring around the state layer) and pressed`, async ({ page }) => {
     const label = checkbox(page, id);
     const s = await box(label.locator('.m3e-checkbox__state'));
@@ -297,29 +302,86 @@ for (const id of ['static-enabled-unchecked', 'static-enabled-checked', 'static-
   });
 }
 
-test('the state layer is the box color (flag on), none while unchecked; no outline change', async ({
+test('state layer colors: box color when checked; m3.material.io per state while unchecked; no outline change', async ({
   page,
 }) => {
+  // The color the state layer is drawn in now (a probe inside the circle reads its variable).
   const layer = (id: string) =>
     checkbox(page, id)
       .locator('.m3e-checkbox__state')
-      .evaluate((el) => getComputedStyle(el, '::before').backgroundColor);
+      .evaluate((el) => {
+        const probe = document.createElement('i');
+        probe.style.color = 'var(--m3e-comp-state-layer-color)';
+        el.append(probe);
+        const c = getComputedStyle(probe).color;
+        probe.remove();
+        return c;
+      });
   // color-mix() output, to compare like with like.
-  const primary = await page.evaluate(() => {
-    const el = document.createElement('div');
-    el.style.color = 'color-mix(in srgb, var(--m3e-sys-color-primary) 100%, transparent)';
-    document.body.append(el);
-    const c = getComputedStyle(el).color;
-    el.remove();
-    return c;
-  });
-  expect(await layer('static-enabled-checked')).toBe(primary);
-  expect(await layer('static-enabled-unchecked')).toMatch(/(rgba\(0, 0, 0, 0\)|\/ 0\))/);
+  const role = (name: string) =>
+    page.evaluate((n) => {
+      const el = document.createElement('div');
+      el.style.color = `color-mix(in srgb, var(--m3e-sys-color-${n}) 100%, transparent)`;
+      document.body.append(el);
+      const c = getComputedStyle(el).color;
+      el.remove();
+      return c;
+    }, name);
+  const [primary, onSurface, error] = [
+    await role('primary'),
+    await role('on-surface'),
+    await role('error'),
+  ];
+  /** Hover, focus (keyboard) and pressed colors of one checkbox. */
+  const states = async (id: string) => {
+    const label = checkbox(page, id);
+    await label.locator('.m3e-checkbox__label').hover();
+    const hover = await layer(id);
+    await page.mouse.move(0, 0);
+    await label.locator('.m3e-checkbox__input').focus();
+    await page.keyboard.press('Shift+Tab');
+    await page.keyboard.press('Tab');
+    const focus = await layer(id);
+    await page.keyboard.press('Shift+Tab');
+    const input = await box(label.locator('.m3e-checkbox__input'));
+    await page.mouse.move(input.x + input.width / 2, input.y + input.height / 2);
+    await page.mouse.down();
+    await expect(label.locator('.m3e-checkbox__state')).toHaveAttribute('data-pressed', '');
+    const pressed = await layer(id);
+    await page.mouse.up();
+    await page.mouse.move(0, 0);
+    return { hover, focus, pressed };
+  };
+  // Hover changes no outline color (Compose never renders Unselected*OutlineColor).
   const outline = (el: Locator) => el.evaluate((n) => getComputedStyle(n).borderTopColor);
   const target = checkbox(page, 'static-enabled-unchecked');
   const rest = await outline(target.locator('.m3e-checkbox__box'));
   await target.hover();
   expect(await outline(target.locator('.m3e-checkbox__box'))).toBe(rest);
+  await page.mouse.move(0, 0);
+  // Pressing toggles on release; each checkbox is read once, before its release.
+  // Checked: Compose's indicatorColor (the box color) in every state.
+  expect(await states('static-enabled-checked')).toEqual({
+    hover: primary,
+    focus: primary,
+    pressed: primary,
+  });
+  expect(await states('static-error-checked')).toEqual({
+    hover: error,
+    focus: error,
+    pressed: error,
+  });
+  // Unchecked (owner decision 2026-10-17): md.comp.checkbox.unselected.* and error.* state layer.
+  expect(await states('static-enabled-unchecked')).toEqual({
+    hover: onSurface,
+    focus: onSurface,
+    pressed: primary,
+  });
+  expect(await states('static-error-unchecked')).toEqual({
+    hover: error,
+    focus: error,
+    pressed: error,
+  });
 });
 
 test('keyboard: Tab reaches each enabled checkbox, Space toggles, Enter does not', async ({

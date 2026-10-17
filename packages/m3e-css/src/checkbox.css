@@ -26,6 +26,10 @@
  *   on: CheckboxTokens.ContainerSize 18dp, 0.25 / 0.65 / 0.75, disabled checkmark surface, ripple
  *   in the box color, transparent while unchecked). Owner decision (M8): 1, which matches the
  *   token file and m3.material.io. One declaration (e.g. on :root) switches it back.
+ * - State layer while unchecked (owner decision 2026-10-17, amending M8 #4; flag on only): not
+ *   Compose's transparent ripple but the m3.material.io token DB's per-state colors
+ *   (md.comp.checkbox.unselected.{hover,focus}.state-layer.color on-surface, .pressed primary;
+ *   with aria-invalid md.comp.checkbox.error.* error). Checked / indeterminate keep the box color.
  * - Layout (L554-593): clickable → minimumInteractiveComponentSize (48dp, the input here),
  *   triStateToggleable (Role.Checkbox), the box centred in it. Unbounded ripple of radius
  *   StateLayerSize / 2 (L554-560): the 40dp state layer circle, the press grows from its centre.
@@ -49,8 +53,8 @@
  *   by opacity here (one layer: the two segments overlap at the joint).
  * - Colors: defaultCheckboxColors (L446-476); indeterminate = checked. Error is not a Compose
  *   parameter: the CheckboxTokens Selected/UnselectedError* colors (owner decision M8). Hover,
- *   focus and press change no color (the tokens' Unselected{Hover,Focus,Pressed}OutlineColor are
- *   never rendered by Compose): state layer only.
+ *   focus and press change no box or outline color (the tokens' Unselected{Hover,Focus,Pressed}
+ *   OutlineColor are never rendered by Compose): state layer only.
  * - Label: CheckboxWithTextSample (CheckboxSamples.kt L62-89): 16dp after the 48dp checkbox,
  *   bodyLarge, in the content color; the whole row toggles and shows the checkbox's ripple.
  */
@@ -139,12 +143,6 @@
       var(--m3e-comp-checkbox-checkmark-color-disabled-styling-fix)
         calc(var(--_m3e-checkbox-fix) * 100%),
       var(--m3e-comp-checkbox-checkmark-color-disabled)
-    );
-    --_m3e-checkbox-ripple-unchecked: color-mix(
-      in srgb,
-      var(--m3e-comp-checkbox-state-layer-color-unchecked-styling-fix)
-        calc(var(--_m3e-checkbox-fix) * 100%),
-      var(--m3e-comp-checkbox-state-layer-color)
     );
 
     position: relative;
@@ -387,9 +385,33 @@
     --_m3e-checkbox-mark-color: var(--_m3e-checkbox-mark-disabled);
   }
 
-  /* --- State layer: the 40dp ripple circle, over the box ------------------------------------ */
+  /*
+   * --- State layer: the 40dp ripple circle, over the box ------------------------------------
+   * Its color per state: --_m3e-checkbox-ripple-{hover,focus,pressed}, picked below by the state
+   * (pressed over focus over hover; the resting layer is invisible, so it takes the hover color).
+   * With the flag off every one is the content color (Compose's Color.Unspecified ripple).
+   */
   .m3e-checkbox__state {
-    --m3e-comp-state-layer-color: var(--_m3e-checkbox-ripple-unchecked);
+    /* Unchecked: the m3.material.io unselected colors (owner decision 2026-10-17). */
+    --_m3e-checkbox-ripple-hover: color-mix(
+      in srgb,
+      var(--m3e-comp-checkbox-state-layer-color-unselected-hover)
+        calc(var(--_m3e-checkbox-fix) * 100%),
+      var(--m3e-comp-checkbox-state-layer-color)
+    );
+    --_m3e-checkbox-ripple-focus: color-mix(
+      in srgb,
+      var(--m3e-comp-checkbox-state-layer-color-unselected-focus)
+        calc(var(--_m3e-checkbox-fix) * 100%),
+      var(--m3e-comp-checkbox-state-layer-color)
+    );
+    --_m3e-checkbox-ripple-pressed: color-mix(
+      in srgb,
+      var(--m3e-comp-checkbox-state-layer-color-unselected-pressed)
+        calc(var(--_m3e-checkbox-fix) * 100%),
+      var(--m3e-comp-checkbox-state-layer-color)
+    );
+    --m3e-comp-state-layer-color: var(--_m3e-checkbox-ripple-hover);
 
     inset-inline-start: calc(
       (
@@ -403,18 +425,47 @@
     border-radius: var(--m3e-comp-checkbox-state-layer-shape);
   }
 
-  /* Ripple color: the content color (flag off), or indicatorColor(state) with the flag. */
+  .m3e-checkbox__input:focus-visible ~ .m3e-checkbox__state {
+    --m3e-comp-state-layer-color: var(--_m3e-checkbox-ripple-focus);
+  }
+
+  :is(.m3e-checkbox:active .m3e-checkbox__state, .m3e-checkbox__state[data-pressed]) {
+    --m3e-comp-state-layer-color: var(--_m3e-checkbox-ripple-pressed);
+  }
+
+  /* Unchecked error: md.comp.checkbox.error.{hover,focus,pressed}.state-layer.color. */
+  .m3e-checkbox__input[aria-invalid='true'] ~ .m3e-checkbox__state {
+    --_m3e-checkbox-ripple-hover: color-mix(
+      in srgb,
+      var(--m3e-comp-checkbox-state-layer-color-error-hover) calc(var(--_m3e-checkbox-fix) * 100%),
+      var(--m3e-comp-checkbox-state-layer-color)
+    );
+    --_m3e-checkbox-ripple-focus: color-mix(
+      in srgb,
+      var(--m3e-comp-checkbox-state-layer-color-error-focus) calc(var(--_m3e-checkbox-fix) * 100%),
+      var(--m3e-comp-checkbox-state-layer-color)
+    );
+    --_m3e-checkbox-ripple-pressed: color-mix(
+      in srgb,
+      var(--m3e-comp-checkbox-state-layer-color-error-pressed) calc(var(--_m3e-checkbox-fix) * 100%),
+      var(--m3e-comp-checkbox-state-layer-color)
+    );
+  }
+
+  /* Checked / indeterminate: indicatorColor(state), the box color, in every state (Compose). */
   .m3e-checkbox__input:is(:checked, :indeterminate) ~ .m3e-checkbox__state {
-    --m3e-comp-state-layer-color: color-mix(
+    --_m3e-checkbox-ripple-hover: color-mix(
       in srgb,
       var(--m3e-comp-checkbox-state-layer-color-checked-styling-fix)
         calc(var(--_m3e-checkbox-fix) * 100%),
       var(--m3e-comp-checkbox-state-layer-color)
     );
+    --_m3e-checkbox-ripple-focus: var(--_m3e-checkbox-ripple-hover);
+    --_m3e-checkbox-ripple-pressed: var(--_m3e-checkbox-ripple-hover);
   }
 
   .m3e-checkbox__input[aria-invalid='true']:is(:checked, :indeterminate) ~ .m3e-checkbox__state {
-    --m3e-comp-state-layer-color: color-mix(
+    --_m3e-checkbox-ripple-hover: color-mix(
       in srgb,
       var(--m3e-comp-checkbox-container-color-selected-error) calc(var(--_m3e-checkbox-fix) * 100%),
       var(--m3e-comp-checkbox-state-layer-color)

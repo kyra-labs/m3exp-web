@@ -473,6 +473,12 @@ export const checkboxDefaults = {
   checkboxLabelTextSize: "var(--m3e-sys-typescale-body-large-size)",
   checkboxLabelTextLineHeight: "var(--m3e-sys-typescale-body-large-line-height)",
   checkboxLabelTextTracking: "var(--m3e-sys-typescale-body-large-tracking)",
+  checkboxStateLayerColorUnselectedHover: "var(--m3e-sys-color-on-surface)",
+  checkboxStateLayerColorUnselectedFocus: "var(--m3e-sys-color-on-surface)",
+  checkboxStateLayerColorUnselectedPressed: "var(--m3e-sys-color-primary)",
+  checkboxStateLayerColorErrorHover: "var(--m3e-sys-color-error)",
+  checkboxStateLayerColorErrorFocus: "var(--m3e-sys-color-error)",
+  checkboxStateLayerColorErrorPressed: "var(--m3e-sys-color-error)",
   checkboxFollowDuration: 1
 } as const;
 

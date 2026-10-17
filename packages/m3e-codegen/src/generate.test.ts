@@ -736,6 +736,27 @@ describe('checkbox values (M8)', () => {
     expect(t('state-layer-color-unchecked-styling-fix')).toBe('transparent');
   });
 
+  it('unchecked state layer: the m3.material.io token DB colors (owner decision 2026-10-17)', () => {
+    // CheckboxTokens has no state layer colors; the values come from the m3 DB, cited per token.
+    expect(source('CheckboxTokens.kt')).not.toMatch(/StateLayerColor/);
+    const states: [string, string][] = [
+      ['unselected-hover', 'on-surface'],
+      ['unselected-focus', 'on-surface'],
+      ['unselected-pressed', 'primary'],
+      ['error-hover', 'error'],
+      ['error-focus', 'error'],
+      ['error-pressed', 'error'],
+    ];
+    const parity = output.get('PARITY.md')!;
+    for (const [state, role] of states) {
+      expect(t(`state-layer-color-${state}`), state).toBe(`var(--m3e-sys-color-${role})`);
+      const token = `md.comp.checkbox.${state.replace('-', '.')}.state-layer.color`;
+      expect(parity).toContain(
+        `${token} = md.sys.color.${role}\` | m3.material.io Checkbox › Specs (_dsm/content/m3/2026-10-13_06-10-19/c0332583-8417-4b80-a0a1-e283781d31c6.json, updated 2026-08-12), token DB "Google Material 3" v38.2.9 rev 7989 (_dsm/data/dsdb-m3/2026-10-13_06-10-19/TOKEN_TABLE.31f16b44fe03b0c0.json`,
+      );
+    }
+  });
+
   it('motion: check DefaultSpatial, 100ms snap, colors DefaultEffects in / FastEffects out', () => {
     expect(kt).toContain('private const val SnapAnimationDelay = 100');
     expect(t('snap-delay')).toBe('100ms');
