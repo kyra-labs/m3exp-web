@@ -498,6 +498,31 @@ button.docs-tile {
     var(--m3e-sys-typescale-body-large-line-height) var(--m3e-sys-typescale-body-large-font);
 }
 
+/* Checkbox: rows of labelled checkboxes; the tri-state sample indents its children (24dp). */
+.docs-checkbox-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--m3e-sys-space-100) var(--m3e-sys-space-300);
+  align-items: center;
+  margin: var(--m3e-sys-space-150) 0;
+  color: var(--m3e-sys-color-on-surface);
+}
+
+.docs-checkbox-tree {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin: var(--m3e-sys-space-150) 0;
+  color: var(--m3e-sys-color-on-surface);
+}
+
+.docs-checkbox-children {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding-inline-start: var(--m3e-sys-space-300);
+}
+
 .docs-note {
   padding: var(--m3e-sys-space-150) var(--m3e-sys-space-200);
   border-radius: var(--m3e-sys-shape-corner-medium);

@@ -120,6 +120,37 @@ describe('attachAutoRipple', () => {
     expect(item.hasAttribute('data-pressed')).toBe(false);
   });
 
+  it('draws a checkbox press (label or input) on its state circle; Space only; not disabled', () => {
+    const html =
+      '<label class="m3e-checkbox"><input class="m3e-checkbox__input" type="checkbox"%>' +
+      '<span class="m3e-checkbox__box"><span class="m3e-checkbox__mark"></span></span>' +
+      '<span class="m3e-checkbox__state"></span><span class="m3e-checkbox__label">A</span></label>';
+    const root = mount(html.replace('%', ''));
+    const input = root.querySelector('input')!;
+    const state = root.querySelector('.m3e-checkbox__state')!;
+    box(state, 4, 4, 40, 40);
+    down(root.querySelector('.m3e-checkbox__label')!, 100, 24);
+    expect(ripple(state)).toMatchObject({ ripple: true, pressed: true });
+    up(root);
+    down(input, 24, 24, 2);
+    expect(ripple(state)).toMatchObject({ ripple: true, pressed: true, x: '20px', y: '20px' });
+    up(input, 2);
+    key(input, 'keydown', 'Enter');
+    expect(state.hasAttribute('data-pressed')).toBe(false);
+    key(input, 'keydown', ' ');
+    expect(state.hasAttribute('data-pressed')).toBe(true);
+    key(input, 'keyup', ' ');
+    expect(state.hasAttribute('data-pressed')).toBe(false);
+
+    const disabled = mount(html.replace('%', ' disabled'));
+    down(disabled.querySelector('.m3e-checkbox__label')!);
+    down(disabled.querySelector('input')!, 0, 0, 3);
+    expect(ripple(disabled.querySelector('.m3e-checkbox__state')!)).toMatchObject({
+      ripple: false,
+      pressed: false,
+    });
+  });
+
   it('ignores disabled triggers and hosts', () => {
     const disabled = mount('<button class="m3e-button" disabled></button>');
     down(disabled);

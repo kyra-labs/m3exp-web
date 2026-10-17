@@ -39,4 +39,5 @@
 @import './linear-progress.css';
 @import './circular-progress.css';
 @import './search.css';
+@import './checkbox.css';
 @import './layout.css'; /* canonical layouts; imports vertical-drag-handle.css */

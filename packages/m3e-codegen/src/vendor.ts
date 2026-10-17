@@ -51,6 +51,7 @@ export const MATERIAL3_SOURCES = [
   'TabRow.kt',
   'Tab.kt',
   'DragHandle.kt',
+  'Checkbox.kt',
 ] as const;
 
 /** Material3 samples the generator reads (values the Compose catalog renders, e.g. icon rotation). */
@@ -64,6 +65,7 @@ export const MATERIAL3_SAMPLE_SOURCES = [
   'NavigationRailSamples.kt',
   'DrawerSamples.kt',
   'TabSamples.kt',
+  'CheckboxSamples.kt',
 ] as const;
 
 /** Android `actual`s the generator reads (DropdownMenu's popup margins, AndroidMenu.android.kt). */
