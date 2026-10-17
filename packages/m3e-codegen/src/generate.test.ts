@@ -838,6 +838,67 @@ describe('radio button values (M8)', () => {
   });
 });
 
+describe('switch values (M8)', () => {
+  const css = output.get('components/switch-defaults.css')!;
+  const decl = declarations(css);
+  const kt = inputs.material3Sources['Switch.kt']!.replace(/\r\n/g, '\n');
+  const t = (name: string) => decl.get(`--m3e-comp-switch-${name}`);
+  const tok = (name: string) => declarations(output.get('components/switch.css')!).get(name);
+
+  it('handle: 16dp unchecked, 24dp checked or with an icon, 28dp pressed; 52 × 32dp track', () => {
+    expect(t('unchecked-thumb-diameter')).toBe('16px');
+    expect(t('thumb-diameter')).toBe('24px');
+    expect(t('pressed-thumb-diameter')).toBe('28px');
+    expect(tok('--m3e-comp-switch-track-width')).toBe('52px');
+    expect(tok('--m3e-comp-switch-track-height')).toBe('32px');
+    expect(tok('--m3e-comp-switch-track-outline-width')).toBe('2px');
+    expect(tok('--m3e-comp-switch-icon-handle-width')).toBe('24px');
+    expect(kt).toContain('hasContent || checked -> ThumbDiameter');
+    expect(kt).toContain('private val ThumbPadding = (SwitchHeight - ThumbDiameter) / 2');
+    expect(t('icon-size')).toBe('16px');
+  });
+
+  it('motion: FastSpatial for offset and size, SnapSpec while pressed; colors not animated', () => {
+    for (const field of ['duration', 'easing', 'damping-ratio', 'stiffness']) {
+      expect(t(`handle-${field}`)).toBe(`var(--m3e-sys-motion-spring-fast-spatial-${field})`);
+    }
+    expect(t('handle-press-duration')).toBe('0ms');
+    expect(kt).toContain('sizeAnim?.animateTo(size, if (isPressed) SnapSpec else animationSpec)');
+    expect(kt).toContain('.background(thumbColor, thumbShape)');
+  });
+
+  it('colors: defaultSwitchColors; disabled composited over surface', () => {
+    expect(t('handle-color-checked')).toBe('var(--m3e-sys-color-on-primary)');
+    expect(t('track-color-checked')).toBe('var(--m3e-sys-color-primary)');
+    expect(t('track-outline-color-checked')).toBe('transparent');
+    expect(t('icon-color-checked')).toBe('var(--m3e-sys-color-on-primary-container)');
+    expect(t('handle-color-unchecked')).toBe('var(--m3e-sys-color-outline)');
+    expect(t('track-color-unchecked')).toBe('var(--m3e-sys-color-surface-container-highest)');
+    expect(t('track-outline-color-unchecked')).toBe('var(--m3e-sys-color-outline)');
+    expect(t('icon-color-unchecked')).toBe('var(--m3e-sys-color-surface-container-highest)');
+    const over = (color: string, alpha: string) =>
+      `color-mix(in srgb, var(--m3e-sys-color-${color}) calc(${alpha} * 100%), var(--m3e-sys-color-surface))`;
+    expect(t('handle-color-checked-disabled')).toBe(over('surface', '1'));
+    expect(t('track-color-checked-disabled')).toBe(over('on-surface', '0.12'));
+    expect(t('track-outline-color-checked-disabled')).toBe('transparent');
+    expect(t('icon-color-checked-disabled')).toBe(over('on-surface', '0.38'));
+    expect(t('handle-color-unchecked-disabled')).toBe(over('on-surface', '0.38'));
+    expect(t('track-color-unchecked-disabled')).toBe(over('surface-container-highest', '0.12'));
+    expect(t('track-outline-color-unchecked-disabled')).toBe(over('on-surface', '0.12'));
+    expect(t('icon-color-unchecked-disabled')).toBe(over('surface-container-highest', '0.38'));
+    expect(t('state-layer-color')).toBe('currentcolor');
+  });
+
+  it('the inline label: the expressive ListItem spacing and label style', () => {
+    expect(t('label-space')).toBe('12px');
+    expect(t('label-text-size')).toBe('var(--m3e-sys-typescale-body-large-size)');
+    expect(t('label-text-tracking')).toBe('var(--m3e-sys-typescale-body-large-tracking)');
+    expect(output.get('PARITY.md')).toMatch(
+      /ListItem\.kt@\w+ L\d+ \| `--m3e-comp-switch-label-space`/,
+    );
+  });
+});
+
 describe('navigation suite scaffold values (M7)', () => {
   const css = output.get('components/navigation-suite-defaults.css')!;
   const decl = declarations(css.slice(0, css.indexOf('@media')));

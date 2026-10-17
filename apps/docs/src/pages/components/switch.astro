@@ -1,0 +1,158 @@
+---
+import SwitchPlayground from '../../islands/SwitchPlayground.tsx';
+import Base from '../../layouts/Base.astro';
+
+// Static switches in the m3e-css contract (switch.css): unchecked / checked × enabled / disabled,
+// icons in the handle (Compose thumbContent), leading labels in a settings list, no label.
+const ROWS = [
+  { id: 'enabled', title: 'Enabled', disabled: false },
+  { id: 'disabled', title: 'Disabled', disabled: true },
+];
+const STATES = ['checked', 'unchecked'] as const;
+// Compose's SwitchWithThumbIconSample (a check while checked), and m3.material.io's check / close pair.
+const ICON_ROWS = [
+  { id: 'check', title: 'Check icon', checked: 'check', unchecked: null },
+  { id: 'both', title: 'Both icons', checked: 'check', unchecked: 'close' },
+];
+const SETTINGS = [
+  { id: 'wifi', label: 'Wi-Fi', checked: true },
+  { id: 'bluetooth', label: 'Bluetooth', checked: false },
+  { id: 'airplane', label: 'Airplane mode', checked: false },
+];
+---
+
+<Base title="Switch">
+  <link rel="stylesheet" href="/icons/docs-icons.css" slot="head" />
+  <h1>Switch</h1>
+  <p>
+    Switches (COMPONENT_SPEC §24; Compose <code>Switch</code>) on a native <code>&lt;input type="checkbox" role="switch"&gt;</code>: a 52 × 32dp track in a 48dp-high target. Pressing snaps the handle to 28dp; releasing springs it to its place on the fast spatial spring, which overshoots under the expressive motion scheme, so a click
+    grows the handle and then springs it across. Track and handle colors change without animating, as
+    in Compose. Space toggles (Enter does not), with no JavaScript.
+  </p>
+
+  <section aria-labelledby="static-heading" id="static-switches">
+    <h2 id="static-heading">Static (m3e-css)</h2>
+    <p>
+      <code>&lt;label class="m3e-switch"&gt;</code> around the <code>.m3e-switch__input</code>, the <code>__track</code> with its <code>__handle</code> (optional <code>.m3e-icon.m3e-switch__icon</code>s and the <code>__state</code> circle) and an optional <code>__label</code>, before or after the
+      switch. The whole label toggles and shows the handle's hover and press. The ripple needs <code>@kyralabs/m3e-elements/ripple.js</code> (this section uses <code>attachAutoRipple</code>).
+    </p>
+    {
+      ROWS.map((row) => (
+        <div class="docs-switch-row" data-testid={`static-${row.id}`}>
+          {STATES.map((s) => (
+            <label class="m3e-switch" data-testid={`static-${row.id}-${s}`}>
+              <input
+                class="m3e-switch__input"
+                type="checkbox"
+                role="switch"
+                checked={s === 'checked'}
+                disabled={row.disabled}
+              />
+              <span class="m3e-switch__track" aria-hidden="true">
+                <span class="m3e-switch__handle">
+                  <span class="m3e-switch__state" />
+                </span>
+              </span>
+              <span class="m3e-switch__label">
+                {row.title} {s}
+              </span>
+            </label>
+          ))}
+        </div>
+      ))
+    }
+    {
+      ICON_ROWS.map((row) => (
+        <div class="docs-switch-row" data-testid={`static-${row.id}`}>
+          {[...STATES, 'disabled'].map((s) => (
+            <label class="m3e-switch" data-testid={`static-${row.id}-${s}`}>
+              <input
+                class="m3e-switch__input"
+                type="checkbox"
+                role="switch"
+                checked={s !== 'unchecked'}
+                disabled={s === 'disabled'}
+              />
+              <span class="m3e-switch__track" aria-hidden="true">
+                <span class="m3e-switch__handle">
+                  <span
+                    class="m3e-icon m3e-switch__icon m3e-switch__icon--checked"
+                    data-fill
+                    aria-hidden="true"
+                  >
+                    {row.checked}
+                  </span>
+                  {row.unchecked ? (
+                    <span
+                      class="m3e-icon m3e-switch__icon m3e-switch__icon--unchecked"
+                      data-fill
+                      aria-hidden="true"
+                    >
+                      {row.unchecked}
+                    </span>
+                  ) : null}
+                  <span class="m3e-switch__state" />
+                </span>
+              </span>
+              <span class="m3e-switch__label">
+                {row.title} {s}
+              </span>
+            </label>
+          ))}
+        </div>
+      ))
+    }
+    <div class="docs-switch-list" data-testid="static-settings">
+      {
+        SETTINGS.map((item) => (
+          <label class="m3e-switch docs-switch-list__item" data-testid={`static-settings-${item.id}`}>
+            <span class="m3e-switch__label">{item.label}</span>
+            <input class="m3e-switch__input" type="checkbox" role="switch" checked={item.checked} />
+            <span class="m3e-switch__track" aria-hidden="true">
+              <span class="m3e-switch__handle">
+                <span class="m3e-switch__state" />
+              </span>
+            </span>
+          </label>
+        ))
+      }
+    </div>
+    <div class="docs-switch-row">
+      <label class="m3e-switch" data-testid="static-no-label">
+        <input class="m3e-switch__input" type="checkbox" role="switch" aria-label="Notifications" />
+        <span class="m3e-switch__track" aria-hidden="true">
+          <span class="m3e-switch__handle">
+            <span class="m3e-switch__state"></span>
+          </span>
+        </span>
+      </label>
+    </div>
+  </section>
+
+  <section aria-labelledby="element-heading">
+    <h2 id="element-heading">Element</h2>
+    <p>
+      There is no <code>&lt;m3e-switch&gt;</code>: the native checkbox already toggles on Space,
+      submits with its form and exposes <code>role="switch"</code>, and the press snap and spring
+      are CSS (<code>:active</code> and transitions), so the plain markup above is the element-layer
+      API. Load <code>@kyralabs/m3e-elements/ripple.js</code> for the press ripple.
+    </p>
+  </section>
+
+  <section aria-labelledby="react-heading">
+    <h2 id="react-heading">React</h2>
+    <p>
+      <code>&lt;Switch isSelected defaultSelected onChange isDisabled isReadOnly checkedIcon
+      uncheckedIcon labelPosition name value aria-label&gt;</code> (React Aria <code>useSwitch</code>); the same DOM as the static markup.
+    </p>
+    <SwitchPlayground client:only="react" />
+  </section>
+</Base>
+
+<script>
+  import { attachAutoRipple } from '@kyralabs/m3exp-web/elements';
+
+  // The ripple for the static switches (React drives its own).
+  const statics = document.querySelector<HTMLElement>('#static-switches');
+  if (statics) attachAutoRipple(statics, new AbortController().signal);
+</script>

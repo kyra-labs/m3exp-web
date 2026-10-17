@@ -398,8 +398,9 @@ text). A user toggle updates `checked` and clears `indeterminate`.
 m3e-css draws hover, focus and pressed overlays without JS; the press ripple needs a little.
 One import adds it to every plain-HTML button, icon button, assist chip, FAB, extended FAB, FAB menu item, `.m3e-state-layer`,
 interactive card (pressed through `.m3e-card__action`, drawn on the card), navigation item
-(drawn on `.m3e-navigation-item__state`), navigation drawer item, tab, checkbox and radio button
-(pressed through the label or the input, drawn on the 40dp `__state` circle) in the document,
+(drawn on `.m3e-navigation-item__state`), navigation drawer item, tab, checkbox, radio button and
+switch (pressed through the label or the input, drawn on the 40dp `__state` circle; a switch's
+moves with its handle) in the document,
 including ones added later:
 
 ```js
@@ -410,8 +411,8 @@ It uses one set of delegated pointer and keyboard listeners on `document` and wr
 contract as `attachRipple`: the first press on a host sets `data-ripple`, which stays, and each
 press toggles `data-pressed` and writes `--_m3e-ripple-x/-y/-radius`. Hosts carrying a
 `data-ripple` it did not set (m3e-react components and `attachRipple` hosts) are skipped, as are
-disabled ones. Enter and Space press from the center (links: Enter only; checkboxes and radio
-buttons: Space only, as they toggle or select). To scope it or stop it,
+disabled ones. Enter and Space press from the center (links: Enter only; checkboxes, radio
+buttons and switches: Space only, as they toggle or select). To scope it or stop it,
 call `attachAutoRipple(root, signal)` from the package root instead; that import has no side
 effect, and aborting the signal removes the attributes and variables it wrote.
 

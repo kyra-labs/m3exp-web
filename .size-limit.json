@@ -115,6 +115,12 @@
     "limit": "2 KB"
   },
   {
+    "name": "m3e-css: switch (track, handle press / spring, icons, state layer)",
+    "path": "packages/m3e-css/dist/switch.css",
+    "rolldown": false,
+    "limit": "2 KB"
+  },
+  {
     "name": "m3e-css: legacy navigation bar + rail (D4)",
     "path": [
       "packages/m3e-css/dist/navigation-bar.css",
@@ -571,6 +577,12 @@
     "path": "packages/m3e-react/dist/index.js",
     "import": "{ RadioGroup, Radio }",
     "limit": "17 KB"
+  },
+  {
+    "name": "m3e-react: { Switch } only (incl. react-aria useSwitch press/focus/keyboard + react-stately toggle state)",
+    "path": "packages/m3e-react/dist/index.js",
+    "import": "{ Switch }",
+    "limit": "16 KB"
   },
   {
     "name": "m3exp-web/react: { Icon } only",

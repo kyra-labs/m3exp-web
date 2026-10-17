@@ -3306,6 +3306,42 @@ export const switchTokens = {
   iconHandleWidth: 24
 } as const;
 
+/** SwitchDefaults */
+export const switchDefaults = {
+  switchThumbDiameter: "24px",
+  switchUncheckedThumbDiameter: "16px",
+  switchPressedThumbDiameter: "28px",
+  switchHandleDuration: "var(--m3e-sys-motion-spring-fast-spatial-duration)",
+  switchHandleEasing: "var(--m3e-sys-motion-spring-fast-spatial-easing)",
+  switchHandleDampingRatio: "var(--m3e-sys-motion-spring-fast-spatial-damping-ratio)",
+  switchHandleStiffness: "var(--m3e-sys-motion-spring-fast-spatial-stiffness)",
+  switchHandlePressDuration: "0ms",
+  switchHandleColorChecked: "var(--m3e-sys-color-on-primary)",
+  switchTrackColorChecked: "var(--m3e-sys-color-primary)",
+  switchIconColorChecked: "var(--m3e-sys-color-on-primary-container)",
+  switchHandleColorUnchecked: "var(--m3e-sys-color-outline)",
+  switchTrackColorUnchecked: "var(--m3e-sys-color-surface-container-highest)",
+  switchIconColorUnchecked: "var(--m3e-sys-color-surface-container-highest)",
+  switchTrackOutlineColorUnchecked: "var(--m3e-sys-color-outline)",
+  switchTrackOutlineColorChecked: "transparent",
+  switchTrackOutlineColorCheckedDisabled: "transparent",
+  switchHandleColorCheckedDisabled: "color-mix(in srgb, var(--m3e-sys-color-surface) calc(1 * 100%), var(--m3e-sys-color-surface))",
+  switchTrackColorCheckedDisabled: "color-mix(in srgb, var(--m3e-sys-color-on-surface) calc(0.12 * 100%), var(--m3e-sys-color-surface))",
+  switchIconColorCheckedDisabled: "color-mix(in srgb, var(--m3e-sys-color-on-surface) calc(0.38 * 100%), var(--m3e-sys-color-surface))",
+  switchHandleColorUncheckedDisabled: "color-mix(in srgb, var(--m3e-sys-color-on-surface) calc(0.38 * 100%), var(--m3e-sys-color-surface))",
+  switchTrackColorUncheckedDisabled: "color-mix(in srgb, var(--m3e-sys-color-surface-container-highest) calc(0.12 * 100%), var(--m3e-sys-color-surface))",
+  switchTrackOutlineColorUncheckedDisabled: "color-mix(in srgb, var(--m3e-sys-color-on-surface) calc(0.12 * 100%), var(--m3e-sys-color-surface))",
+  switchIconColorUncheckedDisabled: "color-mix(in srgb, var(--m3e-sys-color-surface-container-highest) calc(0.38 * 100%), var(--m3e-sys-color-surface))",
+  switchIconSize: 16,
+  switchStateLayerColor: "currentcolor",
+  switchLabelSpace: "12px",
+  switchLabelTextFont: "var(--m3e-sys-typescale-body-large-font)",
+  switchLabelTextWeight: "var(--m3e-sys-typescale-body-large-weight)",
+  switchLabelTextSize: "var(--m3e-sys-typescale-body-large-size)",
+  switchLabelTextLineHeight: "var(--m3e-sys-typescale-body-large-line-height)",
+  switchLabelTextTracking: "var(--m3e-sys-typescale-body-large-tracking)"
+} as const;
+
 /** TabsDefaults */
 export const tabsDefaults = {
   tabsScrollableMinTabWidth: 90,
