@@ -232,6 +232,7 @@ test('the disabled color snaps; the enabled color animates on default effects', 
 
 test('keyboard: Tab enters at the selected radio, arrows move the selection and wrap, Space selects', async ({
   page,
+  browserName,
 }) => {
   const input = (o: string) => radio(page, `static-group-${o}`).locator('input');
   await input('calls').focus();
@@ -242,12 +243,21 @@ test('keyboard: Tab enters at the selected radio, arrows move the selection and 
   await page.keyboard.press('ArrowRight');
   await expect(input('friends')).toBeChecked();
   await page.keyboard.press('ArrowDown');
-  await expect(input('calls')).toBeChecked();
-  await expect(input('calls')).toBeFocused();
-  await page.keyboard.press('ArrowUp');
-  await expect(input('friends')).toBeChecked();
-  await page.keyboard.press('ArrowLeft');
-  await expect(input('missed')).toBeChecked();
+  // Native radios wrap in Chromium and Firefox; WebKit's stop at the group's ends (UA behavior,
+  // a known gap of the zero-JS layer; React Aria wraps everywhere, below).
+  if (browserName === 'webkit') {
+    await expect(input('friends')).toBeChecked();
+    await expect(input('friends')).toBeFocused();
+    await page.keyboard.press('ArrowUp');
+    await expect(input('missed')).toBeChecked();
+  } else {
+    await expect(input('calls')).toBeChecked();
+    await expect(input('calls')).toBeFocused();
+    await page.keyboard.press('ArrowUp');
+    await expect(input('friends')).toBeChecked();
+    await page.keyboard.press('ArrowLeft');
+    await expect(input('missed')).toBeChecked();
+  }
   // Shift+Tab leaves the group, Tab comes back to the selected radio.
   await page.keyboard.press('Tab');
   await page.keyboard.press('Shift+Tab');
