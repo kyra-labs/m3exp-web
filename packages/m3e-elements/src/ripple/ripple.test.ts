@@ -182,6 +182,34 @@ describe('attachAutoRipple', () => {
     });
   });
 
+  it('draws a switch press (label or input) on the circle around its handle; Space only; not disabled', () => {
+    const html =
+      '<label class="m3e-switch"><input class="m3e-switch__input" type="checkbox" role="switch"%>' +
+      '<span class="m3e-switch__track"><span class="m3e-switch__handle">' +
+      '<span class="m3e-switch__state"></span></span></span>' +
+      '<span class="m3e-switch__label">A</span></label>';
+    const root = mount(html.replace('%', ''));
+    const input = root.querySelector('input')!;
+    const state = root.querySelector('.m3e-switch__state')!;
+    box(state, 0, 4, 40, 40);
+    down(root.querySelector('.m3e-switch__label')!, 100, 24);
+    expect(ripple(state)).toMatchObject({ ripple: true, pressed: true });
+    up(root);
+    key(input, 'keydown', 'Enter');
+    expect(state.hasAttribute('data-pressed')).toBe(false);
+    key(input, 'keydown', ' ');
+    expect(state.hasAttribute('data-pressed')).toBe(true);
+    key(input, 'keyup', ' ');
+    expect(state.hasAttribute('data-pressed')).toBe(false);
+
+    const disabled = mount(html.replace('%', ' disabled'));
+    down(disabled.querySelector('.m3e-switch__label')!);
+    expect(ripple(disabled.querySelector('.m3e-switch__state')!)).toMatchObject({
+      ripple: false,
+      pressed: false,
+    });
+  });
+
   it('ignores disabled triggers and hosts', () => {
     const disabled = mount('<button class="m3e-button" disabled></button>');
     down(disabled);

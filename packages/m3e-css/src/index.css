@@ -41,4 +41,5 @@
 @import './search.css';
 @import './checkbox.css';
 @import './radio-button.css';
+@import './switch.css';
 @import './layout.css'; /* canonical layouts; imports vertical-drag-handle.css */

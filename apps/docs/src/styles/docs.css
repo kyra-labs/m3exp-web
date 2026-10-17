@@ -536,6 +536,27 @@ button.docs-tile {
     var(--m3e-sys-typescale-label-large-line-height) var(--m3e-sys-typescale-label-large-font);
 }
 
+/* Switch: demo rows of switches with space between them (the library adds none). */
+.docs-switch-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--m3e-sys-space-100) var(--m3e-sys-space-300);
+  align-items: center;
+  margin: var(--m3e-sys-space-150) 0;
+}
+
+/* A settings-style list: the label at the start, the switch at the end of the row. */
+.docs-switch-list {
+  display: flex;
+  flex-direction: column;
+  max-inline-size: 22rem;
+}
+
+.docs-switch-list__item {
+  display: flex;
+  justify-content: space-between;
+}
+
 .docs-note {
   padding: var(--m3e-sys-space-150) var(--m3e-sys-space-200);
   border-radius: var(--m3e-sys-shape-corner-medium);

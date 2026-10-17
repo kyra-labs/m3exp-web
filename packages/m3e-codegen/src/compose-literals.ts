@@ -1,5 +1,5 @@
 // Shared engine for the selection controls' `*-defaults` generators (checkbox-defaults.ts,
-// radio-button-defaults.ts): the literals a composable renders that are not in its token file,
+// radio-button-defaults.ts, switch-defaults.ts): the literals a composable renders that are not in its token file,
 // each read from a vendored file with a targeted regex and cited by line, plus wiring CHECKS that
 // throw when what the component CSS assumes changes upstream.
 import { compVar, kebabName } from './names.js';
@@ -24,7 +24,17 @@ export interface ComposeLiteral {
 }
 
 export type LiteralKind =
-  'dp' | 'fraction' | 'ms' | 'motion' | 'token' | 'type' | 'alias' | 'flag' | 'keyword';
+  | 'dp'
+  | 'fraction'
+  | 'ms'
+  | 'motion'
+  | 'token'
+  | 'type'
+  | 'typeToken'
+  | 'composite'
+  | 'alias'
+  | 'flag'
+  | 'keyword';
 
 export interface LiteralRule {
   kind: LiteralKind;
@@ -32,7 +42,12 @@ export interface LiteralRule {
   owner: string;
   member: string;
   file: string;
-  /** First capture group: a literal, a motion key, a `<Object>Tokens.<Member>` reference. */
+  /**
+   * First capture group: a literal, a motion key, a `<Object>Tokens.<Member>` reference (`type`:
+   * a `MaterialTheme.typography` style; `typeToken`: a TypographyToken). `composite`: the color
+   * token, then its alpha token, then the ColorScheme role it is composited over
+   * (`fromToken(<color>).copy(alpha = <alpha>).compositeOver(<role>)`).
+   */
   pattern: RegExp;
   /** `flag`: the value emitted instead of the upstream default (an owner decision). */
   enabled?: boolean;
@@ -55,6 +70,8 @@ const KEYWORDS: Readonly<Record<string, string>> = {
   'Color.Unspecified': 'currentcolor',
   'Dp.Unspecified': '0px',
   'snap(delayMillis = SnapAnimationDelay)': 'steps(1, jump-end)',
+  // SnapSpec() (delay 0): the value jumps, a transition of no duration.
+  'SnapSpec<Float>()': '0ms',
   CircleShape: 'var(--m3e-sys-shape-corner-full)',
 };
 
@@ -132,6 +149,36 @@ function extractRule(
         js: `var(--m3e-sys-typescale-${style}-${field})`,
         raw: `MaterialTheme.typography.${captured}`,
       }));
+    }
+    case 'typeToken': {
+      // `ListTokens.ItemLabelTextFont` → the generated `--m3e-comp-list-item-label-text-*` set.
+      const font = /^var\((--[\w-]+)-font\)$/.exec(tokenVar(captured));
+      if (!font) throw new Error(`${label}: ${captured} is not a typography token`);
+      return TYPE_FIELDS.map((field) => ({
+        ...base,
+        name: `${rule.name}-${field}`,
+        value: `var(${font[1]!}-${field})`,
+        js: `var(${font[1]!}-${field})`,
+        raw: captured,
+      }));
+    }
+    case 'composite': {
+      // Color.copy(alpha).compositeOver(role): an opaque mix over the role, in sRGB (Compose
+      // composites in the color's space; ColorScheme colors are sRGB).
+      const alpha = match[2];
+      const role = match[3];
+      if (alpha === undefined || role === undefined)
+        throw new Error(`${label}: ${rule.name} needs the alpha and role captures`);
+      const over = kebabName(role[0]!.toUpperCase() + role.slice(1));
+      const value = `color-mix(in srgb, ${tokenVar(captured)} calc(${tokenVar(alpha)} * 100%), var(--m3e-sys-color-${over}))`;
+      return [
+        {
+          ...base,
+          value,
+          js: value,
+          raw: `${captured}.copy(alpha = ${alpha}).compositeOver(${role})`,
+        },
+      ];
     }
     case 'motion':
       return SPRING_FIELDS.map((field) => ({
