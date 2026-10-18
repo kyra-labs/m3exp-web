@@ -479,7 +479,7 @@
   @media (forced-colors: active) {
     /* Item boundaries (segmented and interactive items lose their container color). */
     :is(.m3e-list-item--segmented, .m3e-list-item--interactive) {
-      outline: var(--m3e-comp-divider-thickness) solid transparent;
+      outline: var(--m3e-comp-divider-thickness) solid CanvasText;
       outline-offset: calc(var(--m3e-comp-divider-thickness) * -1);
     }
 
