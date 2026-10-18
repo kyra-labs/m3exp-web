@@ -1077,3 +1077,28 @@ button.docs-layout-item:focus-visible {
   display: block;
   margin-block-end: var(--m3e-sys-space-200);
 }
+
+/*
+ * Snackbar (snackbar.astro): the static specimens, stacked; the ScaffoldWithMultilineSnackbar
+ * text (maxLines = 2, overflow = TextOverflow.Ellipsis).
+ */
+.docs-snackbar-specimens {
+  display: flex;
+  flex-direction: column;
+  gap: var(--m3e-sys-space-200);
+  margin-block: var(--m3e-sys-space-300);
+}
+
+.docs-snackbar-two-lines {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+}
+
+.docs-snackbar-option {
+  display: inline-flex;
+  gap: var(--m3e-sys-space-100);
+  align-items: center;
+}

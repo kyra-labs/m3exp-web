@@ -736,13 +736,31 @@
   - [ ] Plus CAC.
 
 ## 32. Snackbar
-- **Tokens:** container inverse-surface; action inverse-primary; icon inverse-on-surface (`TODO(verify)` SnackbarTokens).
-- **ARIA:** `role="status"`/`alert`; no auto-dismiss while hovered or focused.
-- **Layers:** css + elements (queue) + react.
+- **Tokens (verified, generated):** `SnackbarTokens.kt@19991f2c` (generated `snackbar.css`) as read by `Snackbar.kt` (`SnackbarDefaults`: container inverse surface, extra-small corners, text inverse on-surface body medium, action inverse primary label large, dismiss icon inverse on-surface 24dp; the Surface's `shadowElevation` = `ContainerElevation` Level3), plus `components/snackbar-defaults.css` (PARITY.md lines):
+
+  | | value | source |
+  |---|---|---|
+  | layout | `ComposeMaterial3Flags.isSnackbarStylingFixEnabled` **on** (owner decision M9 #19; the pin ships it off, whose legacy layouts place the text from its baseline and give the same 48 / 68dp for one / two lines) | `Snackbar.kt` L124-165 |
+  | one row | text padded `SnackbarVerticalPadding` 14dp, `HorizontalSpacing` 16dp before it; the action then the dismiss button at the end, centered vertically; at least `SingleLineContainerHeight` 48dp (two lines: 68dp); the row is at most `ContainerMaxWidth` 600dp inside the paddings; without a dismiss button `TextEndExtraSpacing` 8dp after the text and at the end | `OneRowSnackbar` L495-574 |
+  | action on a new line | at most 600dp; the text padded 14dp and 16dp at its end; the buttons end-aligned below, `ActionButtonBottomPadding` 4dp under them, `HorizontalSpacingButtonSide` 8dp after them without a dismiss button | `NewLineButtonSnackbar` L286-331 |
+  | buttons | the action a `TextButton` (`actionColor`), the dismiss action an `IconButton(Close)` named "Dismiss" in a `TooltipBox(Above)` with a `PlainTooltip` (owner decision M9 #30); both lay out at the 48dp minimum interactive size | `Snackbar(snackbarData)` L222-283 |
+  | host | 12dp around each snackbar; one at a time; `Scaffold` centers the host above the FAB (`FabSpacing` 16dp) / bottom bar / bottom inset | `Snackbar.kt` L272, `Scaffold.kt` L234-288, L369-370 |
+  | durations | `Short` 4000ms (the default without an action), `Long` 10000ms, `Indefinite` (the default with an action), from when the snackbar shows | `SnackbarHost.kt` L100-107, L216-239, L298-317 |
+
+- **Motion:** `FadeInFadeOutWithScale`: alpha 0 ↔ 1 on fast effects, scale 0.8 ↔ 1 on fast spatial (overshoots), around the center, interruptible; the incoming snackbar fades in where the outgoing one fades out (one cell), and the outgoing one is removed when its fade ends. Reduced motion: the scale jumps (spatial duration 0), the fade stays.
+- **Behavior:** `SnackbarHostState`: `showSnackbar` queues (first in, first out, Compose's fair `Mutex`) and resolves with `'action-performed'` or `'dismissed'`; an `AbortSignal` removes a call from the queue or the screen (Compose: cancelling the caller). The host dismisses the current snackbar after its duration, **paused while the pointer is over it or focus is in it** (owner decision M9 #20: the web stand-in for Android's `calculateRecommendedTimeoutMillis`, `TODO(verify)` SOURCES #75; apps that keep a timeout preference pass `recommendedTimeout`); **Escape** in it dismisses it (m3.material.io); focus never moves to it on its own; `focus()` (element) / `hostState.focus()` moves focus to its action (no shortcut is bound: apps provide one, m3.material.io); when a focused snackbar leaves, focus returns to where it came from.
+- **Placement (owner decision M9 #21):** `.m3e-snackbar-host` is fixed to the bottom center of the window, above `env(safe-area-inset-bottom)` and `--m3e-comp-snackbar-host-bottom-offset` (0; set it to the FAB height + `--m3e-comp-snackbar-host-fab-spacing` above a FAB, as `Scaffold` places it). Scaffold integration waits for §39.
+- **ARIA:** the host is a polite live region, `role="status"` (Compose: `liveRegion = Polite` on the visible snackbar; m3.material.io: polite). The dismiss button is named "Dismiss" (`dismiss-label`; Compose `Strings.SnackbarDismiss`); its tooltip repeats the name, so it is `aria-hidden` (owner decision M9 #2). Compose's `paneTitle` "Alert" has no web equivalent and is not rendered.
+- **Layers:** css + elements (`<m3e-snackbar-host>`; `snackbar-layout` entry: `SnackbarHostState`, `SnackbarHostController`) + react (`useSnackbarHostState()`, `<SnackbarHost>`, `<Snackbar>`, driving `SnackbarHostController`; the dismiss tooltip is `<TooltipTrigger>` + `<PlainTooltip>`, the element's the shared `TooltipController`).
+- **Classes:** `.m3e-snackbar-host` > `__item` > `.m3e-snackbar` (`--action-on-new-line`) > (`__text`, `__actions` > (`__action`, `__dismiss`)); JS hooks `[data-driven]`, `--_m3e-snackbar-scale` / `-opacity` on an item.
+- **API:** Element `<m3e-snackbar-host dismiss-label action-on-new-line>`; methods `showSnackbar(message | { message, actionLabel, withDismissAction, duration, signal })` (a Promise of the result), `focus()`; properties `hostState`, `currentSnackbarData`, `recommendedTimeout`. React `const hostState = useSnackbarHostState()`, `<SnackbarHost hostState actionOnNewLine dismissLabel snackbar recommendedTimeout>`, `<Snackbar snackbarData actionOnNewLine dismissLabel>` or `<Snackbar action dismissAction actionOnNewLine>{message}</Snackbar>` (Compose's two overloads).
 - **Acceptance:**
-  - [ ] One snackbar visible at a time.
-  - [ ] Action reachable by keyboard.
-  - [ ] Plus CAC.
+  - [x] One snackbar visible at a time.
+  - [x] Action reachable by keyboard.
+  - [x] Element / React DOM parity (`snackbar.test.tsx`).
+  - [x] Plus CAC.
+- **Fidelity:** the flag-on layout (owner decision M9 #19); the timer pauses while hovered or focused, which Compose does not do (#20); m3.material.io's "48dp to 64dp" for two lines against the tokens' 68dp, which Compose renders (`TODO(verify)` SOURCES #76); no Scaffold yet: the host is fixed to the window (#21); the outgoing and incoming snackbars share the host's top edge as in Compose's `Box`, so a shorter new snackbar moves down when the old one is removed; the action and dismiss buttons are plain m3e-css buttons in both layers (the ripple from `ripple.js`).
+- **Sources:** Snackbar.kt, SnackbarHost.kt, Scaffold.kt, ScaffoldSamples.kt, ComposeMaterial3Flags.kt, SnackbarTokens.kt, material3 res `strings.xml` L28-31 (vendored); m3.material.io Snackbar (Guidelines, Accessibility; token DB `md.comp.snackbar`).
 
 ## 33. Tooltips (plain, rich)
 - **Tokens (verified, generated):** `PlainTooltipTokens.kt` / `RichTooltipTokens.kt@19991f2c` plus the `Tooltip.kt` / `internal/BasicTooltip.kt` values Compose renders (`components/tooltip-defaults.css`). Plain: inverse surface, inverse-on-surface body small, extra-small corners, no elevation; 40 × 24dp minimum and 200dp maximum width with 8 × 4dp padding inside. Rich: surface container, medium corners, a Level2 shadow (tonal 0); up to 320dp wide, 16dp sides; the subhead (title small, on-surface-variant) has its first baseline 28dp from the top, the supporting text (body medium, on-surface-variant) its first baseline 24dp below the subhead (or the top) and 16dp under it, or 4dp above and below when it is alone; the action slot (label large, primary; the samples' TextButton) is at least 36dp with 8dp of bottom padding, 48dp + 8dp with the button's minimum interactive size. Caret (opt-in, `caretShape` defaults to null): `TooltipDefaults.caretSize` 16 × 8dp, on the edge facing the anchor (`layoutCaret`, `caretX`).
