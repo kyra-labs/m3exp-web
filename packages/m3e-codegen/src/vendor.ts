@@ -77,6 +77,7 @@ export const MATERIAL3_SAMPLE_SOURCES = [
   'ChipSamples.kt',
   'SliderSamples.kt',
   'TextFieldSamples.kt',
+  'ListSamples.kt',
 ] as const;
 
 /** Android `actual`s the generator reads (DropdownMenu's popup margins, AndroidMenu.android.kt). */
