@@ -55,6 +55,9 @@ export const MATERIAL3_SOURCES = [
   'RadioButton.kt',
   'Switch.kt',
   'Slider.kt',
+  'TextField.kt',
+  'OutlinedTextField.kt',
+  'internal/Strings.kt',
 ] as const;
 
 /** Material3 samples the generator reads (values the Compose catalog renders, e.g. icon rotation). */
@@ -73,12 +76,17 @@ export const MATERIAL3_SAMPLE_SOURCES = [
   'SwitchSamples.kt',
   'ChipSamples.kt',
   'SliderSamples.kt',
+  'TextFieldSamples.kt',
 ] as const;
 
 /** Android `actual`s the generator reads (DropdownMenu's popup margins, AndroidMenu.android.kt). */
 export const MATERIAL3_ANDROID_PATH =
   'compose/material3/material3/src/androidMain/kotlin/androidx/compose/material3';
-export const MATERIAL3_ANDROID_SOURCES = ['AndroidMenu.android.kt'] as const;
+export const MATERIAL3_ANDROID_SOURCES = [
+  'AndroidMenu.android.kt',
+  // `Strings.DefaultErrorMessage` (the text field error semantics) → compose/ui `default_error_message`.
+  'internal/Strings.android.kt',
+] as const;
 
 /** Compose spring physics ported by m3e-motion (and compiled as-is by its JVM reference harness). */
 export const ANIMATION_CORE_PATH =

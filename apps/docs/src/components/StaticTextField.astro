@@ -1,0 +1,153 @@
+---
+// One static text field in the m3e-css contract (text-field.css), no JavaScript: the docs page
+// renders every variant / state from these props. <m3e-text-field> and m3e-react write the same DOM.
+interface Props {
+  id: string;
+  variant?: 'filled' | 'outlined';
+  labelPosition?: 'inside' | 'cutout' | 'above';
+  label?: string;
+  value?: string;
+  placeholder?: string;
+  leadingIcon?: string;
+  trailingIcon?: string;
+  /** A trailing icon button (its accessible name). */
+  trailingButton?: string;
+  prefix?: string;
+  suffix?: string;
+  supportingText?: string;
+  errorText?: string;
+  invalid?: boolean;
+  disabled?: boolean;
+  readOnly?: boolean;
+  required?: boolean;
+  maxLength?: number;
+  multiline?: boolean;
+  ariaLabel?: string;
+  testid?: string;
+}
+
+const {
+  id,
+  variant = 'filled',
+  labelPosition,
+  label,
+  value = '',
+  placeholder,
+  leadingIcon,
+  trailingIcon,
+  trailingButton,
+  prefix,
+  suffix,
+  supportingText,
+  errorText,
+  invalid = false,
+  disabled = false,
+  readOnly = false,
+  required = false,
+  maxLength,
+  multiline = false,
+  ariaLabel,
+  testid,
+} = Astro.props;
+
+const classes = ['m3e-text-field'];
+if (variant === 'outlined') classes.push('m3e-text-field--outlined');
+if (labelPosition === 'above') classes.push('m3e-text-field--label-above');
+if (multiline) classes.push('m3e-text-field--multiline');
+const message = invalid && errorText ? errorText : supportingText;
+const supportingId = message ? `${id}-supporting` : undefined;
+const counterId = maxLength !== undefined ? `${id}-counter` : undefined;
+const describedBy = [supportingId, counterId].filter(Boolean).join(' ') || undefined;
+const inputProps = {
+  id,
+  class: 'm3e-text-field__input',
+  placeholder: placeholder ?? ' ',
+  disabled,
+  readonly: readOnly,
+  required,
+  maxlength: maxLength,
+  'aria-invalid': invalid ? ('true' as const) : undefined,
+  'aria-describedby': describedBy,
+  'aria-label': ariaLabel,
+};
+---
+
+<div class={classes.join(' ')} data-testid={testid}>
+  <div class="m3e-text-field__container">
+    {
+      leadingIcon && (
+        <span class="m3e-text-field__leading" aria-hidden="true">
+          <span class="m3e-icon">{leadingIcon}</span>
+        </span>
+      )
+    }
+    {label && <label class="m3e-text-field__label" for={id}>{label}</label>}
+    {prefix && <span class="m3e-text-field__prefix">{prefix}</span>}
+    {
+      multiline ? (
+        <textarea {...inputProps} rows="1" set:text={value} />
+      ) : (
+        <input {...inputProps} value={value} />
+      )
+    }
+    {suffix && <span class="m3e-text-field__suffix">{suffix}</span>}
+    {
+      trailingIcon && (
+        <span class="m3e-text-field__trailing" aria-hidden="true">
+          <span class="m3e-icon">{trailingIcon}</span>
+        </span>
+      )
+    }
+    {
+      trailingButton && (
+        <span class="m3e-text-field__trailing">
+          <button
+            class="m3e-icon-button"
+            type="button"
+            aria-label={trailingButton}
+            disabled={disabled}
+          >
+            <span class="m3e-icon" aria-hidden="true">
+              cancel
+            </span>
+          </button>
+        </span>
+      )
+    }
+    {
+      variant === 'outlined' && labelPosition !== 'above' && label && (
+        <fieldset class="m3e-text-field__outline" aria-hidden="true">
+          <legend class="m3e-text-field__notch">
+            <span>{label}</span>
+          </legend>
+        </fieldset>
+      )
+    }
+    {
+      variant === 'outlined' && (labelPosition === 'above' || !label) && (
+        <fieldset class="m3e-text-field__outline" aria-hidden="true" />
+      )
+    }
+  </div>
+  {
+    (message || counterId) && (
+      <div class="m3e-text-field__supporting">
+        {message ? (
+          <span
+            class="m3e-text-field__supporting-text"
+            id={supportingId}
+            role={invalid && errorText ? 'alert' : undefined}
+          >
+            {message}
+          </span>
+        ) : null}
+        {counterId ? (
+          <span class="m3e-text-field__counter" id={counterId}>
+            <span class="m3e-text-field__a11y">Character count, </span>
+            {value.length}/{maxLength}
+          </span>
+        ) : null}
+      </div>
+    )
+  }
+</div>

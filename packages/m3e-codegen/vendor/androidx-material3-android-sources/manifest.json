@@ -3,6 +3,10 @@
   "commit": "19991f2c0858aadfcb442ce02b2c8e4743c96898",
   "path": "compose/material3/material3/src/androidMain/kotlin/androidx/compose/material3",
   "files": {
-    "AndroidMenu.android.kt": "78e4994e3772d58e594972fd902ba42bdba7e56bc9faa64534a4c57febe05d9c"
+    "AndroidMenu.android.kt": "78e4994e3772d58e594972fd902ba42bdba7e56bc9faa64534a4c57febe05d9c",
+    "Strings.android.kt": "72db1d475408e756f4b007f5a055f892ec4b9f2500a21a98b229c19918fee8c4"
+  },
+  "upstream": {
+    "Strings.android.kt": "internal/Strings.android.kt"
   }
 }
