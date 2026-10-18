@@ -40,9 +40,11 @@
     "TextField.kt": "00ed832c27f1dd8f2f6a57b9f8ecaf13be43e08cf96c79ca5b989a5fe5855ceb",
     "TextFieldDefaults.kt": "862b2e5705f879402c62c6dc30844ff2e40b0dcbcf56b868c0f84bffe3d32a41",
     "ToggleButton.kt": "176a1adf0656d8c9fb51d0b34207b2775ee1e31c20a5d68915a9fc6ee318ebbe",
+    "Tooltip.kt": "b1047314137da575357cc56742f6dc4b264bd50d0838b09655cb897fe635ad86",
     "WavyProgressIndicator.kt": "d968b8e289c5d1346fa3d2dc92892c9bb3c90abaa4f5a8224925abd00ad0f5d0",
     "WideNavigationRail.kt": "d29cabe67bcdda8fb746c21fbba28d860d430c9632184f89fd8fc5251b04a6b9",
     "WideNavigationRailState.kt": "bd2c1feccffbb1849e629a250671c27047c39d9408c12cea3b8234d6bc052333",
+    "BasicTooltip.kt": "898dad495ed119453d974c320abd939f350cb996f3efcbe0201135f38bc296cf",
     "CircularWavyProgressModifiers.kt": "2c92c9765d35b2b8f0498da7ec51a8e9c7cc15da479d9c0ad2af1a691a2da88e",
     "Elevation.kt": "304e9d0d7749bf1a7a2646acd7f05a7d6f5c52fe0118fd8bbfd37fbd03d08f2f",
     "LinearWavyProgressModifiers.kt": "219d396a3e923ab305cf99d61cf7c6d4870244bc0e10139224088dbc079e8121",
@@ -51,11 +53,12 @@
     "TextFieldImpl.kt": "6490160723b2e07790cbcae86db014b494aa45b4f5f13402ebfc5597d94b2253"
   },
   "upstream": {
+    "BasicTooltip.kt": "internal/BasicTooltip.kt",
     "CircularWavyProgressModifiers.kt": "internal/CircularWavyProgressModifiers.kt",
     "Elevation.kt": "internal/Elevation.kt",
     "LinearWavyProgressModifiers.kt": "internal/LinearWavyProgressModifiers.kt",
     "MenuPosition.kt": "internal/MenuPosition.kt",
-    "TextFieldImpl.kt": "internal/TextFieldImpl.kt",
-    "Strings.kt": "internal/Strings.kt"
+    "Strings.kt": "internal/Strings.kt",
+    "TextFieldImpl.kt": "internal/TextFieldImpl.kt"
   }
 }

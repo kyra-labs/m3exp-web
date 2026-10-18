@@ -58,6 +58,8 @@ export const MATERIAL3_SOURCES = [
   'TextField.kt',
   'OutlinedTextField.kt',
   'internal/Strings.kt',
+  'Tooltip.kt',
+  'internal/BasicTooltip.kt',
 ] as const;
 
 /** Material3 samples the generator reads (values the Compose catalog renders, e.g. icon rotation). */
@@ -78,6 +80,7 @@ export const MATERIAL3_SAMPLE_SOURCES = [
   'SliderSamples.kt',
   'TextFieldSamples.kt',
   'ListSamples.kt',
+  'TooltipSamples.kt',
 ] as const;
 
 /** Android `actual`s the generator reads (DropdownMenu's popup margins, AndroidMenu.android.kt). */
@@ -87,6 +90,9 @@ export const MATERIAL3_ANDROID_SOURCES = [
   'AndroidMenu.android.kt',
   // `Strings.DefaultErrorMessage` (the text field error semantics) → compose/ui `default_error_message`.
   'internal/Strings.android.kt',
+  // Tooltip caret / popup actuals (`Tooltip.android.kt`) and the platform BasicTooltip (timeouts).
+  'Tooltip.android.kt',
+  'internal/BasicTooltip.android.kt',
 ] as const;
 
 /** Compose spring physics ported by m3e-motion (and compiled as-is by its JVM reference harness). */
