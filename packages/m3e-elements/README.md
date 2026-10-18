@@ -453,6 +453,32 @@ press or key ends). Attributes: `min` (0), `max` (1), `step`, `value`, `range` w
 `slider-layout.js` entry (class names, custom properties, input attributes, value text) is shared
 with m3e-react's `<Slider>` / `<RangeSlider>`, which render the same DOM.
 
+## Text field
+
+```js
+import '@kyralabs/m3e-elements/text-field.js';
+```
+
+```html
+<m3e-text-field label="Email" name="email" type="email"></m3e-text-field>
+<m3e-text-field variant="outlined" label="Bio" maxlength="20" supporting-text="Public"></m3e-text-field>
+<m3e-text-field label="User" invalid error-text="Already taken" required></m3e-text-field>
+<m3e-text-field variant="outlined" label="Notes" multiline></m3e-text-field>
+```
+
+`<m3e-text-field>` renders the m3e-css `.m3e-text-field` (load `text-field.css`) inside itself
+around a native `<input>` (or, with `multiline`, a `<textarea>`) that takes part in forms and fires
+the native `input` / `change` events. The label float, colors and outlined notch need no script
+(the plain markup works without this element); the element adds the live character counter
+(`maxlength`: "n/max", read as "Character count, n/max") and grows the textarea where CSS
+`field-sizing: content` is missing. Attributes: `variant` (`filled` default, `outlined`), `label`,
+`label-position` (`above`), `value`, `placeholder`, `type`, `name`, `autocomplete`, `inputmode`,
+`supporting-text`, `error-text` (shown instead while `invalid`, with the "alert" role), `invalid`,
+`disabled`, `readonly`, `required`, `maxlength`, `multiline`, `leading-icon`, `trailing-icon`,
+`prefix-text`, `suffix-text`, `counter-label`. The `text-field-layout.js` entry (class names,
+counter text, describedby, textarea growth) is shared with m3e-react's `<TextField>`, which renders
+the same DOM.
+
 ## Ripple for plain HTML
 
 m3e-css draws hover, focus and pressed overlays without JS; the press ripple needs a little.
