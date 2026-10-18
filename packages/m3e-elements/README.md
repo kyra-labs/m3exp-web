@@ -531,6 +531,36 @@ tooltip. Events: `open-change` (`detail: { open }`). The `tooltip-popup.js` entr
 (`TooltipController`, `TooltipPopup`) is shared with m3e-react's `<TooltipTrigger>`, which renders
 the same DOM.
 
+## Dialog
+
+```html
+<button class="m3e-button m3e-button--filled" onclick="discard.show()">Discard</button>
+<m3e-dialog id="discard" headline="Discard draft?" icon="delete">
+  This permanently deletes the draft.
+  <button class="m3e-button m3e-button--text" slot="actions">Cancel</button>
+  <button class="m3e-button m3e-button--text" slot="actions">Discard</button>
+</m3e-dialog>
+
+<m3e-dialog variant="full-screen" headline="New event">
+  …form…
+  <button class="m3e-button m3e-button--text" slot="actions">Save</button>
+</m3e-dialog>
+```
+
+`<m3e-dialog>` renders a native `<dialog class="m3e-dialog">` inside itself (the alert dialog has
+`role="alertdialog"`, named by `headline` and described by the text) and moves its own child nodes
+into it: `slot="actions"` children into the actions row (the dismiss button first), the rest into
+the content. `variant`: `alert` (default; Compose `AlertDialog`, with an optional `icon`),
+`custom` (Compose `BasicAlertDialog`: the children draw their own surface; named by `label`,
+default "Dialog") or `full-screen` (m3.material.io: a header with a close button, named by
+`close-label`, default "Close"; full-screen below 600px, a basic dialog from 600px). `open`
+(reflected), `show()`, `close()`. It opens with `showModal()` (the page inert, the scroll locked, Tab
+kept inside, focus on the first control and back on the opener when it closes) and animates in and
+out; Escape, the scrim, the close button and browser close requests emit a cancelable
+`open-change` (`detail: { open }`; `preventDefault()` keeps the dialog open). The
+`dialog-layout.js` entry (`DialogLayout`) is shared with m3e-react's `<AlertDialog>`,
+`<BasicAlertDialog>` and `<FullScreenDialog>`, which render the same DOM.
+
 ## Ripple for plain HTML
 
 m3e-css draws hover, focus and pressed overlays without JS; the press ripple needs a little.

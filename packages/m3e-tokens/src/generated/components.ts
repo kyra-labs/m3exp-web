@@ -768,6 +768,54 @@ export const dialogTokens = {
   iconSize: 24
 } as const;
 
+/** AlertDialogDefaults */
+export const alertDialogDefaults = {
+  dialogContainerMinWidth: 280,
+  dialogContainerMaxWidth: 560,
+  dialogContainerPadding: 24,
+  dialogSupportingTextPaddingBottom: 24,
+  dialogIconPaddingBottom: 16,
+  dialogHeadlinePaddingBottom: 16,
+  dialogActionsMainAxisSpacing: 8,
+  dialogActionsCrossAxisSpacing: 8,
+  dialogButtonMinHeight: "40px",
+  dialogTonalElevation: 0,
+  dialogScrimDuration: "var(--m3e-sys-motion-spring-default-effects-duration)",
+  dialogScrimEasing: "var(--m3e-sys-motion-spring-default-effects-easing)",
+  dialogScrimDampingRatio: "var(--m3e-sys-motion-spring-default-effects-damping-ratio)",
+  dialogScrimStiffness: "var(--m3e-sys-motion-spring-default-effects-stiffness)",
+  dialogSlideDistance: 50,
+  dialogEnterDuration: 500,
+  dialogEnterEasing: "cubic-bezier(0.3, 0, 0, 1)",
+  dialogContainerCollapsedHeight: 0.35,
+  dialogContainerEnterFadeDuration: 50,
+  dialogContentEnterDelay: 50,
+  dialogContentEnterDuration: 200,
+  dialogActionsEnterDelay: 150,
+  dialogActionsEnterDuration: 150,
+  dialogExitDuration: 150,
+  dialogExitEasing: "cubic-bezier(0.3, 0, 0.8, 0.15)",
+  dialogContainerExitFadeDelay: 100,
+  dialogContainerExitFadeDuration: 50,
+  dialogContentExitDuration: 100,
+  dialogWindowMargin: 24,
+  fullScreenDialogContainerColor: "var(--m3e-sys-color-surface)",
+  fullScreenDialogContainerShape: "var(--m3e-sys-shape-corner-none)",
+  fullScreenDialogHeaderContainerColor: "var(--m3e-sys-color-surface)",
+  fullScreenDialogHeaderOnScrollContainerColor: "var(--m3e-sys-color-surface-container)",
+  fullScreenDialogHeaderContainerHeight: 56,
+  fullScreenDialogHeaderHeadlineColor: "var(--m3e-sys-color-on-surface)",
+  fullScreenDialogHeaderHeadlineFont: "var(--m3e-sys-typescale-title-large-font)",
+  fullScreenDialogHeaderHeadlineWeight: "var(--m3e-sys-typescale-title-large-weight)",
+  fullScreenDialogHeaderHeadlineSize: "var(--m3e-sys-typescale-title-large-size)",
+  fullScreenDialogHeaderHeadlineLineHeight: "var(--m3e-sys-typescale-title-large-line-height)",
+  fullScreenDialogHeaderHeadlineTracking: "var(--m3e-sys-typescale-title-large-tracking)",
+  fullScreenDialogHeaderIconColor: "var(--m3e-sys-color-on-surface)",
+  fullScreenDialogHeaderIconSize: 24,
+  fullScreenDialogPadding: 24,
+  fullScreenDialogHeaderSpacing: 8
+} as const;
+
 /** DividerTokens */
 export const dividerTokens = {
   color: "var(--m3e-sys-color-outline-variant)",

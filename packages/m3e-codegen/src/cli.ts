@@ -17,6 +17,10 @@ import {
   ANIMATION_CORE_PATH,
   FOUNDATION_RES_PATH,
   FOUNDATION_RES_SOURCES,
+  MATERIAL3_RES_PATH,
+  MATERIAL3_RES_SOURCES,
+  UI_RES_PATH,
+  UI_RES_SOURCES,
   ANIMATION_CORE_SOURCES,
   ANIMATION_CORE_EASING_SOURCES,
   ANIMATION_CORE_SPEC_SOURCES,
@@ -197,6 +201,14 @@ async function main(command: string | undefined, flags: readonly string[]): Prom
       shapesVendor('androidx-foundation-res'),
       FOUNDATION_RES_SOURCES,
     );
+    await fetchVendor(
+      repo,
+      commit,
+      MATERIAL3_RES_PATH,
+      shapesVendor('androidx-material3-res'),
+      MATERIAL3_RES_SOURCES,
+    );
+    await fetchVendor(repo, commit, UI_RES_PATH, shapesVendor('androidx-ui-res'), UI_RES_SOURCES);
     await fetchVendor(
       repo,
       commit,

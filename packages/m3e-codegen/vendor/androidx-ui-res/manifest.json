@@ -1,0 +1,8 @@
+{
+  "repo": "https://android.googlesource.com/platform/frameworks/support",
+  "commit": "19991f2c0858aadfcb442ce02b2c8e4743c96898",
+  "path": "compose/ui/ui/src/androidMain/res/values",
+  "files": {
+    "styles.xml": "129d91d44888ed3608449075ec045ea391e500003e8f753f0ae6cd875aff42f6"
+  }
+}

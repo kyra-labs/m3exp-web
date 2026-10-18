@@ -13,6 +13,8 @@ export default defineConfig(
     '**/.astro/',
     '**/coverage/',
     'packages/m3e-tokens/src/generated/',
+    // Vendored upstream sources (Material Web's dialog animations are JavaScript), read only.
+    'packages/m3e-codegen/vendor/',
     'apps/visual/test-results/',
     'apps/visual/playwright-report/',
   ]),

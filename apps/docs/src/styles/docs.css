@@ -1054,3 +1054,26 @@ button.docs-layout-item:focus-visible {
   margin-block: var(--m3e-sys-space-300);
   padding-block-start: var(--m3e-sys-space-100);
 }
+
+/*
+ * Dialogs (dialog.astro): the BasicAlertDialogSample surface (16dp padding, 24dp before the
+ * button at the end) and the full-screen dialog's field.
+ */
+.docs-dialog-custom {
+  display: flex;
+  flex-direction: column;
+  padding: var(--m3e-sys-space-200);
+}
+
+.docs-dialog-custom > p {
+  margin: 0 0 var(--m3e-sys-space-300);
+}
+
+.docs-dialog-custom > button {
+  align-self: flex-end;
+}
+
+.docs-dialog-field {
+  display: block;
+  margin-block-end: var(--m3e-sys-space-200);
+}

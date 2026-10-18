@@ -1,0 +1,9 @@
+---
+'@kyralabs/m3e-tokens': minor
+'@kyralabs/m3e-css': minor
+'@kyralabs/m3e-elements': minor
+'@kyralabs/m3e-react': minor
+'@kyralabs/m3exp-web': minor
+---
+
+Dialogs (M9, COMPONENT_SPEC §29): the alert dialog (Compose `AlertDialog`: an optional centered icon, a headline, supporting text and the dismiss / confirm buttons, end-aligned and stacked with the confirm button on top when they do not fit, in a 280–560dp surface-container-high surface with extra-large corners and no shadow), custom content (Compose `BasicAlertDialog`) and the full-screen dialog (m3.material.io; Compose has none: a 56dp header with a close button, the headline and the confirming action, filling the window below 600dp and laid out as a basic dialog from 600dp, the header taking surface-container while the content scrolls). Each is a native `<dialog>` opened with `showModal()`: the page is inert, the page scroll locks, Tab stays inside, focus starts on the first control and returns to the opener; Escape, the 32% scrim and the close button ask to close (cancelable, as Compose's `onDismissRequest`). The alert dialog has the `alertdialog` role and is named by its headline and described by its text; the others are plain dialogs named by the headline or "Dialog". Motion: the scrim fades on the default effects spring; the dialog slides in and its surface grows as Material Web's dialog does (fades only under reduced motion). New `components/dialog-defaults.css` tokens (the `AlertDialog.kt` values Compose renders, the modal scrim fade, Material Web 2.5.0's dialog motion and the m3.material.io full-screen dialog), m3e-css `dialog.css`, the m3e-elements `<m3e-dialog>` and `dialog-layout` (`DialogLayout`) entries, and m3e-react `<AlertDialog>`, `<BasicAlertDialog>` and `<FullScreenDialog>`. Shared helper: `base/modal.ts` gains `ModalSession` (scroll lock, Tab trap, Escape, initial focus and focus return) for the modals that follow.

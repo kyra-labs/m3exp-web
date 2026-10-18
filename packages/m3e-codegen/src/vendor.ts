@@ -61,6 +61,9 @@ export const MATERIAL3_SOURCES = [
   'Tooltip.kt',
   'internal/BasicTooltip.kt',
   'Badge.kt',
+  'AlertDialog.kt',
+  // The modal scrim's fade (DefaultEffects), which the dialog's scrim follows (owner decision M9 #9).
+  'ModalBottomSheet.kt',
 ] as const;
 
 /** Material3 samples the generator reads (values the Compose catalog renders, e.g. icon rotation). */
@@ -83,6 +86,7 @@ export const MATERIAL3_SAMPLE_SOURCES = [
   'ListSamples.kt',
   'TooltipSamples.kt',
   'BadgeSamples.kt',
+  'AlertDialogSamples.kt',
 ] as const;
 
 /** Android `actual`s the generator reads (DropdownMenu's popup margins, AndroidMenu.android.kt). */
@@ -95,6 +99,8 @@ export const MATERIAL3_ANDROID_SOURCES = [
   // Tooltip caret / popup actuals (`Tooltip.android.kt`) and the platform BasicTooltip (timeouts).
   'Tooltip.android.kt',
   'internal/BasicTooltip.android.kt',
+  // `actual AlertDialog` (AlertDialogImpl with the platform's dialog window).
+  'AndroidAlertDialog.android.kt',
 ] as const;
 
 /**
@@ -104,6 +110,20 @@ export const MATERIAL3_ANDROID_SOURCES = [
  */
 export const FOUNDATION_RES_PATH = 'compose/foundation/foundation/src/androidMain/res/values';
 export const FOUNDATION_RES_SOURCES = ['strings.xml'] as const;
+
+/**
+ * Material3's Android strings: `m3c_dialog` "Dialog", the pane title `BasicAlertDialog` gives its
+ * window (`Strings.Dialog` via internal/Strings.android.kt), the m3e dialog's default name.
+ */
+export const MATERIAL3_RES_PATH = 'compose/material3/material3/src/androidMain/res/values';
+export const MATERIAL3_RES_SOURCES = ['strings.xml'] as const;
+
+/**
+ * Compose UI's Android dialog window theme (`FloatingDialogWindowTheme`: the platform dim and
+ * window animation, which Compose dialogs show instead of a scrim / motion of their own).
+ */
+export const UI_RES_PATH = 'compose/ui/ui/src/androidMain/res/values';
+export const UI_RES_SOURCES = ['styles.xml'] as const;
 
 /** Compose spring physics ported by m3e-motion (and compiled as-is by its JVM reference harness). */
 export const ANIMATION_CORE_PATH =
@@ -180,7 +200,16 @@ export const MATERIAL3_ADAPTIVE_SOURCES = [
  * SOURCE_PIN `material_web` version, verified against the registry's sha512 integrity.
  */
 export const MATERIAL_WEB_PACKAGE = '@material/web';
-export const MATERIAL_WEB_FILES = ['elevation/internal/_elevation.scss', 'LICENSE'] as const;
+export const MATERIAL_WEB_FILES = [
+  'elevation/internal/_elevation.scss',
+  // md-dialog's open / close animations and sizes: the m3e dialog's motion (owner decision M9 #9;
+  // neither androidx nor m3.material.io specifies dialog motion).
+  'dialog/internal/animations.js',
+  'dialog/internal/_dialog.scss',
+  // EASING.EMPHASIZED / EMPHASIZED_ACCELERATE, which animations.js imports.
+  'internal/motion/animation.js',
+  'LICENSE',
+] as const;
 
 /**
  * graphics-shapes as Material3 1.5.0-beta01 consumes it: `api("androidx.graphics:graphics-shapes:1.0.1")`

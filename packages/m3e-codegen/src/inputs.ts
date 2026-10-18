@@ -51,6 +51,10 @@ export function readGeneratorInputs(root: string, pin: SourcePin): GenerateOptio
         ...vendorFile(vendor('androidx-animation-core-specs'), 'AnimateAsState.kt', commit).files,
         ...vendorFile(vendor('androidx-material3-adaptive'), 'NavigationSuiteScaffold.kt', commit)
           .files,
+        // md-dialog's animations / sizes (dialog-defaults.ts; Material Web, secondary source).
+        ...vendorFile(vendor('material-web'), 'animations.js', materialWebVersion).files.filter(
+          (f) => /^(animations?\.js|_dialog\.scss)$/.test(f.name),
+        ),
       ].map((f) => [f.name, f.content]),
     ),
     easingKt: vendorFile(vendor('androidx-animation-easing'), 'Easing.kt', commit).content,
