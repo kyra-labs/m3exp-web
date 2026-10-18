@@ -217,7 +217,7 @@ test('colors: baseline unselected leading icon primary, expressive (tonal) on-su
   expect(await style(chip(page, 'suggestion-flat-plain'), 'color')).toBe(variant);
 });
 
-test('keyboard: one tab stop per chip set, arrows move, Space toggles a filter chip', async ({
+test('keyboard: one tab stop per chip set, arrows move and wrap, Space toggles a filter chip', async ({
   page,
 }) => {
   const set = page.getByTestId('set-single-line');
@@ -228,6 +228,11 @@ test('keyboard: one tab stop per chip set, arrows move, Space toggles a filter c
   await page.keyboard.press('ArrowRight');
   await expect(inputs.nth(1)).toBeFocused();
   await page.keyboard.press('End');
+  await expect(inputs.last()).toBeFocused();
+  // The arrows wrap at the ends (React Aria TagGroup, as m3e-react's InputChipGroup).
+  await page.keyboard.press('ArrowRight');
+  await expect(inputs.first()).toBeFocused();
+  await page.keyboard.press('ArrowLeft');
   await expect(inputs.last()).toBeFocused();
   await page.keyboard.press('Space');
   await expect(inputs.last()).toBeChecked();

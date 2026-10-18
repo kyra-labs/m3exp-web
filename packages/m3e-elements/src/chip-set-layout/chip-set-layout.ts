@@ -44,10 +44,10 @@ export interface ChipSetLayoutOptions {
  * `<ChipSet>`, so both write one DOM contract:
  *
  * - **Focus:** one tab stop for the whole set and arrow keys between the chips (m3e-elements
- *   RovingFocus: ArrowLeft / ArrowRight mirrored in RTL, Home / End, no wrapping;
- *   m3.material.io: "Arrow keys move focus between chips"). The items are the chips (a filter
- *   chip's native checkbox); natively disabled ones and `aria-disabled` input chips are skipped,
- *   as React Aria's TagGroup skips disabled tags.
+ *   RovingFocus: ArrowLeft / ArrowRight mirrored in RTL, Home / End, wrapping at the ends as
+ *   React Aria's TagGroup does; m3.material.io: "Arrow keys move focus between chips"). The
+ *   items are the chips (a filter chip's native checkbox); natively disabled ones and
+ *   `aria-disabled` input chips are skipped, as React Aria's TagGroup skips disabled tags.
  * - **Input chips** (owner decision M8 #10): the set is a `role="grid"` of `role="row"` chips with
  *   one `role="gridcell"` each, wired as React Aria's TagGroup wires them: row ids
  *   (`<prefix>-<value>`), `aria-label` = the label text, the remove button
@@ -71,6 +71,7 @@ export class ChipSetLayout {
     this.#options = options;
     this.#focus = new RovingFocus(root, {
       items: () => this.items(),
+      wrap: () => true,
     });
     const { signal } = this.#abort;
     root.addEventListener(

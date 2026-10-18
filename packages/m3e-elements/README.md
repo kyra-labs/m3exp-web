@@ -413,17 +413,18 @@ import '@kyralabs/m3e-elements/chip-set.js';
 </m3e-chip-set>
 ```
 
-`<m3e-chip-set>` renders the m3e-css `.m3e-chip-set` (load `chip-set.css` and the chip files)
-inside itself and moves its children, chips in the m3e-css markup, into it. The set is one tab
-stop with the arrow keys (mirrored in RTL), Home and End between its chips (a filter chip's native
-checkbox, an assist or suggestion chip, an input chip). With input chips it is a `role="grid"` of
-`role="row"` chips wired as React Aria's TagGroup (m3e-react `<InputChipGroup>` renders the same
-DOM): Backspace or Delete on a focused input chip, or a press on its remove button (labelled
-"Remove <label>"), emits `remove` (`detail: { value, chip }`, cancelable; `value` is
-`data-value`, else the label); unless canceled, the chip is removed and the focus moves to the next
-chip. Attributes: `label` (the set's accessible name), `single-line` (one scrolling row). Filter,
-assist and suggestion chips need no element: a filter chip is a native checkbox. The behavior
-lives in the `chip-set-layout.js` entry (`ChipSetLayout`), which m3e-react's `<ChipSet>` uses too.
+`<m3e-chip-set>` renders the m3e-css `.m3e-chip-set` (load `chip-set.css` and the chip files) inside
+itself and moves its children, chips in the m3e-css markup, into it. The set is one tab stop with
+the arrow keys (mirrored in RTL, wrapping at the ends as React Aria's TagGroup does), Home and End
+between its chips (a filter chip's native checkbox, an assist or suggestion chip, an input chip).
+With input chips it is a `role="grid"` of `role="row"` chips wired as React Aria's TagGroup
+(m3e-react `<InputChipGroup>` renders the same DOM): Backspace or Delete on a focused input chip, or
+a press on its remove button (labelled "Remove <label>"), emits `remove` (`detail: { value, chip }`,
+cancelable; `value` is `data-value`, else the label); unless canceled, the chip is removed and the
+focus moves to the next chip. Attributes: `label` (the set's accessible name), `single-line` (one
+scrolling row). Filter, assist and suggestion chips need no element: a filter chip is a native
+checkbox. The behavior lives in the `chip-set-layout.js` entry (`ChipSetLayout`), which m3e-react's
+`<ChipSet>` uses too.
 
 ## Slider
 
