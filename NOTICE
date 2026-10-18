@@ -53,9 +53,11 @@ Copyright (C) The Android Open Source Project
 Licensed under the Apache License, Version 2.0
 
 --------------------------------------------------------------------------------
-Material Web (@material/web 2.5.0: elevation shadow values in @kyralabs/m3e-tokens)
+Material Web (@material/web 2.5.0: elevation shadow values and the dialog motion / window margin
+values in @kyralabs/m3e-tokens)
 https://github.com/material-components/material-web
 Copyright 2022 Google LLC
+Copyright 2023 Google LLC
 Licensed under the Apache License, Version 2.0
 
 --------------------------------------------------------------------------------

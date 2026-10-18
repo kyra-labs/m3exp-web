@@ -3,6 +3,7 @@
   "commit": "19991f2c0858aadfcb442ce02b2c8e4743c96898",
   "path": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3",
   "files": {
+    "AlertDialog.kt": "4b5d670bc94af8f80ea9886d571437d5226ff99661ee251b8135274a6e78ff13",
     "AppBar.kt": "3261fd559fd0f9abff24c75f46deae40bbb76de2cc8899243fe139a18b046270",
     "Badge.kt": "f908017c646601b1cf2d967aab1afecae8461bd8dfbc78340c10922ed4b23865",
     "Button.kt": "9095ad12e5b26a20bf0cdc53ba01f54b7c8ca41ba4ece933d578ef28a2d97240",
@@ -23,6 +24,7 @@
     "MaterialTheme.kt": "9dcf759d23217000822595f76021235c236a08ce4c8a71c3be38b69e3db628bb",
     "Menu.kt": "f6fe29552c15e79a2a102d65fc450bb60c34816cbda0580e98c8539588ce2938",
     "MenuDefaults.kt": "dfc6c3c97ca24d7427acb9fe922f2aa0d4529f95a5f4007fc19bbd071f127852",
+    "ModalBottomSheet.kt": "6b5f472e9cef3109f488562f396c8d6351406ad36424d03f877d5bc01b44741f",
     "NavigationBar.kt": "25504d905f94172c3c3e553aa20b285b5166145c49ff448bada1d929962814d4",
     "NavigationDrawer.kt": "f5a53108f27288b678810d9da9f64dcf176fa7e6e2bd896cc1e6a96966f45650",
     "NavigationItem.kt": "ec8a954c65c3658310d7cbd776b66704988362d7a99e28ea341ef983a4b41fc7",

@@ -3,6 +3,7 @@
   "commit": "19991f2c0858aadfcb442ce02b2c8e4743c96898",
   "path": "compose/material3/material3/src/androidMain/kotlin/androidx/compose/material3",
   "files": {
+    "AndroidAlertDialog.android.kt": "966b048cce1fe6c111b863d204bf714e6f6641856b8f922f49233d0a0518c9f0",
     "AndroidMenu.android.kt": "78e4994e3772d58e594972fd902ba42bdba7e56bc9faa64534a4c57febe05d9c",
     "Tooltip.android.kt": "a5683c858676ca82549377822f623a8e17216b066278083d8b07b46101477d70",
     "BasicTooltip.android.kt": "37212a13dd78005f80a7258866f75c6bf4653780c8085d10b93283c41b7c2f47",

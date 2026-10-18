@@ -2282,3 +2282,77 @@ describe('badge values (M9)', () => {
     expect(badgeText(1000)).toBe('999+');
   });
 });
+
+describe('dialog values (M9)', () => {
+  const decl = declarations(output.get('components/dialog-defaults.css')!);
+  const t = (name: string) => decl.get(`--m3e-comp-dialog-${name}`);
+  const fs = (name: string) => decl.get(`--m3e-comp-full-screen-dialog-${name}`);
+  const kt = inputs.material3Sources['AlertDialog.kt']!.replace(/\r\n/g, '\n');
+  const tokens = declarations(output.get('components/dialog.css')!);
+
+  it('DialogTokens: surface-container-high, extra-large corners; Level3 is generated but not read (#8)', () => {
+    expect(tokens.get('--m3e-comp-dialog-container-color')).toBe(
+      'var(--m3e-sys-color-surface-container-high)',
+    );
+    expect(tokens.get('--m3e-comp-dialog-container-shape')).toBe(
+      'var(--m3e-sys-shape-corner-extra-large)',
+    );
+    expect(tokens.get('--m3e-comp-dialog-container-elevation')).toBe(
+      'var(--m3e-sys-elevation-level3)',
+    );
+    expect(kt).not.toContain('DialogTokens.ContainerElevation');
+    expect(kt).toMatch(/public val TonalElevation: Dp = 0\.dp/);
+    expect(t('tonal-elevation')).toBe('0px');
+  });
+
+  it('AlertDialog.kt: 280–560dp, 24dp padding and text gap, 16dp below icon and title, 8dp buttons', () => {
+    expect(t('container-min-width')).toBe('280px');
+    expect(t('container-max-width')).toBe('560px');
+    expect(t('container-padding')).toBe('24px');
+    expect(t('supporting-text-padding-bottom')).toBe('24px');
+    expect(t('icon-padding-bottom')).toBe('16px');
+    expect(t('headline-padding-bottom')).toBe('16px');
+    expect(t('actions-main-axis-spacing')).toBe('8px');
+    expect(t('actions-cross-axis-spacing')).toBe('8px');
+    // ButtonDefaults.MinHeight (ButtonSmallTokens.ContainerHeight): stacked spacing 8 − (48 − 40) = 0.
+    expect(t('button-min-height')).toBe('40px');
+  });
+
+  it('the scrim fades on DefaultEffects (ModalBottomSheet, #9)', () => {
+    expect(t('scrim-duration')).toBe('var(--m3e-sys-motion-spring-default-effects-duration)');
+    expect(t('scrim-easing')).toBe('var(--m3e-sys-motion-spring-default-effects-easing)');
+    const scrim = declarations(output.get('components/scrim.css')!);
+    expect(scrim.get('--m3e-comp-scrim-container-opacity')).toBe('0.32');
+  });
+
+  it('Material Web 2.5.0 motion: 500ms emphasized open, 150ms emphasized-accelerate close (#9)', () => {
+    expect(t('enter-duration')).toBe('500ms');
+    expect(t('enter-easing')).toBe('cubic-bezier(0.3, 0, 0, 1)');
+    expect(t('slide-distance')).toBe('50px');
+    expect(t('container-collapsed-height')).toBe('35%');
+    expect(t('container-enter-fade-duration')).toBe('50ms');
+    expect([t('content-enter-delay'), t('content-enter-duration')]).toEqual(['50ms', '200ms']);
+    expect([t('actions-enter-delay'), t('actions-enter-duration')]).toEqual(['150ms', '150ms']);
+    expect(t('exit-duration')).toBe('150ms');
+    expect(t('exit-easing')).toBe('cubic-bezier(0.3, 0, 0.8, 0.15)');
+    expect([t('container-exit-fade-delay'), t('container-exit-fade-duration')]).toEqual([
+      '100ms',
+      '50ms',
+    ]);
+    expect(t('content-exit-duration')).toBe('100ms');
+    expect(t('window-margin')).toBe('24px');
+    expect(output.get('PARITY.md')).toMatch(
+      /@material\/web@2\.5\.0 dialog\/internal\/animations\.js L14 \| `--m3e-comp-dialog-slide-distance`/,
+    );
+  });
+
+  it('full-screen dialog from the m3.material.io token DB (#11)', () => {
+    expect(fs('container-color')).toBe('var(--m3e-sys-color-surface)');
+    expect(fs('container-shape')).toBe('var(--m3e-sys-shape-corner-none)');
+    expect(fs('header-on-scroll-container-color')).toBe('var(--m3e-sys-color-surface-container)');
+    expect(fs('header-container-height')).toBe('56px');
+    expect(fs('header-headline-size')).toBe('var(--m3e-sys-typescale-title-large-size)');
+    expect(fs('header-icon-size')).toBe('24px');
+    expect(fs('padding')).toBe('24px');
+  });
+});

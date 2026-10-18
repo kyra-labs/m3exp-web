@@ -4,10 +4,16 @@
   "path": "@material/web",
   "files": {
     "_elevation.scss": "23205ad06de68370182fdb6928afe67d66a658a25ac0b7b3b1ee30337be351e4",
+    "animations.js": "6172bcb6dc9a8b76ad489f6012edb7093e820fad9722bd504ad13ad46a84312d",
+    "_dialog.scss": "096922af1ac52f4678e68d971dbc4e992b1805c92a99117d639483af21a94ae5",
+    "animation.js": "7121f86e02967e2b05c616dde596cf012eff4362799426fa510bec6a170dfb0b",
     "LICENSE": "295cdb4364b782931c914f5ca8c47fac87c732fa7e448b788a47aa5b25728212"
   },
   "upstream": {
-    "_elevation.scss": "elevation/internal/_elevation.scss"
+    "_elevation.scss": "elevation/internal/_elevation.scss",
+    "animations.js": "dialog/internal/animations.js",
+    "_dialog.scss": "dialog/internal/_dialog.scss",
+    "animation.js": "internal/motion/animation.js"
   },
   "sha256": "sha512-x2Uovyq8E/Zc1xHXd9s1eBMXF5pMHVAt70pISKd0fL3Ajj4L6zQaQUY/awcfR2RDAMKXC7i4+vr0arv1YaOR/g=="
 }
