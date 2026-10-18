@@ -1,0 +1,260 @@
+/*
+ * Tooltips (COMPONENT_SPEC §33): plain and rich, with an optional caret. CSS draws them; the
+ * m3e-elements tooltip controller (<m3e-tooltip>, m3e-react's <TooltipTrigger>) shows them on
+ * hover, keyboard focus and long press, places them next to the anchor and springs them in and
+ * out.
+ *
+ *   <div class="m3e-tooltip" role="tooltip" id="t1" popover="manual">Add to favorites</div>
+ *
+ *   <div class="m3e-tooltip m3e-tooltip--rich" role="tooltip" id="t2" popover="manual">
+ *     <div class="m3e-tooltip__subhead">Permissions</div>
+ *     <div class="m3e-tooltip__supporting-text">Configure permissions for …</div>
+ *     <div class="m3e-tooltip__action">
+ *       <button class="m3e-button m3e-button--text" type="button">Request access</button>
+ *     </div>
+ *   </div>
+ *
+ * - Plain: the text is the tooltip's content. Rich (--rich): an optional subhead, the supporting
+ *   text and an optional action slot (a text button: import button.css as well).
+ * - --caret: DefaultTooltipCaretShape, a TooltipDefaults.caretSize triangle on the edge facing the
+ *   anchor. Without the controller it sits under the middle of the bottom edge (a tooltip above
+ *   its anchor); the controller writes [data-caret] (up | down | left | right: where the apex
+ *   points) and --_m3e-tooltip-caret-x / -y (the middle of its base, px from the top-left corner).
+ * - Without [popover] the tooltip renders inline (static specimens).
+ * - JS hooks: [data-driven] (show / hide springs write --_m3e-tooltip-scale / -opacity),
+ *   [data-positioned] (TooltipPositionProviderImpl writes --_m3e-tooltip-x / -y).
+ *
+ * Sources (compose/material3 @ 19991f2c):
+ * - Tooltip.kt: PlainTooltip (Surface in TooltipDefaults' plain colors and shape, no elevation;
+ *   sizeIn(TooltipMinWidth, plainTooltipMaxWidth, TooltipMinHeight) then PlainTooltipContentPadding;
+ *   PlainTooltipTokens.SupportingTextFont), RichTooltip (Surface sizeIn(TooltipMinWidth,
+ *   richTooltipMaxWidth, TooltipMinHeight) in richTooltipColors, RichTooltipTokens.ContainerShape,
+ *   shadow RichTooltipTokens.ContainerElevation; a Column padded RichTooltipHorizontalPadding: the
+ *   title paddingFromBaseline(HeightToSubheadFirstLine) in SubheadFont, the text in
+ *   SupportingTextFont with textVerticalPadding, the action requiredHeightIn(ActionLabelMinHeight)
+ *   padded ActionLabelBottomPadding in ActionLabelTextFont), TooltipBox (scale from 0.8 on
+ *   FastSpatial, alpha from 0 on FastEffects, around the center), DefaultTooltipCaretShape and
+ *   Modifier.layoutCaret.
+ * - TooltipSamples.kt: the rich tooltip's action is a TextButton (its minimum interactive size
+ *   makes the action slot 48dp + the bottom padding tall).
+ * - paddingFromBaseline: a baseline sits --m3e-comp-tooltip-baseline-shift × the font size below
+ *   the middle of its line box (Google Sans Flex metrics, as for the tabs).
+ * - Literals: components/tooltip-defaults.css (PARITY.md).
+ */
+@import '@kyralabs/m3e-tokens/components/plain-tooltip.css';
+@import '@kyralabs/m3e-tokens/components/rich-tooltip.css';
+@import '@kyralabs/m3e-tokens/components/tooltip-defaults.css';
+@import '@kyralabs/m3e-tokens/components/button-defaults.css';
+@import '@kyralabs/m3e-tokens/components/divider.css';
+
+@layer m3e.components {
+  .m3e-tooltip {
+    --_m3e-tooltip-container: var(--m3e-comp-plain-tooltip-container-color);
+
+    position: relative;
+    display: block;
+    box-sizing: border-box;
+    inline-size: max-content;
+    min-inline-size: var(--m3e-comp-tooltip-min-width);
+    max-inline-size: var(--m3e-comp-tooltip-plain-max-width);
+    min-block-size: var(--m3e-comp-tooltip-min-height);
+    margin: 0;
+    padding: var(--m3e-comp-tooltip-plain-padding-vertical)
+      var(--m3e-comp-tooltip-plain-padding-horizontal);
+    overflow: visible;
+    border: none;
+    border-radius: var(--m3e-comp-plain-tooltip-container-shape);
+    background-color: var(--_m3e-tooltip-container);
+    color: var(--m3e-comp-plain-tooltip-supporting-text-color);
+    font-family: var(--m3e-comp-plain-tooltip-supporting-text-font);
+    font-size: var(--m3e-comp-plain-tooltip-supporting-text-size);
+    font-weight: var(--m3e-comp-plain-tooltip-supporting-text-weight);
+    line-height: var(--m3e-comp-plain-tooltip-supporting-text-line-height);
+    letter-spacing: var(--m3e-comp-plain-tooltip-supporting-text-tracking);
+    overflow-wrap: break-word;
+    text-align: start;
+  }
+
+  /* --- Rich --------------------------------------------------------------------------------- */
+  .m3e-tooltip--rich {
+    --_m3e-tooltip-container: var(--m3e-comp-rich-tooltip-container-color);
+
+    max-inline-size: var(--m3e-comp-tooltip-rich-max-width);
+    padding: 0 var(--m3e-comp-tooltip-rich-padding-horizontal);
+    border-radius: var(--m3e-comp-rich-tooltip-container-shape);
+    box-shadow: var(--m3e-comp-tooltip-rich-shadow);
+    color: var(--m3e-comp-rich-tooltip-supporting-text-color);
+    font-family: var(--m3e-comp-rich-tooltip-supporting-text-font);
+    font-size: var(--m3e-comp-rich-tooltip-supporting-text-size);
+    font-weight: var(--m3e-comp-rich-tooltip-supporting-text-weight);
+    line-height: var(--m3e-comp-rich-tooltip-supporting-text-line-height);
+    letter-spacing: var(--m3e-comp-rich-tooltip-supporting-text-tracking);
+  }
+
+  /* The title: its first baseline HeightToSubheadFirstLine below the tooltip top. */
+  .m3e-tooltip__subhead {
+    padding-block-start: max(
+      0%,
+      calc(
+        var(--m3e-comp-tooltip-rich-subhead-baseline) -
+          var(--m3e-comp-rich-tooltip-subhead-line-height) / 2 -
+          var(--m3e-comp-rich-tooltip-subhead-size) * var(--m3e-comp-tooltip-baseline-shift)
+      )
+    );
+    color: var(--m3e-comp-rich-tooltip-subhead-color);
+    font-family: var(--m3e-comp-rich-tooltip-subhead-font);
+    font-size: var(--m3e-comp-rich-tooltip-subhead-size);
+    font-weight: var(--m3e-comp-rich-tooltip-subhead-weight);
+    line-height: var(--m3e-comp-rich-tooltip-subhead-line-height);
+    letter-spacing: var(--m3e-comp-rich-tooltip-subhead-tracking);
+  }
+
+  /* textVerticalPadding: alone, PlainTooltipVerticalPadding above and below. */
+  .m3e-tooltip__supporting-text {
+    padding-block: var(--m3e-comp-tooltip-plain-padding-vertical);
+  }
+
+  /* With a title or an action: the first baseline 24dp below what is above, 16dp under it. */
+  .m3e-tooltip__subhead ~ .m3e-tooltip__supporting-text,
+  .m3e-tooltip__supporting-text:has(~ .m3e-tooltip__action) {
+    padding-block: max(
+        0%,
+        calc(
+          var(--m3e-comp-tooltip-rich-text-baseline) -
+            var(--m3e-comp-rich-tooltip-supporting-text-line-height) / 2 -
+            var(--m3e-comp-rich-tooltip-supporting-text-size) *
+            var(--m3e-comp-tooltip-baseline-shift)
+        )
+      )
+      var(--m3e-comp-tooltip-rich-text-padding-bottom);
+  }
+
+  /*
+   * The action slot: at least ActionLabelMinHeight with ActionLabelBottomPadding inside it; the
+   * samples' TextButton lays out at the minimum interactive size, its 40dp container centered.
+   */
+  .m3e-tooltip__action {
+    display: flex;
+    align-items: center;
+    box-sizing: border-box;
+    min-block-size: max(
+      var(--m3e-comp-tooltip-rich-action-min-height),
+      calc(
+        var(--m3e-comp-minimum-interactive-component-size) +
+          var(--m3e-comp-tooltip-rich-action-padding-bottom)
+      )
+    );
+    padding-block-end: var(--m3e-comp-tooltip-rich-action-padding-bottom);
+    color: var(--m3e-comp-rich-tooltip-action-label-text-color);
+    font-family: var(--m3e-comp-rich-tooltip-action-label-text-font);
+    font-size: var(--m3e-comp-rich-tooltip-action-label-text-size);
+    font-weight: var(--m3e-comp-rich-tooltip-action-label-text-weight);
+    line-height: var(--m3e-comp-rich-tooltip-action-label-text-line-height);
+    letter-spacing: var(--m3e-comp-rich-tooltip-action-label-text-tracking);
+  }
+
+  /* --- Caret -------------------------------------------------------------------------------- */
+
+  /* The caret path is unioned with the container shape: same color, outside the bounds. */
+  .m3e-tooltip--caret::after {
+    --_m3e-tooltip-caret-w: var(--m3e-comp-tooltip-caret-width);
+    --_m3e-tooltip-caret-h: var(--m3e-comp-tooltip-caret-height);
+
+    content: '';
+    position: absolute;
+    top: var(--_m3e-tooltip-caret-y, 100%);
+    left: calc(var(--_m3e-tooltip-caret-x, 50%) - var(--_m3e-tooltip-caret-w) / 2);
+    inline-size: var(--_m3e-tooltip-caret-w);
+    block-size: var(--_m3e-tooltip-caret-h);
+    background-color: var(--_m3e-tooltip-container);
+    clip-path: polygon(0 0, 100% 0, 50% 100%);
+    pointer-events: none;
+  }
+
+  .m3e-tooltip--caret[data-caret='up']::after {
+    top: calc(var(--_m3e-tooltip-caret-y, 0%) - var(--_m3e-tooltip-caret-h));
+    clip-path: polygon(50% 0, 100% 100%, 0 100%);
+  }
+
+  .m3e-tooltip--caret[data-caret='left']::after,
+  .m3e-tooltip--caret[data-caret='right']::after {
+    top: calc(var(--_m3e-tooltip-caret-y, 50%) - var(--_m3e-tooltip-caret-w) / 2);
+    inline-size: var(--_m3e-tooltip-caret-h);
+    block-size: var(--_m3e-tooltip-caret-w);
+  }
+
+  .m3e-tooltip--caret[data-caret='right']::after {
+    left: var(--_m3e-tooltip-caret-x, 100%);
+    clip-path: polygon(0 0, 100% 50%, 0 100%);
+  }
+
+  .m3e-tooltip--caret[data-caret='left']::after {
+    left: calc(var(--_m3e-tooltip-caret-x, 0%) - var(--_m3e-tooltip-caret-h));
+    clip-path: polygon(100% 0, 100% 100%, 0 50%);
+  }
+
+  /* --- Popup -------------------------------------------------------------------------------- */
+
+  /*
+   * In the top layer. The JS positioner writes viewport coordinates (computed RTL-aware by the
+   * TooltipPositionProviderImpl port), so they are physical left/top. Hover-transparent while
+   * hidden; the center is the transform origin (graphicsLayer's default).
+   */
+  .m3e-tooltip[popover] {
+    position: fixed;
+    inset: auto;
+    top: var(--_m3e-tooltip-y, auto);
+    left: var(--_m3e-tooltip-x, auto);
+    scale: var(--_m3e-tooltip-scale, 1);
+    opacity: var(--_m3e-tooltip-opacity, 1);
+  }
+
+  .m3e-tooltip[popover]:not(:popover-open) {
+    display: none;
+  }
+
+  .m3e-tooltip[popover]::backdrop {
+    display: none;
+  }
+
+  /* CSS only (no [data-driven]): show / hide on the springs' linear() curves. */
+  .m3e-tooltip[popover]:not([data-driven]) {
+    transition:
+      scale var(--m3e-comp-tooltip-scale-duration) var(--m3e-comp-tooltip-scale-easing),
+      opacity var(--m3e-comp-tooltip-opacity-duration) var(--m3e-comp-tooltip-opacity-easing),
+      display var(--m3e-comp-tooltip-scale-duration) allow-discrete,
+      overlay var(--m3e-comp-tooltip-scale-duration) allow-discrete;
+  }
+
+  .m3e-tooltip[popover]:not([data-driven], :popover-open) {
+    scale: var(--m3e-comp-tooltip-closed-scale);
+    opacity: var(--m3e-comp-tooltip-closed-opacity);
+  }
+
+  @starting-style {
+    .m3e-tooltip[popover]:not([data-driven]):popover-open {
+      scale: var(--m3e-comp-tooltip-closed-scale);
+      opacity: var(--m3e-comp-tooltip-closed-opacity);
+    }
+  }
+
+  /* CSS only: anchor positioning where supported (above, flipped below). */
+  @supports (position-area: block-start) {
+    .m3e-tooltip[popover]:not([data-positioned]) {
+      position-area: block-start;
+      position-try-fallbacks: flip-block;
+      margin-block-end: var(--m3e-comp-tooltip-spacing);
+    }
+  }
+
+  @media (forced-colors: active) {
+    .m3e-tooltip {
+      border: var(--m3e-comp-divider-thickness) solid CanvasText;
+    }
+
+    .m3e-tooltip--caret::after {
+      forced-color-adjust: none;
+      background-color: CanvasText;
+    }
+  }
+}
