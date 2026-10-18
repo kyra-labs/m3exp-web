@@ -83,10 +83,17 @@ test('matches the visual baselines', async ({ page }) => {
     await closed(dialog);
   }
   // Keyboard: the first control has the focus ring.
-  await open(page, 'alert', true);
+  const alert = await open(page, 'alert', true);
   await expect(page).toHaveScreenshot('dialog-alert-focus.png');
   await page.keyboard.press('Escape');
-  // From 600dp the full-screen dialog is laid out as a basic dialog.
+  await closed(alert);
+});
+
+test('from 600dp the full-screen dialog is laid out as a basic dialog', async ({ page }) => {
+  // The page behind is scrolled to its end, so the backdrop does not depend on earlier steps.
+  await page.evaluate(() => {
+    window.scrollTo(0, document.documentElement.scrollHeight);
+  });
   await open(page, 'full-screen');
   await page.mouse.move(0, 0);
   await expect(page).toHaveScreenshot('dialog-full-screen-basic.png');
