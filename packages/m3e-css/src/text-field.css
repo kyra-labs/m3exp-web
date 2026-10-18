@@ -358,10 +358,9 @@
   .m3e-text-field__container {
     position: relative;
     display: grid;
-    grid-template-columns: [leading] auto [prefix] auto [input] minmax(
-        0,
-        1fr
-      ) [suffix] auto [trailing] auto;
+    grid-template-columns:
+      [leading] auto [prefix] auto [input] minmax(0, 1fr)
+      [suffix] auto [trailing] auto;
     align-items: start;
     box-sizing: border-box;
     min-block-size: var(--m3e-comp-text-field-min-height);
@@ -397,18 +396,12 @@
   /* The outline (outlined only): a fieldset whose legend cuts the notch. */
   .m3e-text-field__outline {
     position: absolute;
-    inset: calc(
-        (
-            var(--_m3e-text-field-indicator-width) -
-              var(--m3e-comp-text-field-label-minimized-line-height)
-          ) /
-          2
-      )
-      0 0;
+    inset: 0;
     box-sizing: border-box;
     min-inline-size: 0;
     margin: 0;
     padding-block: 0;
+
     /* The notch starts the cutout padding before the label (16dp − 4dp from the outer edge). */
     padding-inline: calc(
         var(--m3e-comp-text-field-padding) - var(--m3e-comp-text-field-cutout-padding) -
@@ -420,6 +413,18 @@
     pointer-events: none;
     transition: border-color var(--_m3e-text-field-color-duration)
       var(--m3e-comp-text-field-indicator-color-easing);
+  }
+
+  /* With a notch legend the fieldset moves up so its border's outer edge stays on the container's. */
+  .m3e-text-field:not(.m3e-text-field--label-above)
+    .m3e-text-field__outline:has(> .m3e-text-field__notch) {
+    inset-block-start: calc(
+      (
+          var(--_m3e-text-field-indicator-width) -
+            var(--m3e-comp-text-field-label-minimized-line-height)
+        ) /
+        2
+    );
   }
 
   .m3e-text-field__notch {
