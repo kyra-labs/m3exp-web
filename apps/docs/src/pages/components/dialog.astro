@@ -1,0 +1,93 @@
+---
+import DialogPlayground from '../../islands/DialogPlayground.tsx';
+import Base from '../../layouts/Base.astro';
+
+const text = (label: string, testid?: string) =>
+  `<button type="button" class="m3e-button m3e-button--text" slot="actions" data-dialog-close${testid ? ` data-testid="${testid}"` : ''}>${label}</button>`;
+const paragraphs = Array.from(
+  { length: 12 },
+  (_, i) =>
+    `<p>Paragraph ${String(i + 1)}. Location services let apps use your device's location to show nearby places, give directions and tag photos. You can turn them off at any time in settings.</p>`,
+).join('');
+---
+
+<Base title="Dialogs">
+  <link rel="stylesheet" href="/icons/docs-icons.css" slot="head" />
+  <h1>Dialogs</h1>
+  <p>
+    Dialogs (COMPONENT_SPEC §29) ask for a decision or show critical information in front of the page. The <strong>alert dialog</strong> is Compose's <code>AlertDialog</code>: an optional icon, a headline, supporting text and up to two text buttons in a 280–560dp surface-container-high surface with extra-large corners and no shadow. <strong>Custom content</strong> is Compose's <code>BasicAlertDialog</code>: your own surface, sized the same. The <strong>full-screen dialog</strong> comes from m3.material.io (Compose has none at the pinned version): below 600dp it fills the window with a 56dp header; from 600dp it is laid out as a basic dialog.
+  </p>
+  <p>
+    Each is a native <code>&lt;dialog&gt;</code> opened with <code>showModal()</code>: the rest of the page is inert, Tab cycles inside the dialog, focus starts on its first control and returns to the button that opened it. Escape, a press on the 32% scrim and the full-screen close button ask to close (the app may refuse, as Compose's <code>onDismissRequest</code>). The alert dialog has the <code>alertdialog</code> role (m3.material.io's web guidance) and is named by its headline. The scrim fades on the default effects spring; the dialog slides in and its surface grows from the top as in Material Web, with fades only under reduced motion.
+  </p>
+
+  <section aria-labelledby="alert-heading">
+    <h2 id="alert-heading">Alert dialog (element)</h2>
+    <p>
+      <code>&lt;m3e-dialog headline icon&gt;</code>: the text is the content, children with <code>slot="actions"</code> are the buttons (the dismiss button first; the confirm button ends the row and tops the stack when they do not fit). The first two are the Compose samples.
+    </p>
+    <div class="docs-button-row">
+      <button type="button" class="m3e-button m3e-button--filled" data-dialog-open="alert" data-testid="open-alert">Basic</button>
+      <button type="button" class="m3e-button m3e-button--tonal" data-dialog-open="alert-icon" data-testid="open-alert-icon">With icon</button>
+      <button type="button" class="m3e-button m3e-button--tonal" data-dialog-open="alert-stacked" data-testid="open-alert-stacked">Stacked buttons</button>
+      <button type="button" class="m3e-button m3e-button--tonal" data-dialog-open="alert-scroll" data-testid="open-alert-scroll">Long content</button>
+      <button type="button" class="m3e-button m3e-button--outlined" data-dialog-open="custom" data-testid="open-custom">Custom content</button>
+    </div>
+
+    <m3e-dialog data-testid="alert" headline="Title">Turned on by default<Fragment set:html={text('Dismiss') + text('Confirm')} /></m3e-dialog>
+
+    <m3e-dialog data-testid="alert-icon" icon="favorite" headline="Title">This area typically contains the supportive text which presents the details regarding the Dialog's purpose.<Fragment set:html={text('Dismiss') + text('Confirm')} /></m3e-dialog>
+
+    <m3e-dialog data-testid="alert-stacked" headline="Turn off notifications?">You will stop getting alerts from this app until you turn them back on.<Fragment set:html={text('Keep getting notifications from this app') + text('Turn off all notifications from this app')} /></m3e-dialog>
+
+    <m3e-dialog data-testid="alert-scroll" headline="Use location services?"><Fragment set:html={paragraphs} /><p><a href="#alert-heading">Learn more about location</a></p><Fragment set:html={text('Disagree') + text('Agree')} /></m3e-dialog>
+
+    <m3e-dialog data-testid="custom" variant="custom" label="Supportive text">
+      <div class="m3e-surface m3e-surface--shape-large docs-dialog-custom">
+        <p>This area typically contains the supportive text which presents the details regarding the Dialog's purpose.</p>
+        <button type="button" class="m3e-button m3e-button--text" data-dialog-close>Confirm</button>
+      </div>
+    </m3e-dialog>
+  </section>
+
+  <section aria-labelledby="full-screen-heading">
+    <h2 id="full-screen-heading">Full-screen dialog (element)</h2>
+    <p>
+      <code>&lt;m3e-dialog variant="full-screen" headline close-label&gt;</code>: a close button and the headline in the header, the confirming action (<code>slot="actions"</code>) at its end. While the content scrolls, the header takes surface-container. Narrow the window below 600px to see the full-screen layout.
+    </p>
+    <div class="docs-button-row">
+      <button type="button" class="m3e-button m3e-button--filled" data-dialog-open="full-screen" data-testid="open-full-screen">New event</button>
+    </div>
+    <m3e-dialog data-testid="full-screen" variant="full-screen" headline="New event">
+      <m3e-text-field label="Event title" variant="outlined" class="docs-dialog-field"></m3e-text-field>
+      <Fragment set:html={paragraphs} />
+      <Fragment set:html={text('Save', 'full-screen-save')} />
+    </m3e-dialog>
+  </section>
+
+  <section aria-labelledby="react-heading">
+    <h2 id="react-heading">React</h2>
+    <p>
+      <code>&lt;AlertDialog isOpen onOpenChange headline icon dismissButton confirmButton&gt;</code>, <code>&lt;BasicAlertDialog&gt;</code> and <code>&lt;FullScreenDialog headline action closeLabel&gt;</code> render the same DOM as the element. <code>onOpenChange(false)</code> reports Escape, the scrim and the close button; a controlled dialog stays open until <code>isOpen</code> is false.
+    </p>
+    <DialogPlayground client:only="react" />
+  </section>
+</Base>
+
+<script>
+  import '@kyralabs/m3exp-web/elements';
+
+  type DialogHost = HTMLElement & { show(): void; close(): void };
+  for (const button of document.querySelectorAll<HTMLButtonElement>('[data-dialog-open]')) {
+    button.addEventListener('click', () => {
+      document
+        .querySelector<DialogHost>(`m3e-dialog[data-testid="${button.dataset['dialogOpen'] ?? ''}"]`)
+        ?.show();
+    });
+  }
+  // Buttons in a dialog close it (the app's own actions; Escape and the scrim ask on their own).
+  document.addEventListener('click', (e) => {
+    const target = (e.target as Element | null)?.closest('[data-dialog-close]');
+    target?.closest<DialogHost>('m3e-dialog')?.close();
+  });
+</script>
