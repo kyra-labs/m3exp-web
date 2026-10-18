@@ -1007,6 +1007,100 @@ describe('text field values (M8)', () => {
   });
 });
 
+describe('list item values (M8)', () => {
+  const decl = declarations(output.get('components/list-defaults.css')!);
+  const t = (name: string) => decl.get(`--m3e-comp-list-item-${name}`);
+  const list = declarations(output.get('components/list.css')!);
+  const reorder = declarations(output.get('components/reorder-list.css')!);
+  const kt = inputs.material3Sources['ListItem.kt']!.replace(/\r\n/g, '\n');
+  const c = (name: string) => `var(--m3e-sys-color-${name})`;
+
+  it('expressive layout: 16 / 10dp padding, 12dp slot spacing, 56 / 72 / 88dp minimum heights', () => {
+    expect(t('padding-start')).toBe('16px');
+    expect(t('padding-end')).toBe('16px');
+    expect(t('padding-top')).toBe('10px');
+    expect(t('padding-bottom')).toBe('10px');
+    expect(t('space')).toBe('12px');
+    expect(t('one-line-min-height')).toBe('56px');
+    expect(t('two-line-min-height')).toBe('72px');
+    expect(t('three-line-min-height')).toBe('88px');
+    // (88 + 72) / 2 − 10 − 10 = 60dp: two-line content (52dp) centred, three-line (68dp) on top.
+    expect(kt).toContain(
+      '(ListTokens.ItemThreeLineContainerHeight + ListTokens.ItemTwoLineContainerHeight) / 2 -',
+    );
+  });
+
+  it('type: headline body large, overline label small, supporting body medium, trailing label small', () => {
+    expect(t('headline-style-size')).toBe('var(--m3e-sys-typescale-body-large-size)');
+    expect(t('overline-style-size')).toBe('var(--m3e-sys-typescale-label-small-size)');
+    expect(t('supporting-style-size')).toBe('var(--m3e-sys-typescale-body-medium-size)');
+    expect(t('leading-style-size')).toBe('var(--m3e-sys-typescale-title-medium-size)');
+    expect(t('trailing-style-size')).toBe('var(--m3e-sys-typescale-label-small-size)');
+  });
+
+  it('shapes: 4dp rest, 12dp hovered, 16dp focused / selected / pressed / dragged; 16dp outer segmented corners, 2dp gap', () => {
+    expect(t('shape')).toBe('var(--m3e-sys-shape-corner-extra-small)');
+    expect(t('shape-hovered')).toBe('var(--m3e-sys-shape-corner-medium)');
+    for (const s of ['selected', 'pressed', 'focused', 'dragged']) {
+      expect(t(`shape-${s}`)).toBe('var(--m3e-sys-shape-corner-large)');
+    }
+    expect(t('segmented-shape')).toBe('var(--m3e-sys-shape-corner-large)');
+    expect(t('segmented-gap')).toBe('2px');
+    expect(list.get('--m3e-comp-list-segmented-gap')).toBe('2px');
+    expect(t('baseline-shape')).toBe('var(--m3e-sys-shape-corner-none)');
+  });
+
+  it('motion: colors DefaultEffects, shape and shadow FastSpatial; dragged Level4', () => {
+    for (const field of ['duration', 'easing', 'damping-ratio', 'stiffness']) {
+      expect(t(`color-${field}`)).toBe(`var(--m3e-sys-motion-spring-default-effects-${field})`);
+      expect(t(`morph-${field}`)).toBe(`var(--m3e-sys-motion-spring-fast-spatial-${field})`);
+      expect(t(`elevation-${field}`)).toBe(`var(--m3e-sys-motion-spring-fast-spatial-${field})`);
+    }
+    expect(t('shadow')).toBe('var(--m3e-sys-elevation-level0-shadow)');
+    expect(t('shadow-dragged')).toBe('var(--m3e-sys-elevation-level4-shadow)');
+  });
+
+  it('colors: defaultListItemColors content colors; containers stay the token variables', () => {
+    expect(t('headline-content-color')).toBe(c('on-surface'));
+    expect(t('leading-content-color')).toBe(c('on-surface-variant'));
+    expect(t('trailing-content-color')).toBe(c('on-surface-variant'));
+    expect(t('supporting-content-color')).toBe(c('on-surface-variant'));
+    expect(t('headline-content-color-selected')).toBe(c('on-secondary-container'));
+    expect(t('trailing-content-color-selected')).toBe(c('on-secondary-container'));
+    expect(t('supporting-content-color-disabled')).toBe(
+      'color-mix(in srgb, var(--m3e-sys-color-on-surface) calc(0.38 * 100%), transparent)',
+    );
+    expect(t('headline-content-color-dragged')).toBe(c('on-tertiary-container'));
+    expect(list.get('--m3e-comp-list-item-container-color')).toBe(c('surface'));
+    expect(list.get('--m3e-comp-list-item-segmented-container-color')).toBe(c('surface'));
+    expect(list.get('--m3e-comp-list-item-container-color-selected')).toBe(
+      c('secondary-container'),
+    );
+    expect(reorder.get('--m3e-comp-reorder-list-item-container-color')).toBe(
+      c('tertiary-container'),
+    );
+    // No hover / focus / pressed colors: ListItemColors take enabled / selected / dragged only.
+    expect([...decl.keys()].some((k) => /hover|focus|pressed/.test(k) && k.includes('color'))).toBe(
+      false,
+    );
+  });
+
+  it('legacy ListItem: 8dp (three-line 12dp) vertical padding, 16dp sides and slot spacing', () => {
+    expect(t('baseline-padding-vertical')).toBe('8px');
+    expect(t('baseline-three-line-padding-vertical')).toBe('12px');
+    expect(t('baseline-padding-start')).toBe('16px');
+    expect(t('baseline-padding-end')).toBe('16px');
+    expect(t('baseline-leading-space')).toBe('16px');
+    expect(t('baseline-trailing-space')).toBe('16px');
+  });
+
+  it('PARITY.md cites the composable sources by line', () => {
+    const parity = output.get('PARITY.md')!;
+    expect(parity).toMatch(/\/ListItem\.kt@\w+ L\d+ \| `--m3e-comp-list-item-space`/);
+    expect(parity).toMatch(/ListItemDefaults\.kt@\w+ L\d+ \| `--m3e-comp-list-item-shape-hovered`/);
+  });
+});
+
 describe('slider values (M8)', () => {
   const decl = declarations(output.get('components/slider-defaults.css')!);
   const kt = inputs.material3Sources['Slider.kt']!.replace(/\r\n/g, '\n');
