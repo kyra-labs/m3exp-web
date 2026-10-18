@@ -979,7 +979,7 @@ button.docs-layout-item:focus-visible {
   margin-block: 1rem;
 }
 
-.docs-text-field-grid .m3e-text-field {
+.docs-text-field-grid [class~='m3e-text-field'] {
   inline-size: 100%;
   min-inline-size: 0;
 }
