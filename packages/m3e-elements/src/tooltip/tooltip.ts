@@ -209,7 +209,7 @@ export class M3eTooltip extends M3eElement {
         this.#actionSlot.className = 'm3e-tooltip__action';
         const button = doc.createElement('button');
         button.type = 'button';
-        button.className = 'm3e-button m3e-button--text';
+        button.className = 'm3e-button m3e-button--text m3e-button--size-s m3e-button--round';
         // As m3e-react's <Button> (React Aria useButton + useStateLayer) renders it.
         button.tabIndex = 0;
         button.setAttribute('data-spring', '');

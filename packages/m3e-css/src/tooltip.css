@@ -10,7 +10,8 @@
  *     <div class="m3e-tooltip__subhead">Permissions</div>
  *     <div class="m3e-tooltip__supporting-text">Configure permissions for …</div>
  *     <div class="m3e-tooltip__action">
- *       <button class="m3e-button m3e-button--text" type="button">Request access</button>
+ *       <button class="m3e-button m3e-button--text m3e-button--size-s m3e-button--round"
+ *         type="button">Request access</button>
  *     </div>
  *   </div>
  *

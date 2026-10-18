@@ -85,7 +85,9 @@ describe('<m3e-tooltip> contract', () => {
     expect(text!.textContent).toBe('Configure permissions');
     expect(action!.className).toBe('m3e-tooltip__action');
     const button = action!.firstElementChild as HTMLButtonElement;
-    expect(button.className).toBe('m3e-button m3e-button--text');
+    expect(button.className).toBe(
+      'm3e-button m3e-button--text m3e-button--size-s m3e-button--round',
+    );
     expect(button.type).toBe('button');
     expect(button.textContent).toBe('Request access');
     expect(tooltip.getAttribute('role')).toBe('dialog');
