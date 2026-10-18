@@ -53,7 +53,7 @@
  *   (:focus-visible; Android touch input does not focus).
  * - segmentedShapes (L449-507): the first item's top corners, the last item's bottom corners and a
  *   single item's four take ListTokens.ContainerShape (16dp) in the rest shape only.
- * - Colors (ListItemColors: disabled > dragged > selected > default, L790-L850) on DefaultEffects;
+ * - Colors (ListItemColors: disabled > dragged > selected > default, L751-L837) on DefaultEffects;
  *   disabled content translucent (copy(alpha)) on the enabled container; segmentedColors() =
  *   ItemSegmentedContainerColor (Surface; owner decision M8 #12). Hover, focus and press change
  *   no color: the state layer only (owner decision M8 #3).
