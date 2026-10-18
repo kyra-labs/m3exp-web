@@ -137,11 +137,12 @@ test('bounds (badgeBounds rulers): the badge moves back inside once they are set
       },
       [end, top] as const,
     );
+  // The translate is a fraction of the badge's own (text) width: WebKit snaps it to 1/64 px.
   const before = await rect(badgeOf(page, 'box-count-4'));
   await setBounds('box-count-4', '8px', '0px');
   const box = await rect(page.getByTestId('box-count-4'));
   const clamped = await rect(badgeOf(page, 'box-count-4'));
-  expect(clamped.x + clamped.width).toBeCloseTo(box.x + box.width + 8, 1);
+  expect(Math.abs(clamped.x + clamped.width - (box.x + box.width + 8))).toBeLessThan(0.25);
   expect(clamped.y).toBeCloseTo(box.y, 1);
   // Room enough: nothing moves (min / max keep the desired place).
   await setBounds('box-count-4', '64px', '8px');
@@ -150,7 +151,7 @@ test('bounds (badgeBounds rulers): the badge moves back inside once they are set
   await setBounds('rtl-count-4', '8px', '0px');
   const rtlBox = await rect(page.getByTestId('rtl-count-4'));
   const rtl = await rect(badgeOf(page, 'rtl-count-4'));
-  expect(rtl.x).toBeCloseTo(rtlBox.x - 8, 1);
+  expect(Math.abs(rtl.x - (rtlBox.x - 8))).toBeLessThan(0.25);
   expect(rtl.y).toBeCloseTo(rtlBox.y, 1);
 });
 
