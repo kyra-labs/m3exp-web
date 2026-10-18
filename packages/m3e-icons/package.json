@@ -1,6 +1,6 @@
 {
   "name": "@kyralabs/m3e-icons",
-  "version": "1.5.0",
+  "version": "1.6.0",
   "description": "Material Symbols subsetting (m3e-icons subset) for m3exp-web.",
   "keywords": [
     "material-design",
