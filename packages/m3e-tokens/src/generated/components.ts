@@ -3275,6 +3275,31 @@ export const snackbarTokens = {
   twoLinesContainerHeight: 68
 } as const;
 
+/** SnackbarDefaults */
+export const snackbarDefaults = {
+  snackbarContainerMaxWidth: 600,
+  snackbarPaddingStart: 16,
+  snackbarTextPaddingVertical: 14,
+  snackbarTextEndSpacing: 8,
+  snackbarNewLineActionsPaddingEnd: 8,
+  snackbarNewLineActionsPaddingBottom: 4,
+  snackbarMargin: 12,
+  snackbarDurationShort: 4000,
+  snackbarDurationLong: 10000,
+  snackbarClosedScale: 0.8,
+  snackbarClosedOpacity: 0,
+  snackbarScaleDuration: "var(--m3e-sys-motion-spring-fast-spatial-duration)",
+  snackbarScaleEasing: "var(--m3e-sys-motion-spring-fast-spatial-easing)",
+  snackbarScaleDampingRatio: "var(--m3e-sys-motion-spring-fast-spatial-damping-ratio)",
+  snackbarScaleStiffness: "var(--m3e-sys-motion-spring-fast-spatial-stiffness)",
+  snackbarOpacityDuration: "var(--m3e-sys-motion-spring-fast-effects-duration)",
+  snackbarOpacityEasing: "var(--m3e-sys-motion-spring-fast-effects-easing)",
+  snackbarOpacityDampingRatio: "var(--m3e-sys-motion-spring-fast-effects-damping-ratio)",
+  snackbarOpacityStiffness: "var(--m3e-sys-motion-spring-fast-effects-stiffness)",
+  snackbarHostFabSpacing: 16,
+  snackbarHostBottomOffset: 0
+} as const;
+
 /** SplitButtonDefaults */
 export const splitButtonDefaults = {
   splitButtonSpacing: 2,
