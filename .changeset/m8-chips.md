@@ -1,9 +1,0 @@
----
-'@kyralabs/m3e-tokens': minor
-'@kyralabs/m3e-css': minor
-'@kyralabs/m3e-elements': minor
-'@kyralabs/m3e-react': minor
-'@kyralabs/m3exp-web': minor
----
-
-Chips (M8, COMPONENT_SPEC §18; Compose `FilterChip`, `ElevatedFilterChip`, `InputChip`, `SuggestionChip`, `ElevatedSuggestionChip`): filter, input and suggestion chips on a chip base shared with the assist chip (`.m3e-assist-chip` and `<AssistChip>` are unchanged). Filter chips are a native checkbox in a label (`.m3e-filter-chip`, `--elevated`, `--expressive`; `__input`, `__leading` with the `check` icon that expands in when selected, `__label`); a flat filter chip rises to Level1 on hover, selected or not, as Compose's `filterChipElevation`. Input chips are rows of a grid (`.m3e-input-chip`, `--expressive`; `__cell`, `__avatar`, `__label`, `__remove` labelled "Remove <label>"). Suggestion chips are buttons or links (`.m3e-suggestion-chip`, `--elevated`). `--expressive` opts into Compose's `shapes` overload: ChipsTokens corners (12dp, full when selected, 8dp while pressed) morphing on the fast spatial spring, tonal colors and 4dp spacing next to icons. `.m3e-chip-set` lays chips out in 48dp rows (`--single-line`: one scrolling row). New `components/chips-defaults.css` tokens (the `Chip.kt` values Compose renders: spacing and padding, the flat filter chip's elevations, tonal colors, shape and icon motion, the chip group spacing). New m3e-elements `<m3e-chip-set>` entry (one tab stop and arrow keys between the chips; for input chips the grid wiring and Backspace / Delete or the remove button emitting a cancelable `remove` event) and `chip-set-layout` entry (`ChipSetLayout`); the `ripple.js` triggers include the new chips. New m3e-react `<FilterChip>`, `<InputChipGroup>` / `<InputChip>` (React Aria TagGroup), `<SuggestionChip>` and `<ChipSet>`; `useShapeSpring` gains an `enabled` option.
