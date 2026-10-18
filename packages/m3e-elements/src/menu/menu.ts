@@ -1,12 +1,11 @@
 import { M3eElement } from '../base/M3eElement.js';
 import { attachRipple } from '../base/ripple.js';
+import { TypeSelect } from '../base/type-select.js';
 import { type MenuAnchorPosition, MenuPopup } from '../menu-popup/menu-popup.js';
 
 /** Where focus goes when a menu opens: an item, or the menu itself (pointer opens). */
 export type MenuFocusStrategy = 'first' | 'last' | null;
 
-/** React Aria useTypeSelect clears the typeahead buffer after this long (TYPEAHEAD_DEBOUNCE_WAIT_MS). */
-const TYPEAHEAD_MS = 1000;
 /** React Aria useSubmenuTrigger's default hover delay before a submenu opens. */
 const SUBMENU_DELAY_MS = 200;
 
@@ -142,8 +141,7 @@ export class M3eMenu extends M3eElement {
   #openSubmenu: M3eMenu | null = null;
   #focusOnOpen: MenuFocusStrategy = null;
   #shown = false;
-  #typeahead = '';
-  #typeaheadTimer = 0;
+  #typeahead = new TypeSelect();
   #submenuTimer = 0;
   #keyboard = false;
   #keysBound = false;
@@ -180,7 +178,7 @@ export class M3eMenu extends M3eElement {
     this.#anchorAbort?.abort();
     this.#popup?.destroy();
     this.#shown = false;
-    clearTimeout(this.#typeaheadTimer);
+    this.#typeahead.reset();
     clearTimeout(this.#submenuTimer);
   }
 
@@ -646,37 +644,20 @@ export class M3eMenu extends M3eElement {
       default:
         break;
     }
-    if (e.key === ' ' && this.#typeahead === '') {
+    if (e.key === ' ' && !this.#typeahead.active) {
       if (config) {
         e.preventDefault();
         this.#activate(config, ' ');
       }
       return;
     }
-    if (e.key.length === 1 && !e.ctrlKey && !e.metaKey && !e.altKey) {
+    // React Aria useTypeSelect + ListKeyboardDelegate.getKeyForSearch.
+    const texts = items.map((el) => el.querySelector('.m3e-menu__item-label')?.textContent ?? '');
+    const found = this.#typeahead.type(e, texts, current ? items.indexOf(current) : -1);
+    if (found >= 0) {
       e.preventDefault();
-      this.#typeSelect(e.key, items, current);
+      this.#focus(items[found]);
     }
-  }
-
-  /** React Aria useTypeSelect + ListKeyboardDelegate.getKeyForSearch. */
-  #typeSelect(char: string, items: HTMLElement[], current: HTMLElement | null): void {
-    this.#typeahead += char;
-    clearTimeout(this.#typeaheadTimer);
-    this.#typeaheadTimer = window.setTimeout(() => {
-      this.#typeahead = '';
-    }, TYPEAHEAD_MS);
-    const collator = new Intl.Collator(undefined, { usage: 'search', sensitivity: 'base' });
-    const search = this.#typeahead;
-    const matches = (el: HTMLElement) => {
-      const text = el.querySelector('.m3e-menu__item-label')?.textContent ?? '';
-      return collator.compare(text.slice(0, search.length), search) === 0;
-    };
-    const from = current ? items.indexOf(current) : 0;
-    const found =
-      items.slice(Math.max(from, 0)).find(matches) ??
-      items.slice(0, Math.max(from, 0)).find(matches);
-    if (found) this.#focus(found);
   }
 }
 

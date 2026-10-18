@@ -1,0 +1,44 @@
+---
+// A checkbox, radio button or switch in a list item slot (m3e-css checkbox.css / radio-button.css /
+// switch.css; the markup m3e-elements `listControlTree` builds). In an <m3e-list> option it is an
+// indicator (the element makes it inert and keeps `checked` in step); in a static item it is a live
+// control named by `labelledby`.
+interface Props {
+  type: 'checkbox' | 'radio' | 'switch';
+  checked?: boolean;
+  /** A live control's accessible name (the item headline's id). */
+  labelledby?: string | undefined;
+}
+
+const { type, checked = false, labelledby } = Astro.props;
+---
+
+{
+  type === 'checkbox' ? (
+    <span class="m3e-checkbox">
+      <input class="m3e-checkbox__input" type="checkbox" checked={checked} aria-labelledby={labelledby} />
+      <span class="m3e-checkbox__box" aria-hidden="true">
+        <svg class="m3e-checkbox__mark" focusable="false">
+          <path class="m3e-checkbox__stroke" d="M0 0H48" />
+          <path class="m3e-checkbox__stroke" d="M0 0H48" />
+        </svg>
+      </span>
+      <span class="m3e-checkbox__state" aria-hidden="true" />
+    </span>
+  ) : type === 'radio' ? (
+    <span class="m3e-radio-button">
+      <input class="m3e-radio-button__input" type="radio" checked={checked} aria-labelledby={labelledby} />
+      <span class="m3e-radio-button__icon" aria-hidden="true" />
+      <span class="m3e-radio-button__state" aria-hidden="true" />
+    </span>
+  ) : (
+    <span class="m3e-switch">
+      <input class="m3e-switch__input" type="checkbox" role="switch" checked={checked} aria-labelledby={labelledby} />
+      <span class="m3e-switch__track" aria-hidden="true">
+        <span class="m3e-switch__handle">
+          <span class="m3e-switch__state" />
+        </span>
+      </span>
+    </span>
+  )
+}

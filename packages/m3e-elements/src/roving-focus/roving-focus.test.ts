@@ -65,4 +65,29 @@ describe('RovingFocus', () => {
     expect(key(els[0]!, 'ArrowRight')).toBe(true);
     expect(document.activeElement).toBe(els[0]);
   });
+
+  it('wrap: the arrows go past either end (default: they stop); both takes both key pairs', () => {
+    const { els } = setup('<button>a</button><button>b</button><button>c</button>');
+    els[2]!.focus();
+    key(els[2]!, 'ArrowRight');
+    expect(document.activeElement).toBe(els[2]);
+    document.body.innerHTML = '';
+    const wrapped = setup('<button>a</button><button>b</button><button>c</button>', {
+      orientation: () => 'both',
+      wrap: () => true,
+    });
+    const [a, b, c] = wrapped.els as [HTMLElement, HTMLElement, HTMLElement];
+    c.focus();
+    key(c, 'ArrowDown');
+    expect(document.activeElement).toBe(a);
+    key(a, 'ArrowUp');
+    expect(document.activeElement).toBe(c);
+    key(c, 'ArrowRight');
+    expect(document.activeElement).toBe(a);
+    key(a, 'ArrowLeft');
+    expect(document.activeElement).toBe(c);
+    key(c, 'ArrowLeft');
+    expect(document.activeElement).toBe(b);
+    expect(b.getAttribute('tabindex')).toBe('0');
+  });
 });

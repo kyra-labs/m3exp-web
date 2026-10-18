@@ -1,6 +1,10 @@
-import { type ToolbarOrientation, toolbarNavigationTarget } from '@kyralabs/m3e-motion';
+import {
+  type NavigationOrientation,
+  type ToolbarOrientation,
+  toolbarNavigationTarget,
+} from '@kyralabs/m3e-motion';
 
-export type { ToolbarOrientation };
+export type { NavigationOrientation, ToolbarOrientation };
 
 /** Elements that can take focus (the toolbar items). */
 const FOCUSABLE = 'button, a[href], input, select, textarea, [tabindex]';
@@ -13,8 +17,16 @@ const TEXT_ENTRY =
 export interface RovingFocusOptions {
   /** The items in focus order. Default: the focusable, visible descendants of the root. */
   items?: (() => HTMLElement[]) | undefined;
-  /** Which arrow keys move focus. Default `horizontal` (ArrowLeft / ArrowRight). */
-  orientation?: (() => ToolbarOrientation) | undefined;
+  /**
+   * Which arrow keys move focus. Default `horizontal` (ArrowLeft / ArrowRight); `both` takes both
+   * pairs (Down / Right next, Up / Left previous).
+   */
+  orientation?: (() => NavigationOrientation) | undefined;
+  /**
+   * Whether the arrow keys wrap from the last item to the first and back. Default false (the APG
+   * toolbar); an interactive list wraps (m3.material.io Lists › Accessibility).
+   */
+  wrap?: (() => boolean) | undefined;
   /**
    * The item that holds the tab stop before any has been focused. Default: the first. (A radio
    * group would pass its checked item.)
@@ -31,8 +43,8 @@ export interface RovingFocusOptions {
  *   items are skipped; `aria-disabled` ones stay in the arrow-key order (APG) but only hold the
  *   stop once focused.
  * - **Keys** (m3e-motion `toolbarNavigationTarget`): ArrowRight / ArrowLeft (mirrored in RTL) when
- *   horizontal, ArrowDown / ArrowUp when vertical, Home / End; no wrapping. Text inputs keep their
- *   arrow keys.
+ *   horizontal, ArrowDown / ArrowUp when vertical, both pairs for `both`, Home / End; no wrapping
+ *   unless `wrap()`. Text inputs keep their arrow keys.
  * - **`tabbable = false`** takes the whole widget out of the tab order (all `-1`), e.g. a floating
  *   toolbar that has scrolled off screen (Compose: `focusProperties { canFocus = false }`).
  *
@@ -143,7 +155,8 @@ export class RovingFocus {
     if (index < 0) return;
     const orientation = this.#options.orientation?.() ?? 'horizontal';
     const rtl = getComputedStyle(this.root).direction === 'rtl';
-    const next = toolbarNavigationTarget(e.key, items.length, index, orientation, rtl);
+    const wrap = this.#options.wrap?.() ?? false;
+    const next = toolbarNavigationTarget(e.key, items.length, index, orientation, rtl, wrap);
     if (next === null) return;
     e.preventDefault();
     if (next !== index) items[next]?.focus();

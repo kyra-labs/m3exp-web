@@ -479,11 +479,36 @@ the native `input` / `change` events. The label float, colors and outlined notch
 counter text, describedby, textarea growth) is shared with m3e-react's `<TextField>`, which renders
 the same DOM.
 
+## List
+
+```html
+<m3e-list label="Pets" selection="single">
+  <div class="m3e-list-item" data-value="cat">
+    <span class="m3e-list-item__content"><span class="m3e-list-item__headline">Cat</span></span>
+  </div>
+  <div class="m3e-list-item" data-value="dog" aria-selected="true">
+    <span class="m3e-list-item__content"><span class="m3e-list-item__headline">Dog</span></span>
+  </div>
+</m3e-list>
+```
+
+Static lists need no script (`<ul class="m3e-list">` of `<li class="m3e-list-item">`, load
+`list.css`). `<m3e-list>` renders an interactive `.m3e-list` inside itself and moves its
+`.m3e-list-item` children (m3e-css markup; `data-value` keys them, `aria-selected="true"` and
+`aria-disabled="true"` set the initial state) into it: a `role="listbox"` of options with one tab
+stop, arrow keys that wrap (Down / Right next, Up / Left previous), Home / End and typeahead.
+`selection="single" | "multiple"`: click, Space or Enter toggles an option and emits
+`selection-change` (`detail: { values, value }`, cancelable); a checkbox, radio button or switch in
+a slot is made inert and shows the option's state. `selection="none"` (the default): click or Enter
+emits `action` (`detail: { value }`). Also `label`, `disallow-empty-selection` and the
+`selectedValues` property. The `list-layout.js` entry (ListLayout, item class names, the indicator
+markup) is shared with m3e-react's `<List>`, which renders the same DOM.
+
 ## Ripple for plain HTML
 
 m3e-css draws hover, focus and pressed overlays without JS; the press ripple needs a little.
 One import adds it to every plain-HTML button, icon button, chip (assist, filter, input, suggestion), FAB, extended FAB, FAB menu item, `.m3e-state-layer`,
-interactive card (pressed through `.m3e-card__action`, drawn on the card), navigation item
+interactive card (pressed through `.m3e-card__action`, drawn on the card), interactive list item, navigation item
 (drawn on `.m3e-navigation-item__state`), navigation drawer item, tab, checkbox, radio button and
 switch (pressed through the label or the input, drawn on the 40dp `__state` circle; a switch's
 moves with its handle) in the document,

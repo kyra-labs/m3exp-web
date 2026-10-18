@@ -39,6 +39,25 @@ describe('toolbarNavigationTarget (APG toolbar, no wrapping)', () => {
     expect(toolbarNavigationTarget('ArrowLeft', 3, -1)).toBe(2);
     expect(toolbarNavigationTarget('Home', 0, -1)).toBeNull();
   });
+
+  it('wrap (interactive lists): past either end to the other; Home / End unchanged', () => {
+    expect(toolbarNavigationTarget('ArrowDown', 3, 2, 'vertical', false, true)).toBe(0);
+    expect(toolbarNavigationTarget('ArrowUp', 3, 0, 'vertical', false, true)).toBe(2);
+    expect(toolbarNavigationTarget('ArrowDown', 3, 0, 'vertical', false, true)).toBe(1);
+    expect(toolbarNavigationTarget('ArrowRight', 4, 3, 'horizontal', false, true)).toBe(0);
+    expect(toolbarNavigationTarget('End', 3, 0, 'vertical', false, true)).toBe(2);
+    expect(toolbarNavigationTarget('ArrowDown', 1, 0, 'vertical', false, true)).toBe(0);
+  });
+
+  it('both: Down / Right next and Up / Left previous (Left / Right mirrored in RTL)', () => {
+    expect(toolbarNavigationTarget('ArrowDown', 3, 0, 'both')).toBe(1);
+    expect(toolbarNavigationTarget('ArrowRight', 3, 0, 'both')).toBe(1);
+    expect(toolbarNavigationTarget('ArrowUp', 3, 2, 'both')).toBe(1);
+    expect(toolbarNavigationTarget('ArrowLeft', 3, 2, 'both')).toBe(1);
+    expect(toolbarNavigationTarget('ArrowLeft', 3, 0, 'both', true)).toBe(1);
+    expect(toolbarNavigationTarget('ArrowRight', 3, 0, 'both', true, true)).toBe(2);
+    expect(toolbarNavigationTarget('ArrowUp', 3, 0, 'both', true, true)).toBe(2);
+  });
 });
 
 describe('exitAlways scroll state (FloatingToolbar.kt)', () => {
