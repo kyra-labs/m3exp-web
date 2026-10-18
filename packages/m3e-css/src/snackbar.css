@@ -1,0 +1,209 @@
+/*
+ * Snackbar (COMPONENT_SPEC §32): a brief message at the bottom of the window, with an optional
+ * action and dismiss (close) button. CSS draws it; the m3e-elements snackbar host
+ * (<m3e-snackbar-host>, m3e-react's <SnackbarHost>) shows one at a time from its queue, springs
+ * it in and out and dismisses it after its duration.
+ *
+ *   <div class="m3e-snackbar-host" role="status">
+ *     <div class="m3e-snackbar-host__item">
+ *       <div class="m3e-snackbar">
+ *         <div class="m3e-snackbar__text">Message archived</div>
+ *         <div class="m3e-snackbar__actions">                                      (optional)
+ *           <button class="m3e-button m3e-button--text m3e-snackbar__action" type="button">
+ *             Undo</button>
+ *           <button class="m3e-icon-button m3e-snackbar__dismiss" type="button"
+ *             aria-label="Dismiss"><span class="m3e-icon" aria-hidden="true">close</span></button>
+ *         </div>
+ *       </div>
+ *     </div>
+ *   </div>
+ *
+ * - .m3e-snackbar-host: fixed to the bottom center of the window, above the bottom safe-area
+ *   inset and --m3e-comp-snackbar-host-bottom-offset (raise it above a FAB: the FAB height +
+ *   --m3e-comp-snackbar-host-fab-spacing, as Scaffold places the host; owner decision M9 #21).
+ *   A polite live region (role="status"). Its items share one cell: the leaving snackbar fades
+ *   out where the new one fades in. A .m3e-snackbar also renders on its own (static specimens).
+ * - --action-on-new-line: the action under the text, end-aligned (Compose actionOnNewLine).
+ * - Buttons come from button.css / icon-button.css (import them as well); the action takes the
+ *   inverse primary color, the dismiss button the inverse on-surface icon color.
+ * - JS hooks: [data-driven] on an item (the springs write --_m3e-snackbar-scale / -opacity).
+ *   Without it an item scales and fades in on the springs' linear() curves.
+ *
+ * Sources (compose/material3 @ 19991f2c; values: snackbar.css, snackbar-defaults.css, lines in
+ * PARITY.md):
+ * - Snackbar.kt Snackbar (L101-168): a Surface in SnackbarDefaults' shape and colors with the
+ *   ContainerElevation shadow; ComposeMaterial3Flags.isSnackbarStylingFixEnabled picks the layout
+ *   (owner decision M9 #19: the flag-on branch, although the pin ships it off).
+ *   OneRowSnackbar (L495-574): the text padded SnackbarVerticalPadding, the action then the dismiss
+ *   button at the end, all centered vertically, at least SingleLineContainerHeight; the row is
+ *   min(available, ContainerMaxWidth) inside a HorizontalSpacing start padding and, without a
+ *   dismiss button, TextEndExtraSpacing at the end and between the text and the action.
+ *   NewLineButtonSnackbar (L286-331): at most ContainerMaxWidth, the text padded
+ *   SnackbarVerticalPadding and HorizontalSpacing at its end, the buttons end-aligned below with
+ *   ActionButtonBottomPadding and, without a dismiss button, HorizontalSpacingButtonSide at the end.
+ *   Snackbar(snackbarData) (L222-283): the TextButton action, the IconButton(Close) dismiss action
+ *   in a TooltipBox, 12dp around it; buttons lay out at the minimum interactive size.
+ * - SnackbarHost.kt FadeInFadeOutWithScale (L322-384): alpha on FastEffects, scale from 0.8 on
+ *   FastSpatial, around the center; the items stacked in one Box.
+ * - Scaffold.kt (L234-288): the host centered, above the FAB / bottom bar / bottom inset.
+ */
+@import '@kyralabs/m3e-tokens/components/snackbar.css';
+@import '@kyralabs/m3e-tokens/components/snackbar-defaults.css';
+@import '@kyralabs/m3e-tokens/components/small-icon-button.css';
+@import '@kyralabs/m3e-tokens/components/button-defaults.css';
+@import '@kyralabs/m3e-tokens/components/divider.css';
+
+@layer m3e.components {
+  /* --- Host ----------------------------------------------------------------------------------- */
+
+  .m3e-snackbar-host {
+    position: fixed;
+    inset-inline: 0;
+    inset-block-end: calc(
+      var(--m3e-comp-snackbar-host-bottom-offset) + env(safe-area-inset-bottom)
+    );
+
+    /* Scaffold SnackbarZIndex: above the content and the top bar. */
+    z-index: 2;
+    display: grid;
+    justify-items: center;
+    pointer-events: none;
+  }
+
+  .m3e-snackbar-host__item {
+    grid-area: 1 / 1;
+    align-self: start;
+    box-sizing: border-box;
+    inline-size: 100%;
+    padding: var(--m3e-comp-snackbar-margin);
+    scale: var(--_m3e-snackbar-scale, 1);
+    opacity: var(--_m3e-snackbar-opacity, 1);
+  }
+
+  /* CSS only (no [data-driven]): scale and fade in on the springs' linear() curves. */
+  .m3e-snackbar-host__item:not([data-driven]) {
+    transition:
+      scale var(--m3e-comp-snackbar-scale-duration) var(--m3e-comp-snackbar-scale-easing),
+      opacity var(--m3e-comp-snackbar-opacity-duration) var(--m3e-comp-snackbar-opacity-easing);
+  }
+
+  @starting-style {
+    .m3e-snackbar-host__item:not([data-driven]) {
+      scale: var(--m3e-comp-snackbar-closed-scale);
+      opacity: var(--m3e-comp-snackbar-closed-opacity);
+    }
+  }
+
+  /* --- Snackbar ------------------------------------------------------------------------------- */
+
+  .m3e-snackbar {
+    /* OneRowSnackbar: TextEndExtraSpacing at the end without a dismiss button, else 0. */
+    --_m3e-snackbar-padding-end: var(--m3e-comp-snackbar-text-end-spacing);
+    --_m3e-snackbar-text-gap: var(--m3e-comp-snackbar-text-end-spacing);
+
+    /* A button's layout box is the minimum interactive size around its 40dp container. */
+    --_m3e-snackbar-button-inset: calc(
+      (
+          var(--m3e-comp-minimum-interactive-component-size) -
+            var(--m3e-comp-small-icon-button-container-height)
+        ) /
+        2
+    );
+
+    display: flex;
+    align-items: center;
+    box-sizing: border-box;
+    inline-size: 100%;
+
+    /* The row inside the paddings is at most ContainerMaxWidth. */
+    max-inline-size: calc(
+      var(--m3e-comp-snackbar-container-max-width) + var(--m3e-comp-snackbar-padding-start) +
+        var(--_m3e-snackbar-padding-end)
+    );
+    min-block-size: var(--m3e-comp-snackbar-single-line-container-height);
+    padding-inline: var(--m3e-comp-snackbar-padding-start) var(--_m3e-snackbar-padding-end);
+    border-radius: var(--m3e-comp-snackbar-container-shape);
+    background-color: var(--m3e-comp-snackbar-container-color);
+    box-shadow: var(--m3e-comp-snackbar-container-shadow);
+    color: var(--m3e-comp-snackbar-supporting-text-color);
+    font-family: var(--m3e-comp-snackbar-supporting-text-font);
+    font-size: var(--m3e-comp-snackbar-supporting-text-size);
+    font-weight: var(--m3e-comp-snackbar-supporting-text-weight);
+    line-height: var(--m3e-comp-snackbar-supporting-text-line-height);
+    letter-spacing: var(--m3e-comp-snackbar-supporting-text-tracking);
+  }
+
+  /* With a dismiss button its 48dp target reaches the end (a zero length, for the calc above). */
+  .m3e-snackbar:has(.m3e-snackbar__dismiss) {
+    --_m3e-snackbar-padding-end: calc(var(--m3e-comp-snackbar-text-end-spacing) * 0);
+    --_m3e-snackbar-text-gap: 0;
+  }
+
+  .m3e-snackbar__text {
+    flex: 1 1 0;
+    min-inline-size: 0;
+    padding-block: var(--m3e-comp-snackbar-text-padding-vertical);
+    padding-inline-end: var(--_m3e-snackbar-text-gap);
+    overflow-wrap: break-word;
+    text-align: start;
+  }
+
+  .m3e-snackbar__actions {
+    display: flex;
+    flex: none;
+    align-items: center;
+  }
+
+  /* TextButton(colors = textButtonColors(contentColor = actionColor)). */
+  .m3e-snackbar__action.m3e-button {
+    --_m3e-button-content: var(--m3e-comp-snackbar-action-label-text-color);
+
+    flex: none;
+    margin-block: var(--_m3e-snackbar-button-inset);
+  }
+
+  /* IconButton with LocalContentColor = dismissActionContentColor. */
+  .m3e-snackbar__dismiss.m3e-icon-button {
+    --_m3e-icon-button-content: var(--m3e-comp-snackbar-icon-color);
+
+    flex: none;
+    margin: var(--_m3e-snackbar-button-inset);
+  }
+
+  /* --- Action on a new line ------------------------------------------------------------------- */
+
+  .m3e-snackbar--action-on-new-line {
+    flex-direction: column;
+    align-items: stretch;
+    max-inline-size: var(--m3e-comp-snackbar-container-max-width);
+    min-block-size: 0;
+    padding-inline-end: 0;
+  }
+
+  .m3e-snackbar--action-on-new-line > .m3e-snackbar__text {
+    flex: none;
+    padding-inline-end: var(--m3e-comp-snackbar-padding-start);
+  }
+
+  .m3e-snackbar--action-on-new-line > .m3e-snackbar__actions {
+    align-self: flex-end;
+    padding-block-end: var(--m3e-comp-snackbar-new-line-actions-padding-bottom);
+    padding-inline-end: var(--m3e-comp-snackbar-new-line-actions-padding-end);
+  }
+
+  .m3e-snackbar--action-on-new-line:has(.m3e-snackbar__dismiss) > .m3e-snackbar__actions {
+    padding-inline-end: 0;
+  }
+
+  /* In a host: centered, and the only part that takes the pointer. */
+  .m3e-snackbar-host__item > .m3e-snackbar {
+    margin-inline: auto;
+    pointer-events: auto;
+  }
+
+  @media (forced-colors: active) {
+    .m3e-snackbar {
+      border: var(--m3e-comp-divider-thickness) solid CanvasText;
+    }
+  }
+}

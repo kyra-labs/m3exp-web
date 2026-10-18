@@ -16,6 +16,7 @@ export * from './list/index.js';
 export * from './tooltip/index.js';
 export * from './badge/index.js';
 export * from './dialog/index.js';
+export * from './snackbar/index.js';
 export * from './top-app-bar/index.js';
 export * from './assist-chip/index.js';
 export * from './chips/index.js';
