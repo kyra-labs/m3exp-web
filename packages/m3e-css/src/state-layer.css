@@ -47,6 +47,7 @@
     .m3e-menu__item,
     .m3e-fab-menu__item,
     .m3e-search__result,
+    .m3e-list-item--interactive,
     .m3e-checkbox__state,
     .m3e-radio-button__state,
     .m3e-switch__state
@@ -72,6 +73,7 @@
     .m3e-menu__item,
     .m3e-fab-menu__item,
     .m3e-search__result,
+    .m3e-list-item--interactive,
     .m3e-checkbox__state,
     .m3e-radio-button__state,
     .m3e-switch__state
@@ -167,7 +169,8 @@
         .m3e-tab,
         .m3e-menu__item,
         .m3e-fab-menu__item,
-        .m3e-search__result
+        .m3e-search__result,
+        .m3e-list-item--interactive
       ):hover::before {
       --_m3e-state-layer-opacity: var(--m3e-sys-state-hover-state-layer-opacity);
     }
@@ -188,7 +191,8 @@
       .m3e-tab,
       .m3e-menu__item,
       .m3e-fab-menu__item,
-      .m3e-search__result
+      .m3e-search__result,
+      .m3e-list-item--interactive
     ):focus-visible::before {
     --_m3e-state-layer-opacity: var(--m3e-sys-state-focus-state-layer-opacity);
   }
@@ -208,7 +212,8 @@
       .m3e-tab,
       .m3e-menu__item,
       .m3e-fab-menu__item,
-      .m3e-search__result
+      .m3e-search__result,
+      .m3e-list-item--interactive
     )[data-dragged]::before {
     --_m3e-state-layer-opacity: var(--m3e-sys-state-dragged-state-layer-opacity);
   }
@@ -228,7 +233,8 @@
       .m3e-tab,
       .m3e-menu__item,
       .m3e-fab-menu__item,
-      .m3e-search__result
+      .m3e-search__result,
+      .m3e-list-item--interactive
     ):active::before,
   :where(
       .m3e-state-layer,
@@ -247,6 +253,7 @@
       .m3e-menu__item,
       .m3e-fab-menu__item,
       .m3e-search__result,
+      .m3e-list-item--interactive,
       .m3e-checkbox__state,
       .m3e-radio-button__state,
       .m3e-switch__state
@@ -269,7 +276,8 @@
       .m3e-tab,
       .m3e-menu__item,
       .m3e-fab-menu__item,
-      .m3e-search__result
+      .m3e-search__result,
+      .m3e-list-item--interactive
     ):is(:disabled, [aria-disabled='true'])::before {
     display: none;
   }
@@ -332,6 +340,7 @@
       .m3e-menu__item,
       .m3e-fab-menu__item,
       .m3e-search__result,
+      .m3e-list-item--interactive,
       .m3e-checkbox__state,
       .m3e-radio-button__state,
       .m3e-switch__state
@@ -379,6 +388,7 @@
       .m3e-menu__item,
       .m3e-fab-menu__item,
       .m3e-search__result,
+      .m3e-list-item--interactive,
       .m3e-checkbox__state,
       .m3e-radio-button__state,
       .m3e-switch__state

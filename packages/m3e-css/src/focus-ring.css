@@ -78,7 +78,8 @@
   }
 
   /*
-   * Menu items sit edge to edge in their group, and drawer items draw the ripple's inset ring
+   * Menu items sit edge to edge in their group (interactive list items too, segmented ones
+   * 2dp apart, which an outer ring would overlap), and drawer items draw the ripple's inset ring
    * (m3.material.io token DB: focus-indicator.outline.offset = inner offset): drawn inward. Tabs
    * fill their row edge to edge (the ripple's inset ring on the tab) and tab panels often span
    * the page width: inward too, as do the panes of a pane scaffold (focused when they become the
@@ -86,6 +87,7 @@
    */
   :where(
     .m3e-menu__item,
+    .m3e-list-item--interactive,
     .m3e-navigation-drawer-item,
     .m3e-tab,
     .m3e-tab-panel,
@@ -97,6 +99,7 @@
 
   :where(
       .m3e-menu__item,
+      .m3e-list-item--interactive,
       .m3e-navigation-drawer-item,
       .m3e-tab,
       .m3e-tab-panel,
@@ -153,6 +156,7 @@
     :where(.m3e-slider__input:focus-visible + .m3e-slider__handle),
     :where(
       .m3e-menu__item,
+      .m3e-list-item--interactive,
       .m3e-navigation-drawer-item,
       .m3e-tab,
       .m3e-tab-panel,
