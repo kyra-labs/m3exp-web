@@ -7,7 +7,7 @@ interface Props {
   type: 'checkbox' | 'radio' | 'switch';
   checked?: boolean;
   /** A live control's accessible name (the item headline's id). */
-  labelledby?: string;
+  labelledby?: string | undefined;
 }
 
 const { type, checked = false, labelledby } = Astro.props;

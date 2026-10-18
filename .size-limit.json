@@ -157,6 +157,12 @@
     "limit": "3 KB"
   },
   {
+    "name": "m3e-css: lists (expressive, segmented, interactive and dragged items; indicators; legacy item D4)",
+    "path": "packages/m3e-css/dist/list.css",
+    "rolldown": false,
+    "limit": "3 KB"
+  },
+  {
     "name": "m3e-css: legacy navigation bar + rail (D4)",
     "path": [
       "packages/m3e-css/dist/navigation-bar.css",
@@ -468,6 +474,16 @@
     "limit": "1 KB"
   },
   {
+    "name": "m3e-elements: <m3e-list> entry (renders the contract; listbox keyboarding and selection; list-layout)",
+    "path": "packages/m3e-elements/dist/list/index.js",
+    "limit": "5 KB"
+  },
+  {
+    "name": "m3e-elements: list-layout entry (ListLayout, class names, indicator markup, roving focus, typeahead; used by m3e-react <List>)",
+    "path": "packages/m3e-elements/dist/list-layout/index.js",
+    "limit": "4 KB"
+  },
+  {
     "name": "m3e-elements: tabs-layout entry (TabsLayout, used by m3e-react <Tabs>)",
     "path": "packages/m3e-elements/dist/tabs-layout/index.js",
     "limit": "6 KB"
@@ -663,6 +679,12 @@
     "limit": "12 KB"
   },
   {
+    "name": "m3e-react: { List, ListItem, SegmentedListItem } (incl. react-aria useListBox / useOption, react-stately list state, list-layout, motion shape spring)",
+    "path": "packages/m3e-react/dist/index.js",
+    "import": "{ List, ListItem, SegmentedListItem }",
+    "limit": "32 KB"
+  },
+  {
     "name": "m3e-react: { FilterChip } only (incl. react-aria useCheckbox press/focus + react-stately toggle state, Icon, motion shape spring)",
     "path": "packages/m3e-react/dist/index.js",
     "import": "{ FilterChip }",
@@ -694,10 +716,10 @@
     "limit": "1 KB"
   },
   {
-    "name": "m3exp-web (root): { Icon } (the root entry registers every custom element by design, with <m3e-menu>, <m3e-split-button>, <m3e-button-group>, the toolbars, the progress indicators, <m3e-search>, the navigation bar / rails, <m3e-navigation-drawer>, <m3e-navigation-suite>, the window size class observer, <m3e-tabs>, <m3e-checkbox>, <m3e-chip-set>, <m3e-slider>, <m3e-text-field> and the canonical layouts (~56.2 kB with their lazily imported pane-motion / pane-expansion entries); a leaked React component adds ~10 kB of react-aria. Raised 53 → 54 kB for <m3e-chip-set>, 54 → 56 kB for <m3e-slider> and m3e-motion's slider math, 56 → 57 kB for <m3e-text-field> (M8). Raise with m3e-elements (all); D17)",
+    "name": "m3exp-web (root): { Icon } (the root entry registers every custom element by design, with <m3e-menu>, <m3e-split-button>, <m3e-button-group>, the toolbars, the progress indicators, <m3e-search>, the navigation bar / rails, <m3e-navigation-drawer>, <m3e-navigation-suite>, the window size class observer, <m3e-tabs>, <m3e-checkbox>, <m3e-chip-set>, <m3e-slider>, <m3e-text-field>, <m3e-list> and the canonical layouts (~57.4 kB with their lazily imported pane-motion / pane-expansion entries); a leaked React component adds ~10 kB of react-aria. Raised 53 → 54 kB for <m3e-chip-set>, 54 → 56 kB for <m3e-slider> and m3e-motion's slider math, 56 → 57 kB for <m3e-text-field>, 57 → 58 kB for <m3e-list> and its list-layout (M8). Raise with m3e-elements (all); D17)",
     "path": "packages/m3exp-web/dist/index.js",
     "import": "{ Icon }",
     "ignore": ["react", "react-dom"],
-    "limit": "57 KB"
+    "limit": "58 KB"
   }
 ]
