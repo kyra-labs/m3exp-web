@@ -326,6 +326,9 @@ export class SnackbarHostController {
 
   /** A rendered item shows `data` (the current snackbar): springs it in and starts its timer. */
   enter(item: HTMLElement, data: SnackbarData): void {
+    // Driven before its style is first resolved, so the CSS-only @starting-style transition never
+    // starts under the springs.
+    if (!this.#items.has(item)) item.setAttribute('data-driven', '');
     const style = getComputedStyle(item);
     let entry = this.#items.get(item);
     if (!entry) {
@@ -337,7 +340,6 @@ export class SnackbarHostController {
         onRemoved: null,
       };
       this.#items.set(item, entry);
-      item.setAttribute('data-driven', '');
     }
     entry.visible = true;
     entry.onRemoved = null;

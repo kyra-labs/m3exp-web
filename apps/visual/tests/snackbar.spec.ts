@@ -33,13 +33,19 @@ const host = (page: Page) =>
   page.locator('m3e-snackbar-host[data-testid="host"] > .m3e-snackbar-host');
 const items = (page: Page) => host(page).locator('.m3e-snackbar-host__item');
 
+/** Waits for a host item's springs to settle and no animation to run on it (geometry reads). */
+async function settled(item: Locator): Promise<void> {
+  await expect(item).toHaveAttribute('style', /--_m3e-snackbar-opacity: 1;/);
+  await expect(item).toHaveAttribute('style', /--_m3e-snackbar-scale: 1;/);
+  await expect.poll(() => item.evaluate((n) => n.getAnimations().length)).toBe(0);
+}
+
 /** Shows a snackbar from a docs button and waits for its springs to settle. */
 async function show(page: Page, which: 'simple' | 'action' | 'indefinite'): Promise<Locator> {
   await page.getByTestId(`show-${which}`).click();
   await page.mouse.move(0, 0);
   const item = items(page).last();
-  await expect(item).toHaveAttribute('style', /--_m3e-snackbar-opacity: 1;/);
-  await expect(item).toHaveAttribute('style', /--_m3e-snackbar-scale: 1;/);
+  await settled(item);
   await expect(items(page)).toHaveCount(1);
   return item.locator('.m3e-snackbar');
 }
@@ -197,6 +203,7 @@ test('the host: bottom center, 12dp around the snackbar, one at a time, raised b
   // The first fades out (removed when its fade ends) while the second fades in.
   await expect(items(page)).toHaveCount(1);
   await expect(host(page).locator('.m3e-snackbar__text')).toHaveText('Snackbar # 2');
+  await settled(items(page));
   // --m3e-comp-snackbar-host-bottom-offset raises it (e.g. above a FAB).
   await page.evaluate(() => {
     document.documentElement.style.setProperty('--m3e-comp-snackbar-host-bottom-offset', '88px');
