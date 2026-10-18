@@ -736,12 +736,16 @@
   - [x] Plus CAC.
 
 ## 34. Badge
-- **Tokens:** `TODO(verify)` BadgeTokens; error/on-error.
-- **ARIA:** count exposed in parent's accessible name.
-- **Layers:** css.
+- **Tokens (verified, generated):** `BadgeTokens.kt@19991f2c` plus the `Badge.kt` values Compose renders (`components/badge-defaults.css`). Small (no content): a 6dp dot, full corners, `BadgeDefaults.containerColor` (error). Large (with content): at least 16 × 16dp, full corners, 4dp horizontal padding, label small in on-error (`contentColorFor(error)`), the same error container (Compose never reads `LargeColor`).
+- **Placement (Compose `BadgedBox`):** the box is the anchor's size, content centered; the dot starts 6dp (`BadgeOffset`) before the anchor's end and overlaps its top by 6dp; a badge with content (wider than 6dp) starts 12dp (`BadgeWithContentHorizontalOffset`) before the end, its bottom 14dp (`BadgeWithContentVerticalOffset`) below the top (2dp above it at 16dp tall); mirrored in RTL (`placeRelative`). Inside a `Modifier.badgeBounds()` layout (navigation items, tabs) `BadgeEndRuler` / `BadgeTopRuler` keep the badge inside it: CSS hook `--_m3e-badged-box-bounds-end` / `-top` (for follow-up B2). No motion: badges appear and disappear at once.
+- **Text:** Compose has no count logic (the samples pass "8" and "999+"); m3e-react `<Badge count max>` writes counts above `max` (999) as `<max>+` (owner decision M9 #6; m3.material.io: at most four characters, "+" over 999), with m3e-motion's `badgeText`, which the navigation elements will share.
+- **ARIA:** the badge holds visually hidden text (`__label`) that joins the accessible name of the item it is in: "New notification" for the dot (BadgeSamples.kt), the count otherwise, or an overriding `label`; the visible text (`__text`) is `aria-hidden` (owner decision M9 #7). Name the item from its content (or with `aria-labelledby` that includes the badge), not `aria-label`.
+- **Layers:** css + react (`<Badge>`, `<BadgedBox>`). No element (owner decision M9 #6): the navigation elements render the badge contract themselves (follow-up B2: bar / rail / suite destinations and tabs; owner decision M9 #30). The navigation drawer's badge stays trailing label-colored text (Compose `NavigationDrawerItem(badge)`).
+- **Classes:** `.m3e-badge` (`--large`) > (`__text`, `__label`); `.m3e-badged-box` (the anchor, then the badge).
+- **API:** React `<Badge count max label>{children}</Badge>` (no `count` and no children: the dot; `label=""` leaves it out of the name), `<BadgedBox badge>{anchor}</BadgedBox>`.
 - **Acceptance:**
-  - [ ] "999+" overflow.
-  - [ ] Plus CAC.
+  - [x] "999+" overflow.
+  - [x] Plus CAC.
 
 ## 35. Divider
 - **Tokens (verified, generated):** `DividerTokens.kt@19991f2c` via `DividerDefaults` (`Divider.kt` L111–118): thickness 1dp, color outline-variant. `HorizontalDivider` fills the width, `VerticalDivider` the height (L49–89); no built-in insets (margins on the element).

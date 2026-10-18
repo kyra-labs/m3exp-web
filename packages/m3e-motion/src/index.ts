@@ -252,3 +252,4 @@ export {
   threePaneScaffoldDirective,
   threePaneScaffoldLayout,
 } from './three-pane-scaffold.js';
+export { BADGE_DOT_LABEL, BADGE_MAX_COUNT, badgeText } from './badge.js';

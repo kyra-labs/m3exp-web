@@ -1044,3 +1044,13 @@ button.docs-layout-item:focus-visible {
 .docs-css-tooltip {
   position-anchor: --docs-css-tooltip;
 }
+
+/* Badges (badge.astro): specimen rows with room above for the badges. */
+.docs-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--m3e-sys-space-400);
+  align-items: center;
+  margin-block: var(--m3e-sys-space-300);
+  padding-block-start: var(--m3e-sys-space-100);
+}

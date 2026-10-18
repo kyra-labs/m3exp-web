@@ -1,0 +1,127 @@
+---
+import BadgePlayground from '../../islands/BadgePlayground.tsx';
+import Base from '../../layouts/Base.astro';
+
+const counts = [
+  { id: 'count-1', text: '8' },
+  { id: 'count-2', text: '99' },
+  { id: 'count-4', text: '999+' },
+];
+---
+
+<Base title="Badges">
+  <link rel="stylesheet" href="/icons/docs-icons.css" slot="head" />
+  <h1>Badges</h1>
+  <p>
+    Badges (COMPONENT_SPEC §34, Compose <code>Badge</code> in a <code>BadgedBox</code>) show dynamic information on an icon: a <strong>small</strong> 6dp dot, or a <strong>large</strong> 16dp pill with a count or up to four characters, in the error color. A badged box keeps the anchor's size and puts the dot 6dp inside its top-end corner, or the large badge 12dp before its end and 2dp above its top; both mirror in right-to-left text. Badges appear and disappear without motion, as in Compose. CSS draws them; m3e-react's <code>&lt;Badge count max&gt;</code> writes counts above <code>max</code> (999) as <code>999+</code>. There is no custom element: the navigation components render the badge contract themselves.
+  </p>
+  <p>
+    The badge holds visually hidden text that is read with the item it sits in ("Inbox, 8"): "New notification" for the dot, the count for a large badge, or your own words. The visible digits are hidden from assistive technology. Name the item from its content (an icon with a label, visible text), not with <code>aria-label</code>, which replaces the content and the badge with it.
+  </p>
+
+  <section aria-labelledby="variants-heading">
+    <h2 id="variants-heading">Small and large (CSS only)</h2>
+    <div class="docs-badges" data-testid="variants">
+      <span class="m3e-badge" data-testid="small"
+        ><span class="m3e-badge__label">New notification</span></span
+      >
+      {
+        counts.map(({ id, text }) => (
+          <span class="m3e-badge m3e-badge--large" data-testid={id}>
+            <span class="m3e-badge__text" aria-hidden="true">
+              {text}
+            </span>
+            <span class="m3e-badge__label">{text}</span>
+          </span>
+        ))
+      }
+    </div>
+  </section>
+
+  <section aria-labelledby="badged-box-heading">
+    <h2 id="badged-box-heading">On an icon (badged box)</h2>
+    <p>
+      <code>.m3e-badged-box</code> around the anchor, the <code>.m3e-badge</code> after it (the Compose samples: a 24dp icon in a navigation bar item).
+    </p>
+    <div class="docs-badges" data-testid="badged">
+      <span class="m3e-badged-box" data-testid="box-small">
+        <span class="m3e-icon" role="img" aria-label="Mail">mail</span>
+        <span class="m3e-badge"><span class="m3e-badge__label">New notification</span></span>
+      </span>
+      <span class="m3e-badged-box" data-testid="box-count-1">
+        <span class="m3e-icon" role="img" aria-label="Inbox">inbox</span>
+        <span class="m3e-badge m3e-badge--large">
+          <span class="m3e-badge__text" aria-hidden="true">8</span>
+          <span class="m3e-badge__label">8</span>
+        </span>
+      </span>
+      <span class="m3e-badged-box" data-testid="box-count-4">
+        <span class="m3e-icon" role="img" aria-label="Notifications">notifications</span>
+        <span class="m3e-badge m3e-badge--large">
+          <span class="m3e-badge__text" aria-hidden="true">999+</span>
+          <span class="m3e-badge__label">999+</span>
+        </span>
+      </span>
+    </div>
+    <div dir="rtl" class="docs-badges" data-testid="rtl">
+      <span class="m3e-badged-box" data-testid="rtl-small">
+        <span class="m3e-icon" role="img" aria-label="البريد">mail</span>
+        <span class="m3e-badge"><span class="m3e-badge__label">إشعار جديد</span></span>
+      </span>
+      <span class="m3e-badged-box" data-testid="rtl-count-4">
+        <span class="m3e-icon" role="img" aria-label="الإشعارات">notifications</span>
+        <span class="m3e-badge m3e-badge--large">
+          <span class="m3e-badge__text" aria-hidden="true">999+</span>
+          <span class="m3e-badge__label">999+</span>
+        </span>
+      </span>
+    </div>
+  </section>
+
+  <section aria-labelledby="buttons-heading">
+    <h2 id="buttons-heading">In a button</h2>
+    <p>
+      The button is named from its content: the icon's label, then the badge ("Chat, New notification"; "Notifications, 3 unread").
+    </p>
+    <div class="docs-badges" data-testid="buttons">
+      <button
+        type="button"
+        class="m3e-icon-button m3e-icon-button--standard"
+        data-testid="button-small"
+      >
+        <span class="m3e-badged-box">
+          <span class="m3e-icon" role="img" aria-label="Chat">chat</span>
+          <span class="m3e-badge"><span class="m3e-badge__label">New notification</span></span>
+        </span>
+      </button>
+      <button
+        type="button"
+        class="m3e-icon-button m3e-icon-button--tonal"
+        data-testid="button-large"
+      >
+        <span class="m3e-badged-box">
+          <span class="m3e-icon" role="img" aria-label="Notifications">notifications</span>
+          <span class="m3e-badge m3e-badge--large">
+            <span class="m3e-badge__text" aria-hidden="true">3</span>
+            <span class="m3e-badge__label">3 unread</span>
+          </span>
+        </span>
+      </button>
+    </div>
+  </section>
+
+  <section aria-labelledby="react-heading">
+    <h2 id="react-heading">React</h2>
+    <p>
+      <code>&lt;BadgedBox badge=&#123;&lt;Badge count=&#123;n&#125; /&gt;&#125;&gt;</code> around the anchor. <code>&lt;Badge /&gt;</code> is the dot; <code>count</code> (with <code>max</code>, 999 by default) or short <code>children</code> make the large badge; <code>label</code> replaces the hidden text (<code>""</code> leaves it out). <code>&lt;IconButton&gt;</code> asks for <code>aria-label</code> or <code>aria-labelledby</code>: point <code>aria-labelledby</code> at the icon and the badge, so the badge stays in the name.
+    </p>
+    <BadgePlayground client:only="react" />
+  </section>
+
+  <section aria-labelledby="navigation-heading">
+    <h2 id="navigation-heading">Navigation</h2>
+    <p>
+      Badges on navigation bar, rail and suite destinations and on tabs come in a follow-up. The navigation drawer's <code>badge</code> stays trailing text in the label color, as Compose's <code>NavigationDrawerItem</code> draws it.
+    </p>
+  </section>
+</Base>

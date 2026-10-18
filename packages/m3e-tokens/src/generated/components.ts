@@ -171,6 +171,15 @@ export const badgeTokens = {
   size: 6
 } as const;
 
+/** BadgeDefaults */
+export const badgeDefaults = {
+  badgeContainerColor: "var(--m3e-sys-color-error)",
+  badgeLargePaddingHorizontal: 4,
+  badgeLargeOffsetHorizontal: 12,
+  badgeLargeOffsetVertical: 14,
+  badgeOffset: 6
+} as const;
+
 /** BaselineButtonTokens */
 export const baselineButtonTokens = {
   containerColor: "var(--m3e-sys-color-primary)",

@@ -2,6 +2,7 @@
 // independent regexes (not the parser) and compared with what the generator emits.
 import { fileURLToPath } from 'node:url';
 import {
+  BADGE_DOT_LABEL,
   DRAWER_POSITIONAL_THRESHOLD,
   SLIDER_KEY_DIVISIONS,
   SLIDER_PAGE_DIVISOR,
@@ -13,6 +14,7 @@ import {
   SEARCH_DROPDOWN_VISIBLE_PROGRESS,
   TAB_INDICATOR_MIN_WIDTH,
   TOP_TITLE_ALPHA_EASING,
+  badgeText,
 } from '@kyralabs/m3e-motion';
 import { describe, expect, it } from 'vitest';
 import { generate } from './generate.js';
@@ -2228,5 +2230,55 @@ describe('tooltip values (M9)', () => {
     expect(rich.get('--m3e-comp-rich-tooltip-container-shape')).toBe(
       'var(--m3e-sys-shape-corner-medium)',
     );
+  });
+});
+
+describe('badge values (M9)', () => {
+  const css = output.get('components/badge-defaults.css')!;
+  const decl = declarations(css);
+  const kt = inputs.material3Sources['Badge.kt']!.replace(/\r\n/g, '\n');
+  const t = (name: string) => decl.get(`--m3e-comp-badge-${name}`);
+  const tokens = declarations(output.get('components/badge.css')!);
+
+  it('BadgeTokens: a 6dp dot, 16dp with content, full corners, on-error label small', () => {
+    expect(source('BadgeTokens.kt')).toMatch(/val Size: [\w.]+\n\s*get\(\) = 6\.0\.dp/);
+    expect(tokens.get('--m3e-comp-badge-size')).toBe('6px');
+    expect(tokens.get('--m3e-comp-badge-large-size')).toBe('16px');
+    expect(tokens.get('--m3e-comp-badge-shape')).toBe('var(--m3e-sys-shape-corner-full)');
+    expect(tokens.get('--m3e-comp-badge-large-shape')).toBe('var(--m3e-sys-shape-corner-full)');
+    expect(tokens.get('--m3e-comp-badge-large-label-text-color')).toBe(
+      'var(--m3e-sys-color-on-error)',
+    );
+    expect(tokens.get('--m3e-comp-badge-large-label-text-size')).toBe(
+      'var(--m3e-sys-typescale-label-small-size)',
+    );
+  });
+
+  it('BadgeDefaults.containerColor is BadgeTokens.Color (error) for both sizes', () => {
+    expect(kt).toMatch(
+      /public val containerColor: Color\n\s*@Composable get\(\) = BadgeTokens\.Color\.value/,
+    );
+    expect(t('container-color')).toBe('var(--m3e-sys-color-error)');
+    expect(kt).not.toContain('BadgeTokens.LargeColor');
+  });
+
+  it('padding 4dp; BadgedBox offsets 12 × 14dp with content, 6 × 6dp for the dot', () => {
+    expect(kt).toMatch(/internal val BadgeWithContentHorizontalPadding\n\s*get\(\) = 4\.dp/);
+    expect(t('large-padding-horizontal')).toBe('4px');
+    expect(t('large-offset-horizontal')).toBe('12px');
+    expect(t('large-offset-vertical')).toBe('14px');
+    expect(t('offset')).toBe('6px');
+    expect(output.get('PARITY.md')).toMatch(
+      /material3\/Badge\.kt@\w+ L\d+ \| `--m3e-comp-badge-large-offset-vertical`/,
+    );
+  });
+
+  it('m3e-motion badge text: the samples\' dot description, "8" and "999+" (M9 #6, #7)', () => {
+    const samples = inputs.material3Sources['BadgeSamples.kt']!.replace(/\r\n/g, '\n');
+    expect(samples).toContain(`contentDescription = "${BADGE_DOT_LABEL}"`);
+    expect(samples).toContain('val badgeNumber = "8"');
+    expect(samples).toContain('val badgeNumber = "999+"');
+    expect(badgeText(8)).toBe('8');
+    expect(badgeText(1000)).toBe('999+');
   });
 });

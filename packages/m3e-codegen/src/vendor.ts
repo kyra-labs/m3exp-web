@@ -60,6 +60,7 @@ export const MATERIAL3_SOURCES = [
   'internal/Strings.kt',
   'Tooltip.kt',
   'internal/BasicTooltip.kt',
+  'Badge.kt',
 ] as const;
 
 /** Material3 samples the generator reads (values the Compose catalog renders, e.g. icon rotation). */
@@ -81,6 +82,7 @@ export const MATERIAL3_SAMPLE_SOURCES = [
   'TextFieldSamples.kt',
   'ListSamples.kt',
   'TooltipSamples.kt',
+  'BadgeSamples.kt',
 ] as const;
 
 /** Android `actual`s the generator reads (DropdownMenu's popup margins, AndroidMenu.android.kt). */
