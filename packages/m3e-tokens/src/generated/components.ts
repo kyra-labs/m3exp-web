@@ -3684,7 +3684,8 @@ export const textFieldDefaults = {
   textFieldOutlinedCursorColorError: "var(--m3e-sys-color-error)",
   textFieldIconPadding: "calc((48px - 24px) / 2)",
   textFieldCutoutLabelSpace: "calc(var(--m3e-sys-typescale-body-small-line-height) / 2)",
-  textFieldSelectionColor: "color-mix(in srgb, var(--m3e-sys-color-primary) calc(0.4 * 100%), transparent)"
+  textFieldSelectionColor: "color-mix(in srgb, var(--m3e-sys-color-primary) calc(0.4 * 100%), transparent)",
+  textFieldCounterSpace: 16
 } as const;
 
 /** TimeInputTokens */

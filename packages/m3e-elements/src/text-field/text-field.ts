@@ -269,7 +269,8 @@ export class M3eTextField extends M3eElement {
       }
       if (focused) input.focus();
     }
-    const input = this.#input!;
+    const input = this.#input;
+    if (!input) return;
     if (!this.#abort) {
       const abort = (this.#abort = new AbortController());
       input.addEventListener(

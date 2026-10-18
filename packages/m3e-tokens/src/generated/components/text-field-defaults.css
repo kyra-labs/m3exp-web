@@ -167,5 +167,6 @@
     --m3e-comp-text-field-icon-padding: calc((48px - 24px) / 2);
     --m3e-comp-text-field-cutout-label-space: calc(var(--m3e-sys-typescale-body-small-line-height) / 2);
     --m3e-comp-text-field-selection-color: color-mix(in srgb, var(--m3e-sys-color-primary) calc(0.4 * 100%), transparent);
+    --m3e-comp-text-field-counter-space: 16px;
   }
 }

@@ -53,6 +53,9 @@ export const TEXT_FIELD_DEFAULTS_SOURCES = [
 
 const P = '--m3e-comp-text-field';
 
+export const TEXT_FIELD_M3IO_PAGE =
+  'm3.material.io Text fields › Specs (_dsm/content/m3/2026-10-13_06-10-19/8741ef66-1a80-4b39-adb1-66bea5e6992f.json, updated 2026-09-08): "Supporting text and character counter top padding 4dp", "Padding between supporting text and character counter 16dp"';
+
 /** TextFieldColors parts: [CSS part, Compose member stem]. */
 const PARTS: readonly [string, string][] = [
   ['text', 'TextColor'],
@@ -114,7 +117,8 @@ function colorRules(variant: 'filled' | 'outlined', anchor: string): LiteralRule
     });
   };
   for (const [part, stem] of PARTS) {
-    for (const [suffix, state] of STATES) add(`${P}-${variant}-${part}-color${suffix}`, `${state}${stem}`);
+    for (const [suffix, state] of STATES)
+      add(`${P}-${variant}-${part}-color${suffix}`, `${state}${stem}`);
   }
   add(`${P}-${variant}-cursor-color`, 'cursorColor');
   add(`${P}-${variant}-cursor-color-error`, 'errorCursorColor');
@@ -308,8 +312,7 @@ const RULES: readonly LiteralRule[] = [
     owner: 'CommonDecorationBox',
     member: 'decoratedPlaceholder(textStyle)',
     file: IMPL,
-    pattern:
-      /contentColor = placeholderColor,\n\s*textStyle = (bodyLarge),/d,
+    pattern: /contentColor = placeholderColor,\n\s*textStyle = (bodyLarge),/d,
   },
   {
     kind: 'type',
@@ -325,7 +328,8 @@ const RULES: readonly LiteralRule[] = [
     owner: 'CommonDecorationBox',
     member: 'decoratedSupporting(textStyle)',
     file: IMPL,
-    pattern: /Decoration\(contentColor = supportingTextColor, textStyle = (bodySmall), content = it\)/d,
+    pattern:
+      /Decoration\(contentColor = supportingTextColor, textStyle = (bodySmall), content = it\)/d,
   },
   // --- Motion ------------------------------------------------------------------------------
   {
@@ -639,12 +643,29 @@ export function extractTextFieldDefaults(
       owner: THEME,
       member: 'rememberTextSelectionColors(backgroundColor)',
       file: THEME,
-      line: lineOf(THEME, /backgroundColor = primaryColor\.copy\(alpha = TextSelectionBackgroundOpacity\)/),
+      line: lineOf(
+        THEME,
+        /backgroundColor = primaryColor\.copy\(alpha = TextSelectionBackgroundOpacity\)/,
+      ),
       note: 'LocalTextSelectionColors from MaterialTheme (TextFieldColors.textSelectionColors); the selection highlight (::selection)',
     },
   );
+  // The character counter is not a Compose slot (TextFieldWithErrorState puts "Limit: n/max" in a
+  // supporting Row); m3.material.io gives its spacing.
+  out.push({
+    name: `${P}-counter-space`,
+    value: '16px',
+    js: 16,
+    raw: 'Padding between supporting text and character counter 16dp',
+    owner: 'm3.material.io',
+    member: 'Padding between supporting text and character counter',
+    file: 'm3.material.io',
+    line: 0,
+    cite: TEXT_FIELD_M3IO_PAGE,
+    note: 'the counter (owner rule: build what Compose lacks per m3.material.io) at the end of the supporting line',
+  });
   // The selection opacity itself must still be 0.4f.
-  if (!/internal const val TextSelectionBackgroundOpacity = 0\.4f/.test(text(THEME)))
+  if (!text(THEME).includes('internal const val TextSelectionBackgroundOpacity = 0.4f'))
     throw new Error(`${THEME}: TextSelectionBackgroundOpacity changed upstream`);
   return out;
 }

@@ -30,7 +30,12 @@ export default function TextFieldPlayground() {
         leadingIcon="search"
         trailingIcon={
           query ? (
-            <IconButton aria-label="Clear text" onPress={() => setQuery('')}>
+            <IconButton
+              aria-label="Clear text"
+              onPress={() => {
+                setQuery('');
+              }}
+            >
               <Icon name="cancel" />
             </IconButton>
           ) : undefined
@@ -38,7 +43,12 @@ export default function TextFieldPlayground() {
       />
       <TextField label="Amount" prefix="$" suffix="USD" inputMode="decimal" />
       <TextField variant="outlined" label="Message" multiline description="Grows with its lines" />
-      <TextField variant="outlined" labelPosition="above" label="Label above" placeholder="Placeholder" />
+      <TextField
+        variant="outlined"
+        labelPosition="above"
+        label="Label above"
+        placeholder="Placeholder"
+      />
       <TextField label="Disabled" defaultValue="Input text" isDisabled />
     </div>
   );

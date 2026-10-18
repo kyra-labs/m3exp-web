@@ -4,7 +4,7 @@
 > Source: compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/tokens @ 19991f2c0858aadfcb442ce02b2c8e4743c96898  
 > Values: Copyright (C) The Android Open Source Project, Apache License 2.0 (see NOTICE).  
 
-Emitted: 377 system and 3439 component variables from 130 component token objects.
+Emitted: 377 system and 3440 component variables from 130 component token objects.
 
 ## Not emitted here
 
@@ -4280,6 +4280,7 @@ Emitted: 377 system and 3439 component variables from 130 component token object
 | `TextFieldImpl.kt.textFieldHorizontalIconPadding` | `((LocalMinimumInteractiveComponentSize - SmallIconButtonTokens.IconSize) / 2).coerceAtLeast(0.dp)` | compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/TextFieldImpl.kt@19991f2c0858aadfcb442ce02b2c8e4743c96898 L2170 | `--m3e-comp-text-field-icon-padding` | `calc((48px - 24px) / 2)` | the 24dp icons sit in a 48dp box: the text starts TextFieldPadding − this after it (12dp) |
 | `TextFieldImpl.kt.minimizedLabelHalfHeight` | `MaterialTheme.typography.bodySmall.lineHeight / 2` | compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/TextFieldImpl.kt@19991f2c0858aadfcb442ce02b2c8e4743c96898 L2177 | `--m3e-comp-text-field-cutout-label-space` | `calc(var(--m3e-sys-typescale-body-small-line-height) / 2)` | topPaddingForLabelCutout: the space above an outlined field with a Cutout label, for the half of the minimized label above the outline |
 | `MaterialTheme.kt.rememberTextSelectionColors(backgroundColor)` | `primary.copy(alpha = TextSelectionBackgroundOpacity 0.4f)` | compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/MaterialTheme.kt@19991f2c0858aadfcb442ce02b2c8e4743c96898 L281 | `--m3e-comp-text-field-selection-color` | `color-mix(in srgb, var(--m3e-sys-color-primary) calc(0.4 * 100%), transparent)` | LocalTextSelectionColors from MaterialTheme (TextFieldColors.textSelectionColors); the selection highlight (::selection) |
+| `m3.material.io.Padding between supporting text and character counter` | `Padding between supporting text and character counter 16dp` | m3.material.io Text fields › Specs (_dsm/content/m3/2026-10-13_06-10-19/8741ef66-1a80-4b39-adb1-66bea5e6992f.json, updated 2026-09-08): "Supporting text and character counter top padding 4dp", "Padding between supporting text and character counter 16dp" | `--m3e-comp-text-field-counter-space` | `16px` | the counter (owner rule: build what Compose lacks per m3.material.io) at the end of the supporting line |
 
 ## time-input
 

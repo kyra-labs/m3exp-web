@@ -115,7 +115,11 @@ export const TextField = /* @__PURE__ */ forwardRef(function TextField(
   } = props;
   const ref = useObjectRef(forwardedRef);
   const id = useId(props.id);
-  const [value, setValue] = useControlledState(props.value, props.defaultValue ?? '', props.onChange);
+  const [value, setValue] = useControlledState(
+    props.value,
+    props.defaultValue ?? '',
+    props.onChange,
+  );
   const hasLabel = label != null && label !== '';
   const error = isInvalid && errorMessage != null && errorMessage !== '';
   const supporting = description ?? supportingText;
@@ -141,6 +145,8 @@ export const TextField = /* @__PURE__ */ forwardRef(function TextField(
     } as Parameters<typeof useTextField>[0],
     ref as React.RefObject<HTMLInputElement & HTMLTextAreaElement>,
   );
+  // useFocusable's tabIndex 0 is a text field's native default: not written (the element's DOM).
+  if (inputProps.tabIndex === 0) delete inputProps.tabIndex;
 
   useLayoutEffect(() => {
     if (ref.current) growTextFieldInput(ref.current);

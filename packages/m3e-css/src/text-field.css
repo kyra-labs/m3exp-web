@@ -161,7 +161,8 @@
 
     /* Filled: expanded at top padding + half the minimized line height, minimized at the top padding. */
     --_m3e-text-field-label-y0: calc(
-      var(--m3e-comp-text-field-label-vertical-padding) + var(--m3e-comp-text-field-cutout-label-space)
+      var(--m3e-comp-text-field-label-vertical-padding) +
+        var(--m3e-comp-text-field-cutout-label-space)
     );
     --_m3e-text-field-label-y1: var(--m3e-comp-text-field-label-vertical-padding);
     --_m3e-text-field-label-x0: calc(
@@ -196,9 +197,7 @@
   }
 
   /* The label is minimized while the input is focused, not empty or autofilled. */
-  .m3e-text-field:has(
-      .m3e-text-field__input:is(:focus, :not(:placeholder-shown), :autofill)
-    ) {
+  .m3e-text-field:has(.m3e-text-field__input:is(:focus, :not(:placeholder-shown), :autofill)) {
     --_m3e-text-field-progress: 1;
   }
 
@@ -359,7 +358,10 @@
   .m3e-text-field__container {
     position: relative;
     display: grid;
-    grid-template-columns: [leading] auto [prefix] auto [input] minmax(0, 1fr) [suffix] auto [trailing] auto;
+    grid-template-columns: [leading] auto [prefix] auto [input] minmax(
+        0,
+        1fr
+      ) [suffix] auto [trailing] auto;
     align-items: start;
     box-sizing: border-box;
     min-block-size: var(--m3e-comp-text-field-min-height);
