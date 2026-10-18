@@ -1,6 +1,6 @@
 {
   "name": "@kyralabs/m3e-tokens",
-  "version": "1.6.0",
+  "version": "1.6.1",
   "description": "Generated Material 3 Expressive design tokens (CSS custom properties + JS objects) and self-hosted fonts.",
   "keywords": [
     "material-design",
