@@ -66,7 +66,7 @@ const inputProps = {
   readonly: readOnly,
   required,
   maxlength: maxLength,
-  'aria-invalid': invalid ? 'true' : undefined,
+  'aria-invalid': invalid ? ('true' as const) : undefined,
   'aria-describedby': describedBy,
   'aria-label': ariaLabel,
 };
