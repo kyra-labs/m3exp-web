@@ -54,6 +54,7 @@ export const MATERIAL3_SOURCES = [
   'Checkbox.kt',
   'RadioButton.kt',
   'Switch.kt',
+  'Slider.kt',
 ] as const;
 
 /** Material3 samples the generator reads (values the Compose catalog renders, e.g. icon rotation). */
@@ -71,6 +72,7 @@ export const MATERIAL3_SAMPLE_SOURCES = [
   'RadioButtonSamples.kt',
   'SwitchSamples.kt',
   'ChipSamples.kt',
+  'SliderSamples.kt',
 ] as const;
 
 /** Android `actual`s the generator reads (DropdownMenu's popup margins, AndroidMenu.android.kt). */

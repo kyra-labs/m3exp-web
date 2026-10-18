@@ -1,0 +1,765 @@
+/*
+ * Slider (COMPONENT_SPEC §25): standard, range (two thumbs), centered and vertical, sizes XS–XL,
+ * stops (ticks), an inset icon (M–XL) and the value indicator. This file draws a static slider
+ * from three custom properties on the root; <m3e-slider> / m3e-react's <Slider> and
+ * <RangeSlider> write them and add pointer, keyboard and value events.
+ *
+ *   <div class="m3e-slider" role="group" aria-label="Volume"
+ *        style="--m3e-comp-slider-value: 0.4; --m3e-comp-slider-steps: 4">
+ *     <div class="m3e-slider__track">
+ *       <span class="m3e-slider__inactive-start" aria-hidden="true"></span>
+ *       <span class="m3e-slider__active" aria-hidden="true"></span>
+ *       <span class="m3e-slider__inactive-end" aria-hidden="true"></span>
+ *       <span class="m3e-slider__ticks" aria-hidden="true">
+ *         <span class="m3e-slider__tick" style="--m3e-comp-slider-tick-index: 0"></span>
+ *         … one per stop, 0 … steps + 1 …
+ *       </span>
+ *       <div class="m3e-slider__thumb">
+ *         <input class="m3e-slider__input" type="range" min="0" max="1" step="0.2" value="0.4"
+ *                aria-valuetext="0.4" aria-orientation="horizontal" aria-labelledby="…" />
+ *         <span class="m3e-slider__handle" aria-hidden="true"></span>
+ *         <span class="m3e-slider__value-indicator" aria-hidden="true">0.4</span>
+ *       </div>
+ *     </div>
+ *   </div>
+ *
+ * Inputs: --m3e-comp-slider-value (0–1, the thumb or a range's end), --m3e-comp-slider-start-value
+ * (0–1, a range's start), --m3e-comp-slider-steps (Compose `steps`: stops between the ends; 0 =
+ * continuous). Modifiers: --range (two thumbs, the first `.m3e-slider__thumb--start`), --centered
+ * (SliderDefaults.CenteredTrack), --vertical (minimum at the bottom; give the slider a
+ * block-size), --size-xs (default), --size-s, --size-m, --size-l, --size-xl. Inset icon (standard
+ * M / L / XL only): two copies of the icon in the track, `.m3e-icon.m3e-slider__icon` (shown on
+ * the active track when it fits) and `.m3e-icon.m3e-slider__icon.m3e-slider__icon--inactive`
+ * (shown at the start of the inactive track otherwise). The track parts, ticks and inset icon are
+ * optional for a standard slider without stops; JS layers render them all.
+ *
+ * Sources (compose/material3 @ 19991f2c, Slider.kt; values in slider.css / slider-defaults.css,
+ * lines in PARITY.md):
+ * - Layout (SliderImpl L878–1082): minimumInteractiveComponentSize (≥ 48dp across); the track is
+ *   the slider less the thumb width, placed thumb width / 2 in; a thumb is centred on its value:
+ *   track × fraction, or with steps (off the first and last stop) (track − 2 × corner) × fraction
+ *   + corner. `__track` is that box (the pointer target, the full 48dp across) and a size
+ *   container: 100cqi (vertical: 100cqb) is the track length.
+ * - Track (SliderDefaults.drawTrack L2398–2671): parts end ThumbWidth / 2 + ThumbTrackGapSize
+ *   (2 + 6dp) from a thumb centre, with 2dp inside corners towards the thumb and the track corner
+ *   size outside (default Track: thickness / 2; S–XL: the token DB corner size). A part is drawn
+ *   only when longer than a threshold: the corner size (the inside corner for range / centered
+ *   active parts), or 0 when corners shrink (Track(trackCornerSize) and CenteredTrack, without
+ *   steps). CSS scales over-large radii like Skia's RRect, so short parts shrink their corners.
+ *   Centered (CenteredTrack): the active part runs between the centre and the thumb; the gap on
+ *   the centre side of the thumb has no thumb width while the thumb is past the centre.
+ *   Booleans come from round(up, x, step): 1 (or the track length) for any x > 0, 0 for x = 0.
+ * - Stop indicators (drawStopIndicator): 4dp dots one corner size in from the end of the inactive
+ *   part (a range or centered slider: both ends), in the active track color (owner decision
+ *   M8 #20), drawn with their part. None with an inset icon (SliderWithTrackIconsSample).
+ * - Ticks: dots at lerp(corner, length − corner, i / (steps + 1)); the stop indicators replace the
+ *   last (range / centered: and the first); dots within a thumb gap (or a centered slider's
+ *   centre gap) are not drawn; active ticks (on the active part) the inactive track color, others
+ *   the active track color (owner decision M8 #20).
+ * - Thumb (ThumbContent L2727–2773): ThumbWidth × ThumbHeight (vertical: swapped), its handle's
+ *   width (height) halved while pressed or dragged ([data-dragging]) or keyboard focused, at
+ *   once: no animation (owner decision M8 #17). The hand cursor over the thumb. No ripple or state
+ *   layer (Compose's slider has none). Focus: the project ring around the handle; it does not
+ *   widen the gaps (owner decision M8 #23).
+ * - Colors (defaultSliderColors L1716–1757): disabled parts translucent, the disabled handle
+ *   composited over surface. Hover changes nothing (owner decision M8 #3).
+ * - Sizes (owner decision M8 #16): the m3.material.io token DB (slider-defaults.css): track
+ *   thickness 16 / 24 / 40 / 56 / 96dp, handle 44 / 44 / 44 / 68 / 108dp (M: TODO(verify),
+ *   SOURCES register #68), corner 8 / 8 / 12 / 16 / 28dp; S–XL shrink corners like the Compose
+ *   samples' Track(trackCornerSize). Stop indicators sit one corner size in (TODO(verify),
+ *   register #70: the token DB says a 4dp trailing space).
+ * - Inset icon (owner decision M8 #18): M / L / XL 24 / 24 / 32dp, padding 6 / 6 / 8dp; on the
+ *   active part when icon + 2 × padding fits (SliderWithTrackIconsSample), else at the start of
+ *   the inactive part (m3.material.io "the icon moves to the inactive track"); colors: the tick
+ *   colors of its part.
+ * - Value indicator (owner decision M8 #19): SliderTokens.ValueIndicator* (inverse surface,
+ *   label large, 12dp above the handle), 48 × 44dp (m3.material.io Measurements), shape
+ *   TODO(verify) (register #69), while dragging or keyboard focused; a vertical slider's shows at
+ *   the inline start of the thumb.
+ */
+@import '@kyralabs/m3e-tokens/components/slider.css';
+@import '@kyralabs/m3e-tokens/components/slider-defaults.css';
+@import '@kyralabs/m3e-tokens/components/button-defaults.css';
+
+@layer m3e.components {
+  .m3e-slider {
+    --_m3e-slider-thickness: var(--m3e-comp-slider-x-small-track-height);
+    --_m3e-slider-thumb-length: var(--m3e-comp-slider-x-small-thumb-height);
+    --_m3e-slider-corner: var(--m3e-comp-slider-x-small-track-corner-size);
+    --_m3e-slider-icon-size: var(--m3e-comp-slider-medium-icon-size);
+    --_m3e-slider-icon-padding: var(--m3e-comp-slider-medium-icon-padding);
+    --_m3e-slider-shrink: 0;
+    --_m3e-slider-steps: var(--m3e-comp-slider-steps, 0);
+    --_m3e-slider-end: var(--m3e-comp-slider-value, 0);
+    --_m3e-slider-start: var(--m3e-comp-slider-start-value, 0);
+    --_m3e-slider-active: var(--m3e-comp-slider-track-color-active);
+    --_m3e-slider-inactive: var(--m3e-comp-slider-track-color-inactive);
+    --_m3e-slider-tick-active: var(--m3e-comp-slider-tick-color-active);
+    --_m3e-slider-tick-inactive: var(--m3e-comp-slider-tick-color-inactive);
+    --_m3e-slider-stop: var(--m3e-comp-slider-track-stop-indicator-color);
+    --_m3e-slider-thumb: var(--m3e-comp-slider-thumb-color);
+    --_m3e-slider-icon-active: var(--m3e-comp-slider-icon-color-active);
+    --_m3e-slider-icon-inactive: var(--m3e-comp-slider-icon-color-inactive);
+
+    position: relative;
+    display: block;
+    box-sizing: border-box;
+    block-size: max(
+      var(--m3e-comp-minimum-interactive-component-size),
+      var(--_m3e-slider-thumb-length)
+    );
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* --- Sizes (token DB; S–XL shrink corners like Track(trackCornerSize)) -------------------- */
+  .m3e-slider--size-s {
+    --_m3e-slider-thickness: var(--m3e-comp-slider-small-track-height);
+    --_m3e-slider-thumb-length: var(--m3e-comp-slider-small-thumb-height);
+    --_m3e-slider-corner: var(--m3e-comp-slider-small-track-corner-size);
+    --_m3e-slider-shrink: 1;
+  }
+
+  .m3e-slider--size-m {
+    --_m3e-slider-thickness: var(--m3e-comp-slider-medium-track-height);
+    --_m3e-slider-thumb-length: var(--m3e-comp-slider-medium-thumb-height);
+    --_m3e-slider-corner: var(--m3e-comp-slider-medium-track-corner-size);
+    --_m3e-slider-icon-size: var(--m3e-comp-slider-medium-icon-size);
+    --_m3e-slider-icon-padding: var(--m3e-comp-slider-medium-icon-padding);
+    --_m3e-slider-shrink: 1;
+  }
+
+  .m3e-slider--size-l {
+    --_m3e-slider-thickness: var(--m3e-comp-slider-large-track-height);
+    --_m3e-slider-thumb-length: var(--m3e-comp-slider-large-thumb-height);
+    --_m3e-slider-corner: var(--m3e-comp-slider-large-track-corner-size);
+    --_m3e-slider-icon-size: var(--m3e-comp-slider-large-icon-size);
+    --_m3e-slider-icon-padding: var(--m3e-comp-slider-large-icon-padding);
+    --_m3e-slider-shrink: 1;
+  }
+
+  .m3e-slider--size-xl {
+    --_m3e-slider-thickness: var(--m3e-comp-slider-x-large-track-height);
+    --_m3e-slider-thumb-length: var(--m3e-comp-slider-x-large-thumb-height);
+    --_m3e-slider-corner: var(--m3e-comp-slider-x-large-track-corner-size);
+    --_m3e-slider-icon-size: var(--m3e-comp-slider-x-large-icon-size);
+    --_m3e-slider-icon-padding: var(--m3e-comp-slider-x-large-icon-padding);
+    --_m3e-slider-shrink: 1;
+  }
+
+  /* The range Track never shrinks corners; CenteredTrack always does. */
+  .m3e-slider.m3e-slider--range {
+    --_m3e-slider-shrink: 0;
+  }
+
+  .m3e-slider.m3e-slider--centered {
+    --_m3e-slider-shrink: 1;
+  }
+
+  /*
+   * --- The track box: the pointer target and the geometry ------------------------------------
+   * Lengths are resolved by the parts (100cqi is this box's inline size there).
+   */
+  .m3e-slider__track {
+    --_m3e-slider-length: 100cqi;
+    --_m3e-slider-zero: calc(var(--_m3e-slider-length) * 0);
+    --_m3e-slider-half: calc(var(--_m3e-slider-length) / 2);
+    --_m3e-slider-gap: calc(
+      var(--m3e-comp-slider-thumb-width) / 2 + var(--m3e-comp-slider-thumb-track-gap-size)
+    );
+    --_m3e-slider-inside: var(--m3e-comp-slider-track-inside-corner-size);
+    --_m3e-slider-discrete: min(1, var(--_m3e-slider-steps));
+
+    /* drawTrack's thresholds count the corner unless corners shrink without steps. */
+    --_m3e-slider-thresholded: calc(
+      1 - var(--_m3e-slider-shrink) + var(--_m3e-slider-shrink) * var(--_m3e-slider-discrete)
+    );
+
+    /* Thumb centres: (length − 2 × corner) × fraction + corner off the end stops, else length × fraction. */
+    --_m3e-slider-pos: calc(
+      var(--_m3e-slider-end) * var(--_m3e-slider-length) + var(--_m3e-slider-discrete) *
+        round(up, min(var(--_m3e-slider-end), 1 - var(--_m3e-slider-end)), 1) *
+        var(--_m3e-slider-corner) * (1 - var(--_m3e-slider-end) - var(--_m3e-slider-end))
+    );
+    --_m3e-slider-start-pos: calc(
+      var(--_m3e-slider-start) * var(--_m3e-slider-length) + var(--_m3e-slider-discrete) *
+        round(up, min(var(--_m3e-slider-start), 1 - var(--_m3e-slider-start)), 1) *
+        var(--_m3e-slider-corner) * (1 - var(--_m3e-slider-start) - var(--_m3e-slider-start))
+    );
+
+    /*
+     * Standard: the active part [0, pos − gap], the inactive part [pos + gap, length]. Raw
+     * lengths (may be negative), then the drawn ones (0 at or under the threshold).
+     */
+    --_m3e-slider-start-raw: var(--_m3e-slider-zero);
+    --_m3e-slider-start-threshold: var(--_m3e-slider-zero);
+    --_m3e-slider-active-from: var(--_m3e-slider-zero);
+    --_m3e-slider-active-raw: calc(var(--_m3e-slider-pos) - var(--_m3e-slider-gap));
+    --_m3e-slider-active-threshold: calc(
+      var(--_m3e-slider-corner) * var(--_m3e-slider-thresholded)
+    );
+    --_m3e-slider-active-start-radius: var(--_m3e-slider-corner);
+    --_m3e-slider-end-raw: calc(
+      var(--_m3e-slider-length) - var(--_m3e-slider-pos) - var(--_m3e-slider-gap)
+    );
+    --_m3e-slider-end-threshold: calc(var(--_m3e-slider-corner) * var(--_m3e-slider-thresholded));
+
+    /* Tick gaps: [centre, gap] pairs (a negative gap never hides a tick). */
+    --_m3e-slider-thumb-gap: var(--_m3e-slider-gap);
+    --_m3e-slider-start-gap-centre: var(--_m3e-slider-zero);
+    --_m3e-slider-start-gap: calc(var(--_m3e-slider-length) * -1);
+    --_m3e-slider-centre-gap: calc(var(--_m3e-slider-length) * -1);
+
+    position: absolute;
+    inset-block: 0;
+    inset-inline: calc(var(--m3e-comp-slider-thumb-width) / 2);
+    container-type: inline-size;
+    touch-action: none;
+  }
+
+  /* Range: [0, start − gap] inactive, [start + gap, end − gap] active, [end + gap, length] inactive. */
+  .m3e-slider--range > .m3e-slider__track {
+    --_m3e-slider-start-raw: calc(var(--_m3e-slider-start-pos) - var(--_m3e-slider-gap));
+    --_m3e-slider-start-threshold: calc(var(--_m3e-slider-corner) * var(--_m3e-slider-thresholded));
+    --_m3e-slider-active-from: calc(var(--_m3e-slider-start-pos) + var(--_m3e-slider-gap));
+    --_m3e-slider-active-raw: calc(
+      var(--_m3e-slider-pos) - var(--_m3e-slider-start-pos) - var(--_m3e-slider-gap) -
+        var(--_m3e-slider-gap)
+    );
+    --_m3e-slider-active-threshold: calc(
+      var(--_m3e-slider-inside) * var(--_m3e-slider-thresholded)
+    );
+    --_m3e-slider-active-start-radius: var(--_m3e-slider-inside);
+    --_m3e-slider-start-gap-centre: var(--_m3e-slider-start-pos);
+    --_m3e-slider-start-gap: var(--_m3e-slider-gap);
+  }
+
+  /*
+   * Centered: the active part between the centre and the thumb. Past the centre (after = 1) the
+   * centre-side gap has no thumb width, as before it (before = 1) the end-side gap.
+   */
+  .m3e-slider--centered > .m3e-slider__track {
+    --_m3e-slider-after: round(up, max(0, var(--_m3e-slider-end) - calc(1 / 2)), 1);
+    --_m3e-slider-before: round(up, max(0, calc(1 / 2) - var(--_m3e-slider-end)), 1);
+    --_m3e-slider-gap-to-start: calc(
+      var(--m3e-comp-slider-thumb-width) * (1 - var(--_m3e-slider-after)) / 2 +
+        var(--m3e-comp-slider-thumb-track-gap-size)
+    );
+    --_m3e-slider-gap-to-end: calc(
+      var(--m3e-comp-slider-thumb-width) * (1 - var(--_m3e-slider-before)) / 2 +
+        var(--m3e-comp-slider-thumb-track-gap-size)
+    );
+    --_m3e-slider-low: min(var(--_m3e-slider-pos), var(--_m3e-slider-half));
+    --_m3e-slider-high: max(var(--_m3e-slider-pos), var(--_m3e-slider-half));
+    --_m3e-slider-start-raw: calc(var(--_m3e-slider-low) - var(--_m3e-slider-gap-to-start));
+    --_m3e-slider-start-threshold: calc(var(--_m3e-slider-corner) * var(--_m3e-slider-thresholded));
+    --_m3e-slider-active-from: calc(
+      var(--_m3e-slider-low) + var(--_m3e-slider-before) * var(--_m3e-slider-gap-to-start)
+    );
+    --_m3e-slider-active-raw: calc(
+      var(--_m3e-slider-high) - var(--_m3e-slider-after) * var(--_m3e-slider-gap-to-end) -
+        var(--_m3e-slider-active-from)
+    );
+    --_m3e-slider-active-threshold: calc(
+      var(--_m3e-slider-inside) * var(--_m3e-slider-thresholded)
+    );
+    --_m3e-slider-active-start-radius: var(--_m3e-slider-inside);
+    --_m3e-slider-end-raw: calc(
+      var(--_m3e-slider-length) - var(--_m3e-slider-high) - var(--_m3e-slider-gap-to-end)
+    );
+    --_m3e-slider-thumb-gap: calc(
+      var(--_m3e-slider-after) * var(--_m3e-slider-gap-to-end) + (1 - var(--_m3e-slider-after)) *
+        var(--_m3e-slider-gap-to-start)
+    );
+    --_m3e-slider-centre-gap: calc(
+      var(--_m3e-slider-after) * var(--_m3e-slider-gap-to-start) + (1 - var(--_m3e-slider-after)) *
+        var(--_m3e-slider-gap-to-end)
+    );
+  }
+
+  /* --- Track parts ---------------------------------------------------------------------------- */
+  .m3e-slider__inactive-start,
+  .m3e-slider__active,
+  .m3e-slider__inactive-end {
+    --_m3e-slider-size: min(
+      max(var(--_m3e-slider-zero), var(--_m3e-slider-raw)),
+      round(
+        up,
+        max(var(--_m3e-slider-zero), var(--_m3e-slider-raw) - var(--_m3e-slider-threshold)),
+        var(--_m3e-slider-length)
+      )
+    );
+
+    position: absolute;
+    inset-block: 0;
+    box-sizing: border-box;
+    inline-size: var(--_m3e-slider-size);
+    block-size: var(--_m3e-slider-thickness);
+    margin-block: auto;
+    background-color: var(--_m3e-slider-inactive);
+    pointer-events: none;
+  }
+
+  .m3e-slider__inactive-start {
+    --_m3e-slider-raw: var(--_m3e-slider-start-raw);
+    --_m3e-slider-threshold: var(--_m3e-slider-start-threshold);
+
+    inset-inline-start: 0;
+    border-start-start-radius: var(--_m3e-slider-corner);
+    border-end-start-radius: var(--_m3e-slider-corner);
+    border-start-end-radius: var(--_m3e-slider-inside);
+    border-end-end-radius: var(--_m3e-slider-inside);
+  }
+
+  .m3e-slider__active {
+    --_m3e-slider-raw: var(--_m3e-slider-active-raw);
+    --_m3e-slider-threshold: var(--_m3e-slider-active-threshold);
+
+    inset-inline-start: var(--_m3e-slider-active-from);
+    border-start-start-radius: var(--_m3e-slider-active-start-radius);
+    border-end-start-radius: var(--_m3e-slider-active-start-radius);
+    border-start-end-radius: var(--_m3e-slider-inside);
+    border-end-end-radius: var(--_m3e-slider-inside);
+    background-color: var(--_m3e-slider-active);
+  }
+
+  .m3e-slider__inactive-end {
+    --_m3e-slider-raw: var(--_m3e-slider-end-raw);
+    --_m3e-slider-threshold: var(--_m3e-slider-end-threshold);
+
+    inset-inline-end: 0;
+    border-start-start-radius: var(--_m3e-slider-inside);
+    border-end-start-radius: var(--_m3e-slider-inside);
+    border-start-end-radius: var(--_m3e-slider-corner);
+    border-end-end-radius: var(--_m3e-slider-corner);
+  }
+
+  /* Stop indicators: drawn with their part, centred one corner size in from the track end. */
+  .m3e-slider__inactive-start::after,
+  .m3e-slider__inactive-end::after {
+    --_m3e-slider-dot: min(
+      var(--m3e-comp-slider-track-stop-indicator-size),
+      round(up, var(--_m3e-slider-size), var(--_m3e-slider-length))
+    );
+
+    content: '';
+    position: absolute;
+    inset-block: 0;
+    inline-size: var(--_m3e-slider-dot);
+    block-size: var(--_m3e-slider-dot);
+    margin-block: auto;
+    border-radius: var(--m3e-comp-slider-stop-indicator-shape);
+    background-color: var(--_m3e-slider-stop);
+  }
+
+  .m3e-slider__inactive-start::after {
+    inset-inline-start: calc(var(--_m3e-slider-corner) - var(--_m3e-slider-dot) / 2);
+  }
+
+  .m3e-slider__inactive-end::after {
+    inset-inline-end: calc(var(--_m3e-slider-corner) - var(--_m3e-slider-dot) / 2);
+  }
+
+  /* --- Ticks ---------------------------------------------------------------------------------- */
+  .m3e-slider__ticks {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+
+  .m3e-slider__tick {
+    --_m3e-slider-spacing: calc(
+      (var(--_m3e-slider-length) - var(--_m3e-slider-corner) - var(--_m3e-slider-corner)) /
+        (var(--_m3e-slider-steps) + 1)
+    );
+    --_m3e-slider-at: calc(
+      var(--_m3e-slider-corner) + var(--m3e-comp-slider-tick-index, 0) * var(--_m3e-slider-spacing)
+    );
+
+    /* Distances past each gap (> 0: outside it), then the drawn size: 0 inside any gap. */
+    --_m3e-slider-past-thumb: calc(
+      max(
+          var(--_m3e-slider-at) - var(--_m3e-slider-pos),
+          var(--_m3e-slider-pos) - var(--_m3e-slider-at)
+        ) -
+        var(--_m3e-slider-thumb-gap)
+    );
+    --_m3e-slider-past-start: calc(
+      max(
+          var(--_m3e-slider-at) - var(--_m3e-slider-start-gap-centre),
+          var(--_m3e-slider-start-gap-centre) - var(--_m3e-slider-at)
+        ) -
+        var(--_m3e-slider-start-gap)
+    );
+    --_m3e-slider-past-centre: calc(
+      max(
+          var(--_m3e-slider-at) - var(--_m3e-slider-half),
+          var(--_m3e-slider-half) - var(--_m3e-slider-at)
+        ) -
+        var(--_m3e-slider-centre-gap)
+    );
+    --_m3e-slider-dot: min(
+      var(--m3e-comp-slider-tick-size),
+      round(
+        up,
+        max(var(--_m3e-slider-zero), var(--_m3e-slider-past-thumb)),
+        var(--_m3e-slider-length)
+      ),
+      round(
+        up,
+        max(var(--_m3e-slider-zero), var(--_m3e-slider-past-start)),
+        var(--_m3e-slider-length)
+      ),
+      round(
+        up,
+        max(var(--_m3e-slider-zero), var(--_m3e-slider-past-centre)),
+        var(--_m3e-slider-length)
+      )
+    );
+
+    /* On the active part (between its ends): the whole dot in the active tick color. */
+    --_m3e-slider-on-active: min(
+      round(
+        up,
+        max(var(--_m3e-slider-zero), var(--_m3e-slider-at) - var(--_m3e-slider-active-from)),
+        var(--_m3e-slider-length)
+      ),
+      round(
+        up,
+        max(
+          var(--_m3e-slider-zero),
+          var(--_m3e-slider-active-from) + var(--_m3e-slider-active-raw) - var(--_m3e-slider-at)
+        ),
+        var(--_m3e-slider-length)
+      )
+    );
+
+    position: absolute;
+    inset-block: 0;
+    inset-inline-start: var(--_m3e-slider-at);
+    inline-size: var(--_m3e-slider-dot);
+    block-size: var(--_m3e-slider-dot);
+    margin-block: auto;
+    margin-inline-start: calc(var(--_m3e-slider-dot) / 2 * -1);
+    border-radius: var(--m3e-comp-slider-stop-indicator-shape);
+    background: linear-gradient(
+      var(--_m3e-slider-tick-active) var(--_m3e-slider-on-active),
+      var(--_m3e-slider-tick-inactive) var(--_m3e-slider-on-active)
+    );
+  }
+
+  /* --- Inset icon (standard M / L / XL): on the active part if it fits, else after the thumb --- */
+  .m3e-slider__icon {
+    --m3e-comp-icon-size: var(--_m3e-slider-icon-size);
+    --_m3e-slider-icon-shown: min(
+      var(--_m3e-slider-icon-size),
+      round(
+        up,
+        max(
+          var(--_m3e-slider-zero),
+          var(--_m3e-slider-active-raw) - var(--_m3e-slider-icon-size) -
+            var(--_m3e-slider-icon-padding) - var(--_m3e-slider-icon-padding)
+        ),
+        var(--_m3e-slider-length)
+      )
+    );
+    --_m3e-slider-icon-at: var(--_m3e-slider-icon-padding);
+
+    position: absolute;
+    inset-block: 0;
+    inset-inline-start: var(--_m3e-slider-icon-at);
+    inline-size: var(--_m3e-slider-icon-shown);
+    margin-block: auto;
+    color: var(--_m3e-slider-icon-active);
+    pointer-events: none;
+  }
+
+  .m3e-slider__icon--inactive {
+    --_m3e-slider-icon-shown: min(
+      var(--_m3e-slider-icon-size),
+      round(
+        up,
+        max(
+          var(--_m3e-slider-zero),
+          var(--_m3e-slider-icon-size) + var(--_m3e-slider-icon-padding) +
+            var(--_m3e-slider-icon-padding) - var(--_m3e-slider-active-raw)
+        ),
+        var(--_m3e-slider-length)
+      )
+    );
+    --_m3e-slider-icon-at: calc(
+      var(--_m3e-slider-pos) + var(--_m3e-slider-gap) + var(--_m3e-slider-icon-padding)
+    );
+
+    color: var(--_m3e-slider-icon-inactive);
+  }
+
+  /* The Icon primitive is direction: ltr (its inline start is always the left): mirror by hand. */
+  .m3e-slider__icon:dir(rtl) {
+    inset-inline: auto var(--_m3e-slider-icon-at);
+  }
+
+  /* --- Thumbs ---------------------------------------------------------------------------------- */
+  .m3e-slider__thumb {
+    --_m3e-slider-at: var(--_m3e-slider-pos);
+
+    position: absolute;
+    inset-block: 0;
+    inset-inline-start: calc(var(--_m3e-slider-at) - var(--m3e-comp-slider-thumb-width) / 2);
+    inline-size: var(--m3e-comp-slider-thumb-width);
+    block-size: var(--_m3e-slider-thumb-length);
+    margin-block: auto;
+    cursor: pointer;
+  }
+
+  .m3e-slider__thumb--start {
+    --_m3e-slider-at: var(--_m3e-slider-start-pos);
+  }
+
+  /* The focus target: invisible over the thumb, never hit by the pointer (the track is). */
+  .m3e-slider__input {
+    appearance: none;
+    position: absolute;
+    inset: 0;
+    box-sizing: border-box;
+    inline-size: auto;
+    block-size: auto;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: none;
+    opacity: 0;
+    pointer-events: none;
+    outline: none;
+  }
+
+  .m3e-slider__handle {
+    position: absolute;
+    inset: 0;
+    inline-size: var(--m3e-comp-slider-thumb-width);
+    margin-inline: auto;
+    border-radius: var(--m3e-comp-slider-handle-shape);
+    background-color: var(--_m3e-slider-thumb);
+  }
+
+  /* --- Value indicator ------------------------------------------------------------------------ */
+  .m3e-slider__value-indicator {
+    position: absolute;
+    inset-block-end: calc(100% + var(--m3e-comp-slider-value-indicator-active-bottom-space));
+    inset-inline-start: 50%;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    inline-size: var(--m3e-comp-slider-value-indicator-container-width);
+    block-size: var(--m3e-comp-slider-value-indicator-container-height);
+    margin-inline-start: calc(var(--m3e-comp-slider-value-indicator-container-width) / 2 * -1);
+    border-radius: var(--m3e-comp-slider-value-indicator-container-shape);
+    background-color: var(--m3e-comp-slider-value-indicator-container-color);
+    color: var(--m3e-comp-slider-value-indicator-label-text-color);
+    font-family: var(--m3e-comp-slider-value-indicator-label-text-font);
+    font-size: var(--m3e-comp-slider-value-indicator-label-text-size);
+    font-weight: var(--m3e-comp-slider-value-indicator-label-text-weight);
+    line-height: var(--m3e-comp-slider-value-indicator-label-text-line-height);
+    letter-spacing: var(--m3e-comp-slider-value-indicator-label-text-tracking);
+    white-space: nowrap;
+    pointer-events: none;
+  }
+
+  /* --- Vertical: the minimum at the bottom (owner decision M8 #21) ---------------------------- */
+  .m3e-slider--vertical {
+    inline-size: max(
+      var(--m3e-comp-minimum-interactive-component-size),
+      var(--_m3e-slider-thumb-length)
+    );
+    block-size: auto;
+  }
+
+  .m3e-slider--vertical > .m3e-slider__track {
+    --_m3e-slider-length: 100cqb;
+
+    inset-block: calc(var(--m3e-comp-slider-thumb-width) / 2);
+    inset-inline: 0;
+    container-type: size;
+  }
+
+  .m3e-slider--vertical
+    :is(.m3e-slider__inactive-start, .m3e-slider__active, .m3e-slider__inactive-end) {
+    inset-block: auto;
+    inset-inline: 0;
+    inline-size: var(--_m3e-slider-thickness);
+    block-size: var(--_m3e-slider-size);
+    margin-block: 0;
+    margin-inline: auto;
+  }
+
+  .m3e-slider--vertical .m3e-slider__inactive-start {
+    inset-block-end: 0;
+    border-start-start-radius: var(--_m3e-slider-inside);
+    border-start-end-radius: var(--_m3e-slider-inside);
+    border-end-start-radius: var(--_m3e-slider-corner);
+    border-end-end-radius: var(--_m3e-slider-corner);
+  }
+
+  .m3e-slider--vertical .m3e-slider__active {
+    inset-block-end: var(--_m3e-slider-active-from);
+    border-start-start-radius: var(--_m3e-slider-inside);
+    border-start-end-radius: var(--_m3e-slider-inside);
+    border-end-start-radius: var(--_m3e-slider-active-start-radius);
+    border-end-end-radius: var(--_m3e-slider-active-start-radius);
+  }
+
+  .m3e-slider--vertical .m3e-slider__inactive-end {
+    inset-block-start: 0;
+    border-start-start-radius: var(--_m3e-slider-corner);
+    border-start-end-radius: var(--_m3e-slider-corner);
+    border-end-start-radius: var(--_m3e-slider-inside);
+    border-end-end-radius: var(--_m3e-slider-inside);
+  }
+
+  .m3e-slider--vertical :is(.m3e-slider__inactive-start, .m3e-slider__inactive-end)::after {
+    inset-block: auto;
+    inset-inline: 0;
+    margin-block: 0;
+    margin-inline: auto;
+  }
+
+  .m3e-slider--vertical .m3e-slider__inactive-start::after {
+    inset-block-end: calc(var(--_m3e-slider-corner) - var(--_m3e-slider-dot) / 2);
+  }
+
+  .m3e-slider--vertical .m3e-slider__inactive-end::after {
+    inset-block-start: calc(var(--_m3e-slider-corner) - var(--_m3e-slider-dot) / 2);
+  }
+
+  .m3e-slider--vertical .m3e-slider__tick {
+    inset-block: auto;
+    inset-block-end: var(--_m3e-slider-at);
+    inset-inline: 0;
+    margin-block: 0 calc(var(--_m3e-slider-dot) / 2 * -1);
+    margin-inline: auto;
+  }
+
+  .m3e-slider--vertical .m3e-slider__icon {
+    inset-block: auto;
+    inset-block-end: var(--_m3e-slider-icon-at);
+    inset-inline: 0;
+    inline-size: var(--_m3e-slider-icon-size);
+    block-size: var(--_m3e-slider-icon-shown);
+    margin-block: 0;
+    margin-inline: auto;
+  }
+
+  .m3e-slider--vertical .m3e-slider__thumb {
+    inset-block: auto;
+    inset-block-end: calc(var(--_m3e-slider-at) - var(--m3e-comp-slider-thumb-width) / 2);
+    inset-inline: 0;
+    inline-size: var(--_m3e-slider-thumb-length);
+    block-size: var(--m3e-comp-slider-thumb-width);
+    margin-block: 0;
+    margin-inline: auto;
+  }
+
+  .m3e-slider--vertical .m3e-slider__handle {
+    inset: 0;
+    inline-size: auto;
+    block-size: var(--m3e-comp-slider-thumb-width);
+    margin: auto 0;
+  }
+
+  .m3e-slider--vertical .m3e-slider__value-indicator {
+    inset-block: 50% auto;
+    inset-inline: auto calc(100% + var(--m3e-comp-slider-value-indicator-active-bottom-space));
+    margin-block-start: calc(var(--m3e-comp-slider-value-indicator-container-height) / 2 * -1);
+    margin-inline-start: 0;
+  }
+
+  /* --- States and hidden parts (after the vertical overrides they win over) ----------------- */
+
+  /* No stop indicators with an inset icon (SliderWithTrackIconsSample). */
+  .m3e-slider:has(.m3e-slider__icon) .m3e-slider__inactive-end::after {
+    display: none;
+  }
+
+  /* The stop indicators replace the last tick (range / centered: also the first). */
+  .m3e-slider:not(:has(.m3e-slider__icon)) .m3e-slider__tick:last-child,
+  .m3e-slider:is(.m3e-slider--range, .m3e-slider--centered) .m3e-slider__tick:first-child {
+    display: none;
+  }
+
+  /* m3.material.io: standard M, L and XL sliders only. */
+  .m3e-slider:is(.m3e-slider--range, .m3e-slider--centered) .m3e-slider__icon,
+  .m3e-slider:not(.m3e-slider--size-m, .m3e-slider--size-l, .m3e-slider--size-xl)
+    .m3e-slider__icon {
+    display: none;
+  }
+
+  /* Pressed, dragged or keyboard focused: half as wide, at once (ThumbContent). */
+  .m3e-slider__thumb:is([data-dragging], :has(> .m3e-slider__input:focus-visible))
+    > .m3e-slider__handle {
+    inline-size: calc(var(--m3e-comp-slider-thumb-width) / 2);
+  }
+
+  /* Shown while dragged or keyboard focused (owner decision M8 #19). */
+  .m3e-slider__thumb:is([data-dragging], :has(> .m3e-slider__input:focus-visible))
+    > .m3e-slider__value-indicator {
+    display: flex;
+  }
+
+  .m3e-slider--vertical
+    .m3e-slider__thumb:is([data-dragging], :has(> .m3e-slider__input:focus-visible))
+    > .m3e-slider__handle {
+    inline-size: auto;
+    block-size: calc(var(--m3e-comp-slider-thumb-width) / 2);
+  }
+
+  /* --- Disabled: translucent tracks and ticks, an opaque handle ------------------------------ */
+  .m3e-slider:has(.m3e-slider__input:disabled) {
+    --_m3e-slider-active: var(--m3e-comp-slider-track-color-active-disabled);
+    --_m3e-slider-inactive: var(--m3e-comp-slider-track-color-inactive-disabled);
+    --_m3e-slider-tick-active: var(--m3e-comp-slider-tick-color-active-disabled);
+    --_m3e-slider-tick-inactive: var(--m3e-comp-slider-tick-color-inactive-disabled);
+    --_m3e-slider-stop: var(--m3e-comp-slider-track-stop-indicator-color-disabled);
+    --_m3e-slider-thumb: var(--m3e-comp-slider-thumb-color-disabled);
+    --_m3e-slider-icon-active: var(--m3e-comp-slider-icon-color-active-disabled);
+    --_m3e-slider-icon-inactive: var(--m3e-comp-slider-icon-color-inactive-disabled);
+  }
+
+  .m3e-slider:has(.m3e-slider__input:disabled) .m3e-slider__thumb {
+    cursor: default;
+  }
+
+  /* --- Forced colors: system colors with visible parts --------------------------------------- */
+  @media (forced-colors: active) {
+    .m3e-slider {
+      --_m3e-slider-active: Highlight;
+      --_m3e-slider-inactive: GrayText;
+      --_m3e-slider-tick-active: HighlightText;
+      --_m3e-slider-tick-inactive: CanvasText;
+      --_m3e-slider-stop: CanvasText;
+      --_m3e-slider-thumb: CanvasText;
+      --_m3e-slider-icon-active: HighlightText;
+      --_m3e-slider-icon-inactive: CanvasText;
+    }
+
+    .m3e-slider:has(.m3e-slider__input:disabled) {
+      --_m3e-slider-active: GrayText;
+      --_m3e-slider-inactive: GrayText;
+      --_m3e-slider-tick-active: Canvas;
+      --_m3e-slider-tick-inactive: Canvas;
+      --_m3e-slider-stop: Canvas;
+      --_m3e-slider-thumb: GrayText;
+      --_m3e-slider-icon-active: Canvas;
+      --_m3e-slider-icon-inactive: Canvas;
+    }
+
+    .m3e-slider__track {
+      forced-color-adjust: none;
+    }
+
+    .m3e-slider__value-indicator {
+      border: var(--m3e-sys-state-focus-indicator-thickness) solid CanvasText;
+      background-color: Canvas;
+      color: CanvasText;
+    }
+  }
+}

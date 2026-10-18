@@ -1,0 +1,194 @@
+---
+import SliderPlayground from '../../islands/SliderPlayground.tsx';
+import Base from '../../layouts/Base.astro';
+
+// Static sliders in the m3e-css contract (slider.css): the root's custom properties place the
+// thumbs; one tick per stop. The element and React sections below render the same DOM.
+interface StaticSlider {
+  id: string;
+  label: string;
+  /** Fractions (0–1): one thumb, or a range's start and end. */
+  values: number[];
+  steps?: number;
+  size?: 's' | 'm' | 'l' | 'xl';
+  centered?: boolean;
+  vertical?: boolean;
+  disabled?: boolean;
+  icon?: string;
+  text?: string[];
+}
+
+const staticSlider = (s: StaticSlider): string => {
+  const range = s.values.length > 1;
+  const classes = ['m3e-slider'];
+  if (s.size) classes.push(`m3e-slider--size-${s.size}`);
+  if (range) classes.push('m3e-slider--range');
+  if (s.centered) classes.push('m3e-slider--centered');
+  if (s.vertical) classes.push('m3e-slider--vertical');
+  const style = [`--m3e-comp-slider-value: ${String(s.values[s.values.length - 1])}`];
+  if (range) style.push(`--m3e-comp-slider-start-value: ${String(s.values[0])}`);
+  if (s.steps) style.push(`--m3e-comp-slider-steps: ${String(s.steps)}`);
+  const ticks = s.steps
+    ? `<span class="m3e-slider__ticks" aria-hidden="true">${Array.from(
+        { length: s.steps + 2 },
+        (_, i) => `<span class="m3e-slider__tick" style="--m3e-comp-slider-tick-index: ${String(i)}"></span>`,
+      ).join('')}</span>`
+    : '';
+  const icon = s.icon
+    ? `<span class="m3e-icon m3e-slider__icon" aria-hidden="true">${s.icon}</span><span class="m3e-icon m3e-slider__icon m3e-slider__icon--inactive" aria-hidden="true">${s.icon}</span>`
+    : '';
+  const thumbs = s.values
+    .map((v, i) => {
+      const text = s.text?.[i] ?? String(Math.round(v * 100));
+      const label = range ? ` aria-label="${i === 0 ? 'Range start' : 'Range end'}"` : '';
+      return `<div class="m3e-slider__thumb${range && i === 0 ? ' m3e-slider__thumb--start' : ''}"><input class="m3e-slider__input" type="range" min="0" max="100" value="${String(Math.round(v * 100))}" aria-valuetext="${text}" aria-orientation="${s.vertical ? 'vertical' : 'horizontal'}"${label} aria-labelledby="${s.id}"${s.disabled ? ' disabled' : ''}><span class="m3e-slider__handle" aria-hidden="true"></span><span class="m3e-slider__value-indicator" aria-hidden="true">${text}</span></div>`;
+    })
+    .join('');
+  return `<div class="${classes.join(' ')}" role="group" id="${s.id}" aria-label="${s.label}" style="${style.join('; ')}"><div class="m3e-slider__track"><span class="m3e-slider__inactive-start" aria-hidden="true"></span><span class="m3e-slider__active" aria-hidden="true"></span><span class="m3e-slider__inactive-end" aria-hidden="true"></span>${ticks}${icon}${thumbs}</div></div>`;
+};
+
+const STANDARD: StaticSlider[] = [
+  { id: 'static-standard', label: 'Standard', values: [0.4] },
+  { id: 'static-standard-min', label: 'At the minimum', values: [0] },
+  { id: 'static-stops', label: 'Stops', values: [0.4], steps: 4 },
+  { id: 'static-range', label: 'Range', values: [0.2, 0.7] },
+  { id: 'static-range-stops', label: 'Range with stops', values: [0.3, 0.7], steps: 9 },
+  { id: 'static-centered', label: 'Centered', values: [0.3], centered: true, text: ['-20'] },
+  { id: 'static-centered-stops', label: 'Centered with stops', values: [0.7], centered: true, steps: 9, text: ['20'] },
+  { id: 'static-disabled', label: 'Disabled', values: [0.6], disabled: true },
+  { id: 'static-disabled-stops', label: 'Disabled with stops', values: [0.3, 0.7], steps: 4, disabled: true },
+];
+
+const SIZES: StaticSlider[] = [
+  { id: 'static-size-xs', label: 'Extra small', values: [0.5] },
+  { id: 'static-size-s', label: 'Small', values: [0.5], size: 's' },
+  { id: 'static-size-m', label: 'Medium', values: [0.5], size: 'm', icon: 'volume_up' },
+  { id: 'static-size-m-low', label: 'Medium, low value', values: [0.05], size: 'm', icon: 'volume_up' },
+  { id: 'static-size-l', label: 'Large', values: [0.5], size: 'l', icon: 'brightness_6' },
+  { id: 'static-size-xl', label: 'Extra large', values: [0.98], size: 'xl', icon: 'brightness_6' },
+];
+
+const VERTICAL: StaticSlider[] = [
+  { id: 'static-vertical', label: 'Vertical', values: [0.3], vertical: true },
+  { id: 'static-vertical-stops', label: 'Vertical with stops', values: [0.6], steps: 4, vertical: true },
+  { id: 'static-vertical-centered', label: 'Vertical centered', values: [0.7], vertical: true, centered: true, text: ['20'] },
+  { id: 'static-vertical-m', label: 'Vertical medium', values: [0.5], vertical: true, size: 'm', icon: 'brightness_6' },
+];
+---
+
+<Base title="Slider">
+  <link rel="stylesheet" href="/icons/docs-icons.css" slot="head" />
+  <h1>Slider</h1>
+  <p>
+    Sliders (COMPONENT_SPEC §25; Compose <code>Slider</code>, <code>VerticalSlider</code> and <code>RangeSlider</code>): a handle on a track with a gap each side of it, an end stop indicator,
+    and stops (ticks) when values snap to steps. Range sliders have two handles that meet but never
+    cross; centered sliders fill from the middle (<code>SliderDefaults.CenteredTrack</code>);
+    vertical sliders have their minimum at the bottom. Five sizes (XS default, S, M, L, XL) from the
+    m3.material.io token DB; M, L and XL standard sliders take an inset icon. Pressing, dragging or
+    keyboard focus halves the handle at once (Compose's <code>ThumbContent</code>) and shows the
+    value indicator.
+  </p>
+  <p class="docs-note">
+    Vertical range sliders are not supported: Compose has none and m3.material.io advises against
+    them ("Avoid using range sliders vertically"). The value indicator is not built into Compose
+    (its samples put a tooltip in a <code>Label</code>); this one follows m3.material.io: inverse
+    surface, label large, 12dp above the handle, 48 × 44dp.
+  </p>
+
+  <section aria-labelledby="static-heading">
+    <h2 id="static-heading">Static (m3e-css)</h2>
+    <p>
+      <code>.m3e-slider</code> (<code>--range</code>, <code>--centered</code>, <code>--vertical</code>, <code>--size-s|m|l|xl</code>) with <code>--m3e-comp-slider-value</code> (0–1), <code>--m3e-comp-slider-start-value</code> (a range's start) and <code>--m3e-comp-slider-steps</code> on it; the <code>__track</code> holds the three track parts, one <code>__tick</code> per stop and a <code>__thumb</code> per value (a native <code>&lt;input type="range"&gt;</code>, the <code>__handle</code> and the <code>__value-indicator</code>). CSS alone draws it; the element or React component moves it.
+    </p>
+    <div class="docs-slider-stack" data-testid="stack-standard">
+      {
+        STANDARD.map((s) => (
+          <div class="docs-slider-row" data-testid={s.id}>
+            <span class="docs-slider-row__label">{s.label}</span>
+            <Fragment set:html={staticSlider(s)} />
+          </div>
+        ))
+      }
+    </div>
+    <h3>Sizes and inset icon</h3>
+    <div class="docs-slider-stack" data-testid="stack-sizes">
+      {
+        SIZES.map((s) => (
+          <div class="docs-slider-row" data-testid={s.id}>
+            <span class="docs-slider-row__label">{s.label}</span>
+            <Fragment set:html={staticSlider(s)} />
+          </div>
+        ))
+      }
+    </div>
+    <h3>Vertical</h3>
+    <div class="docs-slider-verticals" data-testid="static-vertical">
+      {VERTICAL.map((s) => <Fragment set:html={staticSlider(s)} />)}
+    </div>
+  </section>
+
+  <section aria-labelledby="element-heading">
+    <h2 id="element-heading">Element</h2>
+    <p>
+      <code>&lt;m3e-slider label min max step value range start-value end-value centered vertical
+      size icon disabled name&gt;</code> (<code>@kyralabs/m3e-elements/slider.js</code>): pointer
+      drag and presses on the track (a range slider moves the closer handle), the keyboard (arrows by
+      one step or 1 % of the range, Shift + arrow and Page Up / Page Down by a page, Home / End), and
+      <code>input</code> / <code>change</code> events with <code>detail.value</code> (a range: <code>detail.start</code>, <code>detail.end</code>).
+    </p>
+    <div class="docs-slider-stack" data-testid="element-sliders">
+      <div class="docs-slider-row">
+        <span class="docs-slider-row__label">Continuous <output id="element-volume-out">0.4</output></span>
+        <m3e-slider id="element-volume" label="Volume" value="0.4"></m3e-slider>
+      </div>
+      <div class="docs-slider-row">
+        <span class="docs-slider-row__label">Steps of 10</span>
+        <m3e-slider label="Percent" max="100" step="10" value="40"></m3e-slider>
+      </div>
+      <div class="docs-slider-row">
+        <span class="docs-slider-row__label">Range <output id="element-price-out">20 – 80</output></span>
+        <m3e-slider id="element-price" label="Price" range max="100" step="10" start-value="20" end-value="80"></m3e-slider>
+      </div>
+      <div class="docs-slider-row">
+        <span class="docs-slider-row__label">Centered</span>
+        <m3e-slider label="Balance" centered min="-50" max="50" value="10"></m3e-slider>
+      </div>
+      <div class="docs-slider-row">
+        <span class="docs-slider-row__label">Medium with icon</span>
+        <m3e-slider label="Media volume" size="m" icon="volume_up" max="100" value="60"></m3e-slider>
+      </div>
+    </div>
+    <div class="docs-slider-verticals" data-testid="element-vertical">
+      <m3e-slider label="Brightness" vertical max="100" step="10" value="30"></m3e-slider>
+      <m3e-slider label="Warmth" vertical centered size="s" min="-50" max="50" value="20"></m3e-slider>
+    </div>
+  </section>
+
+  <section aria-labelledby="react-heading">
+    <h2 id="react-heading">React</h2>
+    <p>
+      <code>&lt;Slider value defaultValue onChange onChangeEnd minValue maxValue step size variant
+      orientation icon isDisabled formatOptions name aria-label&gt;</code> and <code>&lt;RangeSlider value defaultValue onChange onChangeEnd minValue maxValue step size
+      thumbLabels&gt;</code> (React Aria <code>useSlider</code> / <code>useSliderThumb</code>); the
+      same DOM as the element.
+    </p>
+    <SliderPlayground client:only="react" />
+  </section>
+</Base>
+
+<script>
+  import '@kyralabs/m3exp-web/elements';
+
+  const volume = document.querySelector<HTMLElementTagNameMap['m3e-slider']>('#element-volume');
+  volume?.addEventListener('input', (e: Event) => {
+    const out = document.querySelector('#element-volume-out');
+    const detail = (e as CustomEvent<{ value: number }>).detail;
+    if (out) out.textContent = String(Math.round(detail.value * 100) / 100);
+  });
+  const price = document.querySelector<HTMLElementTagNameMap['m3e-slider']>('#element-price');
+  price?.addEventListener('input', (e: Event) => {
+    const out = document.querySelector('#element-price-out');
+    const { start, end } = (e as CustomEvent<{ start: number; end: number }>).detail;
+    if (out) out.textContent = `${String(start)} – ${String(end)}`;
+  });
+</script>

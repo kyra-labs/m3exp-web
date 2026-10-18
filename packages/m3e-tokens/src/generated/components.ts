@@ -3030,6 +3030,57 @@ export const sliderTokens = {
   }
 } as const;
 
+/** SliderDefaults */
+export const sliderDefaults = {
+  sliderTrackHeight: "16px",
+  sliderThumbWidth: "4px",
+  sliderThumbHeight: "44px",
+  sliderThumbTrackGapSize: "6px",
+  sliderTrackInsideCornerSize: 2,
+  sliderTrackStopIndicatorSize: "4px",
+  sliderTickSize: "4px",
+  sliderThumbColor: "var(--m3e-sys-color-primary)",
+  sliderTrackColorActive: "var(--m3e-sys-color-primary)",
+  sliderTickColorActive: "var(--m3e-sys-color-secondary-container)",
+  sliderTrackColorInactive: "var(--m3e-sys-color-secondary-container)",
+  sliderTickColorInactive: "var(--m3e-sys-color-primary)",
+  sliderThumbColorDisabled: "color-mix(in srgb, var(--m3e-sys-color-on-surface) calc(0.38 * 100%), var(--m3e-sys-color-surface))",
+  sliderTrackColorActiveDisabled: "color-mix(in srgb, var(--m3e-sys-color-on-surface) calc(0.38 * 100%), transparent)",
+  sliderTickColorActiveDisabled: "color-mix(in srgb, var(--m3e-sys-color-on-surface) calc(0.12 * 100%), transparent)",
+  sliderTrackColorInactiveDisabled: "color-mix(in srgb, var(--m3e-sys-color-on-surface) calc(0.12 * 100%), transparent)",
+  sliderTickColorInactiveDisabled: "color-mix(in srgb, var(--m3e-sys-color-on-surface) calc(0.38 * 100%), transparent)",
+  sliderTrackStopIndicatorColor: "var(--m3e-sys-color-primary)",
+  sliderTrackStopIndicatorColorDisabled: "color-mix(in srgb, var(--m3e-sys-color-on-surface) calc(0.38 * 100%), transparent)",
+  sliderIconColorActive: "var(--m3e-sys-color-secondary-container)",
+  sliderIconColorInactive: "var(--m3e-sys-color-primary)",
+  sliderIconColorActiveDisabled: "color-mix(in srgb, var(--m3e-sys-color-on-surface) calc(0.12 * 100%), transparent)",
+  sliderIconColorInactiveDisabled: "color-mix(in srgb, var(--m3e-sys-color-on-surface) calc(0.38 * 100%), transparent)",
+  sliderXSmallTrackHeight: 16,
+  sliderXSmallThumbHeight: 44,
+  sliderXSmallTrackCornerSize: 8,
+  sliderSmallTrackHeight: 24,
+  sliderSmallThumbHeight: 44,
+  sliderSmallTrackCornerSize: 8,
+  sliderMediumTrackHeight: 40,
+  sliderMediumThumbHeight: 44,
+  sliderMediumTrackCornerSize: 12,
+  sliderMediumIconSize: 24,
+  sliderMediumIconPadding: 6,
+  sliderLargeTrackHeight: 56,
+  sliderLargeThumbHeight: 68,
+  sliderLargeTrackCornerSize: 16,
+  sliderLargeIconSize: 24,
+  sliderLargeIconPadding: 6,
+  sliderXLargeTrackHeight: 96,
+  sliderXLargeThumbHeight: 108,
+  sliderXLargeTrackCornerSize: 28,
+  sliderXLargeIconSize: 32,
+  sliderXLargeIconPadding: 8,
+  sliderValueIndicatorContainerWidth: 48,
+  sliderValueIndicatorContainerHeight: 44,
+  sliderValueIndicatorContainerShape: "var(--m3e-sys-shape-corner-full)"
+} as const;
+
 /** SmallIconButtonTokens */
 export const smallIconButtonTokens = {
   containerHeight: 40,

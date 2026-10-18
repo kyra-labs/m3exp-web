@@ -33,6 +33,8 @@ export * from './tabs/index.js';
 export * from './checkbox/index.js';
 export * from './chip-set-layout/index.js';
 export * from './chip-set/index.js';
+export * from './slider-layout/index.js';
+export * from './slider/index.js';
 export * from './pane-scaffold-layout/index.js';
 export * from './list-detail-layout/index.js';
 export * from './supporting-pane-layout/index.js';

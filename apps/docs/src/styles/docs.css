@@ -557,6 +557,31 @@ button.docs-tile {
   justify-content: space-between;
 }
 
+.docs-slider-stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--m3e-sys-space-100);
+  max-inline-size: 25rem;
+  margin: var(--m3e-sys-space-150) 0;
+}
+
+.docs-slider-row__label {
+  display: block;
+  color: var(--m3e-sys-color-on-surface-variant);
+}
+
+/* Vertical sliders take their block-size from here (COMPONENT_SPEC §25). */
+.docs-slider-verticals {
+  display: flex;
+  gap: var(--m3e-sys-space-300);
+  margin: var(--m3e-sys-space-150) 0;
+  padding-inline-start: var(--m3e-sys-space-600);
+}
+
+.docs-slider-verticals [role='group'] {
+  block-size: 12.5rem;
+}
+
 .docs-note {
   padding: var(--m3e-sys-space-150) var(--m3e-sys-space-200);
   border-radius: var(--m3e-sys-shape-corner-medium);
