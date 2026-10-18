@@ -8,7 +8,12 @@ export { type LinearEasing, type LinearEasingOptions, springToLinear } from './l
 export { SpringAnimatable } from './animatable.js';
 export { animatedInt, fabMenuItemVisible } from './fab-menu.js';
 export { menuNavigationTarget } from './menu-navigation.js';
-export { type ToolbarOrientation, toolbarNavigationTarget } from './toolbar-navigation.js';
+export { TYPEAHEAD_TIMEOUT_MS, typeSelectTarget } from './type-select.js';
+export {
+  type NavigationOrientation,
+  type ToolbarOrientation,
+  toolbarNavigationTarget,
+} from './toolbar-navigation.js';
 export {
   type FloatingToolbarExitDirection,
   type FloatingToolbarScrollState,
