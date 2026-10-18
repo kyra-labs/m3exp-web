@@ -51,4 +51,5 @@
 @import './list.css';
 @import './tooltip.css';
 @import './badge.css';
+@import './dialog.css';
 @import './layout.css'; /* canonical layouts; imports vertical-drag-handle.css */
