@@ -45,6 +45,42 @@ describe('<m3e-chip-set>', () => {
     expect(document.activeElement).toBe(inputs[2]);
   });
 
+  it('the arrows wrap at both ends, as React Aria TagGroup (LTR and RTL)', async () => {
+    const chips = `${filterChip('A')}${filterChip('B')}${filterChip('C')}`;
+    for (const [dir, next, previous] of [
+      ['ltr', 'ArrowRight', 'ArrowLeft'],
+      ['rtl', 'ArrowLeft', 'ArrowRight'],
+    ] as const) {
+      document.body.innerHTML = `<div dir="${dir}" style="direction: ${dir}"><m3e-chip-set>${chips}</m3e-chip-set></div>`;
+      await flush();
+      const [a, b, c] = [...document.querySelectorAll('input')] as [
+        HTMLInputElement,
+        HTMLInputElement,
+        HTMLInputElement,
+      ];
+      c.focus();
+      key(c, next);
+      expect(document.activeElement, dir).toBe(a);
+      key(a, previous);
+      expect(document.activeElement, dir).toBe(c);
+      key(c, previous);
+      expect(document.activeElement, dir).toBe(b);
+      expect(b.getAttribute('tabindex'), dir).toBe('0');
+    }
+  });
+
+  it('wrapping skips disabled chips at the ends', async () => {
+    const el = await mount(
+      `<m3e-chip-set>${inputChip('A', ' aria-disabled="true"')}${inputChip('B')}${inputChip('C')}${filterChip('D', ' disabled')}</m3e-chip-set>`,
+    );
+    const [, b, c] = [...el.setElement!.querySelectorAll<HTMLElement>('.m3e-input-chip')];
+    c!.focus();
+    key(c!, 'ArrowRight');
+    expect(document.activeElement).toBe(b);
+    key(b!, 'ArrowLeft');
+    expect(document.activeElement).toBe(c);
+  });
+
   it('single-line adds the modifier', async () => {
     const el = await mount(`<m3e-chip-set single-line>${filterChip('A')}</m3e-chip-set>`);
     expect(el.setElement!.className).toBe('m3e-chip-set m3e-chip-set--single-line');

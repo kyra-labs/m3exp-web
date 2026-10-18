@@ -230,6 +230,11 @@ describe('<ChipSet>', () => {
     inputs[0]!.focus();
     await key(inputs[0]!, 'ArrowRight');
     expect(document.activeElement).toBe(inputs[2]);
+    // The arrows wrap at the ends, as <InputChipGroup> (React Aria TagGroup) does.
+    await key(inputs[2]!, 'ArrowRight');
+    expect(document.activeElement).toBe(inputs[0]);
+    await key(inputs[0]!, 'ArrowLeft');
+    expect(document.activeElement).toBe(inputs[2]);
   });
 });
 

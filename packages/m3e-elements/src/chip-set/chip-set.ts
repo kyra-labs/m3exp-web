@@ -29,7 +29,8 @@ export interface ChipSetRemoveDetail {
  * `display: contents`) and moves its children, chips in the m3e-css markup, into it. It exists for
  * what CSS cannot do (m3e-elements ChipSetLayout, shared with m3e-react's `<ChipSet>`):
  *
- * - One tab stop for the set and arrow keys between the chips (Home / End; mirrored in RTL).
+ * - One tab stop for the set and arrow keys between the chips, wrapping at the ends (Home / End;
+ *   mirrored in RTL).
  * - Input chips (`.m3e-input-chip`): the set becomes a `role="grid"` of rows wired as React
  *   Aria's TagGroup (m3e-react `<InputChipGroup>` renders the same DOM), and Backspace or Delete
  *   on a focused input chip, or a press on its remove button, emits `remove`
