@@ -114,6 +114,7 @@ const RANK: Readonly<Record<TooltipShowPriority, number>> = {
 /**
  * Compose defers to the platform (ViewConfiguration.longPressTimeoutMillis); the web has no such
  * setting, so this is React Aria useLongPress's default threshold (react-aria 3.53.1).
+ * TODO(verify): SOURCES.md register #71.
  */
 export const LONG_PRESS_TIMEOUT_MS = 500;
 
@@ -224,12 +225,12 @@ export class TooltipController {
     const controller = new AbortController();
     this.#anchorListeners = controller;
     const opts = { signal: controller.signal };
-    anchor.addEventListener('pointerenter', (e) => { this.#onPointerEnter(e); }, opts);
-    anchor.addEventListener('pointerleave', (e) => { this.#onPointerLeave(e); }, opts);
-    anchor.addEventListener('pointerdown', (e) => { this.#onPointerDown(e); }, opts);
-    anchor.addEventListener('focusin', () => { this.#onFocusIn(); }, opts);
-    anchor.addEventListener('focusout', (e) => { this.#onFocusOut(e); }, opts);
-    anchor.addEventListener('keydown', (e) => { this.#onAnchorKeyDown(e); }, opts);
+    anchor.addEventListener('pointerenter', this.#onPointerEnter, opts);
+    anchor.addEventListener('pointerleave', this.#onPointerLeave, opts);
+    anchor.addEventListener('pointerdown', this.#onPointerDown, opts);
+    anchor.addEventListener('focusin', this.#onFocusIn, opts);
+    anchor.addEventListener('focusout', this.#onFocusOut, opts);
+    anchor.addEventListener('keydown', this.#onAnchorKeyDown, opts);
     // A long press swallows the click that ends it (Compose consumes the up event).
     anchor.addEventListener(
       'click',
@@ -293,11 +294,12 @@ export class TooltipController {
     this.#visible = false;
   }
 
+  /** `--m3e-comp-tooltip-duration` in ms (minifiers may rewrite `1500ms` as `1.5s`). */
   #duration(): number {
-    const ms = Number.parseFloat(
-      getComputedStyle(this.tooltip).getPropertyValue('--m3e-comp-tooltip-duration'),
-    );
-    return Number.isFinite(ms) ? ms : 0;
+    const raw = getComputedStyle(this.tooltip).getPropertyValue('--m3e-comp-tooltip-duration');
+    const value = Number.parseFloat(raw);
+    if (!Number.isFinite(value)) return 0;
+    return /[^m]s\s*$/.test(raw) ? value * 1000 : value;
   }
 
   #setVisible(visible: boolean): void {
@@ -328,17 +330,17 @@ export class TooltipController {
 
   // --- Pointer ---------------------------------------------------------------------------------
 
-  #onPointerEnter(e: PointerEvent): void {
+  #onPointerEnter = (e: PointerEvent): void => {
     if (!this.enableUserInput || e.pointerType !== 'mouse') return;
     this.show('user-input');
-  }
+  };
 
-  #onPointerLeave(e: PointerEvent): void {
+  #onPointerLeave = (e: PointerEvent): void => {
     if (!this.enableUserInput || e.pointerType !== 'mouse') return;
     if (!this.isPersistent) this.dismiss();
-  }
+  };
 
-  #onPointerDown(e: PointerEvent): void {
+  #onPointerDown = (e: PointerEvent): void => {
     if (!this.enableUserInput || (e.pointerType !== 'touch' && e.pointerType !== 'pen')) return;
     this.#cancelLongPress();
     this.#longPressed = false;
@@ -370,7 +372,7 @@ export class TooltipController {
       this.show('prevent-user-input');
       this.#showingByLongPress = false;
     }, LONG_PRESS_TIMEOUT_MS);
-  }
+  };
 
   #cancelLongPress(): void {
     if (this.#longPressTimer !== undefined) clearTimeout(this.#longPressTimer);
@@ -379,22 +381,22 @@ export class TooltipController {
 
   // --- Keyboard --------------------------------------------------------------------------------
 
-  #onFocusIn(): void {
+  #onFocusIn = (): void => {
     const anchor = this.#anchor;
     if (!this.enableUserInput || !anchor || this.#returningFocus) return;
     // Compose shows on any focus; on the web a click focuses buttons too, so keyboard focus only.
     if (!focusVisible(anchor)) return;
     this.#receivedKeyboardFocus = true;
     this.show('prevent-user-input');
-  }
+  };
 
-  #onFocusOut(e: FocusEvent): void {
+  #onFocusOut = (e: FocusEvent): void => {
     const next = e.relatedTarget as Node | null;
     if (next && (this.tooltip.contains(next) || this.#anchor?.contains(next))) return;
     if (this.#receivedKeyboardFocus && this.#visible) this.dismiss();
-  }
+  };
 
-  #onAnchorKeyDown(e: KeyboardEvent): void {
+  #onAnchorKeyDown = (e: KeyboardEvent): void => {
     if (!this.enableUserInput || !this.#visible) return;
     if (this.hasAction && e.key === 'Tab') {
       const first = this.tooltip.querySelector<HTMLElement>(FOCUSABLE);
@@ -409,7 +411,7 @@ export class TooltipController {
       e.stopPropagation();
       this.dismiss();
     }
-  }
+  };
 
   #bindTooltip(): void {
     if (this.#tooltipListeners) return;

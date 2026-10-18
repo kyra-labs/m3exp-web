@@ -21,7 +21,8 @@ beforeEach(() => {
   vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout'] });
   vi.stubGlobal('requestAnimationFrame', (cb: FrameRequestCallback) => frames.push(cb));
   vi.stubGlobal('cancelAnimationFrame', vi.fn());
-  document.documentElement.style.setProperty('--m3e-comp-tooltip-duration', '1500ms');
+  // As the minified CSS ships it (`1500ms` → `1.5s`).
+  document.documentElement.style.setProperty('--m3e-comp-tooltip-duration', '1.5s');
 });
 
 afterEach(() => {
