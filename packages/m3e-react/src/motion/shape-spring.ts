@@ -122,11 +122,23 @@ export class ValueSpring {
   }
 }
 
-/** A {@link ValueSpring} that writes one CSS length property (px) of an element. */
+/** The corner radius properties a {@link LengthSpring} can write. */
+export type RadiusProperty =
+  | 'borderRadius'
+  | 'borderStartStartRadius'
+  | 'borderStartEndRadius'
+  | 'borderEndStartRadius'
+  | 'borderEndEndRadius';
+
+/**
+ * A {@link ValueSpring} that writes a CSS length (px) to one property of an element, or to several
+ * (e.g. both top corners).
+ */
 export class LengthSpring extends ValueSpring {
-  constructor(el: HTMLElement, property: 'borderRadius') {
+  constructor(el: HTMLElement, property: RadiusProperty | readonly RadiusProperty[]) {
+    const properties = typeof property === 'string' ? [property] : property;
     super((value) => {
-      el.style[property] = `${String(value)}px`;
+      for (const name of properties) el.style[name] = `${String(value)}px`;
     });
   }
 }
