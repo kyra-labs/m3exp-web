@@ -1,0 +1,116 @@
+---
+import ListControl from './ListControl.astro';
+
+// One list item in the m3e-css contract (list.css): the docs page renders static, segmented,
+// interactive (inside <m3e-list>) and legacy items from these props. <m3e-list> and m3e-react write
+// the same DOM.
+interface Props {
+  headline: string;
+  overline?: string;
+  supporting?: string;
+  /** An icon name, `avatar:<letters>`, `image`, `video` or `video-large`. */
+  leading?: string;
+  /** Text, or `icon:<name>`. */
+  trailing?: string;
+  /** A selection indicator (interactive lists): its slot follows Compose's samples. */
+  control?: 'checkbox' | 'radio' | 'switch';
+  controlPosition?: 'leading' | 'trailing';
+  /** The element: `li` (static lists, the default) or `div` (an <m3e-list> option). */
+  tag?: 'li' | 'div';
+  value?: string;
+  segmented?: boolean;
+  threeLine?: boolean;
+  baseline?: boolean;
+  /** Static: the --disabled modifier; options: aria-disabled. */
+  disabled?: boolean;
+  selected?: boolean;
+  dragged?: boolean;
+  /** Static items with a control: the headline id (the live control's name). */
+  id?: string;
+  testid?: string;
+}
+
+const {
+  headline,
+  overline,
+  supporting,
+  leading,
+  trailing,
+  control,
+  controlPosition,
+  tag = 'li',
+  value,
+  segmented = false,
+  threeLine = false,
+  baseline = false,
+  disabled = false,
+  selected = false,
+  dragged = false,
+  id,
+  testid,
+} = Astro.props;
+
+const option = tag === 'div';
+const classes = ['m3e-list-item'];
+if (baseline) classes.push('m3e-list-item--baseline');
+if (segmented) classes.push('m3e-list-item--segmented');
+if (threeLine) classes.push('m3e-list-item--three-line');
+if (disabled && !option) classes.push('m3e-list-item--disabled');
+const Tag = tag;
+const controlSlot = control ? (controlPosition ?? (control === 'switch' ? 'trailing' : 'leading')) : undefined;
+const leadingKind = leading?.startsWith('avatar:') ? 'avatar' : leading;
+const headlineId = id ? `${id}-headline` : undefined;
+---
+
+<Tag
+  class={classes.join(' ')}
+  data-value={value}
+  aria-disabled={option && disabled ? 'true' : undefined}
+  aria-selected={option && selected ? 'true' : undefined}
+  data-dragged={dragged ? '' : undefined}
+  data-testid={testid}
+>
+  {
+    controlSlot === 'leading' || leading ? (
+      <span class="m3e-list-item__leading">
+        {controlSlot === 'leading' ? (
+          <ListControl type={control!} checked={selected} labelledby={option ? undefined : headlineId} />
+        ) : leadingKind === 'avatar' ? (
+          <span class="m3e-list-item__avatar" aria-hidden="true">
+            {leading?.slice('avatar:'.length)}
+          </span>
+        ) : leadingKind === 'image' ? (
+          <span class="m3e-list-item__image docs-list-media" aria-hidden="true" />
+        ) : leadingKind === 'video' || leadingKind === 'video-large' ? (
+          <span class:list={['m3e-list-item__video', 'docs-list-media', { 'm3e-list-item__video--large': leadingKind === 'video-large' }]} aria-hidden="true" />
+        ) : (
+          <span class="m3e-icon" aria-hidden="true">
+            {leading}
+          </span>
+        )}
+      </span>
+    ) : null
+  }
+  <span class="m3e-list-item__content">
+    {overline ? <span class="m3e-list-item__overline">{overline}</span> : null}
+    <span class="m3e-list-item__headline" id={headlineId}>
+      {headline}
+    </span>
+    {supporting ? <span class="m3e-list-item__supporting">{supporting}</span> : null}
+  </span>
+  {
+    controlSlot === 'trailing' || trailing ? (
+      <span class="m3e-list-item__trailing">
+        {controlSlot === 'trailing' ? (
+          <ListControl type={control!} checked={selected} labelledby={option ? undefined : headlineId} />
+        ) : trailing?.startsWith('icon:') ? (
+          <span class="m3e-icon" aria-hidden="true">
+            {trailing.slice('icon:'.length)}
+          </span>
+        ) : (
+          trailing
+        )}
+      </span>
+    ) : null
+  }
+</Tag>

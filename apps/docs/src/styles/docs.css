@@ -983,3 +983,29 @@ button.docs-layout-item:focus-visible {
   inline-size: 100%;
   min-inline-size: 0;
 }
+
+/* Lists (list.astro): columns of demo lists, Compose's dividers and segmented surface container. */
+.docs-list-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(20rem, 1fr));
+  gap: 1.5rem 2rem;
+  align-items: start;
+  margin-block: 1rem;
+}
+
+/* A line above each item but the first, outside the layout (Compose draws HorizontalDividers). */
+.docs-list-divided > li:not(:first-child) {
+  box-shadow: inset 0 var(--m3e-comp-divider-thickness) var(--m3e-comp-divider-color);
+}
+
+.docs-list-surface-container {
+  --m3e-comp-list-item-segmented-container-color: var(--m3e-sys-color-surface-container);
+}
+
+.docs-list-media {
+  background: var(--m3e-sys-color-tertiary-container);
+}
+
+.docs-list-legacy {
+  max-inline-size: 30rem;
+}

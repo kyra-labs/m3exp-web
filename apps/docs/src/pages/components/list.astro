@@ -1,0 +1,131 @@
+---
+import StaticListItem from '../../components/StaticListItem.astro';
+import ListPlayground from '../../islands/ListPlayground.tsx';
+import Base from '../../layouts/Base.astro';
+
+// Compose's ListSamples.kt (StandardListItems, SegmentedListItems, the selection samples) in the
+// m3e-css contract (list.css); interactive lists through <m3e-list>.
+---
+
+<Base title="Lists">
+  <link rel="stylesheet" href="/icons/docs-icons.css" slot="head" />
+  <h1>Lists</h1>
+  <p>
+    Expressive list items (COMPONENT_SPEC §20; Compose <code>ListItem</code> and <code>SegmentedListItem</code>): a headline with an optional overline and supporting text, leading and trailing content, one, two or three lines (56 / 72 / 88dp; three-line items align their slots to the top). Interactive items morph their corners
+    on the fast spatial spring (4dp at rest, 12dp hovered, 16dp focused, selected, pressed or dragged), draw the state layer and take the selected colors (secondary container). Static lists are plain <code>ul</code> / <code>li</code>; interactive lists are a listbox of options whose arrow keys wrap.
+  </p>
+
+  <section aria-labelledby="static-heading">
+    <h2 id="static-heading">Static (m3e-css)</h2>
+    <p>
+      <code>ul.m3e-list</code> &gt; <code>li.m3e-list-item</code> with <code>__leading</code>, <code>__content</code> (<code>__overline</code>, <code>__headline</code>, <code>__supporting</code>) and <code>__trailing</code>. Compose's StandardListItems sample separates the items with dividers.
+    </p>
+    <div class="docs-list-grid">
+      <ul class="m3e-list docs-list-divided" aria-label="Standard list items" data-testid="static-standard">
+        <StaticListItem leading="favorite" headline="One line list item" />
+        <StaticListItem leading="favorite" headline="Two line list item" supporting="Supporting text" />
+        <StaticListItem leading="favorite" headline="Three line list item" overline="Overline text" supporting="Supporting text" />
+        <StaticListItem leading="favorite" headline="Another three line list item" supporting="Supporting text that is multiple lines and wraps" threeLine />
+      </ul>
+      <ul class="m3e-list docs-list-divided" aria-label="Leading and trailing content" data-testid="static-content">
+        <StaticListItem leading="avatar:A" headline="Avatar" supporting="40dp, primary container" trailing="100+" />
+        <StaticListItem leading="image" headline="Image" supporting="56dp, small corners" trailing="icon:more_vert" />
+        <StaticListItem leading="video" headline="Video" supporting="100 × 56dp" />
+        <StaticListItem leading="video-large" headline="Large video" supporting="114 × 64dp, aligned to the top" />
+        <StaticListItem id="static-wifi" leading="wifi" headline="Wi-Fi" control="switch" selected />
+        <StaticListItem leading="favorite" headline="Disabled" supporting="Translucent content" disabled />
+      </ul>
+    </div>
+  </section>
+
+  <section aria-labelledby="segmented-heading">
+    <h2 id="segmented-heading">Segmented</h2>
+    <p>
+      <code>.m3e-list-item--segmented</code>: Surface by default (Compose <code>segmentedColors()</code>), 2dp apart; the first item's top and the last item's bottom corners are 16dp. Compose's samples, and this demo, pass surface container.
+    </p>
+    <div class="docs-list-grid">
+      <ul class="m3e-list docs-list-surface-container" aria-label="Segmented list items" data-testid="segmented">
+        <StaticListItem segmented leading="favorite" headline="One line list item" />
+        <StaticListItem segmented leading="favorite" headline="Two line list item" supporting="Supporting text" />
+        <StaticListItem segmented leading="favorite" headline="Three line list item" overline="Overline text" supporting="Supporting text" />
+        <StaticListItem segmented leading="favorite" headline="Another three line list item" supporting="Supporting text that is multiple lines and wraps" threeLine />
+      </ul>
+      <ul class="m3e-list" aria-label="Single segmented item" data-testid="segmented-single">
+        <StaticListItem segmented leading="favorite" headline="A single item" supporting="All four outer corners" />
+      </ul>
+    </div>
+  </section>
+
+  <section aria-labelledby="element-heading">
+    <h2 id="element-heading">Interactive (element)</h2>
+    <p>
+      <code>&lt;m3e-list label selection="single | multiple | none"&gt;</code> wraps <code>.m3e-list-item</code>s (<code>data-value</code> keys them) into a <code>role="listbox"</code> of options: one tab stop, Down / Right next and Up / Left previous (wrapping), Home / End, typeahead; click, Space or Enter toggles an option (<code>selection-change</code>), or
+      activates it with <code>selection="none"</code> (<code>action</code>). A checkbox, radio button or switch in a slot is the option's indicator: the option is the control, so the indicator is made <code>inert</code> and follows <code>aria-selected</code>.
+    </p>
+    <div class="docs-list-grid">
+      <m3e-list label="Single selection" selection="single" data-testid="element-single">
+        <StaticListItem tag="div" value="1" control="radio" trailing="icon:favorite" headline="Item 1" supporting="Additional info" />
+        <StaticListItem tag="div" value="2" control="radio" trailing="icon:favorite" headline="Item 2" supporting="Additional info" selected />
+        <StaticListItem tag="div" value="3" control="radio" trailing="icon:favorite" headline="Item 3" supporting="Additional info" />
+        <StaticListItem tag="div" value="4" control="radio" trailing="icon:favorite" headline="Item 4" supporting="Disabled" disabled />
+      </m3e-list>
+      <m3e-list label="Multiple selection" selection="multiple" data-testid="element-multiple">
+        <StaticListItem tag="div" value="1" control="checkbox" trailing="icon:favorite" headline="Item 1" supporting="Additional info" selected />
+        <StaticListItem tag="div" value="2" control="checkbox" trailing="icon:favorite" headline="Item 2" supporting="Additional info" />
+        <StaticListItem tag="div" value="3" control="checkbox" trailing="icon:favorite" headline="Item 3" supporting="Additional info" selected />
+      </m3e-list>
+      <m3e-list class="docs-list-surface-container" label="Segmented single selection" selection="single" data-testid="element-segmented">
+        <StaticListItem tag="div" segmented value="1" control="radio" headline="Item 1" supporting="Additional info" />
+        <StaticListItem tag="div" segmented value="2" control="radio" headline="Item 2" supporting="Additional info" selected />
+        <StaticListItem tag="div" segmented value="3" control="radio" headline="Item 3" supporting="Additional info" />
+        <StaticListItem tag="div" segmented value="4" control="radio" headline="Item 4" supporting="Dragged (style only)" dragged />
+      </m3e-list>
+      <m3e-list class="docs-list-surface-container" label="Settings" selection="multiple" data-testid="element-switches">
+        <StaticListItem tag="div" segmented value="wifi" leading="wifi" control="switch" headline="Wi-Fi" selected />
+        <StaticListItem tag="div" segmented value="bluetooth" leading="bluetooth" control="switch" headline="Bluetooth" />
+        <StaticListItem tag="div" segmented value="notifications" leading="notifications" control="switch" headline="Notifications" supporting="Trailing switch" selected />
+      </m3e-list>
+      <m3e-list label="Folders" data-testid="element-action">
+        <StaticListItem tag="div" value="inbox" leading="inbox" headline="Inbox" trailing="24" />
+        <StaticListItem tag="div" value="drafts" leading="drafts" headline="Drafts" trailing="3" />
+        <StaticListItem tag="div" value="send" leading="send" headline="Sent" />
+      </m3e-list>
+    </div>
+    <p aria-live="polite" data-testid="element-log"></p>
+  </section>
+
+  <section aria-labelledby="react-heading">
+    <h2 id="react-heading">React</h2>
+    <p>
+      <code>&lt;List selectionMode selectedKeys onSelectionChange onAction disabledKeys aria-label&gt;</code> with <code>&lt;ListItem id leadingContent trailingContent overlineContent supportingContent selectionControl selectionControlPosition threeLine isDisabled isDragged&gt;</code> and <code>&lt;SegmentedListItem&gt;</code>: a static <code>ul</code>
+      without <code>selectionMode</code> or <code>onAction</code>, else React Aria <code>useListBox</code> / <code>useOption</code> (the corners spring, interruptibly).
+    </p>
+    <ListPlayground client:only="react" />
+  </section>
+
+  <section aria-labelledby="legacy-heading" data-deprecated>
+    <h2 id="legacy-heading">Legacy list item (deprecated)</h2>
+    <p class="docs-deprecated" role="note">
+      Deprecated (DECISIONS D4): the non-expressive list item (Compose's <code>ListItem(headlineContent, …)</code>, deprecated upstream too; React <code>&lt;ListItem headlineContent&gt;</code>, m3e-css <code>.m3e-list-item--baseline</code>) ships until 2.0 for migration and gets no new features. Use the expressive list item.
+    </p>
+    <ul class="m3e-list docs-list-divided docs-list-legacy" aria-label="Legacy list items" data-testid="legacy">
+      <StaticListItem baseline leading="favorite" headline="One line list item with 24x24 icon" />
+      <StaticListItem baseline leading="favorite" headline="Two line list item with trailing" supporting="Secondary text" trailing="meta" />
+      <StaticListItem baseline leading="favorite" headline="Three line list item" overline="OVERLINE" supporting="Secondary text" trailing="meta" />
+    </ul>
+  </section>
+</Base>
+
+<script>
+  import '@kyralabs/m3exp-web/elements';
+
+  const log = document.querySelector('[data-testid="element-log"]');
+  document.addEventListener('selection-change', (e) => {
+    const { values } = (e as CustomEvent<{ values: string[] }>).detail;
+    if (log) log.textContent = `Selected: ${values.join(', ') || 'none'}`;
+  });
+  document.addEventListener('action', (e) => {
+    const { value } = (e as CustomEvent<{ value: string }>).detail;
+    if (log) log.textContent = `Opened: ${value}`;
+  });
+</script>
