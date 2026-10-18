@@ -70,6 +70,17 @@ export {
   menuTransformOrigin,
 } from './menu-position.js';
 export {
+  type TooltipAnchorPosition,
+  type TooltipCaret,
+  type TooltipCaretDirection,
+  type TooltipCaretInput,
+  type TooltipPositionInput,
+  type TooltipRect,
+  tooltipCaret,
+  tooltipCaretX,
+  tooltipPosition,
+} from './tooltip-position.js';
+export {
   type AppBarScrollBehavior,
   type AppBarScrollState,
   type TwoRowsFrame,

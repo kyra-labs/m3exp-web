@@ -233,3 +233,36 @@ function extractRule(
     }
   }
 }
+
+/** Google Sans Flex's hhea metrics (the fonts manifest). */
+export interface FontMetrics {
+  unitsPerEm: number;
+  ascent: number;
+  descent: number;
+}
+
+/**
+ * Where a text baseline Compose places by (firstBaseline / lastBaseline, paddingFromBaseline)
+ * sits: with DefaultLineHeightStyle (Alignment.Center, Trim.None; TypographyTokens.kt L329-330),
+ * (ascent + descent) / 2 × the font size below the middle of its line, as CSS half-leading
+ * places it. Emitted as `name` (a fraction of the font size) for the component CSS.
+ */
+export function baselineShiftLiteral(
+  name: string,
+  font: FontMetrics,
+  note: string,
+): ComposeLiteral {
+  const shift = Math.round(((font.ascent + font.descent) / (2 * font.unitsPerEm)) * 1e4) / 1e4;
+  return {
+    name,
+    value: String(shift),
+    js: shift,
+    raw: `(ascent ${String(font.ascent)} + descent ${String(font.descent)}) / (2 × unitsPerEm ${String(font.unitsPerEm)})`,
+    owner: 'Google Sans Flex (D1)',
+    member: 'hhea ascent / descent',
+    file: 'google-sans-flex.manifest.json',
+    line: 0,
+    cite: 'packages/m3e-tokens/fonts/google-sans-flex.manifest.json metrics (m3e-codegen fonts, from the SOURCE_PIN TTF)',
+    note,
+  };
+}
