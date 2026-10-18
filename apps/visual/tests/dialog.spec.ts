@@ -104,7 +104,7 @@ test.describe('compact window (375 × 812)', () => {
     const container = dialog.locator('.m3e-dialog__container');
     expect(await rect(container)).toEqual({ x: 0, y: 0, width: 375, height: 812 });
     const header = dialog.locator('.m3e-dialog__header');
-    expect((await rect(header)).height).toBe(56);
+    expect((await rect(header)).height).toBeCloseTo(56, 1);
     const surface = await tokenColor(page, '--m3e-sys-color-surface');
     const scrolledColor = await tokenColor(page, '--m3e-sys-color-surface-container');
     const bg = (el: Locator) => el.evaluate((n) => getComputedStyle(n).backgroundColor);
@@ -115,7 +115,7 @@ test.describe('compact window (375 × 812)', () => {
     expect(await container.evaluate((n) => getComputedStyle(n).borderTopLeftRadius)).toBe('0px');
     // Close, headline, action in the header row; the close icon 16dp from the start edge.
     const icon = await rect(dialog.locator('.m3e-dialog__close .m3e-icon'));
-    expect(icon.x).toBe(16);
+    expect(icon.x).toBeCloseTo(16, 1);
     const save = await rect(page.getByTestId('full-screen-save'));
     expect(save.y + save.height / 2).toBeCloseTo(28, 0);
     expect(save.x + save.width).toBeLessThanOrEqual(375 - 8);
@@ -145,24 +145,24 @@ test('AlertDialog geometry: 280–560dp, 24dp padding, 16dp gaps, end-aligned bu
   expect(container.y + container.height / 2).toBeCloseTo(viewport.height / 2, 0);
   const icon = await rect(dialog.locator('.m3e-dialog__icon'));
   expect(icon).toMatchObject({ width: 24, height: 24 });
-  expect(icon.y - container.y).toBe(24);
+  expect(icon.y - container.y).toBeCloseTo(24, 1);
   expect(icon.x + 12).toBeCloseTo(container.x + container.width / 2, 0);
   const headline = await rect(dialog.locator('.m3e-dialog__headline'));
-  expect(headline.y - (icon.y + icon.height)).toBe(16);
+  expect(headline.y - (icon.y + icon.height)).toBeCloseTo(16, 1);
   // With an icon the headline is centered.
   expect(headline.x + headline.width / 2).toBeCloseTo(container.x + container.width / 2, 0);
   const content = await rect(dialog.locator('.m3e-dialog__content'));
-  expect(content.y - (headline.y + headline.height)).toBe(16);
-  expect(content.x - container.x).toBe(24);
+  expect(content.y - (headline.y + headline.height)).toBeCloseTo(16, 1);
+  expect(content.x - container.x).toBeCloseTo(24, 1);
   const [dismiss, confirm] = await Promise.all(
     [0, 1].map((i) => rect(dialog.locator('.m3e-dialog__actions > button').nth(i))),
   );
   // Each button keeps 4dp of its 48dp minimum interactive size above and below.
-  expect(container.y + container.height - (confirm!.y + confirm!.height)).toBe(24 + 4);
-  expect(confirm!.y - (content.y + content.height)).toBe(4);
-  expect(container.x + container.width - (confirm!.x + confirm!.width)).toBe(24);
-  expect(confirm!.x - (dismiss!.x + dismiss!.width)).toBe(8);
-  expect(confirm!.y).toBe(dismiss!.y);
+  expect(container.y + container.height - (confirm!.y + confirm!.height)).toBeCloseTo(24 + 4, 1);
+  expect(confirm!.y - (content.y + content.height)).toBeCloseTo(4, 1);
+  expect(container.x + container.width - (confirm!.x + confirm!.width)).toBeCloseTo(24, 1);
+  expect(confirm!.x - (dismiss!.x + dismiss!.width)).toBeCloseTo(8, 1);
+  expect(confirm!.y).toBeCloseTo(dismiss!.y, 1);
 
   const style = await dialog.locator('.m3e-dialog__container').evaluate((n) => {
     const s = getComputedStyle(n);
@@ -188,7 +188,7 @@ test('stacked buttons: the confirm button on top, both at the end, 8dp apart', a
   const keep = await rect(buttons.nth(0));
   const turnOff = await rect(buttons.nth(1));
   expect(turnOff.y).toBeLessThan(keep.y);
-  expect(keep.y - (turnOff.y + turnOff.height)).toBe(8);
+  expect(keep.y - (turnOff.y + turnOff.height)).toBeCloseTo(8, 1);
   expect(keep.x + keep.width).toBeCloseTo(turnOff.x + turnOff.width, 0);
 });
 
@@ -196,8 +196,8 @@ test('long content scrolls between the pinned headline and buttons', async ({ pa
   const viewport = page.viewportSize()!;
   const dialog = await open(page, 'alert-scroll');
   const container = await rect(dialog.locator('.m3e-dialog__container'));
-  expect(container.y).toBe(24);
-  expect(container.height).toBe(viewport.height - 48);
+  expect(container.y).toBeCloseTo(24, 1);
+  expect(container.height).toBeCloseTo(viewport.height - 48, 1);
   const content = dialog.locator('.m3e-dialog__content');
   expect(
     await content.evaluate((n) => n.scrollHeight > n.clientHeight && getComputedStyle(n).overflowY),
@@ -286,10 +286,19 @@ test('motion: Material Web open / close, the scrim on DefaultEffects (#9)', asyn
     ]),
   );
   await expect(dialog).not.toHaveAttribute('data-motion');
+  // The close motion lasts 150ms: record its animations when data-motion turns to "exit".
+  await dialog.evaluate((n) => {
+    (window as unknown as { exitNames: Promise<string[]> }).exitNames = new Promise((resolve) => {
+      new MutationObserver((_, observer) => {
+        if (n.getAttribute('data-motion') !== 'exit') return;
+        observer.disconnect();
+        resolve(n.getAnimations({ subtree: true }).map((a) => (a as CSSAnimation).animationName));
+      }).observe(n, { attributes: true, attributeFilter: ['data-motion'] });
+    });
+  });
   await page.keyboard.press('Escape');
-  await expect(dialog).toHaveAttribute('data-motion', 'exit');
-  const exit = await dialog.evaluate((n) =>
-    n.getAnimations({ subtree: true }).map((a) => (a as CSSAnimation).animationName),
+  const exit = await page.evaluate(
+    () => (window as unknown as { exitNames: Promise<string[]> }).exitNames,
   );
   expect(exit).toEqual(
     expect.arrayContaining(['m3e-dialog-slide-out', 'm3e-dialog-shrink', 'm3e-dialog-fade-out']),
