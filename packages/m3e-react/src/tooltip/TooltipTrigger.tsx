@@ -9,6 +9,7 @@ import {
   useCallback,
   useMemo,
   useRef,
+  useState,
 } from 'react';
 import { mergeRefs, useId } from 'react-aria';
 import { useOverlayTriggerState } from 'react-stately';
@@ -45,7 +46,8 @@ interface AnchorElementProps {
  * Attaches a tooltip to an anchor (COMPONENT_SPEC §33; Compose TooltipBox). Mouse hover, keyboard
  * focus and a touch long press show it, Escape and a click outside hide it, and only one tooltip
  * is shown at a time — the m3e-elements TooltipController, shared with `<m3e-tooltip>`. The anchor
- * gets `aria-describedby`.
+ * gets `aria-describedby`, unless the tooltip text equals its accessible name (then the tooltip is
+ * `aria-hidden`).
  */
 export function TooltipTrigger({
   children,
@@ -63,6 +65,7 @@ export function TooltipTrigger({
   const [anchor, tooltip] = Children.toArray(children) as [ReactElement, ReactElement];
   const anchorProps = isValidElement<AnchorElementProps>(anchor) ? anchor.props : null;
   const anchorId = anchorProps?.id ?? generatedAnchorId;
+  const [repeatsName, setRepeatsName] = useState(false);
 
   const open = state.isOpen;
   const setOpen = useCallback(
@@ -81,20 +84,24 @@ export function TooltipTrigger({
       position,
       isPersistent,
       isDisabled,
+      repeatsName,
+      setRepeatsName,
     }),
-    [open, setOpen, tooltipId, anchorId, position, isPersistent, isDisabled],
+    [open, setOpen, tooltipId, anchorId, position, isPersistent, isDisabled, repeatsName],
   );
 
   if (!anchorProps) return children as ReactNode;
   // React 19 passes `ref` as a prop; React 18 keeps it on the element.
   const childRef = anchorProps.ref ?? (anchor as unknown as { ref?: Ref<HTMLElement> }).ref;
-  const describedBy = [anchorProps['aria-describedby'], tooltipId].filter(Boolean).join(' ');
+  const describedBy = [anchorProps['aria-describedby'], repeatsName ? null : tooltipId]
+    .filter(Boolean)
+    .join(' ');
   return (
     <TooltipContext.Provider value={context}>
       {cloneElement(anchor, {
         ref: mergeRefs(childRef, anchorRef),
         id: anchorId,
-        'aria-describedby': describedBy,
+        'aria-describedby': describedBy || undefined,
       } as AnchorElementProps & Record<string, unknown>)}
       {tooltip}
     </TooltipContext.Provider>

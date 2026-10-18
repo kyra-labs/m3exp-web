@@ -15,17 +15,20 @@ const flushFrames = () => {
   }
 };
 
+const durationStyle = document.createElement('style');
+
 beforeEach(() => {
   frames = [];
   vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout'] });
   vi.stubGlobal('requestAnimationFrame', (cb: FrameRequestCallback) => frames.push(cb));
   vi.stubGlobal('cancelAnimationFrame', vi.fn());
-  document.documentElement.style.setProperty('--m3e-comp-tooltip-duration', '1500ms');
+  durationStyle.textContent = '.m3e-tooltip { --m3e-comp-tooltip-duration: 1500ms; }';
+  document.head.append(durationStyle);
 });
 
 afterEach(() => {
   document.body.innerHTML = '';
-  document.documentElement.removeAttribute('style');
+  durationStyle.remove();
   vi.useRealTimers();
   vi.unstubAllGlobals();
 });
@@ -61,6 +64,17 @@ describe('<PlainTooltip> / <RichTooltip> contract', () => {
     expect(anchor.getAttribute('aria-describedby')).toBe(`hint ${tip.id}`);
   });
 
+  it('text that repeats the anchor’s name: no aria-describedby, aria-hidden', async () => {
+    const container = await renderReact(
+      <TooltipTrigger>
+        <Button aria-label="Add to favorites">♥</Button>
+        <PlainTooltip>Add to favorites</PlainTooltip>
+      </TooltipTrigger>,
+    );
+    expect(container.querySelector('button')!.hasAttribute('aria-describedby')).toBe(false);
+    expect(tooltip().getAttribute('aria-hidden')).toBe('true');
+  });
+
   it('renders inline (no popover) outside a trigger', async () => {
     const container = await renderReact(<PlainTooltip caret>Static</PlainTooltip>);
     const tip = container.firstElementChild!;
@@ -87,7 +101,7 @@ describe('<PlainTooltip> / <RichTooltip> contract', () => {
 });
 
 describe('<TooltipTrigger> behavior (the shared TooltipController)', () => {
-  it('mouse hover shows and leaving hides; onOpenChange reports both', async () => {
+  it('mouse hover shows and leaving hides after 1.5s; onOpenChange reports both', async () => {
     const onOpenChange = vi.fn();
     const container = await renderReact(
       <TooltipTrigger onOpenChange={onOpenChange}>
@@ -101,6 +115,10 @@ describe('<TooltipTrigger> behavior (the shared TooltipController)', () => {
     expect(tooltip().hasAttribute('data-driven')).toBe(true);
     expect(tooltip().hasAttribute('data-positioned')).toBe(true);
     await pointer(anchor, 'pointerleave', 'mouse');
+    expect(onOpenChange).toHaveBeenLastCalledWith(true);
+    await run(() => {
+      vi.advanceTimersByTime(1500);
+    });
     expect(onOpenChange).toHaveBeenLastCalledWith(false);
     flushFrames();
     expect(tooltip().hasAttribute('data-driven')).toBe(false);

@@ -518,7 +518,8 @@ markup) is shared with m3e-react's `<List>`, which renders the same DOM.
 
 `<m3e-tooltip>` renders a `.m3e-tooltip` popover inside itself, moves its own child nodes into it
 as the text and adds its id to the anchor's `aria-describedby`. It runs Compose's `TooltipBox`
-behavior: mouse hover shows it (and it stays while the anchor is hovered), leaving hides it; a
+behavior: mouse hover shows it at once; it stays while the anchor or the tooltip is hovered and hides
+1.5s after the pointer leaves both (m3.material.io); a
 touch long press shows it until the press ends (at least `--m3e-comp-tooltip-duration`); keyboard
 focus shows it until focus leaves; Escape and a click outside hide it; one tooltip shows at a time.
 `position` (`above` | `below` | `left` | `right` | `start` | `end`, Compose

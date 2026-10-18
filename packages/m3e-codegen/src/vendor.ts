@@ -95,6 +95,14 @@ export const MATERIAL3_ANDROID_SOURCES = [
   'internal/BasicTooltip.android.kt',
 ] as const;
 
+/**
+ * Compose foundation's Android strings that `internal/BasicTooltip.android.kt` reads
+ * (`R.string.tooltip_label` "show tooltip", `tooltip_description` "tooltip"); cited by the tooltip
+ * docs, not rendered (the web roles carry the semantics).
+ */
+export const FOUNDATION_RES_PATH = 'compose/foundation/foundation/src/androidMain/res/values';
+export const FOUNDATION_RES_SOURCES = ['strings.xml'] as const;
+
 /** Compose spring physics ported by m3e-motion (and compiled as-is by its JVM reference harness). */
 export const ANIMATION_CORE_PATH =
   'compose/animation/animation-core/src/commonMain/kotlin/androidx/compose/animation/core';

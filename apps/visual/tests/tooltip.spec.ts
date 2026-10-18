@@ -205,14 +205,23 @@ test('colors and shapes: Plain/RichTooltipTokens', async ({ page }) => {
   );
 });
 
-test('stays open while the anchor is hovered; hides when the pointer leaves', async ({ page }) => {
+test('stays open while the anchor or the tooltip is hovered; hides 1.5s after leaving both', async ({
+  page,
+}) => {
   const tooltip = tip(page, 'el-below');
   await page.locator('#el-below').hover();
   await settled(tooltip);
   // Longer than TooltipDuration (1500ms): hover shows have no timeout.
   await page.waitForTimeout(2000);
   await expect(tooltip).toBeVisible();
+  // Hoverable (WCAG 1.4.13; owner decision M9 #1): the pointer can move onto the tooltip.
+  await tooltip.hover();
+  await page.waitForTimeout(2000);
+  await expect(tooltip).toBeVisible();
+  // m3.material.io: it disappears 1.5s after the pointer leaves.
   await page.mouse.move(1, 1);
+  await page.waitForTimeout(700);
+  await expect(tooltip).toBeVisible();
   await hidden(tooltip);
 });
 
@@ -396,9 +405,12 @@ test('React: hover, the action, and a controlled tooltip', async ({ page }) => {
   await page.getByTestId('react-plain').hover();
   const plain = react.locator('.m3e-tooltip', { hasText: 'Add to list' });
   await settled(plain);
-  await expect(page.getByTestId('react-plain')).toHaveAttribute(
+  // The text repeats the button's name (owner decision M9 #2): no aria-describedby, aria-hidden.
+  await expect(page.getByTestId('react-plain')).not.toHaveAttribute('aria-describedby', /./);
+  await expect(plain).toHaveAttribute('aria-hidden', 'true');
+  await expect(page.locator('#el-below')).toHaveAttribute(
     'aria-describedby',
-    (await plain.getAttribute('id'))!,
+    (await tip(page, 'el-below').getAttribute('id'))!,
   );
   await page.getByTestId('react-rich').hover();
   const rich = react.locator('.m3e-tooltip--rich');

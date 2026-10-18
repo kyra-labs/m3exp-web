@@ -15,6 +15,8 @@ import { readGeneratorInputs } from './inputs.js';
 import { findRepoRoot, readPin, requirePin } from './pin.js';
 import {
   ANIMATION_CORE_PATH,
+  FOUNDATION_RES_PATH,
+  FOUNDATION_RES_SOURCES,
   ANIMATION_CORE_SOURCES,
   ANIMATION_CORE_EASING_SOURCES,
   ANIMATION_CORE_SPEC_SOURCES,
@@ -188,6 +190,13 @@ async function main(command: string | undefined, flags: readonly string[]): Prom
     );
     await fetchVendor(repo, commit, MATERIAL3_SAMPLES_PATH, samplesDir, MATERIAL3_SAMPLE_SOURCES);
     await fetchVendor(repo, commit, UI_PATH, uiSourcesDir, UI_SOURCES);
+    await fetchVendor(
+      repo,
+      commit,
+      FOUNDATION_RES_PATH,
+      shapesVendor('androidx-foundation-res'),
+      FOUNDATION_RES_SOURCES,
+    );
     await fetchVendor(
       repo,
       commit,

@@ -102,6 +102,37 @@ export class TooltipPopup extends AnchoredPopup {
   }
 }
 
+/** Text of `node` as an accessible name would read it (aria-hidden subtrees skipped). */
+function nameText(node: Node): string {
+  if (node.nodeType === Node.TEXT_NODE) return node.textContent ?? '';
+  if (!(node instanceof Element) || node.getAttribute('aria-hidden') === 'true') return '';
+  return [...node.childNodes].map(nameText).join('');
+}
+
+/** The anchor's accessible name: aria-labelledby, aria-label, else its (visible) text. */
+export function accessibleName(el: Element): string {
+  const root = el.getRootNode() as Document | ShadowRoot;
+  const ids = el.getAttribute('aria-labelledby')?.split(/\s+/).filter(Boolean) ?? [];
+  const labelled = ids
+    .map((id) => ('getElementById' in root ? root.getElementById(id) : null))
+    .filter((n): n is HTMLElement => n !== null);
+  if (labelled.length > 0) return labelled.map(nameText).join(' ');
+  return el.getAttribute('aria-label') ?? nameText(el);
+}
+
+const normalizeName = (text: string) => text.replace(/\s+/g, ' ').trim().toLowerCase();
+
+/**
+ * Whether a tooltip's text repeats its anchor's accessible name (an icon button whose label is the
+ * tooltip text, as in every Compose sample). Owner decision M9 #2: then the anchor does not point
+ * `aria-describedby` at it and it is `aria-hidden`, so screen readers do not read it twice.
+ */
+export function tooltipRepeatsName(anchor: Element, tooltip: Element): boolean {
+  // The tooltip's own aria-hidden (set by this rule) does not count.
+  const text = normalizeName([...tooltip.childNodes].map(nameText).join(''));
+  return text !== '' && text === normalizeName(accessibleName(anchor));
+}
+
 /** MutatePriority: Default < UserInput (mouse hover) < PreventUserInput (long press, focus). */
 export type TooltipShowPriority = 'default' | 'user-input' | 'prevent-user-input';
 
@@ -155,7 +186,9 @@ export interface TooltipControllerOptions {
  * and m3e-react's `<TooltipTrigger>`:
  *
  * - Mouse: entering the anchor shows the tooltip (MutatePriority.UserInput: no timeout, it stays
- *   while the anchor is hovered); leaving it hides a non-persistent tooltip.
+ *   while the anchor or the tooltip is hovered); a non-persistent tooltip hides
+ *   `--m3e-comp-tooltip-duration` after the pointer has left both (owner decision M9 #1:
+ *   m3.material.io's 1.5s "after navigating away"; Compose hides on leaving the anchor).
  * - Touch / pen: a long press shows it (PreventUserInput) and swallows the click that follows; a
  *   non-persistent tooltip hides when the press ends, but not before `--m3e-comp-tooltip-duration`.
  * - Keyboard: focusing the anchor (`:focus-visible`) shows it (PreventUserInput) until focus leaves
@@ -193,6 +226,7 @@ export class TooltipController {
   #receivedKeyboardFocus = false;
   #returningFocus = false;
   #tooltipListeners = false;
+  #lingerTimer: ReturnType<typeof setTimeout> | undefined;
 
   constructor(options: TooltipControllerOptions) {
     this.tooltip = options.tooltip;
@@ -258,6 +292,7 @@ export class TooltipController {
    */
   show(priority: TooltipShowPriority = 'default'): boolean {
     const rank = RANK[priority];
+    this.#cancelLinger();
     if (holder && holder.owner !== this && holder.rank > rank) return false;
     if (holder) holder.owner.#endJob(holder, holder.owner === this);
     const job: Job = { owner: this, rank, timer: undefined, longPress: this.#showingByLongPress };
@@ -274,6 +309,7 @@ export class TooltipController {
 
   /** TooltipState.dismiss: hides the tooltip (and releases the mutex). */
   dismiss(): void {
+    this.#cancelLinger();
     this.#setVisible(false);
     if (this.#job) this.#endJob(this.#job, true);
   }
@@ -305,7 +341,10 @@ export class TooltipController {
   #setVisible(visible: boolean): void {
     if (visible === this.#visible) return;
     this.#visible = visible;
-    if (!visible) this.#receivedKeyboardFocus = false;
+    if (!visible) {
+      this.#receivedKeyboardFocus = false;
+      this.#cancelLinger();
+    }
     this.#onVisibleChange(visible);
   }
 
@@ -337,8 +376,23 @@ export class TooltipController {
 
   #onPointerLeave = (e: PointerEvent): void => {
     if (!this.enableUserInput || e.pointerType !== 'mouse') return;
-    if (!this.isPersistent) this.dismiss();
+    this.#linger();
   };
+
+  /** The pointer left the anchor or the tooltip: hide a non-persistent tooltip after a while. */
+  #linger(): void {
+    if (this.isPersistent || !this.#visible) return;
+    this.#cancelLinger();
+    this.#lingerTimer = setTimeout(() => {
+      this.#lingerTimer = undefined;
+      this.dismiss();
+    }, this.#duration());
+  }
+
+  #cancelLinger(): void {
+    if (this.#lingerTimer !== undefined) clearTimeout(this.#lingerTimer);
+    this.#lingerTimer = undefined;
+  }
 
   #onPointerDown = (e: PointerEvent): void => {
     if (!this.enableUserInput || (e.pointerType !== 'touch' && e.pointerType !== 'pen')) return;
@@ -416,6 +470,13 @@ export class TooltipController {
   #bindTooltip(): void {
     if (this.#tooltipListeners) return;
     this.#tooltipListeners = true;
+    // The tooltip itself is hoverable (WCAG 1.4.13): it stays while hovered.
+    this.tooltip.addEventListener('pointerenter', (e) => {
+      if (e.pointerType === 'mouse' && this.#visible) this.#cancelLinger();
+    });
+    this.tooltip.addEventListener('pointerleave', (e) => {
+      if (e.pointerType === 'mouse' && this.enableUserInput) this.#linger();
+    });
     this.tooltip.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') {
         // dismissOnBackPress → onDismissRequest; focus goes back to the anchor's window.

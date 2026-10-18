@@ -14,6 +14,12 @@ export interface TooltipContextValue {
   isPersistent: boolean;
   /** TooltipBox enableUserInput = false. */
   isDisabled: boolean;
+  /**
+   * The tooltip text equals the anchor's accessible name (owner decision M9 #2): the anchor then
+   * does not point `aria-describedby` at it and the tooltip is `aria-hidden`.
+   */
+  repeatsName: boolean;
+  setRepeatsName: (repeats: boolean) => void;
 }
 
 export const TooltipContext = /* @__PURE__ */ createContext<TooltipContextValue | null>(null);

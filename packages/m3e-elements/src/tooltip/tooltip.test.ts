@@ -16,18 +16,21 @@ const settle = async () => {
   for (let i = 0; i < 4; i++) await Promise.resolve();
 };
 
+const durationStyle = document.createElement('style');
+
 beforeEach(() => {
   frames = [];
   vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout'] });
   vi.stubGlobal('requestAnimationFrame', (cb: FrameRequestCallback) => frames.push(cb));
   vi.stubGlobal('cancelAnimationFrame', vi.fn());
   // As the minified CSS ships it (`1500ms` → `1.5s`).
-  document.documentElement.style.setProperty('--m3e-comp-tooltip-duration', '1.5s');
+  durationStyle.textContent = '.m3e-tooltip { --m3e-comp-tooltip-duration: 1.5s; }';
+  document.head.append(durationStyle);
 });
 
 afterEach(() => {
   document.body.innerHTML = '';
-  document.documentElement.removeAttribute('style');
+  durationStyle.remove();
   vi.useRealTimers();
   vi.unstubAllGlobals();
 });
@@ -63,6 +66,20 @@ describe('<m3e-tooltip> contract', () => {
     expect(tooltip.textContent).toBe('Add to favorites');
     expect([...host.childNodes]).toEqual([tooltip]);
     expect(anchor.getAttribute('aria-describedby')).toBe(tooltip.id);
+  });
+
+  it('text that repeats the anchor’s name: no aria-describedby, the tooltip is aria-hidden', async () => {
+    const { tooltip, anchor } = await setup(
+      `<button id="fav" aria-label="Add to favorites"><span aria-hidden="true">favorite</span></button><m3e-tooltip anchor="fav">Add to Favorites</m3e-tooltip>`,
+    );
+    expect(anchor.hasAttribute('aria-describedby')).toBe(false);
+    expect(tooltip.getAttribute('aria-hidden')).toBe('true');
+    const { tooltip: other, anchor: textAnchor } = await setup(
+      `<button id="b">Save <span aria-hidden="true">save</span></button><m3e-tooltip anchor="b">save</m3e-tooltip>`,
+    );
+    // The visible text is the name (aria-hidden glyphs skipped): it repeats too.
+    expect(textAnchor.hasAttribute('aria-describedby')).toBe(false);
+    expect(other.getAttribute('aria-hidden')).toBe('true');
   });
 
   it('keeps the anchor’s own descriptions and removes its id on disconnect', async () => {
@@ -109,7 +126,7 @@ describe('<m3e-tooltip> contract', () => {
 });
 
 describe('<m3e-tooltip> behavior (TooltipBox)', () => {
-  it('mouse: shows on entering the anchor, hides on leaving it', async () => {
+  it('mouse: shows on entering the anchor, hides 1.5s after leaving it', async () => {
     const { host, anchor, tooltip } = await setup(PLAIN);
     const changes: boolean[] = [];
     host.addEventListener('open-change', (e) => {
@@ -125,10 +142,35 @@ describe('<m3e-tooltip> behavior (TooltipBox)', () => {
     expect(host.open).toBe(true);
     pointer(anchor, 'pointerleave', 'mouse');
     await settle();
+    // m3.material.io's linger (owner decision M9 #1).
+    vi.advanceTimersByTime(1499);
+    expect(host.open).toBe(true);
+    vi.advanceTimersByTime(1);
+    await settle();
     expect(host.open).toBe(false);
     flushFrames();
     expect(tooltip.hasAttribute('data-driven')).toBe(false);
     expect(changes).toEqual([true, false]);
+  });
+
+  it('stays open while the tooltip itself is hovered; re-entering the anchor cancels the linger', async () => {
+    const { host, anchor, tooltip } = await setup(PLAIN);
+    pointer(anchor, 'pointerenter', 'mouse');
+    pointer(anchor, 'pointerleave', 'mouse');
+    pointer(tooltip, 'pointerenter', 'mouse');
+    vi.advanceTimersByTime(5000);
+    await settle();
+    expect(host.open).toBe(true);
+    pointer(tooltip, 'pointerleave', 'mouse');
+    vi.advanceTimersByTime(1000);
+    pointer(anchor, 'pointerenter', 'mouse');
+    vi.advanceTimersByTime(5000);
+    await settle();
+    expect(host.open).toBe(true);
+    pointer(anchor, 'pointerleave', 'mouse');
+    vi.advanceTimersByTime(1500);
+    await settle();
+    expect(host.open).toBe(false);
   });
 
   it('touch hover does nothing; a persistent tooltip stays after the mouse leaves', async () => {
@@ -246,6 +288,7 @@ describe('<m3e-tooltip> behavior (TooltipBox)', () => {
     await settle();
     expect([a.open, b.open]).toEqual([false, true]);
     pointer(anchorB, 'pointerleave', 'mouse');
+    vi.advanceTimersByTime(1500);
     // Keyboard focus (PreventUserInput) holds the mutex: a hover elsewhere does not show.
     anchorA.focus();
     await settle();

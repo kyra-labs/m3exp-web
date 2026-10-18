@@ -1,5 +1,9 @@
 import { M3eElement } from '../base/M3eElement.js';
-import { type TooltipAnchorPosition, TooltipController } from '../tooltip-popup/tooltip-popup.js';
+import {
+  type TooltipAnchorPosition,
+  TooltipController,
+  tooltipRepeatsName,
+} from '../tooltip-popup/tooltip-popup.js';
 
 let nextId = 0;
 const uid = () => `m3e-tooltip-${String(++nextId)}`;
@@ -13,7 +17,8 @@ const POSITIONS = new Set(['above', 'below', 'left', 'right', 'start', 'end']);
  * {@link TooltipController} (hover, keyboard focus, long press, Escape, a click outside, one
  * tooltip at a time) with the TooltipPositionProviderImpl placement and show / hide springs.
  *
- * - `anchor`: id of the element the tooltip describes (it gets `aria-describedby`);
+ * - `anchor`: id of the element the tooltip describes (it gets `aria-describedby`, unless the
+ *   tooltip text equals its accessible name: the tooltip is then `aria-hidden`);
  *   `anchorElement` sets it directly.
  * - `variant`: `plain` (default) | `rich`. A rich tooltip takes `subhead` (its title) and `action`
  *   (the label of a text button; clicking it fires `action` and, unless that is cancelled, hides
@@ -255,12 +260,23 @@ export class M3eTooltip extends M3eElement {
     this.#anchorEl = el instanceof HTMLElement ? el : null;
   }
 
-  /** `aria-describedby` on the anchor, added to whatever it already lists. */
+  /**
+   * `aria-describedby` on the anchor, added to whatever it already lists, unless the tooltip only
+   * repeats the anchor's name (then it is `aria-hidden`; owner decision M9 #2).
+   */
   #linkAnchor(): void {
     const anchor = this.anchorElement;
     if (anchor !== this.#describedAnchor) this.#unlinkAnchor();
-    const id = this.#root?.id;
-    if (!anchor || !id) return;
+    const root = this.#root;
+    const id = root?.id;
+    if (!anchor || !root || !id) return;
+    const repeats = !this.action && tooltipRepeatsName(anchor, root);
+    if (repeats) root.setAttribute('aria-hidden', 'true');
+    else root.removeAttribute('aria-hidden');
+    if (repeats) {
+      this.#unlinkAnchor();
+      return;
+    }
     const ids = (anchor.getAttribute('aria-describedby') ?? '').split(/\s+/).filter(Boolean);
     if (!ids.includes(id)) anchor.setAttribute('aria-describedby', [...ids, id].join(' '));
     this.#describedAnchor = anchor;

@@ -8,5 +8,7 @@ export {
   LONG_PRESS_TIMEOUT_MS,
   TooltipController,
   TooltipPopup,
+  accessibleName,
   anchorBounds,
+  tooltipRepeatsName,
 } from './tooltip-popup.js';

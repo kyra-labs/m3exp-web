@@ -15,12 +15,19 @@ const richText =
     <code>RichTooltip</code> in a <code>TooltipBox</code>). A <strong>plain</strong> tooltip is a short
     description of its anchor; a <strong>rich</strong> one adds a subhead and an action. The
     <code>&lt;m3e-tooltip&gt;</code> element (m3e-elements) and <code>&lt;TooltipTrigger&gt;</code> (m3e-react)
-    share one controller: hovering the anchor with a mouse shows the tooltip and leaving hides it,
+    share one controller: hovering the anchor with a mouse shows the tooltip at once, and it stays while the anchor or the
+    tooltip is hovered and hides 1.5 s after the pointer leaves both;
     a touch long press shows it until the press ends (at least 1.5 s), keyboard focus shows it
     until focus leaves, and Escape or a click outside hides it. Only one tooltip shows at a time. It
     is placed by Compose's <code>TooltipPositionProviderImpl</code> (above the anchor by default,
     flipped below at the window top, 4dp away) and scales in from 0.8 on the fast spatial spring
     while it fades in on the fast effects spring.
+  </p>
+  <p>
+    The anchor's <code>aria-describedby</code> points at the tooltip, unless the tooltip text
+    equals the anchor's accessible name (an icon button labelled like its tooltip): the tooltip is
+    then <code>aria-hidden</code>, so it is not read twice. A rich tooltip with an action is a
+    non-modal dialog named by its subhead.
   </p>
 
   <section aria-labelledby="static-heading">

@@ -1,4 +1,4 @@
-import { TooltipController } from '@kyralabs/m3e-elements/tooltip-popup.js';
+import { TooltipController, tooltipRepeatsName } from '@kyralabs/m3e-elements/tooltip-popup.js';
 import {
   type ForwardedRef,
   type HTMLAttributes,
@@ -56,6 +56,9 @@ function useTooltipController(
     controller.enableUserInput = !context.isDisabled;
     controller.popup.placement = context.position;
     controller.setAnchor(context.anchorRef.current);
+    const anchor = context.anchorRef.current;
+    const repeats = !hasAction && anchor !== null && tooltipRepeatsName(anchor, el);
+    if (repeats !== context.repeatsName) context.setRepeatsName(repeats);
     if (controller.popup.isOpen !== context.isOpen || context.isOpen) {
       controller.render(context.isOpen);
     }
@@ -89,6 +92,7 @@ export const PlainTooltip = /* @__PURE__ */ forwardRef(function PlainTooltip(
         className: cx('m3e-tooltip', caret && 'm3e-tooltip--caret', className),
         role: 'tooltip',
         ...(context ? { id: context.tooltipId, popover: 'manual' } : {}),
+        ...(context?.repeatsName ? { 'aria-hidden': true } : {}),
       })}
       ref={ref}
     >
@@ -116,7 +120,7 @@ export const RichTooltip = /* @__PURE__ */ forwardRef(function RichTooltip(
   const hasSubhead = subhead !== undefined && subhead !== null && subhead !== false;
   const dialog = hasAction
     ? { role: 'dialog', 'aria-labelledby': hasSubhead ? subheadId : context?.anchorId }
-    : { role: 'tooltip' };
+    : { role: 'tooltip', ...(context?.repeatsName ? { 'aria-hidden': true } : {}) };
   return (
     <div
       {...mergeProps(rest, {
