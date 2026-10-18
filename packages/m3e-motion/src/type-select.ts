@@ -19,7 +19,7 @@ export function typeSelectTarget(texts: readonly string[], from: number, search:
   const matches = (text: string) =>
     text !== '' && compare.compare(text.slice(0, search.length), search) === 0;
   const start = Math.max(from, 0);
-  for (let i = start; i < texts.length; i++) if (matches(texts[i]!)) return i;
-  for (let i = 0; i < start; i++) if (matches(texts[i]!)) return i;
+  for (let i = start; i < texts.length; i++) if (matches(texts[i] ?? '')) return i;
+  for (let i = 0; i < start; i++) if (matches(texts[i] ?? '')) return i;
   return -1;
 }
