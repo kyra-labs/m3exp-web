@@ -4,6 +4,7 @@
   "path": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3",
   "files": {
     "AppBar.kt": "3261fd559fd0f9abff24c75f46deae40bbb76de2cc8899243fe139a18b046270",
+    "Badge.kt": "f908017c646601b1cf2d967aab1afecae8461bd8dfbc78340c10922ed4b23865",
     "Button.kt": "9095ad12e5b26a20bf0cdc53ba01f54b7c8ca41ba4ece933d578ef28a2d97240",
     "ButtonGroup.kt": "024822d9423c81d7e0238efc9f3d819ffa1529058eebf5d59310618287115b22",
     "Checkbox.kt": "13b16c178c8886411ce53cdc290abd858fd559610130d401ba48f8e82db109ee",

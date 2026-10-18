@@ -14,6 +14,7 @@ export * from './slider/index.js';
 export * from './text-field/index.js';
 export * from './list/index.js';
 export * from './tooltip/index.js';
+export * from './badge/index.js';
 export * from './top-app-bar/index.js';
 export * from './assist-chip/index.js';
 export * from './chips/index.js';

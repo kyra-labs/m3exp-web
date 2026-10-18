@@ -89,7 +89,7 @@
 48. Side sheet values from m3.material.io specs (no Compose source).
 49. Snackbar tokens.
 50. Tooltip tokens.
-51. Badge tokens.
+51. ~~Badge tokens~~ — resolved: `BadgeTokens.kt@19991f2c` (generated; Size 6dp, LargeSize 16dp, Shape / LargeShape CornerFull, Color Error, LargeLabelTextColor OnError, LargeLabelTextFont LabelSmall) as read by `Badge.kt@19991f2c` (`Badge` L151–189, `BadgeDefaults.containerColor` L192–196), plus the `Badge.kt` literals Compose renders (4dp padding L201–202, `BadgedBox` offsets 12 / 14 / 6dp L208–218) in `components/badge-defaults.css` (`badge-defaults.ts`).
 52. ~~Divider tokens~~ — resolved: `DividerTokens.kt@19991f2c` (generated; Thickness 1dp, Color OutlineVariant) as read by `DividerDefaults` (`Divider.kt` L111–118).
 53. Carousel tokens.
 54. Segmented button guidance.

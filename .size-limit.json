@@ -169,6 +169,12 @@
     "limit": "2 KB"
   },
   {
+    "name": "m3e-css: badge (dot, large, badged box with its bounds hook)",
+    "path": "packages/m3e-css/dist/badge.css",
+    "rolldown": false,
+    "limit": "1 KB"
+  },
+  {
     "name": "m3e-css: legacy navigation bar + rail (D4)",
     "path": [
       "packages/m3e-css/dist/navigation-bar.css",
@@ -705,6 +711,13 @@
     "path": "packages/m3e-react/dist/index.js",
     "import": "{ TooltipTrigger, PlainTooltip, RichTooltip }",
     "limit": "23 KB"
+  },
+  {
+    "name": "m3e-react: { Badge, BadgedBox } only (CSS-only rendering; m3e-motion badgeText)",
+    "path": "packages/m3e-react/dist/index.js",
+    "import": "{ Badge, BadgedBox }",
+    "ignore": ["react", "react-dom"],
+    "limit": "1 KB"
   },
   {
     "name": "m3e-react: { FilterChip } only (incl. react-aria useCheckbox press/focus + react-stately toggle state, Icon, motion shape spring)",

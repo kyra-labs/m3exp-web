@@ -4,7 +4,7 @@
 > Source: compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/tokens @ 19991f2c0858aadfcb442ce02b2c8e4743c96898  
 > Values: Copyright (C) The Android Open Source Project, Apache License 2.0 (see NOTICE).  
 
-Emitted: 377 system and 3550 component variables from 132 component token objects.
+Emitted: 377 system and 3555 component variables from 133 component token objects.
 
 ## Not emitted here
 
@@ -668,6 +668,16 @@ Emitted: 377 system and 3550 component variables from 132 component token object
 | `BadgeTokens.LargeSize` | `16.0.dp` | BadgeTokens.kt:39 | `--m3e-comp-badge-large-size` | `16px` |  |
 | `BadgeTokens.Shape` | `ShapeKeyTokens.CornerFull` | BadgeTokens.kt:42 | `--m3e-comp-badge-shape` | `var(--m3e-sys-shape-corner-full)` |  |
 | `BadgeTokens.Size` | `6.0.dp` | BadgeTokens.kt:45 | `--m3e-comp-badge-size` | `6px` |  |
+
+## badge-defaults
+
+| Source token | Source value | Line | CSS variable | Emitted | Note |
+|---|---|---|---|---|---|
+| `BadgeDefaults.containerColor` | `BadgeTokens.Color` | compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/Badge.kt@19991f2c0858aadfcb442ce02b2c8e4743c96898 L195 | `--m3e-comp-badge-container-color` | `var(--m3e-sys-color-error)` | Badge(containerColor) default, the small and the large badge alike (BadgeTokens.LargeColor is not read); the label color is contentColorFor(containerColor) = on-error (ColorScheme.contentColorFor, BadgeTokens.LargeLabelTextColor) |
+| `Badge.kt.BadgeWithContentHorizontalPadding` | `4.dp` | compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/Badge.kt@19991f2c0858aadfcb442ce02b2c8e4743c96898 L202 | `--m3e-comp-badge-large-padding-horizontal` | `4px` | Badge with content: Modifier.padding(horizontal) after defaultMinSize(LargeSize), so the 16dp minimum includes it |
+| `Badge.kt.BadgeWithContentHorizontalOffset` | `12.dp` | compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/Badge.kt@19991f2c0858aadfcb442ce02b2c8e4743c96898 L209 | `--m3e-comp-badge-large-offset-horizontal` | `12px` | BadgedBox: a badge wider than BadgeTokens.Size starts this far before the anchor end (x = anchor width − this, placeRelative) |
+| `Badge.kt.BadgeWithContentVerticalOffset` | `14.dp` | compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/Badge.kt@19991f2c0858aadfcb442ce02b2c8e4743c96898 L211 | `--m3e-comp-badge-large-offset-vertical` | `14px` | BadgedBox: a badge wider than BadgeTokens.Size overlaps the anchor top by this (y = −badge height + this) |
+| `Badge.kt.BadgeOffset` | `6.dp` | compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/Badge.kt@19991f2c0858aadfcb442ce02b2c8e4743c96898 L218 | `--m3e-comp-badge-offset` | `6px` | BadgedBox: the dot (no content) starts this far before the anchor end and overlaps its top by this, i.e. its corner sits inside the anchor top-end corner |
 
 ## baseline-button
 

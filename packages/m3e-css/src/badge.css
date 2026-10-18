@@ -1,0 +1,132 @@
+/*
+ * Badge (COMPONENT_SPEC §34): a 6dp dot, or a 16dp pill with up to four characters ("999+"),
+ * placed on the top-end corner of an anchor by a badged box. No JavaScript needed; m3e-react's
+ * <Badge count max> writes the "999+" text (owner decision M9 #6).
+ *
+ *   <span class="m3e-badged-box">
+ *     <span class="m3e-icon" role="img" aria-label="Inbox">inbox</span>
+ *     <span class="m3e-badge m3e-badge--large">
+ *       <span class="m3e-badge__text" aria-hidden="true">999+</span>
+ *       <span class="m3e-badge__label">999+</span>
+ *     </span>
+ *   </span>
+ *
+ *   <span class="m3e-badged-box">
+ *     <span class="m3e-icon" role="img" aria-label="Mail">mail</span>
+ *     <span class="m3e-badge"><span class="m3e-badge__label">New notification</span></span>
+ *   </span>
+ *
+ * - .m3e-badge alone is the dot (Compose Badge without content); --large is the badge with
+ *   content: the visible text goes in __text (aria-hidden), and __label holds the visually hidden
+ *   text that joins the accessible name of the item around it (owner decision M9 #7: "New
+ *   notification" for the dot, the count otherwise, or the app's own words). Name the item from
+ *   its content (an Icon with a label, visible text): an aria-label on the item replaces its
+ *   content, the badge included.
+ * - .m3e-badged-box (Compose BadgedBox) is the anchor's size, content centered; its direct
+ *   .m3e-badge child is placed relative to its top-end corner, mirrored in RTL (placeRelative).
+ * - Bounds (Compose Modifier.badgeBounds(): BadgeEndRuler / BadgeTopRuler): a component that
+ *   keeps badges inside itself (navigation items, tabs) sets --_m3e-badged-box-bounds-end and
+ *   --_m3e-badged-box-bounds-top on the box or an ancestor: how far its end and top edges lie
+ *   beyond the box's end and top edges (lengths ≥ 0, both set). The badge then moves back inside
+ *   (x = min(desired, end − badge width), y = max(desired, top)). Unset, nothing clamps (a
+ *   BadgedBox outside a badgeBounds() layout: the rulers default to ±infinity).
+ *
+ * Sources (compose/material3 @ 19991f2c):
+ * - BadgeTokens.kt: Size 6dp, LargeSize 16dp, Shape / LargeShape CornerFull, LargeLabelTextFont
+ *   LabelSmall, LargeLabelTextColor OnError.
+ * - Badge.kt: Badge (L151-189: defaultMinSize(size, size), background(containerColor, shape), 4dp
+ *   horizontal padding with content, centered; contentColorFor(BadgeDefaults.containerColor =
+ *   BadgeTokens.Color) = onError), BadgedBox (L64-130: anchor size, badge measured with a loose
+ *   height; hasContent = badge width > BadgeTokens.Size; x = anchor width − 12 or 6dp, y = −badge
+ *   height + 14 or 6dp; clamped by the rulers). No motion: badges appear and disappear at once.
+ * - Literals: components/badge-defaults.css (PARITY.md).
+ */
+@import '@kyralabs/m3e-tokens/components/badge.css';
+@import '@kyralabs/m3e-tokens/components/badge-defaults.css';
+
+@layer m3e.components {
+  .m3e-badge {
+    position: relative;
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    min-inline-size: var(--m3e-comp-badge-size);
+    min-block-size: var(--m3e-comp-badge-size);
+    margin: 0;
+    padding: 0;
+    border-radius: var(--m3e-comp-badge-shape);
+    background-color: var(--m3e-comp-badge-container-color);
+    color: var(--m3e-comp-badge-large-label-text-color);
+    white-space: nowrap;
+  }
+
+  /* Badge with content: a 16dp minimum pill, label small, 4dp each side of the text. */
+  .m3e-badge--large {
+    min-inline-size: var(--m3e-comp-badge-large-size);
+    min-block-size: var(--m3e-comp-badge-large-size);
+    padding-inline: var(--m3e-comp-badge-large-padding-horizontal);
+    border-radius: var(--m3e-comp-badge-large-shape);
+    font-family: var(--m3e-comp-badge-large-label-text-font);
+    font-size: var(--m3e-comp-badge-large-label-text-size);
+    font-weight: var(--m3e-comp-badge-large-label-text-weight);
+    line-height: var(--m3e-comp-badge-large-label-text-line-height);
+    letter-spacing: var(--m3e-comp-badge-large-label-text-tracking);
+  }
+
+  /* Text only assistive technology reads; it joins the accessible name of the item around it. */
+  .m3e-badge__label {
+    position: absolute;
+    inline-size: 0;
+    block-size: 0;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  /* --- Badged box --------------------------------------------------------------------------- */
+  .m3e-badged-box {
+    --_m3e-badge-direction: 1;
+
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .m3e-badged-box:dir(rtl) {
+    --_m3e-badge-direction: -1;
+  }
+
+  .m3e-badged-box > .m3e-badge {
+    --_m3e-badge-offset-inline: var(--m3e-comp-badge-offset);
+    --_m3e-badge-offset-block: var(--m3e-comp-badge-offset);
+
+    position: absolute;
+    inset-block-end: calc(100% - var(--_m3e-badge-offset-block));
+    inset-inline-start: calc(100% - var(--_m3e-badge-offset-inline));
+
+    /* The rulers (see the header): invalid, so none, while the bounds are unset. */
+    translate: calc(
+        min(0%, var(--_m3e-badged-box-bounds-end) + var(--_m3e-badge-offset-inline) - 100%) *
+          var(--_m3e-badge-direction)
+      )
+      max(0%, 100% - var(--_m3e-badge-offset-block) - var(--_m3e-badged-box-bounds-top));
+  }
+
+  .m3e-badged-box > .m3e-badge--large {
+    --_m3e-badge-offset-inline: var(--m3e-comp-badge-large-offset-horizontal);
+    --_m3e-badge-offset-block: var(--m3e-comp-badge-large-offset-vertical);
+  }
+
+  /* --- Forced colors ------------------------------------------------------------------------ */
+  @media (forced-colors: active) {
+    /* Backgrounds are dropped in forced colors: draw the badge in the text color instead. */
+    .m3e-badge {
+      forced-color-adjust: none;
+      background-color: CanvasText;
+      color: Canvas;
+    }
+  }
+}
