@@ -19,7 +19,9 @@ rules for contributors.
 | `@kyralabs/m3e-icons` | Material Symbols subsetting CLI |
 | `@kyralabs/m3e-codegen` | Private build-time token generator |
 
-`apps/docs` is the Astro docs/playground, and `apps/visual` holds the Playwright + axe suites.
+`apps/docs` is the Astro docs/playground, published at <https://m3epg.kyralabs.dev> from `main`
+(`.github/workflows/docs.yml`, Cloudflare Pages), and `apps/visual` holds the Playwright + axe
+suites.
 
 ## Develop
 
