@@ -49,4 +49,5 @@
 @import './slider.css';
 @import './text-field.css';
 @import './list.css';
+@import './tooltip.css';
 @import './layout.css'; /* canonical layouts; imports vertical-drag-handle.css */

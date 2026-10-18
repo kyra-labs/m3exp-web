@@ -18,6 +18,7 @@
 //   from the component tokens file").
 // Each value is read with a targeted regex and cited by line; CHECKS throw when the wiring
 // tabs.css and m3e-motion's tabs port assume changes upstream.
+import { type FontMetrics, baselineShiftLiteral } from './compose-literals.js';
 import { kebabName } from './names.js';
 
 export interface TabsDefault {
@@ -391,7 +392,7 @@ const tokenVar = (ref: string) => {
  */
 export function extractTabsDefaults(
   sources: Readonly<Record<string, string>>,
-  font: { unitsPerEm: number; ascent: number; descent: number },
+  font: FontMetrics,
 ): TabsDefault[] {
   const texts = Object.fromEntries(
     TABS_DEFAULTS_SOURCES.map((file) => [file, normalize(sources[file], file)]),
@@ -459,21 +460,13 @@ export function extractTabsDefaults(
         }));
     }
   });
-  // The text baseline Compose places by (Tab.kt placeTextAndIcon: firstBaseline / lastBaseline)
-  // sits, with DefaultLineHeightStyle (Alignment.Center, Trim.None; TypographyTokens.kt L329-330),
-  // (ascent + descent) / 2 × font size below the middle of its line, as CSS half-leading places it.
-  const shift = Math.round(((font.ascent + font.descent) / (2 * font.unitsPerEm)) * 1e4) / 1e4;
-  out.push({
-    name: `${P}-label-baseline-shift`,
-    value: String(shift),
-    js: shift,
-    raw: `(ascent ${String(font.ascent)} + descent ${String(font.descent)}) / (2 × unitsPerEm ${String(font.unitsPerEm)})`,
-    owner: 'Google Sans Flex (D1)',
-    member: 'hhea ascent / descent',
-    file: 'google-sans-flex.manifest.json',
-    line: 0,
-    cite: 'packages/m3e-tokens/fonts/google-sans-flex.manifest.json metrics (m3e-codegen fonts, from the SOURCE_PIN TTF)',
-    note: 'the label baseline sits this × the font size below the middle of its line box: an icon + text tab places its label from it (tabs.css)',
-  });
+  // The text baseline Compose places by (Tab.kt placeTextAndIcon: firstBaseline / lastBaseline).
+  out.push(
+    baselineShiftLiteral(
+      `${P}-label-baseline-shift`,
+      font,
+      'the label baseline sits this × the font size below the middle of its line box: an icon + text tab places its label from it (tabs.css)',
+    ),
+  );
   return out;
 }

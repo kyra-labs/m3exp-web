@@ -4,9 +4,12 @@
   "path": "compose/material3/material3/src/androidMain/kotlin/androidx/compose/material3",
   "files": {
     "AndroidMenu.android.kt": "78e4994e3772d58e594972fd902ba42bdba7e56bc9faa64534a4c57febe05d9c",
+    "Tooltip.android.kt": "a5683c858676ca82549377822f623a8e17216b066278083d8b07b46101477d70",
+    "BasicTooltip.android.kt": "37212a13dd78005f80a7258866f75c6bf4653780c8085d10b93283c41b7c2f47",
     "Strings.android.kt": "72db1d475408e756f4b007f5a055f892ec4b9f2500a21a98b229c19918fee8c4"
   },
   "upstream": {
+    "BasicTooltip.android.kt": "internal/BasicTooltip.android.kt",
     "Strings.android.kt": "internal/Strings.android.kt"
   }
 }

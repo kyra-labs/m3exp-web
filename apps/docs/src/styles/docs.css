@@ -1009,3 +1009,38 @@ button.docs-layout-item:focus-visible {
 .docs-list-legacy {
   max-inline-size: 30rem;
 }
+
+/* Tooltips (tooltip.astro): static specimens with room for the caret, demo rows. */
+.docs-tooltips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--m3e-sys-space-400);
+  align-items: flex-start;
+  margin-block: var(--m3e-sys-space-300);
+  padding-block-end: var(--m3e-sys-space-200);
+}
+
+.docs-tooltip-demos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--m3e-sys-space-200);
+  align-items: center;
+  margin-block: var(--m3e-sys-space-300);
+}
+
+.docs-tooltip-demos--center {
+  justify-content: center;
+}
+
+.docs-tooltip-anchor {
+  padding: var(--m3e-sys-space-100);
+  border: var(--m3e-comp-divider-thickness) dashed var(--m3e-sys-color-outline);
+}
+
+.docs-css-tooltip-anchor {
+  anchor-name: --docs-css-tooltip;
+}
+
+.docs-css-tooltip {
+  position-anchor: --docs-css-tooltip;
+}

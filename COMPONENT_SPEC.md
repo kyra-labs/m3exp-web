@@ -76,7 +76,7 @@
 - **API:** `.m3e-icon-button--{standard|filled|tonal|outlined}--size-s--width-wide`; React `<IconButton variant size width:'narrow'|'default'|'wide' shape aria-label isSelected? />`.
 - **Acceptance:**
   - [ ] All 15 size×width boxes match tokens.
-  - [ ] Tooltip appears on hover/focus after delay.
+  - [ ] Tooltip appears on hover (immediately, Compose BasicTooltipBox) and on keyboard focus (§33).
   - [ ] Missing `aria-label` throws a dev warning.
   - [ ] Plus CAC.
 - **Sources:** m3.material.io/components/icon-buttons/overview; *IconButtonTokens.kt.
@@ -723,12 +723,17 @@
   - [ ] Plus CAC.
 
 ## 33. Tooltips (plain, rich)
-- **Tokens:** `TODO(verify)` Plain/RichTooltipTokens.
-- **ARIA:** `role="tooltip"`, `aria-describedby`; hover/focus; Esc hides.
-- **Layers:** elements + react.
+- **Tokens (verified, generated):** `PlainTooltipTokens.kt` / `RichTooltipTokens.kt@19991f2c` plus the `Tooltip.kt` / `internal/BasicTooltip.kt` values Compose renders (`components/tooltip-defaults.css`). Plain: inverse surface, inverse-on-surface body small, extra-small corners, no elevation; 40 × 24dp minimum and 200dp maximum width with 8 × 4dp padding inside. Rich: surface container, medium corners, a Level2 shadow (tonal 0); up to 320dp wide, 16dp sides; the subhead (title small, on-surface-variant) has its first baseline 28dp from the top, the supporting text (body medium, on-surface-variant) its first baseline 24dp below the subhead (or the top) and 16dp under it, or 4dp above and below when it is alone; the action slot (label large, primary; the samples' TextButton) is at least 36dp with 8dp of bottom padding, 48dp + 8dp with the button's minimum interactive size. Caret (opt-in, `caretShape` defaults to null): `TooltipDefaults.caretSize` 16 × 8dp, on the edge facing the anchor (`layoutCaret`, `caretX`).
+- **Placement:** `rememberTooltipPositionProvider(TooltipAnchorPosition)` (`TooltipPositionProviderImpl`, m3e-motion `tooltipPosition`): above by default (centered on the anchor and kept inside the window, flipped below when it would leave the window top), below, left, right, start, end (flip on collision, vertically centered); 4dp (`SpacingBetweenTooltipAndAnchor`) from the anchor's bounds, which for m3e components include the 48dp minimum interactive size (the `::after` touch target), as Compose measures them.
+- **Motion:** in and out: scale 0.8 ↔ 1 on fast spatial (overshoots) and alpha 0 ↔ 1 on fast effects, around the center (TooltipBox `graphicsLayer`); interruptible. Reduced motion: the scale jumps.
+- **Behavior (Compose BasicTooltipBox / TooltipState):** mouse enter shows immediately (no timeout while the anchor is hovered); the tooltip is hoverable and a non-persistent one hides 1.5s (`--m3e-comp-tooltip-duration`) after the pointer has left the anchor and the tooltip (owner decision M9 #1: m3.material.io's "disappear 1.5 seconds after navigating away"; Compose hides on leaving the anchor); touch / pen long press shows it until the press ends (at least `BasicTooltipDefaults.TooltipDuration`, 1500ms) and swallows the click; keyboard focus (`:focus-visible` on the web, as a mouse click focuses buttons) shows it until focus leaves; Escape hides it; a pointer down outside the tooltip (the anchor included) hides it; `show()` (Default priority) hides a non-persistent tooltip after 1500ms; a persistent one stays until dismissed. One global mutex: a show cancels the current one unless that one has a higher priority (keyboard / long press > hover > programmatic).
+- **ARIA:** `role="tooltip"`, the anchor's `aria-describedby`, except when the tooltip text equals the anchor's accessible name: then no `aria-describedby` and the tooltip is `aria-hidden` (owner decision M9 #2). A rich tooltip with an action is a non-modal `role="dialog"` labelled by its subhead (or the anchor; owner decision M9 #4): Tab from the anchor moves focus into it (Compose `hasAction`), focus stays in it until Escape (back to the anchor) or a click outside.
+- **Layers:** css + elements (`<m3e-tooltip>`; behavior in the `tooltip-popup` entry: `TooltipController` and `TooltipPopup`, which extends the `AnchoredPopup` engine shared with `MenuPopup`) + react (`<TooltipTrigger>`, `<PlainTooltip>`, `<RichTooltip>` driving the same controller; React Aria's `useTooltipTrigger` is not used: its warm-up delay, focus and hover rules are not Compose's and it has no long press or persistent mode).
+- **Classes:** `.m3e-tooltip` (`--rich`, `--caret`) > (`__subhead`, `__supporting-text`, `__action`); JS hooks `[data-driven]`, `[data-positioned]`, `[data-caret='up' | 'down' | 'left' | 'right']`.
+- **API:** Element `<m3e-tooltip anchor variant="plain | rich" position caret persistent manual subhead action open>` (text from its children); methods `show()`, `hide()`; events `open-change` (`detail: { open }`), `action` (cancelable). React `<TooltipTrigger isOpen defaultOpen onOpenChange position isPersistent isDisabled>` > anchor + `<PlainTooltip caret>` / `<RichTooltip caret subhead action onAction>`.
 - **Acceptance:**
-  - [ ] Stays open while hovered.
-  - [ ] Plus CAC.
+  - [x] Stays open while hovered.
+  - [x] Plus CAC.
 
 ## 34. Badge
 - **Tokens:** `TODO(verify)` BadgeTokens; error/on-error.

@@ -3973,6 +3973,38 @@ export const tonalButtonTokens = {
   labelTextColorUnselectedPressed: "var(--m3e-sys-color-on-secondary-container)"
 } as const;
 
+/** TooltipDefaults */
+export const tooltipDefaults = {
+  tooltipSpacing: 4,
+  tooltipMinWidth: 40,
+  tooltipMinHeight: 24,
+  tooltipPlainPaddingVertical: 4,
+  tooltipPlainPaddingHorizontal: 8,
+  tooltipPlainMaxWidth: 200,
+  tooltipRichMaxWidth: 320,
+  tooltipRichPaddingHorizontal: 16,
+  tooltipRichSubheadBaseline: 28,
+  tooltipRichTextBaseline: 24,
+  tooltipRichTextPaddingBottom: 16,
+  tooltipRichActionMinHeight: 36,
+  tooltipRichActionPaddingBottom: 8,
+  tooltipCaretWidth: 16,
+  tooltipCaretHeight: 8,
+  tooltipRichShadow: "var(--m3e-sys-elevation-level2-shadow)",
+  tooltipClosedScale: 0.8,
+  tooltipClosedOpacity: 0,
+  tooltipScaleDuration: "var(--m3e-sys-motion-spring-fast-spatial-duration)",
+  tooltipScaleEasing: "var(--m3e-sys-motion-spring-fast-spatial-easing)",
+  tooltipScaleDampingRatio: "var(--m3e-sys-motion-spring-fast-spatial-damping-ratio)",
+  tooltipScaleStiffness: "var(--m3e-sys-motion-spring-fast-spatial-stiffness)",
+  tooltipOpacityDuration: "var(--m3e-sys-motion-spring-fast-effects-duration)",
+  tooltipOpacityEasing: "var(--m3e-sys-motion-spring-fast-effects-easing)",
+  tooltipOpacityDampingRatio: "var(--m3e-sys-motion-spring-fast-effects-damping-ratio)",
+  tooltipOpacityStiffness: "var(--m3e-sys-motion-spring-fast-effects-stiffness)",
+  tooltipDuration: 1500,
+  tooltipBaselineShift: 0.34
+} as const;
+
 /** AppBar.kt */
 export const appBar = {
   topAppBarHorizontalPadding: 4,

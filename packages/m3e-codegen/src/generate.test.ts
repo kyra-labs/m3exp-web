@@ -2154,3 +2154,79 @@ describe('canonical layout values (M7)', () => {
     expect(parity).toContain('TODO(verify): SOURCES.md register #66');
   });
 });
+
+describe('tooltip values (M9)', () => {
+  const css = output.get('components/tooltip-defaults.css')!;
+  const decl = declarations(css);
+  const kt = inputs.material3Sources['Tooltip.kt']!.replace(/\r\n/g, '\n');
+  const basic = inputs.material3Sources['BasicTooltip.kt']!.replace(/\r\n/g, '\n');
+  const t = (name: string) => decl.get(`--m3e-comp-tooltip-${name}`);
+
+  it('layout: 4dp from the anchor, 40 × 24dp minimum, plain 8 × 4dp padding up to 200dp', () => {
+    expect(kt).toMatch(/internal val SpacingBetweenTooltipAndAnchor\n\s*get\(\) = 4\.dp/);
+    expect(t('spacing')).toBe('4px');
+    expect(t('min-width')).toBe('40px');
+    expect(t('min-height')).toBe('24px');
+    expect(t('plain-padding-horizontal')).toBe('8px');
+    expect(t('plain-padding-vertical')).toBe('4px');
+    expect(t('plain-max-width')).toBe('200px');
+  });
+
+  it('rich: 320dp wide at most, 16dp sides, baselines 28 / 24dp, 16dp under the text, action slot', () => {
+    expect(t('rich-max-width')).toBe('320px');
+    expect(t('rich-padding-horizontal')).toBe('16px');
+    expect(t('rich-subhead-baseline')).toBe('28px');
+    expect(t('rich-text-baseline')).toBe('24px');
+    expect(t('rich-text-padding-bottom')).toBe('16px');
+    expect(t('rich-action-min-height')).toBe('36px');
+    expect(t('rich-action-padding-bottom')).toBe('8px');
+    expect(t('rich-shadow')).toBe('var(--m3e-sys-elevation-level2-shadow)');
+    // The baseline position paddingFromBaseline is computed from (same as the tabs).
+    expect(t('baseline-shift')).toBe(
+      declarations(output.get('components/tabs-defaults.css')!).get(
+        '--m3e-comp-tabs-label-baseline-shift',
+      ),
+    );
+  });
+
+  it('caret: TooltipDefaults.caretSize 16 × 8dp', () => {
+    expect(kt).toContain('public val caretSize: DpSize = DpSize(16.dp, 8.dp)');
+    expect(t('caret-width')).toBe('16px');
+    expect(t('caret-height')).toBe('8px');
+  });
+
+  it('motion: scale from 0.8 on FastSpatial, alpha from 0 on FastEffects; 1500ms duration', () => {
+    expect(t('closed-scale')).toBe('0.8');
+    expect(t('closed-opacity')).toBe('0');
+    for (const [name, key] of [
+      ['scale', 'fast-spatial'],
+      ['opacity', 'fast-effects'],
+    ] as const) {
+      for (const field of ['duration', 'easing', 'damping-ratio', 'stiffness']) {
+        expect(t(`${name}-${field}`)).toBe(`var(--m3e-sys-motion-spring-${key}-${field})`);
+      }
+    }
+    expect(basic).toContain('const val TooltipDuration = 1500L');
+    expect(t('duration')).toBe('1500ms');
+    expect(output.get('PARITY.md')).toMatch(
+      /internal\/BasicTooltip\.kt@\w+ L\d+ \| `--m3e-comp-tooltip-duration`/,
+    );
+  });
+
+  it('the token files the CSS reads directly', () => {
+    const plain = declarations(output.get('components/plain-tooltip.css')!);
+    expect(plain.get('--m3e-comp-plain-tooltip-container-color')).toBe(
+      'var(--m3e-sys-color-inverse-surface)',
+    );
+    expect(plain.get('--m3e-comp-plain-tooltip-container-shape')).toBe(
+      'var(--m3e-sys-shape-corner-extra-small)',
+    );
+    const rich = declarations(output.get('components/rich-tooltip.css')!);
+    expect(rich.get('--m3e-comp-rich-tooltip-container-color')).toBe(
+      'var(--m3e-sys-color-surface-container)',
+    );
+    expect(rich.get('--m3e-comp-rich-tooltip-container-shape')).toBe(
+      'var(--m3e-sys-shape-corner-medium)',
+    );
+  });
+});

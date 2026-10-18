@@ -505,6 +505,32 @@ emits `action` (`detail: { value }`). Also `label`, `disallow-empty-selection` a
 `selectedValues` property. The `list-layout.js` entry (ListLayout, item class names, the indicator
 markup) is shared with m3e-react's `<List>`, which renders the same DOM.
 
+## Tooltip
+
+```html
+<button id="fav" class="m3e-icon-button" aria-label="Favorite">…</button>
+<m3e-tooltip anchor="fav">Add to favorites</m3e-tooltip>
+
+<m3e-tooltip anchor="info" variant="rich" subhead="Permissions" action="Request access" persistent>
+  Configure permissions for selected service accounts.
+</m3e-tooltip>
+```
+
+`<m3e-tooltip>` renders a `.m3e-tooltip` popover inside itself, moves its own child nodes into it
+as the text and adds its id to the anchor's `aria-describedby`. It runs Compose's `TooltipBox`
+behavior: mouse hover shows it at once; it stays while the anchor or the tooltip is hovered and hides
+1.5s after the pointer leaves both (m3.material.io); a
+touch long press shows it until the press ends (at least `--m3e-comp-tooltip-duration`); keyboard
+focus shows it until focus leaves; Escape and a click outside hide it; one tooltip shows at a time.
+`position` (`above` | `below` | `left` | `right` | `start` | `end`, Compose
+`TooltipAnchorPosition`), `caret`, `persistent` (stays until a click outside or Escape), `manual`
+(no hover / focus / long press), `open` (reflected), `show()` (hides again after the duration
+unless persistent) and `hide()`. A rich tooltip with an `action` is a non-modal `role="dialog"`
+that Tab from the anchor moves into; the action emits a cancelable `action` event and hides the
+tooltip. Events: `open-change` (`detail: { open }`). The `tooltip-popup.js` entry
+(`TooltipController`, `TooltipPopup`) is shared with m3e-react's `<TooltipTrigger>`, which renders
+the same DOM.
+
 ## Ripple for plain HTML
 
 m3e-css draws hover, focus and pressed overlays without JS; the press ripple needs a little.

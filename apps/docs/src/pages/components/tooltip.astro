@@ -1,0 +1,186 @@
+---
+import TooltipPlayground from '../../islands/TooltipPlayground.tsx';
+import Base from '../../layouts/Base.astro';
+
+const positions = ['above', 'below', 'left', 'right', 'start', 'end'] as const;
+const richText =
+  'Configure permissions for selected service accounts. You can add and remove service account members and assign roles to them.';
+---
+
+<Base title="Tooltips">
+  <link rel="stylesheet" href="/icons/docs-icons.css" slot="head" />
+  <h1>Tooltips</h1>
+  <p>
+    Plain and rich tooltips (COMPONENT_SPEC §33, Compose <code>PlainTooltip</code> /
+    <code>RichTooltip</code> in a <code>TooltipBox</code>). A <strong>plain</strong> tooltip is a short
+    description of its anchor; a <strong>rich</strong> one adds a subhead and an action. The
+    <code>&lt;m3e-tooltip&gt;</code> element (m3e-elements) and <code>&lt;TooltipTrigger&gt;</code> (m3e-react)
+    share one controller: hovering the anchor with a mouse shows the tooltip at once, and it stays while the anchor or the
+    tooltip is hovered and hides 1.5 s after the pointer leaves both;
+    a touch long press shows it until the press ends (at least 1.5 s), keyboard focus shows it
+    until focus leaves, and Escape or a click outside hides it. Only one tooltip shows at a time. It
+    is placed by Compose's <code>TooltipPositionProviderImpl</code> (above the anchor by default,
+    flipped below at the window top, 4dp away) and scales in from 0.8 on the fast spatial spring
+    while it fades in on the fast effects spring.
+  </p>
+  <p>
+    The anchor's <code>aria-describedby</code> points at the tooltip, unless the tooltip text
+    equals the anchor's accessible name (an icon button labelled like its tooltip): the tooltip is
+    then <code>aria-hidden</code>, so it is not read twice. A rich tooltip with an action is a
+    non-modal dialog named by its subhead.
+  </p>
+
+  <section aria-labelledby="static-heading">
+    <h2 id="static-heading">Variants (static, CSS only)</h2>
+    <p>Without <code>popover</code> the m3e-css contract renders inline.</p>
+    <div class="docs-tooltips" data-testid="static">
+      <div class="m3e-tooltip" role="tooltip" data-testid="plain">Add to favorites</div>
+      <div class="m3e-tooltip m3e-tooltip--caret" role="tooltip" data-testid="plain-caret">
+        Share
+      </div>
+      <div class="m3e-tooltip" role="tooltip" data-testid="plain-long">
+        Tooltips wrap at 200dp: this plain tooltip has more text than fits on one line.
+      </div>
+      <div class="m3e-tooltip m3e-tooltip--rich" role="tooltip" data-testid="rich-text">
+        <div class="m3e-tooltip__supporting-text">Rich tooltip text only</div>
+      </div>
+      <div class="m3e-tooltip m3e-tooltip--rich" role="tooltip" data-testid="rich-subhead">
+        <div class="m3e-tooltip__subhead">Permissions</div>
+        <div class="m3e-tooltip__supporting-text">{richText}</div>
+      </div>
+      <div
+        class="m3e-tooltip m3e-tooltip--rich m3e-tooltip--caret"
+        role="dialog"
+        aria-labelledby="static-rich-subhead"
+        data-testid="rich-action"
+      >
+        <div class="m3e-tooltip__subhead" id="static-rich-subhead">Permissions</div>
+        <div class="m3e-tooltip__supporting-text">{richText}</div>
+        <div class="m3e-tooltip__action">
+          <button
+            type="button"
+            class="m3e-button m3e-button--text m3e-button--size-s m3e-button--round"
+          >
+            Request access
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section aria-labelledby="elements-heading">
+    <h2 id="elements-heading">Custom element</h2>
+    <p>
+      An <code>&lt;m3e-tooltip anchor="…"&gt;</code> next to its anchor; its text content becomes
+      the tooltip. <code>position</code> (<code>above</code>, <code>below</code>, <code>left</code>,
+      <code>right</code>, <code>start</code>, <code>end</code>), <code>caret</code>,
+      <code>persistent</code> (stays until a click outside or Escape), <code>manual</code> (only
+      <code>show()</code> / <code>hide()</code> / <code>open</code>), and for
+      <code>variant="rich"</code> a <code>subhead</code> and an <code>action</code>. Events:
+      <code>open-change</code> with <code>&#123; open &#125;</code> and a cancelable
+      <code>action</code>. Tab from the anchor moves into a tooltip with an action.
+    </p>
+    <div class="docs-tooltip-demos" data-testid="elements">
+      {
+        positions.map((position) => (
+          <>
+            <button
+              type="button"
+              id={`el-${position}`}
+              class="m3e-icon-button m3e-icon-button--standard"
+              aria-label={`Favorite (${position})`}
+            >
+              <span class="m3e-icon" aria-hidden="true">
+                favorite
+              </span>
+            </button>
+            <m3e-tooltip anchor={`el-${position}`} position={position} caret>
+              {position[0]!.toUpperCase() + position.slice(1)}
+            </m3e-tooltip>
+          </>
+        ))
+      }
+      <button
+        type="button"
+        id="el-info"
+        class="m3e-icon-button m3e-icon-button--standard"
+        aria-label="Permissions"
+      >
+        <span class="m3e-icon" aria-hidden="true">info</span>
+      </button>
+      <m3e-tooltip
+        anchor="el-info"
+        variant="rich"
+        subhead="Permissions"
+        action="Request access"
+        persistent
+        data-testid="el-rich">{richText}</m3e-tooltip
+      >
+      <button type="button" id="el-manual" class="m3e-button m3e-button--outlined">
+        Display tooltip
+      </button>
+      <span id="el-manual-anchor" class="docs-tooltip-anchor">Manual anchor</span>
+      <m3e-tooltip anchor="el-manual-anchor" manual data-testid="el-manual"
+        >Shown by show(); hides after 1.5 s</m3e-tooltip
+      >
+      <p class="docs-menu-log">Last action: <output id="el-log">none</output></p>
+    </div>
+
+    <div dir="rtl" class="docs-tooltip-demos docs-tooltip-demos--center" data-testid="rtl">
+      <button
+        type="button"
+        id="el-rtl"
+        class="m3e-icon-button m3e-icon-button--standard"
+        aria-label="مشاركة"
+      >
+        <span class="m3e-icon" aria-hidden="true">share</span>
+      </button>
+      <m3e-tooltip anchor="el-rtl" position="start" caret>مشاركة</m3e-tooltip>
+    </div>
+  </section>
+
+  <section aria-labelledby="react-heading">
+    <h2 id="react-heading">React</h2>
+    <p>
+      A <code>&lt;TooltipTrigger&gt;</code> around an anchor (a component that forwards its ref)
+      and a <code>&lt;PlainTooltip&gt;</code> or <code>&lt;RichTooltip subhead action
+      onAction&gt;</code>. <code>isPersistent</code>, <code>position</code>, <code>isOpen</code> /
+      <code>defaultOpen</code> / <code>onOpenChange</code> and <code>isDisabled</code> live on the
+      trigger, <code>caret</code> on the tooltip.
+    </p>
+    <TooltipPlayground client:only="react" />
+  </section>
+
+  <section aria-labelledby="css-heading">
+    <h2 id="css-heading">CSS only</h2>
+    <p>
+      A <code>popover</code> with <code>popovertarget</code> toggles on click without JavaScript,
+      placed above its anchor by CSS anchor positioning where supported and animated on the
+      springs' <code>linear()</code> curves. Hover, focus and long press need the element or React
+      layer.
+    </p>
+    <div class="docs-tooltip-demos">
+      <button
+        type="button"
+        class="m3e-button m3e-button--outlined docs-css-tooltip-anchor"
+        popovertarget="css-tooltip"
+        data-testid="css-trigger">Toggle (CSS only)</button
+      >
+      <div class="m3e-tooltip docs-css-tooltip" popover id="css-tooltip" role="tooltip">
+        Plain tooltip
+      </div>
+    </div>
+  </section>
+</Base>
+
+<script>
+  import '@kyralabs/m3exp-web/elements';
+
+  const log = document.getElementById('el-log')!;
+  document.querySelector('[data-testid="el-rich"]')!.addEventListener('action', () => {
+    log.textContent = 'Request access';
+  });
+  document.getElementById('el-manual')!.addEventListener('click', () => {
+    document.querySelector<HTMLElement & { show(): void }>('[data-testid="el-manual"]')!.show();
+  });
+</script>
