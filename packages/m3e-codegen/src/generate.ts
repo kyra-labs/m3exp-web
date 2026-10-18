@@ -58,6 +58,7 @@ import { extractCheckboxDefaults } from './checkbox-defaults.js';
 import { extractRadioButtonDefaults } from './radio-button-defaults.js';
 import { checkSliderXSmallAgainstCompose, extractSliderDefaults } from './slider-defaults.js';
 import { extractSwitchDefaults } from './switch-defaults.js';
+import { extractTextFieldDefaults } from './text-field-defaults.js';
 import type { ComposeLiteral } from './compose-literals.js';
 import {
   ANIMATION_CORE_PATH as ANIMATION_CORE_DIR,
@@ -1285,6 +1286,16 @@ export function generate({
   checkSliderXSmallAgainstCompose((name) => componentValues.get(name));
   setLiterals('slider-defaults', 'SliderDefaults', extractSliderDefaults(material3Sources));
 
+  // TextField.kt / OutlinedTextField.kt / TextFieldDefaults.kt / TextFieldImpl.kt values Compose
+  // renders: layout constants, min sizes, indicator and border thicknesses, the label / placeholder /
+  // affix / supporting type, the motion, both default color sets and the selection color (see
+  // text-field-defaults.ts).
+  setLiterals(
+    'text-field-defaults',
+    'TextFieldDefaults',
+    extractTextFieldDefaults(material3Sources),
+  );
+
   // SplitButtonDefaults values, optical centering and the samples' icon rotation (see
   // split-button-defaults.ts).
   const splitButtonDefaults = extractSplitButtonDefaults(
@@ -1525,6 +1536,13 @@ export function generate({
                                         [],
                                         `${MATERIAL3_DIR}/Slider.kt + ${MATERIAL3_SAMPLES_DIR}/SliderSamples.kt + m3.material.io TOKEN_TABLE.0045edb815f2325e`,
                                       )
+                                    : name === 'text-field-defaults'
+                                      ? cssFile(
+                                          'Compose TextField / OutlinedTextField values that are not in Filled/OutlinedTextFieldTokens, or that pick one of them (lines: PARITY.md).',
+                                          c.tokens,
+                                          [],
+                                          `${MATERIAL3_DIR}/{TextField,OutlinedTextField,TextFieldDefaults,internal/TextFieldImpl,MaterialTheme,InteractiveComponentSize,internal/Strings}.kt + ${MATERIAL3_SAMPLES_DIR}/TextFieldSamples.kt`,
+                                        )
                                     : name === 'switch-defaults'
                                       ? cssFile(
                                           'Compose Switch values that are not in SwitchTokens, or that pick one of them, and the inline label from the expressive ListItem (lines: PARITY.md).',

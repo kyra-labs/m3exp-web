@@ -902,6 +902,111 @@ describe('switch values (M8)', () => {
   });
 });
 
+describe('text field values (M8)', () => {
+  const decl = declarations(output.get('components/text-field-defaults.css')!);
+  const t = (name: string) => decl.get(`--m3e-comp-text-field-${name}`);
+  const filled = declarations(output.get('components/filled-text-field.css')!);
+  const outlined = declarations(output.get('components/outlined-text-field.css')!);
+
+  it('layout: 16dp padding, 8dp label padding, 12dp icon padding, Above / supporting / affix paddings', () => {
+    expect(t('padding')).toBe('16px');
+    expect(t('label-vertical-padding')).toBe('8px');
+    expect(t('icon-padding')).toBe('calc((48px - 24px) / 2)');
+    expect(t('above-label-horizontal-padding')).toBe('4px');
+    expect(t('above-label-bottom-padding')).toBe('4px');
+    expect(t('supporting-top-padding')).toBe('4px');
+    expect(t('affix-padding')).toBe('2px');
+    expect(t('min-text-line-height')).toBe('24px');
+    expect(t('min-minimized-label-line-height')).toBe('16px');
+    expect(t('min-supporting-line-height')).toBe('16px');
+    expect(t('cutout-padding')).toBe('4px');
+    expect(t('cutout-label-space')).toBe(
+      'calc(var(--m3e-sys-typescale-body-small-line-height) / 2)',
+    );
+  });
+
+  it('min sizes 280 × 56dp; indicator and outline 1dp, 2dp focused (the DB focus 3dp is not rendered)', () => {
+    expect(t('min-height')).toBe('56px');
+    expect(t('min-width')).toBe('280px');
+    expect(t('outlined-min-height')).toBe('56px');
+    expect(t('outlined-min-width')).toBe('280px');
+    expect(outlined.get('--m3e-comp-outlined-text-field-container-height')).toBe('56px');
+    expect(t('indicator-thickness')).toBe('1px');
+    expect(t('indicator-thickness-focused')).toBe('2px');
+    expect(filled.get('--m3e-comp-filled-text-field-active-indicator-height-focus')).toBe('2px');
+    expect(t('outline-thickness')).toBe('1px');
+    expect(t('outline-thickness-focused')).toBe('2px');
+  });
+
+  it('type: the label lerps bodyLarge → bodySmall; placeholder / affix bodyLarge, supporting bodySmall', () => {
+    expect(t('label-expanded-size')).toBe('var(--m3e-sys-typescale-body-large-size)');
+    expect(t('label-minimized-size')).toBe('var(--m3e-sys-typescale-body-small-size)');
+    expect(t('label-minimized-line-height')).toBe(
+      'var(--m3e-sys-typescale-body-small-line-height)',
+    );
+    expect(t('placeholder-size')).toBe('var(--m3e-sys-typescale-body-large-size)');
+    expect(t('affix-size')).toBe('var(--m3e-sys-typescale-body-large-size)');
+    expect(t('supporting-size')).toBe('var(--m3e-sys-typescale-body-small-size)');
+  });
+
+  it('motion: label FastSpatial, colors FastEffects, placeholder SlowEffects in / FastEffects out', () => {
+    const spring = (name: string, key: string) => {
+      for (const field of ['duration', 'easing', 'damping-ratio', 'stiffness']) {
+        expect(t(`${name}-${field}`)).toBe(`var(--m3e-sys-motion-spring-${key}-${field})`);
+      }
+    };
+    spring('label', 'fast-spatial');
+    spring('label-color', 'fast-effects');
+    spring('placeholder-in', 'slow-effects');
+    spring('placeholder-out', 'fast-effects');
+    spring('affix-alpha', 'fast-effects');
+    spring('indicator-color', 'fast-effects');
+    spring('indicator-width', 'fast-spatial');
+    spring('container-color', 'fast-effects');
+  });
+
+  it('colors: what defaultTextFieldColors / defaultOutlinedTextFieldColors pick', () => {
+    const c = (name: string) => `var(--m3e-sys-color-${name})`;
+    const alpha = (name: string, a: string) =>
+      `color-mix(in srgb, var(--m3e-sys-color-${name}) calc(${a} * 100%), transparent)`;
+    // The filled disabled container is ContainerColor, not the token's on-surface 4 %.
+    expect(t('filled-container-color-disabled')).toBe(c('surface-container-highest'));
+    expect(filled.get('--m3e-comp-filled-text-field-container-opacity-disabled')).toBe('0.04');
+    expect(t('filled-indicator-color')).toBe(c('on-surface-variant'));
+    expect(t('filled-indicator-color-focused')).toBe(c('primary'));
+    expect(t('filled-indicator-color-error')).toBe(c('error'));
+    expect(t('filled-indicator-color-disabled')).toBe(alpha('on-surface', '0.38'));
+    expect(t('filled-label-color-focused')).toBe(c('primary'));
+    expect(t('filled-label-color-error')).toBe(c('error'));
+    expect(t('filled-leading-icon-color-error')).toBe(c('on-surface-variant'));
+    expect(t('filled-trailing-icon-color-error')).toBe(c('error'));
+    expect(t('filled-supporting-color-error')).toBe(c('error'));
+    expect(t('filled-prefix-color-disabled')).toBe(alpha('on-surface-variant', '0.38'));
+    expect(t('filled-cursor-color')).toBe(c('primary'));
+    expect(t('filled-cursor-color-error')).toBe(c('error'));
+    expect(t('outlined-container-color')).toBe('transparent');
+    expect(t('outlined-indicator-color')).toBe(c('outline'));
+    expect(t('outlined-indicator-color-disabled')).toBe(alpha('on-surface', '0.12'));
+    expect(t('outlined-label-color-disabled')).toBe(alpha('on-surface', '0.38'));
+    expect(t('selection-color')).toBe(
+      'color-mix(in srgb, var(--m3e-sys-color-primary) calc(0.4 * 100%), transparent)',
+    );
+    // No hover color: TextFieldColors takes enabled / error / focused only (owner decision M8 #3).
+    expect([...decl.keys()].some((k) => k.includes('hover'))).toBe(false);
+  });
+
+  it('PARITY.md cites the composable sources by line', () => {
+    const parity = output.get('PARITY.md')!;
+    expect(parity).toMatch(/TextFieldImpl\.kt@\w+ L\d+ \| `--m3e-comp-text-field-padding`/);
+    expect(parity).toMatch(
+      /\/TextField\.kt@\w+ L\d+ \| `--m3e-comp-text-field-label-vertical-padding`/,
+    );
+    expect(parity).toMatch(
+      /OutlinedTextField\.kt@\w+ L\d+ \| `--m3e-comp-text-field-cutout-padding`/,
+    );
+  });
+});
+
 describe('slider values (M8)', () => {
   const decl = declarations(output.get('components/slider-defaults.css')!);
   const kt = inputs.material3Sources['Slider.kt']!.replace(/\r\n/g, '\n');
