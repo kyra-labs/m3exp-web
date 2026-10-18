@@ -969,3 +969,17 @@ button.docs-layout-item:focus-visible {
 .docs-layout-card > :first-child {
   margin-block-start: 0;
 }
+
+/* Text fields: a responsive grid of fields with space between them (the library adds none). */
+.docs-text-field-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(18rem, 1fr));
+  gap: 1.5rem 1rem;
+  align-items: start;
+  margin-block: 1rem;
+}
+
+.docs-text-field-grid .m3e-text-field {
+  inline-size: 100%;
+  min-inline-size: 0;
+}

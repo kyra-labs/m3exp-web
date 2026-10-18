@@ -1,0 +1,75 @@
+---
+import StaticTextField from '../../components/StaticTextField.astro';
+import TextFieldPlayground from '../../islands/TextFieldPlayground.tsx';
+import Base from '../../layouts/Base.astro';
+
+// Static fields in the m3e-css contract (text-field.css): filled and outlined × empty / filled /
+// error / disabled, with icons, prefix / suffix, placeholder, supporting text and counter.
+const VARIANTS = [
+  { id: 'filled', title: 'Filled', variant: 'filled' },
+  { id: 'outlined', title: 'Outlined', variant: 'outlined' },
+] as const;
+---
+
+<Base title="Text fields">
+  <link rel="stylesheet" href="/icons/docs-icons.css" slot="head" />
+  <h1>Text fields</h1>
+  <p>
+    Filled and outlined text fields (COMPONENT_SPEC §26; Compose <code>TextField</code> and <code>OutlinedTextField</code>) around a native <code>&lt;input&gt;</code> or <code>&lt;textarea&gt;</code> with a <code>&lt;label for&gt;</code>. The label floats with no JavaScript: it is minimized while the input is focused or
+    not empty, its type style lerped from body large to body small on the fast spatial spring (which overshoots under the expressive scheme), as Compose lerps the label TextStyle. Focus thickens the indicator (filled) or the outline to 2dp in primary; <code>aria-invalid="true"</code> switches to the error colors.
+    There are no hover colors and no state layer, as in Compose.
+  </p>
+
+  <section aria-labelledby="static-heading" id="static-text-fields">
+    <h2 id="static-heading">Static (m3e-css)</h2>
+    <p>
+      <code>.m3e-text-field</code> (<code>--outlined</code>, <code>--label-above</code>, <code>--multiline</code>) &gt; <code>__container</code> with the <code>__label</code>, the <code>__input</code> and the optional <code>__leading</code> / <code>__trailing</code> icons, <code>__prefix</code> / <code>__suffix</code> and, when outlined, the <code>__outline</code> fieldset whose
+      <code>__notch</code> legend repeats the label text; then an optional <code>__supporting</code> row with the <code>__supporting-text</code> and the <code>__counter</code>. Give the input a placeholder (<code>placeholder=" "</code> when no text is wanted): the resting label uses
+      <code>:placeholder-shown</code> to know the field is empty.
+    </p>
+    {
+      VARIANTS.map((v) => (
+        <div class="docs-text-field-grid" data-testid={`static-${v.id}`}>
+          <StaticTextField id={`${v.id}-empty`} testid={`${v.id}-empty`} variant={v.variant} label="Label" supportingText="Supporting text" />
+          <StaticTextField id={`${v.id}-filled`} testid={`${v.id}-filled`} variant={v.variant} label="Label" value="Input text" supportingText="Supporting text" />
+          <StaticTextField id={`${v.id}-icons`} testid={`${v.id}-icons`} variant={v.variant} label="Label" value="Input text" leadingIcon="search" trailingButton="Clear text" />
+          <StaticTextField id={`${v.id}-icons-empty`} testid={`${v.id}-icons-empty`} variant={v.variant} label="Label" leadingIcon="search" trailingIcon="mic" />
+          <StaticTextField id={`${v.id}-error`} testid={`${v.id}-error`} variant={v.variant} label="Username" value="a very long username" invalid errorText="Text input too long" maxLength={10} required trailingIcon="error" />
+          <StaticTextField id={`${v.id}-disabled`} testid={`${v.id}-disabled`} variant={v.variant} label="Label" value="Input text" disabled supportingText="Supporting text" leadingIcon="search" />
+          <StaticTextField id={`${v.id}-disabled-empty`} testid={`${v.id}-disabled-empty`} variant={v.variant} label="Label" disabled />
+          <StaticTextField id={`${v.id}-affix`} testid={`${v.id}-affix`} variant={v.variant} label="Website" prefix="www." suffix=".com" placeholder="google" />
+          <StaticTextField id={`${v.id}-affix-filled`} testid={`${v.id}-affix-filled`} variant={v.variant} label="Price" prefix="$" suffix="USD" value="250" />
+          <StaticTextField id={`${v.id}-counter`} testid={`${v.id}-counter`} variant={v.variant} label="Bio" value="Hello" maxLength={20} supportingText="Shown on your profile" />
+          <StaticTextField id={`${v.id}-placeholder`} testid={`${v.id}-placeholder`} variant={v.variant} placeholder="Placeholder, no label" ariaLabel="Search terms" />
+          <StaticTextField id={`${v.id}-above`} testid={`${v.id}-above`} variant={v.variant} labelPosition="above" label="Label above" placeholder="Placeholder" />
+          <StaticTextField id={`${v.id}-readonly`} testid={`${v.id}-readonly`} variant={v.variant} label="Read-only" value="Cannot be changed" readOnly />
+          <StaticTextField id={`${v.id}-multiline`} testid={`${v.id}-multiline`} variant={v.variant} label="Message" multiline value={'Multi-line text grows\nwith its content'} />
+        </div>
+      ))
+    }
+  </section>
+
+  <section aria-labelledby="element-heading">
+    <h2 id="element-heading">Element</h2>
+    <p>
+      <code>&lt;m3e-text-field&gt;</code> renders the same contract from attributes and adds what CSS cannot: the live character counter and, where <code>field-sizing: content</code> is missing, the growing textarea.
+    </p>
+    <div class="docs-text-field-grid">
+      <m3e-text-field label="Name" supporting-text="As on your passport" data-testid="element-filled"></m3e-text-field>
+      <m3e-text-field variant="outlined" label="Bio" maxlength="20" leading-icon="person" data-testid="element-outlined"></m3e-text-field>
+      <m3e-text-field variant="outlined" label="Notes" multiline data-testid="element-multiline"></m3e-text-field>
+    </div>
+  </section>
+
+  <section aria-labelledby="react-heading">
+    <h2 id="react-heading">React</h2>
+    <p>
+      <code>&lt;TextField variant label description errorMessage isInvalid isDisabled isReadOnly isRequired leadingIcon trailingIcon prefix suffix maxLength multiline labelPosition value defaultValue onChange&gt;</code> (React Aria <code>useTextField</code>); the same DOM as the static markup.
+    </p>
+    <TextFieldPlayground client:only="react" />
+  </section>
+</Base>
+
+<script>
+  import '@kyralabs/m3exp-web/elements';
+</script>
