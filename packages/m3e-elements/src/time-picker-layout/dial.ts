@@ -258,7 +258,9 @@ export class TimePickerLayout extends TimePickerBase<TimePickerLayoutOptions> {
       for (const label of face.labels) {
         const text = localNumber(label.value, locale);
         setText(label.el, text);
-        setText(label.copy, text);
+        // The copy's text is CSS generated content (attr(data-label)): it is decoration, and a
+        // text node there reads as low-contrast text to checkers that cannot see the clip-path.
+        setAttr(label.copy, 'data-label', text);
         setAttr(
           label.el,
           'aria-label',

@@ -28,7 +28,9 @@
  *       <span class="m3e-time-picker__track"></span>
  *       <span class="m3e-time-picker__center"></span>
  *       <div class="m3e-time-picker__highlight" aria-hidden="true">   (the faces again, on-primary,
- *         <div class="m3e-time-picker__face" data-face="hour" data-active>…</div> …  clipped to the handle)
+ *         <div class="m3e-time-picker__face" data-face="hour" data-active>   clipped to the handle; each
+ *           <span class="m3e-time-picker__label" data-label="12"></span> …     label's text is generated
+ *         </div> …                                                           from data-label)
  *       </div>
  *     </div>
  *   </div>
@@ -474,7 +476,8 @@
     --_m3e-time-picker-item-height: var(--_m3e-time-picker-period-height);
   }
 
-  /* 38–40dp tall: the touch target grows to 48dp (::before is the state layer). */
+  /* 38–40dp tall (and 40dp wide in the side column): the touch target grows to 48dp, as
+     minimumInteractiveComponentSize (::before is the state layer). */
   .m3e-time-picker__period-item::after {
     content: '';
     position: absolute;
@@ -485,7 +488,7 @@
           2
       )
     );
-    inset-inline: 0;
+    inset-inline: min(0%, calc((100% - var(--m3e-comp-minimum-interactive-component-size)) / 2));
   }
 
   /* --- The uncontained variants' side column (SideControlColumn) ----------------------------- */
@@ -530,17 +533,30 @@
     );
   }
 
+  /* SideControlColumn places the 48dp layout boxes; the small icon button's 40dp box is centered
+     in its box, so its top is the icon's top minus (40 - 24) / 2. */
   .m3e-time-picker__side > .m3e-icon-button {
     inset-block-start: calc(
       var(--m3e-comp-time-picker-side-item-height) + var(--m3e-comp-time-picker-side-item-height) +
         var(--m3e-comp-time-picker-side-period-gap) + var(--m3e-comp-time-picker-side-toggle-gap) -
-        (var(--m3e-comp-minimum-interactive-component-size) - var(--m3e-comp-icon-size)) / 2
+        (
+          var(--m3e-comp-small-icon-button-container-height) -
+            var(--m3e-comp-small-icon-button-icon-size)
+        ) /
+        2
     );
   }
 
-  /* 24-hour: the toggle alone, its icon's bottom on the fields' bottom. */
+  /* 24-hour: the toggle alone, its 48dp box at toggleY (84dp). */
   .m3e-time-picker__side > .m3e-icon-button:only-child {
-    inset-block-start: var(--m3e-comp-time-picker-side-toggle-top-24h);
+    inset-block-start: calc(
+      var(--m3e-comp-time-picker-side-toggle-top-24h) +
+        (
+          var(--m3e-comp-minimum-interactive-component-size) -
+            var(--m3e-comp-small-icon-button-container-height)
+        ) /
+        2
+    );
   }
 
   /* --- The dial (ClockFace) ------------------------------------------------------------------ */
@@ -641,6 +657,16 @@
     background-color: var(--m3e-comp-time-picker-clock-dial-selector-handle-container-color);
   }
 
+  /* The selected label lies under the handle, which would hide its inset ring: the handle draws
+     the ring instead, outside it like the other focus rings. */
+  .m3e-time-picker__dial:has(
+      > .m3e-time-picker__face > .m3e-time-picker__label[aria-checked='true']:focus-visible
+    )
+    > .m3e-time-picker__handle {
+    outline: var(--m3e-sys-state-focus-indicator-thickness) solid var(--m3e-sys-color-secondary);
+    outline-offset: var(--m3e-sys-state-focus-indicator-outer-offset);
+  }
+
   /* From the center to the handle's edge, along the selector's angle. */
   .m3e-time-picker__track {
     inset-block-start: calc(
@@ -680,6 +706,11 @@
 
   .m3e-time-picker__highlight .m3e-time-picker__label {
     color: var(--m3e-comp-time-picker-clock-dial-label-text-color-selected);
+  }
+
+  /* ::after: ::before is the labels' state layer (transparent at rest). */
+  .m3e-time-picker__highlight .m3e-time-picker__label::after {
+    content: attr(data-label);
   }
 
   /* --- TimeInput fields ------------------------------------------------------------------------ */
@@ -972,6 +1003,11 @@
     .m3e-time-picker__track,
     .m3e-time-picker__center {
       background-color: Highlight;
+    }
+
+    /* As authored (system colors): no readability backplate behind the clipped copy's text. */
+    .m3e-time-picker__highlight {
+      forced-color-adjust: none;
     }
 
     .m3e-time-picker__highlight .m3e-time-picker__label {

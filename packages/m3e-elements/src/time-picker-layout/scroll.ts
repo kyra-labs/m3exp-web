@@ -32,7 +32,11 @@ const PAGE_HEIGHT = '--m3e-comp-time-picker-scroll-field-height';
 const PAGES = '--m3e-comp-time-picker-scroll-field-pages';
 /** Rows drawn around the wheel's position (a 120–136dp wheel shows parts of three). */
 const AROUND = 2;
-/** compose foundation snapping/SnapFlingBehavior.kt `MinFlingVelocityDp` (dp/s). */
+/**
+ * `MinFlingVelocityDp` (dp/s), foundation gestures/snapping/SnapFlingBehavior.kt@19991f2c L432–433;
+ * slower releases settle on the closest page (PagerDefaults.flingBehavior's
+ * `snapPositionalThreshold` 0.5, pager/Pager.kt L478).
+ */
 const MIN_FLING_VELOCITY = 400;
 
 interface Wheel {
@@ -48,6 +52,8 @@ interface Wheel {
     y: number;
     dragging: boolean;
     samples: { t: number; v: number }[];
+    /** The row pressed (read at pointerdown: pointer capture retargets the later events). */
+    row: HTMLElement | null;
   } | null;
   wheelDelta: number;
 }
@@ -268,6 +274,7 @@ export class TimeScrollLayout extends TimePickerFieldsBase<TimeScrollLayoutOptio
           y: e.clientY,
           dragging: false,
           samples: [],
+          row: e.target instanceof Element ? e.target.closest<HTMLElement>(`.${ROOT}__item`) : null,
         };
         if ('setPointerCapture' in target) target.setPointerCapture(e.pointerId);
       },
@@ -301,9 +308,7 @@ export class TimeScrollLayout extends TimePickerFieldsBase<TimeScrollLayoutOptio
       if (!drag.dragging) {
         // A click on a row: animateScrollToOption(index).
         if (e.type !== 'pointerup') return;
-        const row =
-          e.target instanceof Element ? e.target.closest<HTMLElement>(`.${ROOT}__item`) : null;
-        const page = Number(row?.dataset['page']);
+        const page = Number(drag.row?.dataset['page']);
         if (!Number.isFinite(page)) return;
         const index = ((page % wheel.count) + wheel.count) % wheel.count;
         this.#animate(
