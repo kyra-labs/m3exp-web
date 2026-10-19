@@ -1,0 +1,156 @@
+---
+import SideSheetPlayground from '../../islands/SideSheetPlayground.tsx';
+import Base from '../../layouts/Base.astro';
+
+const body =
+  '<p>Side sheets hold supplementary content and actions next to the main content.</p><p>Use them for filters, details about a selected item, or settings that affect the screen.</p>';
+const filters = ['Photos', 'Videos', 'Documents', 'Shared with me'];
+const filterList = `<ul class="docs-side-sheet-options">${filters
+  .map(
+    (f, i) =>
+      `<li><label class="m3e-checkbox"><input class="m3e-checkbox__input" type="checkbox"${i < 2 ? ' checked' : ''} /><span class="m3e-checkbox__box" aria-hidden="true"><svg class="m3e-checkbox__mark" focusable="false"><path class="m3e-checkbox__stroke" d="M0 0H48" /><path class="m3e-checkbox__stroke" d="M0 0H48" /></svg></span><span class="m3e-checkbox__state" aria-hidden="true"></span><span class="m3e-checkbox__label">${f}</span></label></li>`,
+  )
+  .join('')}</ul>`;
+---
+
+<Base title="Side sheets">
+  <link rel="stylesheet" href="/icons/docs-icons.css" slot="head" />
+  <h1>Side sheets</h1>
+  <p>
+    Side sheets (COMPONENT_SPEC §31) show supplementary content anchored to the end edge of the window (the left edge in right-to-left languages). Compose Material3 has no side sheet, so m3.material.io is the only reference (D8) and every value is <code>TODO(verify)</code> against it. The <strong>standard side sheet</strong> sits next to the main content and narrows it while open; the <strong>modal side sheet</strong> is a dialog over a 32% scrim that has to be dismissed before the page can be used again. The <strong>adaptive</strong> variant is modal below 600dp (the medium window size class) and standard from it.
+  </p>
+  <p>
+    The sheet is 256dp wide by default (the token DB's docked width; set <code>--m3e-comp-side-sheet-container-width</code>, up to 400dp). The standard sheet takes surface, the modal sheet surface-container-low with 16dp corners on its open side and a level 1 shadow. The header has an optional back button, the headline (title large) and the close button that m3.material.io requires; optional action buttons sit at the bottom. Sheets open on the default spatial spring and close on the fast effects spring, the navigation drawer's motion mirrored to the end edge (there are no drags). The close button and Escape close a sheet; the scrim closes a modal one.
+  </p>
+
+  <section aria-labelledby="standard-heading">
+    <h2 id="standard-heading">Standard side sheet (element)</h2>
+    <p>
+      <code>&lt;m3e-side-sheet headline="Title" open&gt;</code> as the last child of a flex row: opening it takes its width from the row, so the content beside it shrinks instead of being covered. Its content scrolls on its own. <code>divider</code> draws the line along its start edge.
+    </p>
+    <div class="docs-side-sheet-frame" data-testid="standard-frame">
+      <div class="docs-side-sheet-frame__main">
+        <p>Main content</p>
+        <button type="button" class="m3e-button m3e-button--tonal" data-side-sheet-toggle="standard" data-testid="toggle-standard">Toggle side sheet</button>
+        <Fragment set:html={body} />
+      </div>
+      <m3e-side-sheet headline="Title" open divider data-testid="standard">
+        <Fragment set:html={body} />
+        <Fragment set:html={body} />
+      </m3e-side-sheet>
+    </div>
+
+    <h3>Back button and actions</h3>
+    <p>
+      <code>back</code> adds the back icon button (it fires <code>back</code>); children with <code>slot="actions"</code> are the bottom actions, start-aligned.
+    </p>
+    <div class="docs-side-sheet-frame" data-testid="actions-frame">
+      <div class="docs-side-sheet-frame__main">
+        <p>Main content</p>
+        <button type="button" class="m3e-button m3e-button--tonal" data-side-sheet-toggle="actions" data-testid="toggle-actions">Toggle side sheet</button>
+      </div>
+      <m3e-side-sheet headline="Filters" back open data-testid="actions">
+        <Fragment set:html={filterList} />
+        <button type="button" class="m3e-button m3e-button--filled" slot="actions" data-side-sheet-close>Save</button>
+        <button type="button" class="m3e-button m3e-button--outlined" slot="actions" data-side-sheet-close>Cancel</button>
+      </m3e-side-sheet>
+    </div>
+  </section>
+
+  <section aria-labelledby="modal-heading">
+    <h2 id="modal-heading">Modal side sheet (element)</h2>
+    <p>
+      <code>&lt;m3e-side-sheet variant="modal"&gt;</code>: <code>show()</code> opens it over the scrim. The page is inert while it is open, Tab stays inside, focus moves to its first button and returns to the opener when it closes. <code>detached</code> insets it by 16dp with all corners rounded; <code>divider</code> separates the actions.
+    </p>
+    <div class="docs-button-row">
+      <button type="button" class="m3e-button m3e-button--filled" data-side-sheet-open="modal" data-testid="open-modal">Modal side sheet</button>
+      <button type="button" class="m3e-button m3e-button--tonal" data-side-sheet-open="modal-detached" data-testid="open-modal-detached">Detached</button>
+    </div>
+
+    <m3e-side-sheet variant="modal" headline="Title" data-testid="modal">
+      <Fragment set:html={body} />
+    </m3e-side-sheet>
+
+    <m3e-side-sheet variant="modal" headline="Filters" back detached divider data-testid="modal-detached">
+      <Fragment set:html={filterList} />
+      <button type="button" class="m3e-button m3e-button--filled" slot="actions" data-side-sheet-close>Save</button>
+      <button type="button" class="m3e-button m3e-button--outlined" slot="actions" data-side-sheet-close>Cancel</button>
+    </m3e-side-sheet>
+  </section>
+
+  <section aria-labelledby="adaptive-heading">
+    <h2 id="adaptive-heading">Adaptive</h2>
+    <p>
+      <code>variant="adaptive"</code> follows the window size class: from 600dp it is a standard sheet (as here on a wide window), below it a modal one (m3.material.io: standard sheets are for medium and expanded windows, modal ones for compact windows). It switches when the window crosses 600dp and stays open.
+    </p>
+    <div class="docs-side-sheet-frame" data-testid="adaptive-frame">
+      <div class="docs-side-sheet-frame__main">
+        <p>Main content</p>
+        <button type="button" class="m3e-button m3e-button--tonal" data-side-sheet-toggle="adaptive" data-testid="toggle-adaptive">Toggle side sheet</button>
+      </div>
+      <m3e-side-sheet variant="adaptive" headline="Details" data-testid="adaptive">
+        <Fragment set:html={body} />
+      </m3e-side-sheet>
+    </div>
+  </section>
+
+  <section aria-labelledby="tooltip-heading">
+    <h2 id="tooltip-heading">A tooltip on the close button</h2>
+    <p>
+      Compose builds a tooltip into a few buttons only (owner decision M9 #30); it has no side sheet, so the close and back buttons have none. A page can add one: <code>&lt;m3e-tooltip&gt;</code> with its <code>anchorElement</code> set to the sheet's <code>.m3e-side-sheet__close</code> button (React: wrap your own trigger in <code>&lt;TooltipTrigger&gt;</code>). Hover the close button of the first sheet on this page.
+    </p>
+    <m3e-tooltip data-testid="close-tooltip" data-anchor-close="standard">Close</m3e-tooltip>
+  </section>
+
+  <section aria-labelledby="react-heading">
+    <h2 id="react-heading">React</h2>
+    <p>
+      <code>&lt;SideSheet variant isOpen onOpenChange headline backButton onBack detached divider actions&gt;</code> renders the same DOM as the element. <code>onOpenChange(false)</code> reports the close button, Escape and the scrim.
+    </p>
+    <SideSheetPlayground client:only="react" />
+  </section>
+</Base>
+
+<script>
+  import '@kyralabs/m3exp-web/elements';
+
+  type SheetHost = HTMLElement & {
+    show(): void;
+    close(): void;
+    toggle(): void;
+    sheetElement?: HTMLElement;
+  };
+  const sheet = (id: string | undefined) =>
+    document.querySelector<SheetHost>(`m3e-side-sheet[data-testid="${id ?? ''}"]`);
+  for (const button of document.querySelectorAll<HTMLButtonElement>('[data-side-sheet-open]')) {
+    button.addEventListener('click', () => {
+      sheet(button.dataset['sideSheetOpen'])?.show();
+    });
+  }
+  for (const button of document.querySelectorAll<HTMLButtonElement>('[data-side-sheet-toggle]')) {
+    button.addEventListener('click', () => {
+      sheet(button.dataset['sideSheetToggle'])?.toggle();
+    });
+  }
+  // The actions inside a sheet close it.
+  document.addEventListener('click', (e) => {
+    const target = e.target as Element | null;
+    if (!target?.closest('[data-side-sheet-close]')) return;
+    target
+      .closest('.m3e-side-sheet')
+      ?.closest<SheetHost>('m3e-side-sheet')
+      ?.close();
+  });
+  // The tooltip example: anchored to a sheet's close button once the sheet has rendered.
+  for (const tip of document.querySelectorAll<HTMLElement & { anchorElement: HTMLElement | null }>(
+    'm3e-tooltip[data-anchor-close]',
+  )) {
+    const host = sheet(tip.dataset['anchorClose']);
+    void customElements.whenDefined('m3e-side-sheet').then(() => {
+      queueMicrotask(() => {
+        tip.anchorElement =
+          host?.sheetElement?.querySelector<HTMLElement>('.m3e-side-sheet__close') ?? null;
+      });
+    });
+  }
+</script>

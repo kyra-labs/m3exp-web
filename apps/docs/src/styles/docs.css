@@ -1162,3 +1162,29 @@ button.docs-layout-item:focus-visible {
   gap: var(--m3e-sys-space-100);
   align-items: center;
 }
+
+/* Side sheets: a flex row of a fixed height (an app window); a standard sheet ends it. */
+.docs-side-sheet-frame {
+  display: flex;
+  block-size: calc(var(--m3e-sys-space-900) * 6);
+  margin-block: var(--m3e-sys-space-300);
+  overflow: hidden;
+  outline: var(--m3e-comp-divider-thickness) solid var(--m3e-sys-color-outline-variant);
+}
+
+.docs-side-sheet-frame__main {
+  flex: 1 1 auto;
+  min-inline-size: 0;
+  padding: var(--m3e-sys-space-200);
+  overflow: auto;
+}
+
+.docs-side-sheet-frame__main > p:first-child {
+  margin-block-start: 0;
+}
+
+.docs-side-sheet-options {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
