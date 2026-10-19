@@ -1,6 +1,6 @@
 {
   "name": "@kyralabs/m3e-react",
-  "version": "1.6.1",
+  "version": "1.7.0",
   "description": "Material 3 Expressive React components (React Aria + Motion). Client-side rendering only.",
   "keywords": [
     "material-design",
