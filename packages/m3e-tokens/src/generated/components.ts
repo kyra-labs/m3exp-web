@@ -3101,6 +3101,41 @@ export const secondaryNavigationTabTokens = {
   iconColorPressed: "var(--m3e-sys-color-on-surface)"
 } as const;
 
+/** SegmentedButtonDefaults */
+export const segmentedButtonDefaults = {
+  segmentedButtonContainerColorSelected: "var(--m3e-sys-color-secondary-container)",
+  segmentedButtonContentColorSelected: "var(--m3e-sys-color-on-secondary-container)",
+  segmentedButtonOutlineColor: "var(--m3e-sys-color-outline)",
+  segmentedButtonContainerColorUnselected: "transparent",
+  segmentedButtonContentColorUnselected: "var(--m3e-sys-color-on-surface)",
+  segmentedButtonContainerColorSelectedDisabled: "var(--m3e-sys-color-secondary-container)",
+  segmentedButtonContentColorDisabled: "color-mix(in srgb, var(--m3e-sys-color-on-surface) calc(0.38 * 100%), transparent)",
+  segmentedButtonOutlineColorDisabled: "color-mix(in srgb, var(--m3e-sys-color-outline) calc(0.12 * 100%), transparent)",
+  segmentedButtonContentPaddingHorizontal: 12,
+  segmentedButtonContentPaddingVertical: 8,
+  segmentedButtonIconSpacing: 8,
+  segmentedButtonMinWidth: 58,
+  segmentedButtonMinHeight: "40px",
+  segmentedButtonSelectedZIndex: 5,
+  segmentedButtonLabelOffsetDuration: "var(--m3e-sys-motion-spring-fast-spatial-duration)",
+  segmentedButtonLabelOffsetEasing: "var(--m3e-sys-motion-spring-fast-spatial-easing)",
+  segmentedButtonLabelOffsetDampingRatio: "var(--m3e-sys-motion-spring-fast-spatial-damping-ratio)",
+  segmentedButtonLabelOffsetStiffness: "var(--m3e-sys-motion-spring-fast-spatial-stiffness)",
+  segmentedButtonIconFadeDuration: "var(--m3e-sys-motion-spring-default-effects-duration)",
+  segmentedButtonIconFadeEasing: "var(--m3e-sys-motion-spring-default-effects-easing)",
+  segmentedButtonIconFadeDampingRatio: "var(--m3e-sys-motion-spring-default-effects-damping-ratio)",
+  segmentedButtonIconFadeStiffness: "var(--m3e-sys-motion-spring-default-effects-stiffness)",
+  segmentedButtonIconScaleDuration: "var(--m3e-sys-motion-spring-fast-spatial-duration)",
+  segmentedButtonIconScaleEasing: "var(--m3e-sys-motion-spring-fast-spatial-easing)",
+  segmentedButtonIconScaleDampingRatio: "var(--m3e-sys-motion-spring-fast-spatial-damping-ratio)",
+  segmentedButtonIconScaleStiffness: "var(--m3e-sys-motion-spring-fast-spatial-stiffness)",
+  segmentedButtonIconCrossfadeDuration: "var(--m3e-sys-motion-spring-default-effects-duration)",
+  segmentedButtonIconCrossfadeEasing: "var(--m3e-sys-motion-spring-default-effects-easing)",
+  segmentedButtonIconCrossfadeDampingRatio: "var(--m3e-sys-motion-spring-default-effects-damping-ratio)",
+  segmentedButtonIconCrossfadeStiffness: "var(--m3e-sys-motion-spring-default-effects-stiffness)",
+  segmentedButtonStateLayerColor: "currentcolor"
+} as const;
+
 /** SegmentedMenuTokens */
 export const segmentedMenuTokens = {
   activeContainerShape: 24,

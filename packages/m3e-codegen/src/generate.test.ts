@@ -2597,3 +2597,70 @@ describe('pull-to-refresh values (M9, no PullToRefreshTokens.kt)', () => {
     );
   });
 });
+
+describe('segmented button values (M9, deprecated D4)', () => {
+  const css = output.get('components/segmented-button-defaults.css')!;
+  const decl = declarations(css);
+  const kt = inputs.material3Sources['SegmentedButton.kt']!.replace(/\r\n/g, '\n');
+  const t = (name: string) => decl.get(`--m3e-comp-segmented-button-${name}`);
+  const tokens = declarations(output.get('components/outlined-segmented-button.css')!);
+
+  it('OutlinedSegmentedButtonTokens: 40dp, 1dp outline, full shape, 18dp icon, label large', () => {
+    expect(source('OutlinedSegmentedButtonTokens.kt')).toMatch(
+      /val ContainerHeight: [\w.]+\n\s*get\(\) = 40\.0\.dp/,
+    );
+    expect(tokens.get('--m3e-comp-outlined-segmented-button-container-height')).toBe('40px');
+    expect(tokens.get('--m3e-comp-outlined-segmented-button-outline-width')).toBe('1px');
+    expect(tokens.get('--m3e-comp-outlined-segmented-button-shape')).toBe(
+      'var(--m3e-sys-shape-corner-full)',
+    );
+    expect(tokens.get('--m3e-comp-outlined-segmented-button-icon-size')).toBe('18px');
+    expect(tokens.get('--m3e-comp-outlined-segmented-button-label-text-size')).toBe(
+      'var(--m3e-sys-typescale-label-large-size)',
+    );
+  });
+
+  it('colors: secondary container selected, transparent unselected; disabled outline is Outline at 12%', () => {
+    expect(t('container-color-selected')).toBe('var(--m3e-sys-color-secondary-container)');
+    expect(t('content-color-selected')).toBe('var(--m3e-sys-color-on-secondary-container)');
+    expect(t('container-color-unselected')).toBe('transparent');
+    expect(t('content-color-unselected')).toBe('var(--m3e-sys-color-on-surface)');
+    expect(t('outline-color')).toBe('var(--m3e-sys-color-outline)');
+    expect(t('container-color-selected-disabled')).toBe('var(--m3e-sys-color-secondary-container)');
+    expect(t('content-color-disabled')).toBe(
+      'color-mix(in srgb, var(--m3e-sys-color-on-surface) calc(0.38 * 100%), transparent)',
+    );
+    // Compose renders OutlineColor at DisabledOutlineOpacity, not the token file's
+    // DisabledOutlineColor (on-surface).
+    expect(kt).toMatch(/disabledActiveBorderColor =\n\s*fromToken\(OutlineColor\)/);
+    expect(tokens.get('--m3e-comp-outlined-segmented-button-outline-color-disabled')).toBe(
+      'var(--m3e-sys-color-on-surface)',
+    );
+    expect(t('outline-color-disabled')).toBe(
+      'color-mix(in srgb, var(--m3e-sys-color-outline) calc(0.12 * 100%), transparent)',
+    );
+    expect(t('state-layer-color')).toBe('currentcolor');
+  });
+
+  it('layout: 12 × 8dp padding, 8dp icon spacing, 58 × 40dp minimum, z-index factor 5', () => {
+    expect(t('content-padding-horizontal')).toBe('12px');
+    expect(t('content-padding-vertical')).toBe('8px');
+    expect(t('icon-spacing')).toBe('8px');
+    expect(t('min-width')).toBe('58px');
+    expect(t('min-height')).toBe('40px');
+    expect(t('selected-z-index')).toBe('5');
+  });
+
+  it('motion: label offset and check scale on FastSpatial, fade and cross-fade on DefaultEffects', () => {
+    for (const part of ['label-offset', 'icon-scale']) {
+      expect(t(`${part}-duration`)).toBe('var(--m3e-sys-motion-spring-fast-spatial-duration)');
+      expect(t(`${part}-easing`)).toBe('var(--m3e-sys-motion-spring-fast-spatial-easing)');
+    }
+    for (const part of ['icon-fade', 'icon-crossfade']) {
+      expect(t(`${part}-duration`)).toBe('var(--m3e-sys-motion-spring-default-effects-duration)');
+    }
+    expect(output.get('PARITY.md')).toMatch(
+      /material3\/SegmentedButton\.kt@\w+ L852 \| `--m3e-comp-segmented-button-selected-z-index`/,
+    );
+  });
+});
