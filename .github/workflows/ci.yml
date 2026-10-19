@@ -155,4 +155,6 @@ jobs:
         run: pnpm reference:carousel
       - name: Pull-to-refresh reference (PullToRefresh.kt drag bookkeeping, ArrowValues, drawArrow)
         run: pnpm reference:pull-to-refresh
+      - name: Time picker reference (TimePicker.kt state, dial angles / taps / selector, input transformation, scroll indices)
+        run: pnpm reference:time-picker
       - run: git diff --exit-code -- packages/m3e-motion/src/__fixtures__ packages/m3e-shapes/src/__fixtures__

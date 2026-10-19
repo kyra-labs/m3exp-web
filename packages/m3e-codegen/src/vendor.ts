@@ -82,6 +82,11 @@ export const MATERIAL3_SOURCES = [
   // and the selectable / toggleable Surface each segment is (48dp target, border, ripple).
   'SegmentedButton.kt',
   'Surface.kt',
+  // Time picker (M10 §28): TimePicker / TimeInput / TimeScroll, their Defaults, colors, state and
+  // dial math (ported by m3e-motion's time-picker.ts), the dialogs, and the scroll wheel.
+  'TimePicker.kt',
+  'TimePickerDialog.kt',
+  'ScrollField.kt',
 ] as const;
 
 /** Material3 samples the generator reads (values the Compose catalog renders, e.g. icon rotation). */
@@ -109,6 +114,7 @@ export const MATERIAL3_SAMPLE_SOURCES = [
   'BottomSheetSamples.kt',
   'PullToRefreshSamples.kt',
   'SegmentedButtonSamples.kt',
+  'TimePickerSamples.kt',
 ] as const;
 
 /** Android `actual`s the generator reads (DropdownMenu's popup margins, AndroidMenu.android.kt). */
@@ -125,6 +131,9 @@ export const MATERIAL3_ANDROID_SOURCES = [
   'AndroidAlertDialog.android.kt',
   // `actual ModalBottomSheetDialog`: the sheet's dialog window (dialog() semantics, no dim).
   'ModalBottomSheet.android.kt',
+  // The time picker's layout type (portrait / landscape), invalid-input feedback and 24h setting.
+  'TimePicker.android.kt',
+  'TimeFormat.android.kt',
 ] as const;
 
 /**
