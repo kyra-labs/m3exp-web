@@ -22,7 +22,7 @@ Copyright (C) The Android Open Source Project
 Licensed under the Apache License, Version 2.0
 
 --------------------------------------------------------------------------------
-AndroidX Compose Foundation (anchoredDraggable: the settle target and decay / tween choice)
+AndroidX Compose Foundation (anchoredDraggable: the settle target and decay / tween choice; snapping: the minimum fling velocity)
 https://android.googlesource.com/platform/frameworks/support/+/19991f2c0858aadfcb442ce02b2c8e4743c96898/compose/foundation/foundation/
 Copyright (C) The Android Open Source Project
 Licensed under the Apache License, Version 2.0

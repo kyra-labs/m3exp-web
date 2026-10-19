@@ -670,6 +670,31 @@ it imports on first use; `disabled`, `threshold` (px), `indicator-label` (defaul
 `distanceFraction`. The `pull-to-refresh-layout.js` entry (`PullToRefreshLayout`) is shared with
 m3e-react's `<PullToRefresh>`, which renders the same DOM.
 
+## Time pickers
+
+```html
+<m3e-time-picker hour="9" minute="41" hour-cycle="12"></m3e-time-picker>
+<m3e-time-input hour="21" minute="30" vibrant></m3e-time-input>
+<m3e-time-scroll hour="6" minute="45" uncontained></m3e-time-scroll>
+<script type="module">
+  document.querySelector('m3e-time-picker').addEventListener('change', (e) => {
+    console.log(e.detail.hour, e.detail.minute);
+  });
+</script>
+```
+
+Compose's `TimePicker` (the dial), `TimeInput` and `TimeScroll`. Each renders a `<div>` inside
+itself (the host is `display: contents`) with the m3e-css contract. Attributes: `hour` (0–23),
+`minute`, `hour-cycle="12|24"` (default: the locale's, from the nearest `lang`), `selection="hour|minute"`,
+`vibrant`; the dial adds `layout="auto|vertical|horizontal"` (auto: horizontal in a landscape
+window), the input and the wheels `uncontained` (a side column with AM, PM and a mode toggle that
+fires `mode-toggle`). Property `labels` overrides the English strings. Events: `change`
+(`detail: { hour, minute }`) and `selection-change` (`detail: { selection }`). The dial takes taps,
+drags and arrow keys (Enter picks); the input fields and the wheels are spin buttons (Up / Down).
+For a dialog, put a picker in a `.m3e-time-picker-dialog` surface inside
+`<m3e-dialog variant="custom">`. The `time-picker-layout.js` entry (`TimePickerLayout`,
+`TimeInputLayout`, `TimeScrollLayout`) is shared with m3e-react.
+
 ## Ripple for plain HTML
 
 m3e-css draws hover, focus and pressed overlays without JS; the press ripple needs a little.
