@@ -68,6 +68,13 @@ export const MATERIAL3_SOURCES = [
   'Snackbar.kt',
   'SnackbarHost.kt',
   'Scaffold.kt',
+  // Bottom sheets (M9 §30): SheetState / BottomSheetDefaults (thresholds, peek, max width, the
+  // drag handle and its tooltip), BottomSheet (anchors, motion, fling dampening, handle click),
+  // the scaffold's standard sheet (the peek option, owner decision M9 #13) and the Scrim.
+  'SheetDefaults.kt',
+  'BottomSheet.kt',
+  'BottomSheetScaffold.kt',
+  'Scrim.kt',
 ] as const;
 
 /** Material3 samples the generator reads (values the Compose catalog renders, e.g. icon rotation). */
@@ -92,6 +99,7 @@ export const MATERIAL3_SAMPLE_SOURCES = [
   'BadgeSamples.kt',
   'AlertDialogSamples.kt',
   'ScaffoldSamples.kt',
+  'BottomSheetSamples.kt',
 ] as const;
 
 /** Android `actual`s the generator reads (DropdownMenu's popup margins, AndroidMenu.android.kt). */
@@ -106,6 +114,8 @@ export const MATERIAL3_ANDROID_SOURCES = [
   'internal/BasicTooltip.android.kt',
   // `actual AlertDialog` (AlertDialogImpl with the platform's dialog window).
   'AndroidAlertDialog.android.kt',
+  // `actual ModalBottomSheetDialog`: the sheet's dialog window (dialog() semantics, no dim).
+  'ModalBottomSheet.android.kt',
 ] as const;
 
 /**
@@ -128,7 +138,34 @@ export const MATERIAL3_RES_SOURCES = ['strings.xml'] as const;
  * window animation, which Compose dialogs show instead of a scrim / motion of their own).
  */
 export const UI_RES_PATH = 'compose/ui/ui/src/androidMain/res/values';
-export const UI_RES_SOURCES = ['styles.xml'] as const;
+/** `strings.xml`: `close_sheet` "Close sheet", ModalBottomSheet's scrim description (`Strings.CloseSheet`). */
+export const UI_RES_SOURCES = ['strings.xml', 'styles.xml'] as const;
+
+/**
+ * Compose foundation's anchored draggable, ported by m3e-motion's anchored-draggable.ts (the
+ * bottom sheets' drag settle; the navigation drawer's target selection): `AnchoredDraggable.kt`
+ * (computeTarget, AnchoredDraggableState, the 125dp/s fling threshold), the snap fling the sheets'
+ * release runs (`SnapFlingBehavior.kt`), and the device test whose cases m3e-motion's
+ * anchored-draggable.test.ts ports (not shipped).
+ */
+export const FOUNDATION_PATH = 'compose/foundation/foundation/src';
+export const FOUNDATION_SOURCES = [
+  'commonMain/kotlin/androidx/compose/foundation/gestures/AnchoredDraggable.kt',
+  'commonMain/kotlin/androidx/compose/foundation/gestures/snapping/SnapFlingBehavior.kt',
+  'androidDeviceTest/kotlin/androidx/compose/foundation/anchoredDraggable/AnchoredDraggableStateTest.kt',
+] as const;
+
+/**
+ * Material3 device tests whose cases m3e-motion's bottom-sheet.test.ts ports (fixtures, not
+ * shipped, not read by the generator).
+ */
+export const MATERIAL3_TEST_PATH =
+  'compose/material3/material3/src/androidDeviceTest/kotlin/androidx/compose/material3';
+export const MATERIAL3_TEST_SOURCES = [
+  'BottomSheetTest.kt',
+  'ModalBottomSheetTest.kt',
+  'SheetStateTest.kt',
+] as const;
 
 /** Compose spring physics ported by m3e-motion (and compiled as-is by its JVM reference harness). */
 export const ANIMATION_CORE_PATH =

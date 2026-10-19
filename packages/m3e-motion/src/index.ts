@@ -158,6 +158,30 @@ export {
   wideNavigationRailWidth,
 } from './wide-navigation-rail.js';
 export {
+  ANCHORED_DRAGGABLE_MIN_FLING_VELOCITY,
+  type AnchoredDraggableSample,
+  type AnchoredFlingOptions,
+  AnchoredDraggableAnimation,
+  DraggableAnchors,
+  computeTarget,
+  defaultPositionalThreshold,
+} from './anchored-draggable.js';
+export {
+  SHEET_BOUNDARY_DAMPENING_ZONE,
+  SHEET_POSITIONAL_THRESHOLD,
+  SHEET_VELOCITY_THRESHOLD,
+  type SheetHandleAction,
+  type SheetLayout,
+  type SheetSample,
+  type SheetSpecs,
+  type SheetStateOptions,
+  type SheetValue,
+  SheetState,
+  bottomSheetAnchors,
+  bottomSheetLayoutTarget,
+  dampenSheetFlingVelocity,
+} from './bottom-sheet.js';
+export {
   DRAWER_POSITIONAL_THRESHOLD,
   DRAWER_SETTLE_MILLIS,
   DRAWER_VELOCITY_THRESHOLD,

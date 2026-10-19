@@ -51,6 +51,9 @@ export function readGeneratorInputs(root: string, pin: SourcePin): GenerateOptio
         ...vendorFile(vendor('androidx-animation-core-specs'), 'AnimateAsState.kt', commit).files,
         ...vendorFile(vendor('androidx-material3-adaptive'), 'NavigationSuiteScaffold.kt', commit)
           .files,
+        // The anchored draggable and snap fling the bottom sheets' release runs
+        // (bottom-sheet-defaults.ts).
+        ...vendorFile(vendor('androidx-foundation-sources'), 'AnchoredDraggable.kt', commit).files,
         // md-dialog's animations / sizes (dialog-defaults.ts; Material Web, secondary source).
         ...vendorFile(vendor('material-web'), 'animations.js', materialWebVersion).files.filter(
           (f) => /^(animations?\.js|_dialog\.scss)$/.test(f.name),

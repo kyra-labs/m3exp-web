@@ -4,8 +4,13 @@ import {
   type DrawerSpecs,
   parseCubicBezier,
 } from '@kyralabs/m3e-motion';
+import { type PointerDrag, pointerDrag } from '../base/drag.js';
 import { lockScroll, tabStops, trapTab, unlockScroll } from '../base/modal.js';
 import { readSpringTokens } from '../base/scroll.js';
+
+// The drag helpers moved to base/drag.ts (shared with the bottom sheets); re-exported here for
+// the drawer's own tests and callers.
+export { releaseVelocity } from '../base/drag.js';
 
 export type NavigationDrawerVariant = 'permanent' | 'dismissible' | 'modal';
 
@@ -35,32 +40,6 @@ const VARS = [
 ] as const;
 /** Compose `Strings.NavigationMenu` (compose/ui androidMain res/values/strings.xml L38). */
 const PANE_TITLE = 'Navigation menu';
-/**
- * Pointer travel before a drag starts: Android's touch slop (8dp, ViewConfiguration), which
- * Compose's anchoredDraggable reads (SOURCES register #33).
- */
-const DRAG_SLOP = 8;
-/**
- * Release velocity (an approximation of Compose's VelocityTracker1D, which fits the samples of the
- * last 100ms and drops everything before a 40ms pause, AssumePointerMoveStoppedMilliseconds):
- * the average speed over the trailing samples within that horizon, the release included.
- */
-const VELOCITY_WINDOW = 100;
-const VELOCITY_PAUSE = 40;
-
-/** px/s over the trailing run of samples (newest last) without a pause, within the window. */
-export function releaseVelocity(samples: readonly { t: number; x: number }[]): number {
-  const last = samples.at(-1);
-  if (!last) return 0;
-  let first = last;
-  for (let i = samples.length - 2; i >= 0; i--) {
-    const s = samples[i];
-    if (!s || first.t - s.t > VELOCITY_PAUSE || last.t - s.t > VELOCITY_WINDOW) break;
-    first = s;
-  }
-  const dt = (last.t - first.t) / 1000;
-  return dt > 0 ? (last.x - first.x) / dt : 0;
-}
 
 const round = (v: number) => String(Math.round(v * 1e4) / 1e4);
 const px = (v: number) => `${String(Math.round(v * 100) / 100)}px`;
@@ -102,16 +81,9 @@ export class NavigationDrawerLayout {
   #shown = false;
   #locked = false;
   #opener: HTMLElement | null = null;
-  #drag: {
-    id: number;
-    x: number;
-    y: number;
-    last: number;
-    active: boolean;
-    /** 1, or −1 in RTL (anchoredDraggable reverseDirection = isRtl). */
-    dir: number;
-    samples: { t: number; x: number }[];
-  } | null = null;
+  #drag: PointerDrag | null = null;
+  /** 1, or −1 in RTL (anchoredDraggable reverseDirection = isRtl), read when a drag may start. */
+  #dir = 1;
 
   constructor(root: HTMLElement, options: NavigationDrawerLayoutOptions = {}) {
     this.root = root;
@@ -136,7 +108,33 @@ export class NavigationDrawerLayout {
         });
       }
       this.update();
-      root.addEventListener('pointerdown', this.#onPointerDown, { signal });
+      // Drags (anchoredDraggable): horizontal, on the open sheet or the modal scrim.
+      this.#drag = pointerDrag(root, {
+        axis: 'x',
+        accept: this.#acceptDrag,
+        start: () => {
+          cancelAnimationFrame(this.#frame);
+          this.#frame = 0;
+          this.#animation.startDrag(performance.now());
+          return true;
+        },
+        move: (delta) => {
+          this.#animation.dragBy(delta * this.#dir);
+          this.#tick(performance.now());
+        },
+        end: (velocity) => {
+          const now = performance.now();
+          const open = this.#animation.release(
+            velocity * this.#dir,
+            this.#specs(),
+            now,
+            DRAWER_VELOCITY_THRESHOLD,
+            (next) => this.#confirm(next),
+          );
+          if (!open) this.#returnFocus();
+          this.#tick(now);
+        },
+      });
       // A mouse drag on an item link would start the browser's link drag (and cancel the pointer).
       root.addEventListener(
         'dragstart',
@@ -183,7 +181,7 @@ export class NavigationDrawerLayout {
           ? active
           : this.#opener;
     }
-    this.#drag = null;
+    this.#drag?.cancel();
     const now = performance.now();
     if (!animate) {
       this.#animation.snapTo(open);
@@ -209,6 +207,7 @@ export class NavigationDrawerLayout {
     cancelAnimationFrame(this.#frame);
     this.#frame = 0;
     this.#observer?.disconnect();
+    this.#drag?.destroy();
     this.#hide();
     this.#rest();
     this.root.removeAttribute('data-dragging');
@@ -271,99 +270,15 @@ export class NavigationDrawerLayout {
 
   // --- Drags ----------------------------------------------------------------------------------
 
-  #onPointerDown = (e: PointerEvent): void => {
-    if (e.button !== 0 || this.#options.gesturesEnabled === false) return;
-    if (!this.#shown) return;
+  #acceptDrag = (e: PointerEvent): boolean => {
+    if (this.#options.gesturesEnabled === false || !this.#shown) return false;
     const target = e.target as Element | null;
     const sheet = this.sheet;
-    if (!target || !(sheet?.contains(target) || target === this.#scrim)) return;
-    if (target.closest('input, textarea, select, [contenteditable="true"]')) return;
-    const now = e.timeStamp || performance.now();
-    this.#drag = {
-      id: e.pointerId,
-      x: e.clientX,
-      y: e.clientY,
-      last: e.clientX,
-      active: false,
-      dir: getComputedStyle(this.root).direction === 'rtl' ? -1 : 1,
-      samples: [{ t: now, x: e.clientX }],
-    };
-    const { signal } = this.#abort;
-    const options = { signal };
-    this.root.addEventListener('pointermove', this.#onPointerMove, options);
-    this.root.addEventListener('pointerup', this.#onPointerUp, options);
-    this.root.addEventListener('pointercancel', this.#onPointerUp, options);
+    if (!target || !(sheet?.contains(target) || target === this.#scrim)) return false;
+    if (target.closest('input, textarea, select, [contenteditable="true"]')) return false;
+    this.#dir = getComputedStyle(this.root).direction === 'rtl' ? -1 : 1;
+    return true;
   };
-
-  #onPointerMove = (e: PointerEvent): void => {
-    const drag = this.#drag;
-    if (drag?.id !== e.pointerId) return;
-    const now = e.timeStamp || performance.now();
-    drag.samples.push({ t: now, x: e.clientX });
-    while (drag.samples.length > 2 && now - (drag.samples[0]?.t ?? now) > VELOCITY_WINDOW) {
-      drag.samples.shift();
-    }
-    if (!drag.active) {
-      const dx = Math.abs(e.clientX - drag.x);
-      const dy = Math.abs(e.clientY - drag.y);
-      if (dy > DRAG_SLOP && dy > dx) {
-        this.#endPointer();
-        return;
-      }
-      if (dx <= DRAG_SLOP || dx < dy) return;
-      drag.active = true;
-      // Until the release's click / press has passed: items ignore it (m3e-react's onPress).
-      this.root.setAttribute('data-dragging', '');
-      drag.last = e.clientX;
-      cancelAnimationFrame(this.#frame);
-      this.#frame = 0;
-      this.#animation.startDrag(performance.now());
-      this.root.setPointerCapture(e.pointerId);
-    }
-    this.#animation.dragBy((e.clientX - drag.last) * drag.dir);
-    drag.last = e.clientX;
-    e.preventDefault();
-    this.#tick(performance.now());
-  };
-
-  #onPointerUp = (e: PointerEvent): void => {
-    const drag = this.#drag;
-    if (drag?.id !== e.pointerId) return;
-    this.#endPointer();
-    if (!drag.active) return;
-    // A drag is not a click: swallow the click that follows this pointerup (dispatched before
-    // any timer), then stop listening.
-    const guard = (click: Event) => {
-      click.preventDefault();
-      click.stopPropagation();
-    };
-    this.root.addEventListener('click', guard, { capture: true, once: true });
-    setTimeout(() => {
-      this.root.removeEventListener('click', guard, { capture: true });
-      this.root.removeAttribute('data-dragging');
-    }, 0);
-    drag.samples.push({ t: e.timeStamp || performance.now(), x: e.clientX });
-    const velocity = e.type === 'pointercancel' ? 0 : releaseVelocity(drag.samples) * drag.dir;
-    const now = performance.now();
-    const open = this.#animation.release(
-      velocity,
-      this.#specs(),
-      now,
-      DRAWER_VELOCITY_THRESHOLD,
-      (next) => this.#confirm(next),
-    );
-    if (!open) this.#returnFocus();
-    this.#tick(now);
-  };
-
-  #endPointer(): void {
-    const drag = this.#drag;
-    this.#drag = null;
-    this.root.removeEventListener('pointermove', this.#onPointerMove);
-    this.root.removeEventListener('pointerup', this.#onPointerUp);
-    this.root.removeEventListener('pointercancel', this.#onPointerUp);
-    if (drag && this.root.hasPointerCapture(drag.id)) this.root.releasePointerCapture(drag.id);
-  }
 
   // --- Keyboard -------------------------------------------------------------------------------
 

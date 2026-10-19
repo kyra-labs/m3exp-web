@@ -1,0 +1,10 @@
+{
+  "repo": "https://android.googlesource.com/platform/frameworks/support",
+  "commit": "19991f2c0858aadfcb442ce02b2c8e4743c96898",
+  "path": "compose/material3/material3/src/androidDeviceTest/kotlin/androidx/compose/material3",
+  "files": {
+    "BottomSheetTest.kt": "c3634894da985e968a5678b4bdcef6e7b5c88cff0163bdaad57b7e4086cf2547",
+    "ModalBottomSheetTest.kt": "9e0cad0c05fb981cc934e028d78ad3800cf0e5b08c87b3a6cf0a991bff0b87fc",
+    "SheetStateTest.kt": "a3ea5f4a606998d606689c81f954e04f322bef82e694b9066ca9aa1820a1504f"
+  }
+}

@@ -1102,3 +1102,63 @@ button.docs-layout-item:focus-visible {
   gap: var(--m3e-sys-space-100);
   align-items: center;
 }
+
+/*
+ * Bottom sheets (bottom-sheet.astro): the frames standard sheets sit in (positioned, so the sheet
+ * fills and clips to them), the samples' rows and the list on the sheet's color
+ * (ListItemDefaults.colors(containerColor = surfaceContainerLow) in the samples).
+ */
+.docs-sheet-frame {
+  position: relative;
+  block-size: calc(var(--m3e-sys-space-900) * 6);
+  margin-block: var(--m3e-sys-space-300);
+  overflow: hidden;
+  outline: var(--m3e-comp-divider-thickness) solid var(--m3e-sys-color-outline-variant);
+}
+
+.docs-sheet-frame__content {
+  padding: var(--m3e-sys-space-200);
+}
+
+.docs-sheet-frame__content > p {
+  margin-block-start: 0;
+}
+
+.docs-sheet-list {
+  --m3e-comp-list-item-container-color: var(--m3e-comp-sheet-bottom-docked-container-color);
+
+  margin: 0;
+  padding: 0;
+}
+
+.docs-sheet-row {
+  display: flex;
+  justify-content: center;
+}
+
+.docs-sheet-field {
+  display: block;
+  margin: var(--m3e-sys-space-100) var(--m3e-sys-space-200);
+}
+
+/* SimpleBottomSheetScaffoldSample: a 128dp box with its text centered, 64dp below the button. */
+.docs-sheet-peek {
+  display: grid;
+  place-items: center;
+  block-size: calc(var(--m3e-sys-space-800) * 2);
+}
+
+.docs-sheet-centered {
+  margin: 0 0 var(--m3e-sys-space-200);
+  text-align: center;
+}
+
+.docs-sheet-peek ~ .docs-sheet-row {
+  padding-block-end: var(--m3e-sys-space-800);
+}
+
+.docs-sheet-option {
+  display: inline-flex;
+  gap: var(--m3e-sys-space-100);
+  align-items: center;
+}

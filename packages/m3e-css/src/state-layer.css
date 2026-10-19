@@ -48,6 +48,7 @@
     .m3e-fab-menu__item,
     .m3e-search__result,
     .m3e-list-item--interactive,
+    .m3e-bottom-sheet__handle,
     .m3e-checkbox__state,
     .m3e-radio-button__state,
     .m3e-switch__state
@@ -74,6 +75,7 @@
     .m3e-fab-menu__item,
     .m3e-search__result,
     .m3e-list-item--interactive,
+    .m3e-bottom-sheet__handle,
     .m3e-checkbox__state,
     .m3e-radio-button__state,
     .m3e-switch__state
@@ -170,7 +172,8 @@
         .m3e-menu__item,
         .m3e-fab-menu__item,
         .m3e-search__result,
-        .m3e-list-item--interactive
+        .m3e-list-item--interactive,
+        .m3e-bottom-sheet__handle
       ):hover::before {
       --_m3e-state-layer-opacity: var(--m3e-sys-state-hover-state-layer-opacity);
     }
@@ -192,7 +195,8 @@
       .m3e-menu__item,
       .m3e-fab-menu__item,
       .m3e-search__result,
-      .m3e-list-item--interactive
+      .m3e-list-item--interactive,
+      .m3e-bottom-sheet__handle
     ):focus-visible::before {
     --_m3e-state-layer-opacity: var(--m3e-sys-state-focus-state-layer-opacity);
   }
@@ -213,7 +217,8 @@
       .m3e-menu__item,
       .m3e-fab-menu__item,
       .m3e-search__result,
-      .m3e-list-item--interactive
+      .m3e-list-item--interactive,
+      .m3e-bottom-sheet__handle
     )[data-dragged]::before {
     --_m3e-state-layer-opacity: var(--m3e-sys-state-dragged-state-layer-opacity);
   }
@@ -234,7 +239,8 @@
       .m3e-menu__item,
       .m3e-fab-menu__item,
       .m3e-search__result,
-      .m3e-list-item--interactive
+      .m3e-list-item--interactive,
+      .m3e-bottom-sheet__handle
     ):active::before,
   :where(
       .m3e-state-layer,
@@ -254,6 +260,7 @@
       .m3e-fab-menu__item,
       .m3e-search__result,
       .m3e-list-item--interactive,
+      .m3e-bottom-sheet__handle,
       .m3e-checkbox__state,
       .m3e-radio-button__state,
       .m3e-switch__state
@@ -277,7 +284,8 @@
       .m3e-menu__item,
       .m3e-fab-menu__item,
       .m3e-search__result,
-      .m3e-list-item--interactive
+      .m3e-list-item--interactive,
+      .m3e-bottom-sheet__handle
     ):is(:disabled, [aria-disabled='true'])::before {
     display: none;
   }
@@ -341,6 +349,7 @@
       .m3e-fab-menu__item,
       .m3e-search__result,
       .m3e-list-item--interactive,
+      .m3e-bottom-sheet__handle,
       .m3e-checkbox__state,
       .m3e-radio-button__state,
       .m3e-switch__state
@@ -389,6 +398,7 @@
       .m3e-fab-menu__item,
       .m3e-search__result,
       .m3e-list-item--interactive,
+      .m3e-bottom-sheet__handle,
       .m3e-checkbox__state,
       .m3e-radio-button__state,
       .m3e-switch__state

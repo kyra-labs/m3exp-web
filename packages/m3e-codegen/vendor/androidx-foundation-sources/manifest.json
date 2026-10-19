@@ -1,0 +1,15 @@
+{
+  "repo": "https://android.googlesource.com/platform/frameworks/support",
+  "commit": "19991f2c0858aadfcb442ce02b2c8e4743c96898",
+  "path": "compose/foundation/foundation/src",
+  "files": {
+    "AnchoredDraggableStateTest.kt": "d55314148a53e57168914a6db6a877556042031245940a6847ed965e4a467f60",
+    "AnchoredDraggable.kt": "cbf351b34fc245dfcb661e5cfbb598be3eaff9b9951a8006b158b304f9da6805",
+    "SnapFlingBehavior.kt": "ee856d5ddc681d7eb80f53dd5bb0f8512398360d1c9aba4d206685e848bb5434"
+  },
+  "upstream": {
+    "AnchoredDraggableStateTest.kt": "androidDeviceTest/kotlin/androidx/compose/foundation/anchoredDraggable/AnchoredDraggableStateTest.kt",
+    "AnchoredDraggable.kt": "commonMain/kotlin/androidx/compose/foundation/gestures/AnchoredDraggable.kt",
+    "SnapFlingBehavior.kt": "commonMain/kotlin/androidx/compose/foundation/gestures/snapping/SnapFlingBehavior.kt"
+  }
+}

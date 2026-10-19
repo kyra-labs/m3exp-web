@@ -187,6 +187,12 @@
     "limit": "1 KB"
   },
   {
+    "name": "m3e-css: bottom sheets (standard, modal, peek; drag handle)",
+    "path": "packages/m3e-css/dist/bottom-sheet.css",
+    "rolldown": false,
+    "limit": "2 KB"
+  },
+  {
     "name": "m3e-css: legacy navigation bar + rail (D4)",
     "path": [
       "packages/m3e-css/dist/navigation-bar.css",
@@ -237,9 +243,9 @@
     "limit": "6 KB"
   },
   {
-    "name": "m3e-elements: ripple entry (plain-HTML press ripple, delegated on document; raised 1 → 1.1 KB for the checkbox label / input triggers, M8)",
+    "name": "m3e-elements: ripple entry (plain-HTML press ripple, delegated on document; raised 1 → 1.1 KB for the checkbox label / input triggers, M8; 1.1 → 1.2 KB for the bottom sheet drag handle trigger, M9)",
     "path": "packages/m3e-elements/dist/ripple/index.js",
-    "limit": "1.1 KB"
+    "limit": "1.2 KB"
   },
   {
     "name": "m3e-elements (all) — D17: reported, 100 KB sanity cap (not a budget)",
@@ -538,6 +544,27 @@
     "limit": "4 KB"
   },
   {
+    "name": "m3e-elements: <m3e-bottom-sheet> entry (renders the contract; the bottom-sheet-layout and tooltip-popup entries are imported on first render and measured on their own)",
+    "path": "packages/m3e-elements/dist/bottom-sheet/index.js",
+    "ignore": ["@kyralabs/m3e-elements"],
+    "limit": "8 KB"
+  },
+  {
+    "name": "m3e-elements: bottom sheet + bottom-sheet-layout + tooltip-popup (what a page with an element bottom sheet loads in all)",
+    "path": [
+      "packages/m3e-elements/dist/bottom-sheet/index.js",
+      "packages/m3e-elements/dist/bottom-sheet-layout/index.js",
+      "packages/m3e-elements/dist/tooltip-popup/index.js"
+    ],
+    "ignore": ["@kyralabs/m3e-elements"],
+    "limit": "14 KB"
+  },
+  {
+    "name": "m3e-elements: bottom-sheet-layout entry (BottomSheetLayout, SheetState, pointerDrag, ModalSession; used by m3e-react's bottom sheets)",
+    "path": "packages/m3e-elements/dist/bottom-sheet-layout/index.js",
+    "limit": "8 KB"
+  },
+  {
     "name": "m3e-elements: tabs-layout entry (TabsLayout, used by m3e-react <Tabs>)",
     "path": "packages/m3e-elements/dist/tabs-layout/index.js",
     "limit": "6 KB"
@@ -766,6 +793,13 @@
     "limit": "10 KB"
   },
   {
+    "name": "m3e-react: { BottomSheet, ModalBottomSheet } only (BottomSheetLayout from m3e-elements, TooltipTrigger / PlainTooltip)",
+    "path": "packages/m3e-react/dist/index.js",
+    "import": "{ BottomSheet, ModalBottomSheet }",
+    "ignore": ["react", "react-dom"],
+    "limit": "13 KB"
+  },
+  {
     "name": "m3e-react: { FilterChip } only (incl. react-aria useCheckbox press/focus + react-stately toggle state, Icon, motion shape spring)",
     "path": "packages/m3e-react/dist/index.js",
     "import": "{ FilterChip }",
@@ -797,10 +831,10 @@
     "limit": "1 KB"
   },
   {
-    "name": "m3exp-web (root): { Icon } (the root entry registers every custom element by design, with <m3e-menu>, <m3e-split-button>, <m3e-button-group>, the toolbars, the progress indicators, <m3e-search>, the navigation bar / rails, <m3e-navigation-drawer>, <m3e-navigation-suite>, the window size class observer, <m3e-tabs>, <m3e-checkbox>, <m3e-chip-set>, <m3e-slider>, <m3e-text-field>, <m3e-list>, <m3e-tooltip>, <m3e-dialog>, <m3e-snackbar-host> and the canonical layouts (~60.0 kB with their lazily imported pane-motion / pane-expansion entries); a leaked React component adds ~10 kB of react-aria. Raised 53 → 54 kB for <m3e-chip-set>, 54 → 56 kB for <m3e-slider> and m3e-motion's slider math, 56 → 57 kB for <m3e-text-field>, 57 → 58 kB for <m3e-list> and its list-layout (M8), 58 → 61 kB for <m3e-tooltip> and its tooltip-popup controller (M9), 61 → 62 kB for <m3e-dialog> and its dialog-layout (M9), 62 → 64 kB for <m3e-snackbar-host> and its snackbar-layout (M9). Raise with m3e-elements (all); D17)",
+    "name": "m3exp-web (root): { Icon } (the root entry registers every custom element by design, with <m3e-menu>, <m3e-split-button>, <m3e-button-group>, the toolbars, the progress indicators, <m3e-search>, the navigation bar / rails, <m3e-navigation-drawer>, <m3e-navigation-suite>, the window size class observer, <m3e-tabs>, <m3e-checkbox>, <m3e-chip-set>, <m3e-slider>, <m3e-text-field>, <m3e-list>, <m3e-tooltip>, <m3e-dialog>, <m3e-snackbar-host>, <m3e-bottom-sheet> and the canonical layouts (~60.0 kB with their lazily imported pane-motion / pane-expansion entries); a leaked React component adds ~10 kB of react-aria. Raised 53 → 54 kB for <m3e-chip-set>, 54 → 56 kB for <m3e-slider> and m3e-motion's slider math, 56 → 57 kB for <m3e-text-field>, 57 → 58 kB for <m3e-list> and its list-layout (M8), 58 → 61 kB for <m3e-tooltip> and its tooltip-popup controller (M9), 61 → 62 kB for <m3e-dialog> and its dialog-layout (M9), 62 → 64 kB for <m3e-snackbar-host> and its snackbar-layout (M9), 64 → 70 kB for <m3e-bottom-sheet>, its bottom-sheet-layout and m3e-motion's anchored draggable / SheetState (M9). Raise with m3e-elements (all); D17)",
     "path": "packages/m3exp-web/dist/index.js",
     "import": "{ Icon }",
     "ignore": ["react", "react-dom"],
-    "limit": "64 KB"
+    "limit": "70 KB"
   }
 ]

@@ -25,6 +25,7 @@ export interface ComposeLiteral {
 
 export type LiteralKind =
   | 'dp'
+  | 'velocity'
   | 'fraction'
   | 'ms'
   | 'motion'
@@ -77,6 +78,7 @@ const KEYWORDS: Readonly<Record<string, string>> = {
   // SnapSpec() (delay 0): the value jumps, a transition of no duration.
   'SnapSpec<Float>()': '0ms',
   CircleShape: 'var(--m3e-sys-shape-corner-full)',
+  'MaterialTheme.shapes.extraLarge': 'var(--m3e-sys-shape-corner-extra-large)',
 };
 
 const normalize = (text: string | undefined, file: string) => {
@@ -135,6 +137,11 @@ function extractRule(
   switch (rule.kind) {
     case 'dp':
       return [{ ...base, value: `${captured}px`, js: Number(captured), raw: `${captured}.dp` }];
+    case 'velocity':
+      // dp per second, unitless (the drawer's velocity threshold is emitted the same way).
+      return [
+        { ...base, value: captured, js: Number(captured), raw: `${captured}.dp (per second)` },
+      ];
     case 'fraction':
       return [{ ...base, value: captured, js: Number(captured), raw: `${captured}f` }];
     case 'ms':
@@ -201,14 +208,21 @@ function extractRule(
       const value = elevation.replace('-elevation', '-shadow');
       return [{ ...base, value, js: value, raw: captured }];
     }
-    case 'motion':
+    case 'motion': {
+      // A MotionSchemeKeyTokens key (`DefaultSpatial`), or a MotionScheme spec getter's name
+      // (`MaterialTheme.motionScheme.defaultSpatialSpec()` captures `defaultSpatial`).
+      const scheme = /^[a-z]/.test(captured);
+      const key = kebabName(captured[0]!.toUpperCase() + captured.slice(1));
       return SPRING_FIELDS.map((field) => ({
         ...base,
         name: `${rule.name}-${field}`,
-        value: `var(--m3e-sys-motion-spring-${kebabName(captured)}-${field})`,
-        js: `var(--m3e-sys-motion-spring-${kebabName(captured)}-${field})`,
-        raw: `MotionSchemeKeyTokens.${captured}`,
+        value: `var(--m3e-sys-motion-spring-${key}-${field})`,
+        js: `var(--m3e-sys-motion-spring-${key}-${field})`,
+        raw: scheme
+          ? `MaterialTheme.motionScheme.${captured}Spec()`
+          : `MotionSchemeKeyTokens.${captured}`,
       }));
+    }
     case 'flag':
       return [
         {

@@ -7,7 +7,7 @@ import { PRESS_KEYS, isRippleDisabled, pressRipple, releaseRipple } from '../bas
  * checkbox's, radio button's or switch's label or input, a filter chip's input).
  */
 const TRIGGERS =
-  '.m3e-button,.m3e-icon-button,.m3e-assist-chip,.m3e-filter-chip,.m3e-filter-chip__input,.m3e-input-chip,.m3e-suggestion-chip,.m3e-fab,.m3e-extended-fab,.m3e-fab-menu__item,.m3e-state-layer,.m3e-card__action,.m3e-navigation-item,.m3e-navigation-drawer-item,.m3e-tab,.m3e-list-item--interactive,.m3e-checkbox,.m3e-checkbox__input,.m3e-radio-button,.m3e-radio-button__input,.m3e-switch,.m3e-switch__input';
+  '.m3e-button,.m3e-icon-button,.m3e-assist-chip,.m3e-filter-chip,.m3e-filter-chip__input,.m3e-input-chip,.m3e-suggestion-chip,.m3e-fab,.m3e-extended-fab,.m3e-fab-menu__item,.m3e-state-layer,.m3e-card__action,.m3e-navigation-item,.m3e-navigation-drawer-item,.m3e-tab,.m3e-list-item--interactive,.m3e-bottom-sheet__handle,.m3e-checkbox,.m3e-checkbox__input,.m3e-radio-button,.m3e-radio-button__input,.m3e-switch,.m3e-switch__input';
 
 /** Pointer id of a keyboard press (real pointer ids are never negative). */
 const KEYBOARD = -1;
