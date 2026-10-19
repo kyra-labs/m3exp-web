@@ -241,6 +241,32 @@ describe('attachAutoRipple', () => {
     up(suggestion);
   });
 
+  it('draws a segmented button press (its label or input) on the button; Space only; not disabled', () => {
+    const html = (type: string, attr = '') =>
+      `<label class="m3e-segmented-button"><input class="m3e-segmented-button__input" type="${type}"${attr}>` +
+      '<span class="m3e-segmented-button__icon"></span><span class="m3e-segmented-button__label">Day</span></label>';
+    for (const type of ['radio', 'checkbox']) {
+      const root = mount(html(type));
+      const input = root.querySelector('input')!;
+      box(root, 0, 0, 90, 40);
+      down(root.querySelector('.m3e-segmented-button__label')!, 60, 20);
+      expect(ripple(root)).toMatchObject({ ripple: true, pressed: true, x: '60px', y: '20px' });
+      up(root);
+      down(input, 10, 20);
+      expect(ripple(root)).toMatchObject({ ripple: true, pressed: true });
+      up(root);
+      key(input, 'keydown', 'Enter');
+      expect(root.hasAttribute('data-pressed')).toBe(false);
+      key(input, 'keydown', ' ');
+      expect(root.hasAttribute('data-pressed')).toBe(true);
+      key(input, 'keyup', ' ');
+      expect(root.hasAttribute('data-pressed')).toBe(false);
+      const disabled = mount(html(type, ' disabled'));
+      down(disabled.querySelector('.m3e-segmented-button__label')!);
+      expect(ripple(disabled)).toMatchObject({ ripple: false, pressed: false });
+    }
+  });
+
   it('ignores disabled triggers and hosts', () => {
     const disabled = mount('<button class="m3e-button" disabled></button>');
     down(disabled);
