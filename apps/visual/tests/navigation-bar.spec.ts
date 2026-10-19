@@ -1,5 +1,6 @@
 import AxeBuilder from '@axe-core/playwright';
 import { type Locator, type Page, expect, test } from '@playwright/test';
+import { expectComposePlacement, placement } from './badge-placement.js';
 
 // Navigation bar (COMPONENT_SPEC §13): short navigation bar + legacy (D4) bar.
 // Acceptance + light/dark × 3 browsers baselines, axe.
@@ -200,5 +201,106 @@ test.describe('forced colors', () => {
     expect(await indicator.evaluate((el) => getComputedStyle(el).backgroundColor)).not.toBe(
       'rgba(0, 0, 0, 0)',
     );
+  });
+
+  test('badges stay visible (CanvasText)', async ({ page }) => {
+    const badge = page.getByTestId('short-badges').locator('.m3e-badge').first();
+    const color = await badge.evaluate((el) => getComputedStyle(el).backgroundColor);
+    expect(color).not.toBe('rgba(0, 0, 0, 0)');
+  });
+});
+
+// Badges (M9 B2): a Compose Badge in the item icon, read after the label.
+test.describe('badges', () => {
+  const BARS = ['short-badges', 'short-badges-horizontal', 'element-badges', 'react-badges-bar'];
+  /** The `<nav>`: the element hosts render it inside themselves. */
+  const barOf = (page: Page, id: string) =>
+    id.startsWith('element-') ? page.getByTestId(id).locator('nav') : page.getByTestId(id);
+
+  test('Compose BadgedBox placement on the icon in every bar, the legacy bar too', async ({
+    page,
+  }) => {
+    for (const id of [...BARS, 'legacy-badges']) {
+      const badges = barOf(page, id).locator('.m3e-badged-box > .m3e-badge');
+      await expect(badges, id).toHaveCount(3);
+      for (const badge of await badges.all()) {
+        await expectComposePlacement(badge, '.m3e-navigation-item');
+      }
+      await expect(barOf(page, id).locator('.m3e-badge__text')).toHaveText(['8', '999+']);
+      await expect(
+        barOf(page, id).locator('.m3e-badged-box > .m3e-navigation-item__icon'),
+      ).toHaveCount(3);
+    }
+  });
+
+  test('the badge is read after the label; the item layout is unchanged', async ({ page }) => {
+    for (const id of BARS) {
+      const items = barOf(page, id).locator('.m3e-navigation-item');
+      await expect(items.nth(1), id).toHaveAccessibleName('Inbox 8');
+      await expect(items.nth(2), id).toHaveAccessibleName('Chat New notification');
+      await expect(items.nth(3), id).toHaveAccessibleName('Mail 1200 unread');
+    }
+    // A badged item lays out as the others: the same pill and label positions.
+    const items = await page.getByTestId('short-badges').locator('.m3e-navigation-item').all();
+    const pill = await box(part(items[0]!, 'state'));
+    const label = await box(part(items[0]!, 'label'));
+    for (const item of items.slice(1)) {
+      const p = await box(part(item, 'state'));
+      expect(p.y).toBeCloseTo(pill.y, 1);
+      expect(p.width).toBeCloseTo(pill.width, 1);
+      expect((await box(part(item, 'label'))).y).toBeCloseTo(label.y, 1);
+      expect((await box(part(item, 'icon'))).y - p.y).toBeCloseTo(4, 1);
+    }
+  });
+
+  test('badgeBounds(): a narrow item keeps its badge inside; RTL mirrors', async ({ page }) => {
+    const bar = page.getByTestId('short-badges');
+    await bar.evaluate((el) => {
+      el.parentElement!.style.maxInlineSize = '240px';
+    });
+    const mail = bar.locator('.m3e-navigation-item').nth(3).locator('.m3e-badge');
+    const clamped = await placement(mail, '.m3e-navigation-item');
+    expect(clamped.overflow).toBeCloseTo(0, 1);
+    expect(clamped.end).toBeLessThan(clamped.width - 12 - 1);
+    expect(clamped.top).toBeCloseTo(-2, 1);
+    await bar.evaluate((el) => {
+      el.parentElement!.style.maxInlineSize = '';
+      el.setAttribute('dir', 'rtl');
+    });
+    for (const badge of await bar.locator('.m3e-badge').all()) {
+      await expectComposePlacement(badge, '.m3e-navigation-item');
+    }
+  });
+
+  test('selection keeps the badge (Compose does not hide it); visual baselines', async ({
+    page,
+  }) => {
+    await page.mouse.move(0, 0);
+    await page.locator('#badges-heading').evaluate((el) => {
+      el.scrollIntoView({ block: 'start' });
+    });
+    const frames = page.locator('section[aria-labelledby="badges-heading"] .docs-nav-frame');
+    const first = await box(frames.first());
+    const wide = await box(frames.nth(1));
+    const last = await box(frames.last());
+    await expect(page).toHaveScreenshot('navigation-bar-badges.png', {
+      clip: {
+        x: first.x - 8,
+        y: first.y - 8,
+        width: Math.max(first.width, wide.width) + 16,
+        height: last.y + last.height - first.y + 16,
+      },
+    });
+    const bar = page.getByTestId('react-badges-bar');
+    const inbox = bar.locator('.m3e-navigation-item').nth(1);
+    await inbox.click();
+    await expect(inbox).toHaveAttribute('aria-current', 'page');
+    await expect(inbox.locator('.m3e-badge')).toHaveCount(1);
+    await expect.poll(() => box(part(inbox, 'indicator')).then((b) => b.width)).toBeCloseTo(56, 1);
+    await page.mouse.move(0, 0);
+    const frame = await box(bar);
+    await expect(page).toHaveScreenshot('navigation-bar-badges-selected.png', {
+      clip: { x: frame.x - 8, y: frame.y - 8, width: frame.width + 16, height: frame.height + 16 },
+    });
   });
 });

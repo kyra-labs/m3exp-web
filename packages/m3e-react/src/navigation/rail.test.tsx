@@ -54,6 +54,26 @@ const ELEMENT_ITEMS = [
   '<m3e-navigation-item value="off" icon="block" disabled>Off</m3e-navigation-item>',
 ].join('');
 
+/** Badges: the dot, a count, 999+, a custom label, text, an icon-only item, none. */
+const BADGE_ITEMS: NavigationDestination[] = [
+  { key: 'chat', icon: 'chat', label: 'Chat', badge: true },
+  { key: 'inbox', icon: 'inbox', label: 'Inbox', badge: 8, href: '/inbox' },
+  { key: 'mail', icon: 'mail', label: 'Mail', badge: 1200, badgeLabel: '1200 unread' },
+  { key: 'new', icon: 'star', label: 'Starred', badge: 'New', isDisabled: true },
+  { key: 'fav', icon: 'favorite', label: 'Favorites', badge: 3, isLabelHidden: true },
+  { key: 'home', icon: 'home', label: 'Home' },
+  { key: 'off', icon: 'block', label: 'Off', badge: '', badgeLabel: '' },
+];
+const ELEMENT_BADGE_ITEMS = [
+  '<m3e-navigation-item value="chat" icon="chat" badge>Chat</m3e-navigation-item>',
+  '<m3e-navigation-item value="inbox" icon="inbox" badge="8" href="/inbox">Inbox</m3e-navigation-item>',
+  '<m3e-navigation-item value="mail" icon="mail" badge="1200" badge-label="1200 unread">Mail</m3e-navigation-item>',
+  '<m3e-navigation-item value="new" icon="star" badge="New" disabled>Starred</m3e-navigation-item>',
+  '<m3e-navigation-item value="fav" icon="favorite" badge="3" label-hidden>Favorites</m3e-navigation-item>',
+  '<m3e-navigation-item value="home" icon="home">Home</m3e-navigation-item>',
+  '<m3e-navigation-item value="off" icon="block" badge="" badge-label="">Off</m3e-navigation-item>',
+].join('');
+
 /** The contract both layers render; React Aria's press marker is a runtime detail. */
 const contract = (el: Element) => {
   const clone = el.cloneNode(true) as Element;
@@ -92,6 +112,50 @@ describe('element / React DOM parity (CLAUDE.md "Done means" #8)', () => {
     const host = await renderElement(
       `<m3e-wide-navigation-rail label="Main" selected="home" expanded><button type="button" aria-label="Menu"></button>${ELEMENT_ITEMS}</m3e-wide-navigation-rail>`,
     );
+    expect(contract(host.querySelector('nav')!)).toBe(contract(react.querySelector('nav')!));
+  });
+
+  it.each(['ShortNavigationBar', 'WideNavigationRail, expanded'])('badges: %s', async (name) => {
+    const rail = name.startsWith('Wide');
+    const react = await renderReact(
+      rail ? (
+        <WideNavigationRail aria-label="Main" items={BADGE_ITEMS} selectedKey="chat" isExpanded />
+      ) : (
+        <ShortNavigationBar aria-label="Main" items={BADGE_ITEMS} selectedKey="chat" />
+      ),
+    );
+    const tag = rail ? 'm3e-wide-navigation-rail' : 'm3e-short-navigation-bar';
+    const host = await renderElement(
+      `<${tag} label="Main" selected="chat"${rail ? ' expanded' : ''}>${ELEMENT_BADGE_ITEMS}</${tag}>`,
+    );
+    expect(host.querySelectorAll('.m3e-badge')).toHaveLength(6);
+    expect(contract(host.querySelector('nav')!)).toBe(contract(react.querySelector('nav')!));
+  });
+
+  it('badges follow attribute changes (added, changed, removed) as React re-renders', async () => {
+    const host = await renderElement(
+      `<m3e-short-navigation-bar label="Main">${ELEMENT_BADGE_ITEMS}</m3e-short-navigation-bar>`,
+    );
+    const items = [...host.querySelectorAll('m3e-navigation-item')];
+    items[0]!.setAttribute('badge', '12');
+    items[1]!.removeAttribute('badge');
+    items[2]!.setAttribute('badge-label', '5 new');
+    items[5]!.setAttribute('badge', '');
+    await new Promise<void>((resolve) => {
+      setTimeout(resolve, 0);
+    });
+    const next: NavigationDestination[] = BADGE_ITEMS.map((item, i) =>
+      i === 0
+        ? { ...item, badge: 12 }
+        : i === 1
+          ? { ...item, badge: undefined }
+          : i === 2
+            ? { ...item, badgeLabel: '5 new' }
+            : i === 5
+              ? { ...item, badge: true }
+              : item,
+    );
+    const react = await renderReact(<ShortNavigationBar aria-label="Main" items={next} />);
     expect(contract(host.querySelector('nav')!)).toBe(contract(react.querySelector('nav')!));
   });
 

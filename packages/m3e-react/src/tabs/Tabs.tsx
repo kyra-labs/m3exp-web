@@ -1,4 +1,5 @@
 import { TabsLayout } from '@kyralabs/m3e-elements/tabs-layout.js';
+import type { BadgeValue } from '@kyralabs/m3e-motion';
 import {
   Children,
   type ForwardedRef,
@@ -15,6 +16,8 @@ import {
   useState,
 } from 'react';
 import { mergeProps, useButton, useObjectRef } from 'react-aria';
+import { Badge, BadgedBox } from '../badge/Badge.js';
+import { destinationBadge, labelWithBadge } from '../badge/destination.js';
 import { Icon } from '../icon/Icon.js';
 import { useStateLayer } from '../state-layer/useStateLayer.js';
 import { cx } from '../utils/cx.js';
@@ -31,6 +34,17 @@ export interface TabItem {
   isDisabled?: boolean | undefined;
   /** Icon only: the label becomes the `aria-label` (Compose `text = null`). */
   isLabelHidden?: boolean | undefined;
+  /**
+   * A badge (Compose `BadgedBox` in the tab's text, TabSamples.kt LeadingIconTabs; m3.material.io:
+   * a large badge at the trailing edge): on the label, or on the icon when the label is hidden.
+   * `true` or `''` the dot, a number (or digits) a count — `999+` above 999 — other text as is.
+   */
+  badge?: BadgeValue | false | undefined;
+  /**
+   * The badge's visually hidden text, read after the label (owner decision M9 #7). Default:
+   * "New notification" for the dot, the shown text otherwise; `''` leaves the badge out.
+   */
+  badgeLabel?: string | undefined;
 }
 
 export interface TabProps {
@@ -41,6 +55,8 @@ export interface TabProps {
   icon?: string | undefined;
   isDisabled?: boolean | undefined;
   isLabelHidden?: boolean | undefined;
+  badge?: BadgeValue | false | undefined;
+  badgeLabel?: string | undefined;
 }
 
 /**
@@ -95,6 +111,8 @@ function tabsFromChildren(children: ReactNode): TabItem[] {
       icon: props.icon,
       isDisabled: props.isDisabled,
       isLabelHidden: props.isLabelHidden,
+      badge: props.badge,
+      badgeLabel: props.badgeLabel,
     }));
 }
 
@@ -109,6 +127,11 @@ interface TabButtonProps {
 /** The m3e-css `.m3e-tab` contract; React Aria handles the press, the tab draws the ripple. */
 function TabButton({ item, id, isSelected, controls, onSelect }: TabButtonProps): ReactNode {
   const { key, label, icon, isDisabled = false, isLabelHidden = false } = item;
+  const iconElement = icon === undefined ? null : <Icon name={icon} className="m3e-tab__icon" />;
+  const labelElement = isLabelHidden ? null : <span className="m3e-tab__label">{label}</span>;
+  // The badge sits on the label (on the icon when the label is hidden), so it is read after it.
+  const anchor = isLabelHidden ? iconElement : labelElement;
+  const badge = anchor ? destinationBadge(item.badge, item.badgeLabel) : null;
   const ref = useRef<HTMLButtonElement>(null);
   const stateLayer = useStateLayer();
   const { buttonProps } = useButton(
@@ -131,13 +154,19 @@ function TabButton({ item, id, isSelected, controls, onSelect }: TabButtonProps)
         'aria-selected': isSelected ? ('true' as const) : ('false' as const),
         'aria-controls': controls,
         'aria-disabled': isDisabled ? ('true' as const) : undefined,
-        'aria-label': isLabelHidden ? label : undefined,
+        'aria-label': isLabelHidden ? labelWithBadge(label, badge) : undefined,
       })}
       ref={ref}
     >
       <span className="m3e-tab__content">
-        {icon === undefined ? null : <Icon name={icon} className="m3e-tab__icon" />}
-        {isLabelHidden ? null : <span className="m3e-tab__label">{label}</span>}
+        {isLabelHidden && badge ? null : iconElement}
+        {badge ? (
+          <BadgedBox badge={<Badge label={isLabelHidden ? '' : badge.label}>{badge.text}</Badge>}>
+            {anchor}
+          </BadgedBox>
+        ) : (
+          labelElement
+        )}
       </span>
     </button>
   );

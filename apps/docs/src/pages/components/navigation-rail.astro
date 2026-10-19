@@ -9,6 +9,13 @@ const items: Item[] = [
   { icon: 'favorite', label: 'Favorites' },
   { icon: 'settings', label: 'Settings' },
 ];
+// Badges (badge.css on the icon): none, a count, the dot, 999+.
+const badged: Item[] = [
+  { icon: 'home', label: 'Home', selected: true },
+  { icon: 'inbox', label: 'Inbox', badge: '8' },
+  { icon: 'chat', label: 'Chat', badge: '' },
+  { icon: 'mail', label: 'Mail', badge: '999+', badgeLabel: '1200 unread' },
+];
 ---
 
 <Base title="Navigation rail">
@@ -143,6 +150,30 @@ const items: Item[] = [
     <NavigationPlayground client:only="react" kind="rail" />
   </section>
 
+  <section aria-labelledby="badges-heading">
+    <h2 id="badges-heading">Badges</h2>
+    <p>A badge on the destination's icon (Compose puts a <code>BadgedBox</code> in the item's icon; <code>NavigationSuiteScaffold</code> builds it in): <code>badge</code> on <code>&lt;m3e-navigation-item&gt;</code> or on the React destination, empty (or <code>true</code>) for the dot, a number for a count (<code>999+</code> above 999), other short text as is; <code>badge-label</code> / <code>badgeLabel</code> replaces the hidden text read after the label. The badge moves with the icon while the rail expands; in the expanded rail the label is drawn over it, as Compose places the label last.</p>
+    <div class="docs-rail-frames">
+      <nav class="m3e-wide-navigation-rail" aria-label="Collapsed badges example" data-testid="rail-badges-collapsed">
+        <NavItems items={badged} prefix="bc" />
+      </nav>
+      <nav
+        class="m3e-wide-navigation-rail m3e-wide-navigation-rail--expanded"
+        aria-label="Expanded badges example"
+        data-testid="rail-badges-expanded"
+      >
+        <NavItems items={badged} prefix="be" />
+      </nav>
+      <m3e-wide-navigation-rail label="Element badges example" selected="home" data-testid="element-badges-rail">
+        <m3e-navigation-item value="home" icon="home">Home</m3e-navigation-item>
+        <m3e-navigation-item value="inbox" icon="inbox" badge="8">Inbox</m3e-navigation-item>
+        <m3e-navigation-item value="chat" icon="chat" badge="">Chat</m3e-navigation-item>
+        <m3e-navigation-item value="mail" icon="mail" badge="1200" badge-label="1200 unread">Mail</m3e-navigation-item>
+      </m3e-wide-navigation-rail>
+    </div>
+    <NavigationPlayground client:only="react" kind="rail-badges" />
+  </section>
+
   <section aria-labelledby="legacy-heading" data-deprecated>
     <h2 id="legacy-heading">Navigation rail (deprecated)</h2>
     <p class="docs-deprecated" role="note">
@@ -155,6 +186,12 @@ const items: Item[] = [
       </nav>
       <nav class="m3e-navigation-rail" aria-label="Legacy icon-only example" data-testid="legacy-rail-icons">
         <NavItems items={items.map((item) => ({ ...item, iconOnly: true }))} prefix="li" />
+      </nav>
+    </div>
+    <p>Compose's <code>NavigationRailItem</code> takes the same badge in its icon, so the legacy rail shows it too:</p>
+    <div class="docs-rail-frames">
+      <nav class="m3e-navigation-rail" aria-label="Legacy badges example" data-testid="legacy-rail-badges">
+        <NavItems items={badged} prefix="lb" />
       </nav>
     </div>
   </section>

@@ -1,6 +1,7 @@
 import AxeBuilder from '@axe-core/playwright';
 import { springValue, springVelocity } from '@kyralabs/m3e-motion';
 import { type Locator, type Page, expect, test } from '@playwright/test';
+import { expectComposePlacement, placement } from './badge-placement.js';
 
 // Navigation rail (COMPONENT_SPEC §14): wide navigation rail (collapsed / expanded / animated),
 // the modal rail, the elements and React, + legacy (D4) rail. Acceptance + light/dark × 3
@@ -562,6 +563,86 @@ test.describe('springs (frames driven by the Playwright clock)', () => {
     const frame = await box(rail);
     await expect(page).toHaveScreenshot('navigation-rail-mid-animation.png', {
       clip: { x: frame.x, y: frame.y, width: 240, height: frame.height },
+    });
+  });
+});
+
+// Badges (M9 B2): a Compose Badge in the item icon, read after the label.
+test.describe('badges', () => {
+  const RAILS = ['rail-badges-collapsed', 'rail-badges-expanded', 'element-badges-rail'];
+  /** The `<nav>`: the element hosts render it inside themselves. */
+  const railOf = (page: Page, id: string) =>
+    id.startsWith('element-') ? page.getByTestId(id).locator('nav') : page.getByTestId(id);
+
+  test('Compose BadgedBox placement on the icon; the item layout is unchanged', async ({
+    page,
+  }) => {
+    for (const id of [...RAILS, 'react-badges-rail', 'legacy-rail-badges']) {
+      const rail = railOf(page, id);
+      const badges = rail.locator('.m3e-badged-box > .m3e-badge');
+      await expect(badges, id).toHaveCount(3);
+      for (const badge of await badges.all()) {
+        await expectComposePlacement(badge, '.m3e-navigation-item');
+        expect((await placement(badge, '.m3e-navigation-item')).overflow, id).toBeLessThan(0);
+      }
+      const items = await rail.locator('.m3e-navigation-item').all();
+      const icon = await box(part(items[0]!, 'icon'));
+      const item = await box(items[0]!);
+      for (const other of items.slice(1)) {
+        const b = await box(part(other, 'icon'));
+        expect(b.x - (await box(other)).x, id).toBeCloseTo(icon.x - item.x, 1);
+      }
+    }
+  });
+
+  test('the badge is read after the label', async ({ page }) => {
+    for (const id of [...RAILS, 'react-badges-rail']) {
+      const items = railOf(page, id).locator('.m3e-navigation-item');
+      await expect(items.nth(1), id).toHaveAccessibleName('Inbox 8');
+      await expect(items.nth(2), id).toHaveAccessibleName('Chat New notification');
+      await expect(items.nth(3), id).toHaveAccessibleName('Mail 1200 unread');
+    }
+  });
+
+  test('the badge follows the icon while the rail expands; visual baselines', async ({ page }) => {
+    await page.mouse.move(0, 0);
+    await page.locator('#badges-heading').evaluate((el) => {
+      el.scrollIntoView({ block: 'start' });
+    });
+    const frames = page.locator('section[aria-labelledby="badges-heading"] .docs-rail-frames');
+    await expect(page).toHaveScreenshot('navigation-rail-badges.png', {
+      clip: await box(frames.first()),
+    });
+    const rail = page.getByTestId('react-badges-rail');
+    await rail.evaluate((el) => {
+      el.scrollIntoView({ block: 'center' });
+    });
+    const mail = rail.locator('.m3e-navigation-item').nth(3).locator('.m3e-badge');
+    const offsets = mail.evaluate(
+      (node) =>
+        new Promise<number[][]>((resolve) => {
+          const samples: number[][] = [];
+          const icon = node.parentElement!.firstElementChild!;
+          const start = performance.now();
+          const tick = () => {
+            const b = node.getBoundingClientRect();
+            const i = icon.getBoundingClientRect();
+            samples.push([b.left - i.right, b.top - i.top]);
+            if (performance.now() - start < 1200) requestAnimationFrame(tick);
+            else resolve(samples);
+          };
+          requestAnimationFrame(tick);
+        }),
+    );
+    await rail.getByRole('button', { name: 'Expand' }).click();
+    for (const [x, y] of await offsets) {
+      expect(x).toBeCloseTo(-12, 1);
+      expect(y).toBeCloseTo(-2, 1);
+    }
+    await rests(rail);
+    await page.mouse.move(0, 0);
+    await expect(page).toHaveScreenshot('navigation-rail-badges-expanded.png', {
+      clip: await box(rail),
     });
   });
 });

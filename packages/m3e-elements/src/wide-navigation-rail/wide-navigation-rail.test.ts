@@ -158,6 +158,48 @@ describe('<m3e-short-navigation-bar>', () => {
     await flush();
     expect(items(host)).toHaveLength(2);
   });
+
+  it('badge / badge-label: the label, then the icon in a badged box; follows changes', async () => {
+    const host = await mount<M3eShortNavigationBar>(
+      `<m3e-short-navigation-bar>${ITEMS}</m3e-short-navigation-bar>`,
+    );
+    const [first, second] = [...host.querySelectorAll('m3e-navigation-item')];
+    first!.setAttribute('badge', '1500');
+    second!.setAttribute('badge', '');
+    await flush();
+    const [home, search] = items(host);
+    const parts = (el: Element) =>
+      [...el.querySelector('.m3e-navigation-item__content')!.children].map((c) => c.className);
+    expect(parts(home!)).toEqual([
+      'm3e-navigation-item__indicator',
+      'm3e-navigation-item__state',
+      'm3e-navigation-item__label',
+      'm3e-badged-box',
+    ]);
+    const box = home!.querySelector('.m3e-badged-box')!;
+    expect(box.innerHTML).toBe(
+      '<span class="m3e-icon m3e-navigation-item__icon" aria-hidden="true">home</span>' +
+        '<span class="m3e-badge m3e-badge--large">' +
+        '<span class="m3e-badge__text" aria-hidden="true">999+</span>' +
+        '<span class="m3e-badge__label">999+</span></span>',
+    );
+    expect(search!.querySelector('.m3e-badge')!.outerHTML).toBe(
+      '<span class="m3e-badge"><span class="m3e-badge__label">New notification</span></span>',
+    );
+    first!.setAttribute('badge-label', 'Lots');
+    first!.setAttribute('label-hidden', '');
+    second!.removeAttribute('badge');
+    await flush();
+    expect(home!.getAttribute('aria-label')).toBe('Home Lots');
+    expect(home!.querySelector('.m3e-badge__label')).toBeNull();
+    expect(home!.querySelector('.m3e-badged-box')).toBe(box);
+    expect(parts(search!)).toEqual([
+      'm3e-navigation-item__indicator',
+      'm3e-navigation-item__state',
+      'm3e-icon m3e-navigation-item__icon',
+      'm3e-navigation-item__label',
+    ]);
+  });
 });
 
 describe('<m3e-wide-navigation-rail>', () => {

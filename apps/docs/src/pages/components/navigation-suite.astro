@@ -66,10 +66,11 @@ const items: Item[] = [
       other child is the content. <code>hideNavigation()</code> / <code>showNavigation()</code> run
       Compose's show / hide spring.
     </p>
+    <p>An item's <code>badge</code> is a Compose <code>Badge</code> on its icon in the bar and rail types (the scaffold's <code>NavigationItemIcon</code> wraps the icon in a <code>BadgedBox</code>): empty for the dot (Search), a number for a count (Mail; <code>999+</code> above 999). The drawer type shows it as the trailing badge text instead (<code>NavigationDrawerItem</code>'s <code>badge</code> slot; the dot shows nothing there).</p>
     <div class="docs-suite-frame" data-testid="element-frame">
       <m3e-navigation-suite label="Element example" selected="home" data-testid="element-suite">
         <m3e-navigation-item value="home" icon="home">Home</m3e-navigation-item>
-        <m3e-navigation-item value="search" icon="search">Search</m3e-navigation-item>
+        <m3e-navigation-item value="search" icon="search" badge="">Search</m3e-navigation-item>
         <m3e-navigation-item value="mail" icon="mail" badge="3">Mail</m3e-navigation-item>
         <m3e-navigation-item value="settings" icon="settings">Settings</m3e-navigation-item>
         <button

@@ -14,6 +14,7 @@ import {
   createDrawerItemElement,
   fillDrawerItemElement,
 } from '../navigation-drawer/drawer-item.js';
+import { createItemElement, fillItemElement } from '../navigation-item/item-element.js';
 import { M3eNavigationContainer, M3eNavigationItem } from '../navigation-item/navigation-item.js';
 import { NavigationSuiteLayout } from '../navigation-suite-layout/navigation-suite-layout.js';
 import {
@@ -298,7 +299,7 @@ export class M3eNavigationSuite extends M3eNavigationContainer {
 
   protected override createItemElement(doc: Document, el: HTMLElement, signal: AbortSignal): void {
     if (this.#drawerItems) createDrawerItemElement(el, signal);
-    else super.createItemElement(doc, el, signal);
+    else createItemElement(doc, el, signal);
   }
 
   protected override fillItemElement(
@@ -308,7 +309,7 @@ export class M3eNavigationSuite extends M3eNavigationContainer {
     selected: boolean,
   ): void {
     if (this.#drawerItems) fillDrawerItemElement(doc, item, el, selected);
-    else super.fillItemElement(doc, item, el, selected);
+    else fillItemElement(doc, item, el, selected);
   }
 }
 

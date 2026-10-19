@@ -28,11 +28,21 @@ import {
   useNavigationSelection,
 } from './NavigationItem.js';
 
-/** A navigation suite destination: a bar / rail destination, plus a badge in the drawer. */
-export interface NavigationSuiteDestination extends NavigationDestination {
-  /** Trailing badge text in the drawer type (bars and rails wait for the Badge component). */
-  badge?: string | undefined;
-}
+/**
+ * A navigation suite destination (Compose `NavigationSuiteScope.item`): a bar / rail destination
+ * whose `badge` is a Badge on the icon in the bar and rail types (Compose NavigationItemIcon's
+ * BadgedBox) and the trailing badge text in the drawer type (NavigationDrawerItem's `badge` slot;
+ * the dot shows nothing there).
+ */
+export type NavigationSuiteDestination = NavigationDestination;
+
+/** The drawer type's trailing text for a destination's `badge` (as `<m3e-navigation-suite>`). */
+const drawerBadge = (badge: NavigationDestination['badge']): string | undefined =>
+  typeof badge === 'number'
+    ? String(badge)
+    : typeof badge === 'string' && badge
+      ? badge
+      : undefined;
 
 export interface NavigationSuiteScaffoldProps
   extends
@@ -198,7 +208,7 @@ export const NavigationSuiteScaffold = /* @__PURE__ */ forwardRef(function Navig
           {items.map((item) => (
             <NavigationDrawerItem
               key={item.key}
-              item={item}
+              item={{ ...item, badge: drawerBadge(item.badge) }}
               isSelected={item.key === selected}
               onSelect={select}
             />

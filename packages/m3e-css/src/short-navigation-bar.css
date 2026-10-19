@@ -89,6 +89,25 @@
     flex: 1 1 0;
   }
 
+  /*
+   * Badge bounds (navigation-item.css): Compose measures each vertical item at width / count and
+   * centers the icon, so the end ruler lies half the item less half the icon past the icon (the
+   * item is an inline-size container for cqi) and the top ruler the top padding plus the pill's
+   * above it. Horizontal items set none: their label lies between the icon and the end ruler and
+   * the icon is centered in the 64dp item, so the rulers cannot reach a four-character badge.
+   */
+  .m3e-short-navigation-bar:not(.m3e-short-navigation-bar--horizontal) > .m3e-navigation-item {
+    --_m3e-badged-box-bounds-end: calc(
+      (100cqi - var(--m3e-comp-navigation-bar-vertical-item-icon-size)) / 2
+    );
+    --_m3e-badged-box-bounds-top: calc(
+      var(--_m3e-nav-item-padding-block-start) +
+        (var(--_m3e-nav-pill-block) - var(--m3e-comp-navigation-bar-vertical-item-icon-size)) / 2
+    );
+
+    container-type: inline-size;
+  }
+
   /* --- Horizontal items, centered -------------------------------------------------------- */
   .m3e-short-navigation-bar--horizontal {
     --_m3e-nav-item-padding-block-start: 0;

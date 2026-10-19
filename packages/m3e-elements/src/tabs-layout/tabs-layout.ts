@@ -21,6 +21,11 @@ const num = (style: CSSStyleDeclaration, name: string) =>
   Number.parseFloat(style.getPropertyValue(name)) || 0;
 const px = (v: number) => `${String(Math.round(v * 100) / 100)}px`;
 const isSelected = (tab: Element) => tab.getAttribute('aria-selected') === 'true';
+const BOUNDS_END = '--_m3e-badged-box-bounds-end';
+const BOUNDS_TOP = '--_m3e-badged-box-bounds-top';
+/** A tab's badged box: its label (or, label hidden, its icon) with a badge. */
+const badgedBox = (tab: Element) =>
+  tab.querySelector<HTMLElement>(':scope > .m3e-tab__content > .m3e-badged-box');
 
 /**
  * Behavior of a `.m3e-tabs` row (COMPONENT_SPEC §17), shared by `<m3e-tabs>` and m3e-react's
@@ -41,6 +46,8 @@ const isSelected = (tab: Element) => tab.getAttribute('aria-selected') === 'true
  * - Scrollable rows (ScrollableTabData): a selection scrolls the row so the selected tab is
  *   centred (clamped), on `--m3e-comp-tabs-scroll-*` from rest; the first layout jumps there. A
  *   wheel, touch or pointer press on the row stops that scroll.
+ * - Badges (Tab's badgeBounds()): on each resize, a tab's `.m3e-badged-box` gets the distances
+ *   to the tab's end and top edges, so badge.css keeps the badge inside the tab.
  */
 export class TabsLayout {
   readonly root: HTMLElement;
@@ -154,6 +161,9 @@ export class TabsLayout {
       targets.add(tab);
       const content = tab.querySelector(':scope > .m3e-tab__content');
       if (content) targets.add(content);
+      // A new badged box gets its first observation (and so its bounds) after the next layout.
+      const box = badgedBox(tab);
+      if (box) targets.add(box);
     }
     for (const el of this.#observed) {
       if (!targets.has(el)) {
@@ -218,9 +228,39 @@ export class TabsLayout {
     this.#tick(now);
   }
 
+  /**
+   * Compose Tab's `Modifier.badgeBounds()` (Tab.kt L110): a badge stays inside its tab. Writes
+   * the badged box's `--_m3e-badged-box-bounds-end` / `-top` (badge.css: how far the tab's end and
+   * top edges lie beyond the box's). LeadingIconTab has no badgeBounds (L152-193), so a badge in
+   * a leading-icon tab with an icon and a label is never moved.
+   */
+  #badgeBounds(): void {
+    const leading = this.root.classList.contains(`${ROOT}--leading-icon`);
+    for (const tab of this.tabs) {
+      const box = badgedBox(tab);
+      if (!box) continue;
+      const leadingIconTab =
+        leading &&
+        box.querySelector(':scope > .m3e-tab__label') !== null &&
+        tab.querySelector('.m3e-tab__icon') !== null;
+      if (leadingIconTab) {
+        box.style.removeProperty(BOUNDS_END);
+        box.style.removeProperty(BOUNDS_TOP);
+        if (box.getAttribute('style') === '') box.removeAttribute('style');
+        continue;
+      }
+      const t = tab.getBoundingClientRect();
+      const b = box.getBoundingClientRect();
+      const end = this.#rtl ? b.left - t.left : t.right - b.right;
+      box.style.setProperty(BOUNDS_END, px(Math.max(0, end)));
+      box.style.setProperty(BOUNDS_TOP, px(Math.max(0, b.top - t.top)));
+    }
+  }
+
   /** New sizes: the first layout settles everything; later ones retarget (Compose re-measures). */
   #resized(): void {
     const specs = this.#readStyle();
+    this.#badgeBounds();
     const positions = this.#positions();
     const position = positions?.[this.#selected];
     if (!positions || !position) return;

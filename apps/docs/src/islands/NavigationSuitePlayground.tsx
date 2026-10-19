@@ -10,8 +10,8 @@ import { useState } from 'react';
 
 const ITEMS: NavigationSuiteDestination[] = [
   { key: 'home', icon: 'home', label: 'Home' },
-  { key: 'search', icon: 'search', label: 'Search' },
-  { key: 'mail', icon: 'mail', label: 'Mail', badge: '3' },
+  { key: 'search', icon: 'search', label: 'Search', badge: true },
+  { key: 'mail', icon: 'mail', label: 'Mail', badge: 3 },
   { key: 'settings', icon: 'settings', label: 'Settings' },
 ];
 

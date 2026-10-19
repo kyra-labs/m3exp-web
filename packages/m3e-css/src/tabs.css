@@ -17,6 +17,23 @@
  *   </div>
  *   <div class="m3e-tab-panel" role="tabpanel" id="p-1" aria-labelledby="t-1" tabindex="0">…</div>
  *
+ * A badge (badge.css) wraps the label in a badged box, as TabSamples.kt LeadingIconTabs (L302)
+ * wraps the tab's Text and m3.material.io (Badges › Guidelines) puts a large badge at the trailing
+ * edge; with the label hidden it goes on the icon and the tab's aria-label carries its text:
+ *
+ *         <span class="m3e-badged-box">
+ *           <span class="m3e-tab__label">Inbox</span>
+ *           <span class="m3e-badge m3e-badge--large">
+ *             <span class="m3e-badge__text" aria-hidden="true">999+</span>
+ *             <span class="m3e-badge__label">999+</span>
+ *           </span>
+ *         </span>
+ *
+ * Tab has Modifier.badgeBounds() (Tab.kt L110), LeadingIconTab none: TabsLayout writes the
+ * box's --_m3e-badged-box-bounds-end / -top from the tab's edges (badge.css keeps the badge
+ * inside the tab), except in a leading-icon tab with an icon and a label. Without TabsLayout the
+ * badge is not clamped.
+ *
  * Fixed rows split the width into equal tabs; --scrollable rows size each tab to its content (at
  * least the scrollable minimum width), keep the edge padding before the first and after the last
  * tab and scroll horizontally (no scrollbar, as Compose). A tab with an icon and a label stacks
@@ -61,6 +78,7 @@
 @import '@kyralabs/m3e-tokens/components/secondary-navigation-tab.css';
 @import '@kyralabs/m3e-tokens/components/tabs-defaults.css';
 @import '@kyralabs/m3e-tokens/components/divider.css';
+@import './badge.css';
 
 @layer m3e.components {
   .m3e-tabs {
@@ -191,6 +209,12 @@
     overflow-wrap: anywhere;
   }
 
+  /* A badged label (or icon, label hidden) takes its place and may shrink with it. */
+  .m3e-tab__content > .m3e-badged-box {
+    min-inline-size: 0;
+    max-inline-size: 100%;
+  }
+
   /* LeadingIconTab: a SmallTabHeight row, icon, TextDistanceFromLeadingIcon, label. */
   .m3e-tabs--leading-icon .m3e-tab {
     block-size: var(--m3e-comp-tabs-small-tab-height);
@@ -218,7 +242,8 @@
   }
 
   /* Icon + label (TabBaselineLayout placeTextAndIcon): the pair sits at the bottom. */
-  .m3e-tabs:not(.m3e-tabs--leading-icon) .m3e-tab:has(.m3e-tab__icon + .m3e-tab__label) {
+  .m3e-tabs:not(.m3e-tabs--leading-icon)
+    .m3e-tab:has(.m3e-tab__icon + :is(.m3e-tab__label, .m3e-badged-box)) {
     min-block-size: var(--m3e-comp-tabs-large-tab-height);
   }
 
@@ -227,7 +252,8 @@
    * bottom IconDistanceFromBaseline above the first baseline. --_m3e-tab-baseline is the distance
    * from the bottom of a label line to its baseline (half-leading, Google Sans Flex metrics).
    */
-  .m3e-tabs:not(.m3e-tabs--leading-icon) .m3e-tab__content:has(.m3e-tab__icon + .m3e-tab__label) {
+  .m3e-tabs:not(.m3e-tabs--leading-icon)
+    .m3e-tab__content:has(.m3e-tab__icon + :is(.m3e-tab__label, .m3e-badged-box)) {
     --_m3e-tab-baseline: calc(
       var(--m3e-comp-tabs-label-text-line-height) / 2 - var(--m3e-comp-tabs-label-text-size) *
         var(--m3e-comp-tabs-label-baseline-shift)
@@ -241,7 +267,7 @@
       );
   }
 
-  .m3e-tabs:not(.m3e-tabs--leading-icon) .m3e-tab__icon + .m3e-tab__label {
+  .m3e-tabs:not(.m3e-tabs--leading-icon) .m3e-tab__icon + :is(.m3e-tab__label, .m3e-badged-box) {
     margin-block-start: calc(
       var(--m3e-comp-tabs-icon-distance-from-baseline) -
         var(--m3e-comp-tabs-label-text-line-height) + var(--_m3e-tab-baseline)

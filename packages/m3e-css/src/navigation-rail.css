@@ -82,7 +82,28 @@
     );
   }
 
+  /*
+   * Badge bounds (NavigationRailItemLayout's badgeBounds(), L542; a BadgedBox in the icon): the
+   * icon centered in an item at least NavigationRailItemWidth wide, so the end ruler lies at least
+   * half of that less half the icon past the icon (28dp: more than a four-character badge reaches
+   * past it), the top ruler at least the pill's padding above it.
+   */
   .m3e-navigation-rail > .m3e-navigation-item {
+    --_m3e-badged-box-bounds-end: calc(
+      (
+          var(--m3e-comp-navigation-rail-collapsed-narrow-container-width) -
+            var(--m3e-comp-navigation-rail-baseline-item-icon-size)
+        ) /
+        2
+    );
+    --_m3e-badged-box-bounds-top: calc(
+      (
+          var(--m3e-comp-navigation-rail-vertical-item-active-indicator-height) -
+            var(--m3e-comp-navigation-rail-baseline-item-icon-size)
+        ) /
+        2
+    );
+
     min-inline-size: var(--m3e-comp-navigation-rail-collapsed-narrow-container-width);
   }
 

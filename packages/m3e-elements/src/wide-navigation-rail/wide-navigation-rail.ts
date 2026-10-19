@@ -1,4 +1,8 @@
-import { M3eNavigationContainer } from '../navigation-item/navigation-item.js';
+import { createItemElement, fillItemElement } from '../navigation-item/item-element.js';
+import {
+  M3eNavigationContainer,
+  type M3eNavigationItem,
+} from '../navigation-item/navigation-item.js';
 import { WideNavigationRailLayout } from '../wide-navigation-rail-layout/wide-navigation-rail-layout.js';
 
 const RAIL = 'm3e-wide-navigation-rail';
@@ -63,6 +67,19 @@ export abstract class M3eWideRailBase extends M3eNavigationContainer {
     const header = this.#header?.childElementCount ? this.#header : null;
     this.renderItems(nav, header);
     return nav;
+  }
+
+  protected override createItemElement(doc: Document, el: HTMLElement, signal: AbortSignal): void {
+    createItemElement(doc, el, signal);
+  }
+
+  protected override fillItemElement(
+    doc: Document,
+    item: M3eNavigationItem,
+    el: HTMLElement,
+    selected: boolean,
+  ): void {
+    fillItemElement(doc, item, el, selected);
   }
 
   /** Creates the layout once, then animates to the `expanded` attribute. */

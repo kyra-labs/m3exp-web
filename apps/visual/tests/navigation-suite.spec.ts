@@ -1,6 +1,7 @@
 import AxeBuilder from '@axe-core/playwright';
 import { springDurationMillis, springValue } from '@kyralabs/m3e-motion';
 import { type Locator, type Page, expect, test } from '@playwright/test';
+import { expectComposePlacement } from './badge-placement.js';
 
 // Navigation suite scaffold (COMPONENT_SPEC §16): the element, React and the CSS-only adaptive
 // suite at each window size class (viewport resizing), acceptance + light/dark × 3 browsers
@@ -193,6 +194,44 @@ test.describe('layout (NavigationSuiteScaffoldLayout)', () => {
     await expect(drawer.getByTestId('react-fab')).toBeVisible();
     await page.getByTestId('react-type').selectOption('short-navigation-bar-compact');
     await expect(navOf(reactSuite(page))).toHaveAttribute('class', 'm3e-short-navigation-bar');
+  });
+});
+
+// Badges (M9 B2): NavigationItemIcon wraps a bar / rail icon in a BadgedBox; the drawer shows the
+// badge as NavigationDrawerItem's trailing text.
+test.describe('badges', () => {
+  for (const [size, type] of [
+    ['compact', 'bar'],
+    ['compact-height', 'horizontal bar'],
+    ['medium', 'rail'],
+    ['large', 'expanded rail'],
+  ] as const) {
+    test(`the ${type}: a Badge on the icon, read after the label`, async ({ page }) => {
+      await open(page, SIZES[size]);
+      for (const suite of [elementSuite(page), reactSuite(page)]) {
+        const items = navOf(suite).locator('.m3e-navigation-item');
+        await expect(items.nth(1)).toHaveAccessibleName('Search New notification');
+        await expect(items.nth(2)).toHaveAccessibleName('Mail 3');
+        for (const i of [1, 2]) {
+          await expectComposePlacement(
+            items.nth(i).locator('.m3e-badged-box > .m3e-badge'),
+            '.m3e-navigation-item',
+          );
+        }
+        await expect(items.nth(2).locator('.m3e-badge__text')).toHaveText('3');
+      }
+    });
+  }
+
+  test('the drawer: trailing badge text, no Badge (the dot shows nothing)', async ({ page }) => {
+    await open(page, SIZES.large);
+    await page.getByTestId('react-type').selectOption('navigation-drawer');
+    const drawer = reactSuite(page).locator(':scope > .m3e-navigation-drawer');
+    await expect(drawer).toBeVisible();
+    const items = drawer.locator('.m3e-navigation-drawer-item');
+    await expect(items.nth(2).locator('.m3e-navigation-drawer-item__badge')).toHaveText('3');
+    await expect(items.nth(1).locator('.m3e-navigation-drawer-item__badge')).toHaveCount(0);
+    await expect(drawer.locator('.m3e-badge')).toHaveCount(0);
   });
 });
 

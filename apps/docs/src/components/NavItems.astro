@@ -6,6 +6,10 @@ export interface Item {
   selected?: boolean;
   disabled?: boolean;
   iconOnly?: boolean;
+  /** A badge on the icon (badge.css): `''` the dot, else its text ("8", "999+"). */
+  badge?: string;
+  /** The badge's hidden text (default: "New notification" for the dot, else the text). */
+  badgeLabel?: string;
 }
 
 interface Props {
@@ -14,6 +18,7 @@ interface Props {
 }
 
 const { items, prefix } = Astro.props;
+const badgeName = (item: Item) => item.badgeLabel ?? (item.badge ? item.badge : 'New notification');
 ---
 
 {
@@ -23,16 +28,39 @@ const { items, prefix } = Astro.props;
       href={item.disabled ? undefined : `#${prefix}-${item.icon}`}
       aria-current={item.selected ? 'page' : undefined}
       aria-disabled={item.disabled ? 'true' : undefined}
-      aria-label={item.iconOnly ? item.label : undefined}
+      aria-label={
+        item.iconOnly
+          ? item.badge === undefined
+            ? item.label
+            : `${item.label} ${badgeName(item)}`
+          : undefined
+      }
       data-testid={`${prefix}-${item.icon}`}
     >
       <span class="m3e-navigation-item__content">
         <span class="m3e-navigation-item__indicator" aria-hidden="true" />
         <span class="m3e-navigation-item__state" aria-hidden="true" />
-        <span class="m3e-icon m3e-navigation-item__icon" aria-hidden="true">
-          {item.icon}
-        </span>
+        {item.badge === undefined ? (
+          <span class="m3e-icon m3e-navigation-item__icon" aria-hidden="true">
+            {item.icon}
+          </span>
+        ) : null}
         {item.iconOnly ? null : <span class="m3e-navigation-item__label">{item.label}</span>}
+        {item.badge === undefined ? null : (
+          <span class="m3e-badged-box">
+            <span class="m3e-icon m3e-navigation-item__icon" aria-hidden="true">
+              {item.icon}
+            </span>
+            <span class={item.badge ? 'm3e-badge m3e-badge--large' : 'm3e-badge'}>
+              {item.badge ? (
+                <span class="m3e-badge__text" aria-hidden="true">
+                  {item.badge}
+                </span>
+              ) : null}
+              {item.iconOnly ? null : <span class="m3e-badge__label">{badgeName(item)}</span>}
+            </span>
+          </span>
+        )}
       </span>
     </a>
   ))

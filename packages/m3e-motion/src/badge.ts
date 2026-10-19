@@ -22,3 +22,25 @@ export function badgeText(count: number, max: number = BADGE_MAX_COUNT): string 
   const cap = Math.trunc(max);
   return value > cap ? `${String(cap)}+` : String(value);
 }
+
+/**
+ * A badge built into a navigation destination or a tab (m3e-elements `badge` attribute, m3e-react
+ * `badge` prop; owner decision M9 #30): `true` or `''` is the dot, a number or a string of digits
+ * a count (`999+` above `max`), any other text is shown as is.
+ */
+export type BadgeValue = true | number | string;
+
+/** The text a {@link BadgeValue} shows: null for the dot, else the count or the text. */
+export function badgeValueText(value: BadgeValue, max: number = BADGE_MAX_COUNT): string | null {
+  if (value === true || value === '') return null;
+  if (typeof value === 'number') return badgeText(value, max);
+  return /^\d+$/.test(value.trim()) ? badgeText(Number(value), max) : value;
+}
+
+/**
+ * The visually hidden text of a badge (owner decision M9 #7): `label` when given (`''` leaves the
+ * badge out of the name), else {@link BADGE_DOT_LABEL} for the dot (`text` null), else the text.
+ */
+export function badgeLabelText(text: string | null, label?: string | null): string {
+  return label ?? text ?? BADGE_DOT_LABEL;
+}

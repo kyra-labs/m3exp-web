@@ -37,7 +37,8 @@ afterEach(() => {
 const ITEMS: NavigationSuiteDestination[] = [
   { key: 'home', icon: 'home', label: 'Home', href: '/home' },
   { key: 'search', icon: 'search', label: 'Search' },
-  { key: 'mail', icon: 'mail', label: 'Mail', badge: '3' },
+  { key: 'mail', icon: 'mail', label: 'Mail', badge: 3 },
+  { key: 'chat', icon: 'chat', label: 'Chat', badge: true },
   { key: 'off', icon: 'block', label: 'Off', isDisabled: true },
   { key: 'star', icon: 'star', label: 'Starred', href: '/star', isDisabled: true },
 ];
@@ -45,6 +46,7 @@ const ELEMENT_ITEMS = [
   '<m3e-navigation-item value="home" icon="home" href="/home">Home</m3e-navigation-item>',
   '<m3e-navigation-item value="search" icon="search">Search</m3e-navigation-item>',
   '<m3e-navigation-item value="mail" icon="mail" badge="3">Mail</m3e-navigation-item>',
+  '<m3e-navigation-item value="chat" icon="chat" badge>Chat</m3e-navigation-item>',
   '<m3e-navigation-item value="off" icon="block" disabled>Off</m3e-navigation-item>',
   '<m3e-navigation-item value="star" icon="star" href="/star" disabled>Starred</m3e-navigation-item>',
 ].join('');
@@ -90,6 +92,27 @@ describe('element / React DOM parity (CLAUDE.md "Done means" #8)', () => {
     );
     const suite = (root: Element) => root.querySelector('.m3e-navigation-suite')!;
     expect(contract(suite(host))).toBe(contract(suite(react)));
+  });
+
+  it('badges: a Badge on the bar / rail icon (NavigationItemIcon), drawer text in the drawer', async () => {
+    for (const type of ['short-navigation-bar-compact', 'wide-navigation-rail-expanded'] as const) {
+      const root = await renderReact(
+        <NavigationSuiteScaffold aria-label="Main" items={ITEMS} layoutType={type} />,
+      );
+      const mail = root.querySelectorAll('.m3e-navigation-item')[2]!;
+      expect(
+        mail.querySelector('.m3e-badged-box > .m3e-badge--large > .m3e-badge__text')!.textContent,
+      ).toBe('3');
+      const chat = root.querySelectorAll('.m3e-navigation-item')[3]!;
+      expect(chat.querySelector('.m3e-badge__label')!.textContent).toBe('New notification');
+    }
+    const drawer = await renderReact(
+      <NavigationSuiteScaffold aria-label="Main" items={ITEMS} layoutType="navigation-drawer" />,
+    );
+    const [, , mail, chat] = [...drawer.querySelectorAll('.m3e-navigation-drawer-item')];
+    expect(mail!.querySelector('.m3e-navigation-drawer-item__badge')!.textContent).toBe('3');
+    expect(chat!.querySelector('.m3e-navigation-drawer-item__badge')).toBeNull();
+    expect(drawer.querySelector('.m3e-badge')).toBeNull();
   });
 
   it('NavigationSuiteScaffold, adaptive (the default rule), hidden, no primary action', async () => {
