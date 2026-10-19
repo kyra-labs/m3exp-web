@@ -33,6 +33,8 @@ import { Icon } from '../icon/Icon.js';
 import { Menu, MenuItem } from '../menu/Menu.js';
 import { MenuTrigger } from '../menu/MenuTrigger.js';
 import { useStateLayer } from '../state-layer/useStateLayer.js';
+import { PlainTooltip } from '../tooltip/Tooltip.js';
+import { TooltipTrigger } from '../tooltip/TooltipTrigger.js';
 import { cx, defined } from '../utils/cx.js';
 
 /** Compose `Strings.ButtonGroupMoreOptions` (androidMain res/values/strings.xml L19). */
@@ -97,7 +99,7 @@ export interface ButtonGroupProps extends Omit<
    * "More options" icon button at the end (Compose ButtonGroup overflowIndicator).
    */
   overflow?: boolean;
-  /** Accessible name of the overflow button. Default "More options". */
+  /** Accessible name and tooltip of the overflow button. Default "More options". */
   overflowLabel?: string;
   isDisabled?: boolean;
 }
@@ -244,7 +246,11 @@ interface OverflowButtonProps {
   'aria-controls'?: string;
 }
 
-/** Compose ButtonGroupDefaults.OverflowIndicator: a filled icon button with MoreVert. */
+/**
+ * Compose ButtonGroupDefaults.OverflowIndicator: a filled icon button with MoreVert in a
+ * TooltipBox(Above) whose PlainTooltip is the button's name (owner decision M9 #30; it repeats the
+ * name, so it is `aria-hidden`, owner decision M9 #2).
+ */
 const OverflowButton = /* @__PURE__ */ forwardRef(function OverflowButton(
   { size, label, isDisabled, hidden, onPress, onKeyDown, ...aria }: OverflowButtonProps,
   forwardedRef: ForwardedRef<HTMLButtonElement>,
@@ -263,25 +269,28 @@ const OverflowButton = /* @__PURE__ */ forwardRef(function OverflowButton(
   const { focusProps } = useFocusRing();
   const { hoverProps } = useHover({ isDisabled });
   return (
-    <button
-      {...mergeProps(buttonProps, focusProps, hoverProps, stateLayer.stateLayerProps, aria, {
-        className: cx(
-          'm3e-icon-button',
-          'm3e-icon-button--filled',
-          `m3e-icon-button--size-${size}`,
-          'm3e-icon-button--width-default',
-          'm3e-icon-button--round',
-          'm3e-button-group__overflow',
-        ),
-        'aria-label': label,
-        'data-spring': '',
-        'data-pressed': isPressed ? '' : undefined,
-      })}
-      hidden={hidden || undefined}
-      ref={ref}
-    >
-      <Icon name="more_vert" />
-    </button>
+    <TooltipTrigger>
+      <button
+        {...mergeProps(buttonProps, focusProps, hoverProps, stateLayer.stateLayerProps, aria, {
+          className: cx(
+            'm3e-icon-button',
+            'm3e-icon-button--filled',
+            `m3e-icon-button--size-${size}`,
+            'm3e-icon-button--width-default',
+            'm3e-icon-button--round',
+            'm3e-button-group__overflow',
+          ),
+          'aria-label': label,
+          'data-spring': '',
+          'data-pressed': isPressed ? '' : undefined,
+        })}
+        hidden={hidden || undefined}
+        ref={ref}
+      >
+        <Icon name="more_vert" />
+      </button>
+      <PlainTooltip>{label}</PlainTooltip>
+    </TooltipTrigger>
   );
 });
 
@@ -292,7 +301,7 @@ const OverflowButton = /* @__PURE__ */ forwardRef(function OverflowButton(
  * `useToggleButtonGroupItem` with react-stately `useToggleGroupState` when selectable); the
  * motion, roving tabindex and overflow measurement come from m3e-elements' ButtonGroupLayout, the
  * same code `<m3e-button-group>` runs. The overflow menu is a baseline `<Menu>` (Compose
- * DropdownMenu) listing the hidden items.
+ * DropdownMenu) listing the hidden items; its button has Compose's built-in plain tooltip.
  */
 export const ButtonGroup = /* @__PURE__ */ forwardRef(function ButtonGroup(
   props: ButtonGroupProps,

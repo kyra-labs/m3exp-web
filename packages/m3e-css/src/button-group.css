@@ -17,7 +17,10 @@
  * Variants: --standard (default) --connected. Sizes: --size-xs --size-s (default) --size-m
  * --size-l --size-xl; give the items the matching .m3e-button--size-*. --overflow makes the group
  * span its container so trailing items can collapse into the menu of the
- * .m3e-button-group__overflow icon button (hidden items carry `hidden`).
+ * .m3e-button-group__overflow icon button (hidden items carry `hidden`). The overflow button is
+ * followed by its plain tooltip (ButtonGroupDefaults.OverflowIndicator wraps it in a TooltipBox,
+ * ButtonGroup.kt L306–311): a popover `.m3e-tooltip` (tooltip.css) with the button's name,
+ * `aria-hidden` because it repeats that name.
  *
  * Sources (compose/material3 @ 19991f2c, ButtonGroup.kt; m3.material.io Button groups):
  * - Standard spacing: ButtonGroupDefaults.HorizontalArrangement = ButtonGroupSmallTokens.BetweenSpace

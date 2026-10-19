@@ -1,5 +1,8 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import './index.js';
+// The overflow button's tooltip controller is imported when the button is first rendered; loaded
+// here so that import resolves at once (and never after a test file's environment is torn down).
+import '@kyralabs/m3e-elements/tooltip-popup.js';
 import type { M3eButtonGroup, M3eButtonGroupItem } from './button-group.js';
 
 // happy-dom has no layout: sizes are stubbed where a test needs them; frames run on demand.
@@ -16,6 +19,7 @@ beforeEach(() => {
 
 afterEach(() => {
   document.body.innerHTML = '';
+  vi.useRealTimers();
   vi.unstubAllGlobals();
   vi.restoreAllMocks();
 });
@@ -235,6 +239,8 @@ describe('overflow', () => {
     );
     expect(trigger.getAttribute('aria-label')).toBe('More options');
     expect(trigger.getAttribute('aria-haspopup')).toBe('true');
+    // OverflowIndicator's built-in plain tooltip follows the button (owner decision M9 #30).
+    expect(trigger.nextElementSibling!.className).toBe('m3e-tooltip');
     const menu = group.querySelector('m3e-menu')!;
     expect(menu.getAttribute('variant')).toBe('baseline');
     expect(menu.getAttribute('anchor')).toBe(trigger.id);
@@ -246,6 +252,51 @@ describe('overflow', () => {
       ['D', 'checkbox', false],
     ]);
     expect(entries[0]!.getAttribute('icon')).toBe('star');
+  });
+
+  it('the overflow button has a plain tooltip of its name above it, aria-hidden (M9 #30, #2)', async () => {
+    const { host, group } = await setup(`
+      <m3e-button-group overflow>
+        <m3e-button-group-item>A</m3e-button-group-item>
+      </m3e-button-group>`);
+    const trigger = group.querySelector<HTMLButtonElement>('.m3e-button-group__overflow')!;
+    const tip = group.querySelector<HTMLElement>('.m3e-tooltip')!;
+    expect([...group.children].map((c) => c.className.split(' ').at(-1) ?? c.localName)).toEqual([
+      'm3e-button-group__item',
+      'm3e-button-group__overflow',
+      'm3e-tooltip',
+    ]);
+    expect([
+      tip.getAttribute('role'),
+      tip.getAttribute('popover'),
+      tip.getAttribute('aria-hidden'),
+      tip.textContent,
+    ]).toEqual(['tooltip', 'manual', 'true', 'More options']);
+    expect(tip.id).not.toBe('');
+    expect(tip.id).not.toBe(trigger.id);
+    expect(trigger.hasAttribute('aria-describedby')).toBe(false);
+    // The TooltipController (rememberTooltipState: not persistent) runs it: hover shows it, and it
+    // hides --m3e-comp-tooltip-duration after the pointer leaves (owner decision M9 #1).
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout'] });
+    tip.style.setProperty('--m3e-comp-tooltip-duration', '1500ms');
+    trigger.hidden = false;
+    trigger.dispatchEvent(new PointerEvent('pointerenter', { pointerType: 'mouse' }));
+    await settle();
+    expect(tip.hasAttribute('data-positioned')).toBe(true);
+    trigger.dispatchEvent(new PointerEvent('pointerleave', { pointerType: 'mouse' }));
+    vi.advanceTimersByTime(1499);
+    expect(tip.hasAttribute('data-positioned')).toBe(true);
+    vi.advanceTimersByTime(1);
+    for (const cb of frames.splice(0)) cb(performance.now() + 10_000);
+    expect(tip.hasAttribute('data-positioned')).toBe(false);
+    // overflow-label renames the button and its tooltip.
+    host.overflowLabel = 'More formatting';
+    await settle();
+    expect([trigger.getAttribute('aria-label'), tip.textContent]).toEqual([
+      'More formatting',
+      'More formatting',
+    ]);
   });
 
   it('shows the overflow button only when items are hidden', async () => {
