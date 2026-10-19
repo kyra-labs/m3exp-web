@@ -37,6 +37,7 @@
     .m3e-card--interactive,
     .m3e-assist-chip,
     .m3e-filter-chip,
+    .m3e-segmented-button,
     .m3e-input-chip,
     .m3e-suggestion-chip,
     .m3e-fab,
@@ -65,6 +66,7 @@
     .m3e-card--interactive,
     .m3e-assist-chip,
     .m3e-filter-chip,
+    .m3e-segmented-button,
     .m3e-input-chip,
     .m3e-suggestion-chip,
     .m3e-fab,
@@ -165,6 +167,7 @@
         .m3e-card--interactive,
         .m3e-assist-chip,
         .m3e-filter-chip,
+        .m3e-segmented-button,
         .m3e-input-chip,
         .m3e-suggestion-chip,
         .m3e-fab,
@@ -189,6 +192,7 @@
       .m3e-card--interactive,
       .m3e-assist-chip,
       .m3e-filter-chip,
+      .m3e-segmented-button,
       .m3e-input-chip,
       .m3e-suggestion-chip,
       .m3e-fab,
@@ -212,6 +216,7 @@
       .m3e-card--interactive,
       .m3e-assist-chip,
       .m3e-filter-chip,
+      .m3e-segmented-button,
       .m3e-input-chip,
       .m3e-suggestion-chip,
       .m3e-fab,
@@ -235,6 +240,7 @@
       .m3e-card--interactive,
       .m3e-assist-chip,
       .m3e-filter-chip,
+      .m3e-segmented-button,
       .m3e-input-chip,
       .m3e-suggestion-chip,
       .m3e-fab,
@@ -255,6 +261,7 @@
       .m3e-card--interactive,
       .m3e-assist-chip,
       .m3e-filter-chip,
+      .m3e-segmented-button,
       .m3e-input-chip,
       .m3e-suggestion-chip,
       .m3e-fab,
@@ -282,6 +289,7 @@
       .m3e-card--interactive,
       .m3e-assist-chip,
       .m3e-filter-chip,
+      .m3e-segmented-button,
       .m3e-input-chip,
       .m3e-suggestion-chip,
       .m3e-fab,
@@ -326,6 +334,18 @@
   }
 
   /*
+   * Segmented buttons (@deprecated, D4): the label is the host; the native radio or checkbox
+   * inside takes the focus.
+   */
+  :where(.m3e-segmented-button):has(> .m3e-segmented-button__input:focus-visible)::before {
+    --_m3e-state-layer-opacity: var(--m3e-sys-state-focus-state-layer-opacity);
+  }
+
+  :where(.m3e-segmented-button):has(> .m3e-segmented-button__input:disabled)::before {
+    display: none;
+  }
+
+  /*
    * Search results are combobox options with virtual focus (aria-activedescendant, the input keeps
    * DOM focus): the keyboard's current option carries data-focus-visible instead of :focus-visible.
    */
@@ -346,6 +366,7 @@
       .m3e-card--interactive,
       .m3e-assist-chip,
       .m3e-filter-chip,
+      .m3e-segmented-button,
       .m3e-input-chip,
       .m3e-suggestion-chip,
       .m3e-fab,
@@ -396,6 +417,7 @@
       .m3e-card--interactive,
       .m3e-assist-chip,
       .m3e-filter-chip,
+      .m3e-segmented-button,
       .m3e-input-chip,
       .m3e-suggestion-chip,
       .m3e-fab,

@@ -1,0 +1,304 @@
+/*
+ * Segmented button (COMPONENT_SPEC §37) — @deprecated (DECISIONS D4): shipped until 2.0 for
+ * migration, no new features. Use the connected button group (.m3e-button-group--connected,
+ * <ButtonGroup variant="connected">) instead: m3.material.io no longer recommends segmented
+ * buttons since the M3 Expressive update (Compose itself does not deprecate them at the pin).
+ *
+ * Native radios (single choice, Compose SingleChoiceSegmentedButtonRow) or checkboxes (multiple
+ * choice, MultiChoiceSegmentedButtonRow) inside labels: no JavaScript needed (owner decision M9
+ * #29). Radios sharing a `name` select one at a time, arrow keys move the selection, Tab enters
+ * at the selected one, Space selects; checkboxes are Tab stops that Space toggles.
+ *
+ *   <div class="m3e-segmented-button-row" role="radiogroup" aria-label="Range">
+ *     <label class="m3e-segmented-button">
+ *       <input class="m3e-segmented-button__input" type="radio" name="range" value="day" checked />
+ *       <span class="m3e-segmented-button__icon" aria-hidden="true">
+ *         <span class="m3e-icon m3e-segmented-button__check" data-fill>check</span>
+ *       </span>
+ *       <span class="m3e-segmented-button__label">Day</span>
+ *     </label>
+ *     …
+ *   </div>
+ *
+ * - Multiple choice: role="group" on the row and type="checkbox" inputs.
+ * - An icon shown while unselected goes after the check in __icon (SegmentedButtonMultiSelectSample:
+ *   the check and it cross-fade). Without one, the check scales in when selected and the label
+ *   slides over the empty slot while unselected.
+ * - Disabled: the input's `disabled`.
+ *
+ * Sources (compose/material3 @ 19991f2c, SegmentedButton.kt, Surface.kt, Button.kt; values in
+ * outlined-segmented-button.css / segmented-button-defaults.css, lines in PARITY.md):
+ * - Rows (L327-380): Row(width(IntrinsicSize.Min), spacedBy(−BorderWidth), CenterVertically),
+ *   each button weight(1f): equal widths from the widest button, neighbors overlapping by the 1dp
+ *   border. Here an inline grid of 1fr columns sized from the buttons' max-content widths; each
+ *   button reaches 1dp into the next column (a negative end margin) and the row pads its end by
+ *   that 1dp, so every button is the widest one's width and the row is Compose's.
+ * - Button (L130-251): a selectable (Role.RadioButton) or toggleable Surface: the 48dp minimum
+ *   interactive size around it (Surface.kt L355-360, L490-495: the row is 48dp high, the 40dp
+ *   button centered in it; the native input covers the target), defaultMinSize(ButtonDefaults
+ *   MinWidth 58dp, MinHeight 40dp), the border drawn inside the shape and the ripple clipped to it
+ *   (Surface.kt L544-564; an inset shadow here, the state layer over it).
+ * - Shapes (itemShape L597-611): the first button gets the base shape's (full) start corners, the
+ *   last its end corners, one alone all four, the others none.
+ * - Colors (defaultSegmentedButtonColors L548-572): selected secondary container / on secondary
+ *   container, unselected transparent / on surface, outline in both; disabled: content on
+ *   surface at 0.38, the border Outline at 0.12, the selected container kept. Hover, focus and
+ *   press change no color (state layer only, in the content color: ripple() without a color).
+ *   Colors do not animate.
+ * - Content (L383-457, SegmentedButtonDefaults.Icon L644-673): the 18dp icon slot, 8dp
+ *   (IconSpacing), then the label in label large, centered in 12dp / 8dp padding. The slot keeps
+ *   its width while empty and the label is drawn −(18 + 8) / 2 = −13dp back, so it looks centered,
+ *   sliding on fast spatial (it overshoots under the expressive scheme). The check (Icons.Filled.Check,
+ *   the Material Symbols `check` glyph) appears with a fade (default effects) and a scale from 0
+ *   about its bottom corner on the slot's start side (fast spatial), and disappears at once
+ *   (ExitTransition.None). With an unselected icon the two cross-fade (default effects).
+ * - Raised (interactionZIndex L843-852): a selected button (CheckedZIndexFactor 5), plus one for
+ *   focus and one for a press, so its border and focus ring draw over its neighbors.
+ */
+@import '@kyralabs/m3e-tokens/components/outlined-segmented-button.css';
+@import '@kyralabs/m3e-tokens/components/segmented-button-defaults.css';
+@import '@kyralabs/m3e-tokens/components/button-defaults.css';
+
+@layer m3e.components {
+  /* --- Row: SingleChoiceSegmentedButtonRow / MultiChoiceSegmentedButtonRow ------------------ */
+  .m3e-segmented-button-row {
+    display: inline-grid;
+    grid-auto-columns: 1fr;
+    grid-auto-flow: column;
+    align-items: center;
+    vertical-align: middle;
+    box-sizing: border-box;
+    min-block-size: max(
+      var(--m3e-comp-outlined-segmented-button-container-height),
+      var(--m3e-comp-minimum-interactive-component-size)
+    );
+    margin: 0;
+    padding: 0;
+    padding-inline-end: var(--m3e-comp-outlined-segmented-button-outline-width);
+    border: 0;
+  }
+
+  /* --- Button: the selectable / toggleable Surface ------------------------------------------- */
+  .m3e-segmented-button {
+    --_m3e-sb-container: var(--m3e-comp-segmented-button-container-color-unselected);
+    --_m3e-sb-content: var(--m3e-comp-segmented-button-content-color-unselected);
+    --_m3e-sb-outline: var(--m3e-comp-segmented-button-outline-color);
+    --_m3e-sb-shape: var(--m3e-comp-outlined-segmented-button-shape);
+    --_m3e-sb-raise-selected: 0;
+    --_m3e-sb-raise-focus: 0;
+    --_m3e-sb-raise-press: 0;
+    --m3e-comp-state-layer-color: var(--m3e-comp-segmented-button-state-layer-color);
+
+    z-index: calc(
+      var(--_m3e-sb-raise-selected) + var(--_m3e-sb-raise-focus) + var(--_m3e-sb-raise-press)
+    );
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    min-inline-size: var(--m3e-comp-segmented-button-min-width);
+    min-block-size: var(--m3e-comp-segmented-button-min-height);
+    margin: 0;
+    margin-inline-end: calc(-1 * var(--m3e-comp-outlined-segmented-button-outline-width));
+    padding-block: var(--m3e-comp-segmented-button-content-padding-vertical);
+    padding-inline: var(--m3e-comp-segmented-button-content-padding-horizontal);
+    border: 0;
+    border-radius: 0;
+    background-color: var(--_m3e-sb-container);
+    box-shadow: inset 0 0 0 var(--m3e-comp-outlined-segmented-button-outline-width)
+      var(--_m3e-sb-outline);
+    color: var(--_m3e-sb-content);
+    font-family: var(--m3e-comp-outlined-segmented-button-label-text-font);
+    font-size: var(--m3e-comp-outlined-segmented-button-label-text-size);
+    font-weight: var(--m3e-comp-outlined-segmented-button-label-text-weight);
+    line-height: var(--m3e-comp-outlined-segmented-button-label-text-line-height);
+    letter-spacing: var(--m3e-comp-outlined-segmented-button-label-text-tracking);
+    cursor: pointer;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* itemShape: the base shape's start corners on the first, end corners on the last. */
+  .m3e-segmented-button:first-child {
+    border-start-start-radius: var(--_m3e-sb-shape);
+    border-end-start-radius: var(--_m3e-sb-shape);
+  }
+
+  .m3e-segmented-button:last-child {
+    border-start-end-radius: var(--_m3e-sb-shape);
+    border-end-end-radius: var(--_m3e-sb-shape);
+  }
+
+  /* The native input: invisible, over the button and its 48dp target, above the content. */
+  .m3e-segmented-button__input {
+    appearance: none;
+    position: absolute;
+    inset-block: min(
+      0%,
+      calc(
+        (
+            var(--m3e-comp-segmented-button-min-height) -
+              var(--m3e-comp-minimum-interactive-component-size)
+          ) /
+          2
+      )
+    );
+    inset-inline: 0;
+    z-index: 1;
+    box-sizing: border-box;
+    inline-size: auto;
+    block-size: auto;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: none;
+    cursor: inherit;
+    outline: none;
+  }
+
+  /* --- Content: the icon slot, then the label ------------------------------------------------ */
+  .m3e-segmented-button__icon {
+    display: inline-grid;
+    flex: none;
+    place-items: center;
+    inline-size: var(--m3e-comp-outlined-segmented-button-icon-size);
+    block-size: var(--m3e-comp-outlined-segmented-button-icon-size);
+  }
+
+  .m3e-segmented-button__icon > .m3e-icon {
+    --m3e-comp-icon-size: var(--m3e-comp-outlined-segmented-button-icon-size);
+
+    grid-area: 1 / 1;
+  }
+
+  .m3e-segmented-button__label {
+    position: relative;
+    inset-inline-start: 0;
+    margin-inline-start: var(--m3e-comp-segmented-button-icon-spacing);
+    transition: inset-inline-start var(--m3e-comp-segmented-button-label-offset-duration)
+      var(--m3e-comp-segmented-button-label-offset-easing);
+  }
+
+  /* No icon shown (unselected, no unselected icon): the label slides back over the empty slot. */
+  .m3e-segmented-button:not(
+      :has(> .m3e-segmented-button__input:checked),
+      :has(> .m3e-segmented-button__icon > .m3e-icon:not(.m3e-segmented-button__check))
+    )
+    > .m3e-segmented-button__label {
+    inset-inline-start: calc(
+      -1 *
+        (
+          var(--m3e-comp-outlined-segmented-button-icon-size) +
+            var(--m3e-comp-segmented-button-icon-spacing)
+        ) /
+        2
+    );
+  }
+
+  /* The check: gone at once while unselected; fades and scales in from its bottom start corner. */
+  .m3e-segmented-button__check {
+    transform-origin: left bottom;
+    opacity: 0;
+    scale: 0;
+    transition: none;
+  }
+
+  .m3e-segmented-button__check:dir(rtl) {
+    transform-origin: right bottom;
+  }
+
+  .m3e-segmented-button:has(> .m3e-segmented-button__input:checked) .m3e-segmented-button__check {
+    opacity: 1;
+    scale: 1;
+    transition:
+      opacity var(--m3e-comp-segmented-button-icon-fade-duration)
+        var(--m3e-comp-segmented-button-icon-fade-easing),
+      scale var(--m3e-comp-segmented-button-icon-scale-duration)
+        var(--m3e-comp-segmented-button-icon-scale-easing);
+  }
+
+  /* With an unselected icon: it and the check cross-fade both ways (Crossfade). */
+  .m3e-segmented-button__icon:has(> .m3e-icon:not(.m3e-segmented-button__check))
+    > .m3e-segmented-button__check,
+  .m3e-segmented-button__icon > .m3e-icon:not(.m3e-segmented-button__check) {
+    scale: 1;
+    transition: opacity var(--m3e-comp-segmented-button-icon-crossfade-duration)
+      var(--m3e-comp-segmented-button-icon-crossfade-easing);
+  }
+
+  .m3e-segmented-button:has(> .m3e-segmented-button__input:checked)
+    .m3e-segmented-button__icon
+    > .m3e-icon:not(.m3e-segmented-button__check) {
+    opacity: 0;
+  }
+
+  /* --- Raised (interactionZIndex): presses and focus add one each, selection the factor ----- */
+  .m3e-segmented-button:is(:active, [data-pressed]) {
+    --_m3e-sb-raise-press: 1;
+  }
+
+  .m3e-segmented-button:has(> .m3e-segmented-button__input:focus) {
+    --_m3e-sb-raise-focus: 1;
+  }
+
+  /* --- Selected ------------------------------------------------------------------------------ */
+  .m3e-segmented-button:has(> .m3e-segmented-button__input:checked) {
+    --_m3e-sb-container: var(--m3e-comp-segmented-button-container-color-selected);
+    --_m3e-sb-content: var(--m3e-comp-segmented-button-content-color-selected);
+    --_m3e-sb-raise-selected: var(--m3e-comp-segmented-button-selected-z-index);
+  }
+
+  /* --- Disabled ------------------------------------------------------------------------------ */
+  .m3e-segmented-button:has(> .m3e-segmented-button__input:disabled) {
+    --_m3e-sb-content: var(--m3e-comp-segmented-button-content-color-disabled);
+    --_m3e-sb-outline: var(--m3e-comp-segmented-button-outline-color-disabled);
+
+    cursor: default;
+  }
+
+  .m3e-segmented-button:has(> .m3e-segmented-button__input:disabled:checked) {
+    --_m3e-sb-container: var(--m3e-comp-segmented-button-container-color-selected-disabled);
+  }
+
+  /* --- Forced colors: a real border; the selected button in Highlight ----------------------- */
+  @media (forced-colors: active) {
+    .m3e-segmented-button {
+      padding-block: calc(
+        var(--m3e-comp-segmented-button-content-padding-vertical) -
+          var(--m3e-comp-outlined-segmented-button-outline-width)
+      );
+      padding-inline: calc(
+        var(--m3e-comp-segmented-button-content-padding-horizontal) -
+          var(--m3e-comp-outlined-segmented-button-outline-width)
+      );
+      border: var(--m3e-comp-outlined-segmented-button-outline-width) solid ButtonText;
+    }
+
+    .m3e-segmented-button:has(> .m3e-segmented-button__input:checked) {
+      forced-color-adjust: none;
+      border-color: Highlight;
+      background-color: Highlight;
+      color: HighlightText;
+    }
+
+    .m3e-segmented-button:has(> .m3e-segmented-button__input:checked) .m3e-icon {
+      forced-color-adjust: none;
+      color: inherit;
+    }
+
+    .m3e-segmented-button:has(> .m3e-segmented-button__input:disabled),
+    .m3e-segmented-button:has(> .m3e-segmented-button__input:disabled) .m3e-icon {
+      border-color: GrayText;
+      color: GrayText;
+    }
+
+    .m3e-segmented-button:has(> .m3e-segmented-button__input:disabled:checked) {
+      background-color: GrayText;
+      color: Canvas;
+    }
+
+    .m3e-segmented-button:has(> .m3e-segmented-button__input:disabled:checked) .m3e-icon {
+      color: Canvas;
+    }
+  }
+}

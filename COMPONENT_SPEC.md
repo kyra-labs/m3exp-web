@@ -862,13 +862,31 @@
 - **Fidelity:** browser fling physics instead of Compose's (one-item fling and snap spring k400; owner decision M9 #23); no mouse drag-to-scroll (touch, trackpads, Shift + wheel and the keyboard scroll it); `CarouselItemDrawInfo` (the item's current size) is not exposed to content; the uncontained items are `itemWidth + itemSpacing` wide, as Compose lays them out (`uncontainedKeylineList` L168); m3.material.io's Up / Down to leave the carousel is not built in (every item is a Tab stop); RTL is read when the layout runs (a later direction change needs a re-render).
 - **Sources:** carousel/Carousel.kt, Arrangement.kt, Keylines.kt, KeylineList.kt, Strategy.kt, KeylineSnapPosition.kt, CarouselState.kt, CarouselItemScope.kt, CarouselSamples.kt and the androidHostTest suites (vendored, `androidx-material3-carousel`); animation-core AnimationSpec.kt, VectorizedAnimationSpec.kt; m3.material.io Carousel (page `b0726223-2639-4157-84ae-cb84c07ee2e5`: Specs, Guidelines, Accessibility; token DB `TOKEN_TABLE.43a124d2adc8a2ef`, `md.comp.carousel-item`).
 
-## 37. Segmented button — @deprecated (D4)
-- **Status:** shipped for migration; docs point to connected button groups. `TODO(verify)` m3.material.io guidance.
-- **ARIA:** radiogroup/checkbox group.
-- **Layers:** css + react.
+## 37. Segmented button — @deprecated (D4) — built
+- **Status:** shipped for migration until 2.0, no new features; the docs, the `@deprecated` JSDoc and the dev warning point to the connected button group (§5, `ButtonGroup variant="connected"`). m3.material.io no longer recommends segmented buttons (page `409b50be-…`, "May 2025"; SOURCES #54); Compose does not deprecate them at the pin.
+- **Purpose:** Compose `SingleChoiceSegmentedButtonRow` / `MultiChoiceSegmentedButtonRow` with `SegmentedButton`: two to five options, one or several selected.
+- **Tokens (`OutlinedSegmentedButtonTokens.kt`, generated; the values Compose renders that are not tokens in `components/segmented-button-defaults.css` by `segmented-button-defaults.ts`, PARITY.md lines):**
+
+  | | value | source |
+  |---|---|---|
+  | button | 40dp minimum height, 58dp minimum width (`ButtonDefaults.MinHeight` / `MinWidth`), 12dp / 8dp padding (`ContentPadding`), the 48dp minimum interactive size around it (the row is 48dp high) | `SegmentedButton.kt` L155–158, L617–623; `Button.kt` L1053–1065; `Surface.kt` L355–360 |
+  | row | equal widths from the widest button (`weight(1f)` in `width(IntrinsicSize.Min)`), neighbors overlapping by the 1dp border (`spacedBy(−BorderWidth)`), centered vertically | L327–380 |
+  | shapes | the first button the full corners on its start side, the last on its end side, one alone all four, others none (`itemShape`) | L597–611 |
+  | colors | selected secondary container / on secondary container, unselected transparent / on surface, outline border; disabled: content on surface 38%, border Outline 12% (not the token file's on-surface), the selected container kept; state layer in the content color, no color change on hover / focus / press | L548–572; `Surface.kt` L387–396 |
+  | content | an 18dp icon slot (kept while empty), 8dp (`IconSpacing`), the label in label large; the label drawn −13dp (−(18 + 8) / 2) back while no icon shows | L383–457, L853 |
+  | motion | the check: fade in on DefaultEffects + scale from 0 about its bottom start corner on FastSpatial, gone at once (`ExitTransition.None`); with an unselected icon the two cross-fade on DefaultEffects; the label offset on FastSpatial (overshoots under the expressive scheme); colors do not animate | L391, L644–673 |
+  | raised | z-index: selected + 5 (`CheckedZIndexFactor`), + 1 each for focus and a press | L459–479, L843–852 |
+
+- **Input / keyboard (owner decision M9 #29):** native inputs, no element. Single choice: radios sharing a `name` (arrow keys move and select, wrapping in Chromium and Firefox; WebKit's native radios stop at the ends, React Aria wraps everywhere; Tab enters at the selected one; Space selects). Multiple choice: checkboxes (each a Tab stop, Space toggles). Enter does not select (Compose and m3.material.io do).
+- **ARIA:** single choice `role="radiogroup"` (Compose `selectableGroup` + `Role.RadioButton`), multiple choice `role="group"` of checkboxes (m3.material.io: "The role for the multi-select segmented button is Checkbox"); name the row with `aria-label` / `aria-labelledby`; each input is named by its label (the icon slot is `aria-hidden`).
+- **Layers:** css (`segmented-button.css`; the state-layer / focus-ring proxy rules and `ripple.js` triggers of the selection controls) + react (`SingleChoiceSegmentedButtonRow` on `useRadioGroup` / `useRadio`, `MultiChoiceSegmentedButtonRow` on `useCheckboxGroup` / `useCheckboxGroupItem`, `SegmentedButton`). No element (decision #29); the React DOM is checked against the css contract (`segmented-button.test.tsx`).
+- **Classes:** `.m3e-segmented-button-row` > `label.m3e-segmented-button` > `input.m3e-segmented-button__input[type=radio|checkbox]`, `__icon` (`aria-hidden`; `.m3e-icon.m3e-segmented-button__check` `check`, optional unselected `.m3e-icon`), `__label`.
+- **API:** React `<SingleChoiceSegmentedButtonRow value defaultValue onChange isDisabled isReadOnly isRequired name aria-label>` / `<MultiChoiceSegmentedButtonRow value defaultValue onChange isDisabled isReadOnly name aria-label>` around `<SegmentedButton value icon isDisabled>{label}</SegmentedButton>` (the ref is the input). Exports keep the Compose names, marked `@deprecated`; the rows warn once in development (`warnDeprecated`).
 - **Acceptance:**
-  - [ ] Dev warning on use.
-  - [ ] Plus CAC.
+  - [x] Dev warning on use (each row once, naming `ButtonGroup variant="connected"`; `segmented-button.test.tsx`).
+  - [x] Plus CAC.
+- **Fidelity:** the row sizes its equal columns from each button's whole label (CSS grid max-content), where Compose sizes them from the widest unbreakable word (`IntrinsicSize.Min`) and wraps longer labels; the icon and label mirror in RTL (Compose places them with `place()`, unmirrored) and so does the check's scale origin; Enter does not select (native inputs); springs are CSS `linear()` transitions (a retarget keeps no velocity) at fractional px (Compose's label offset is an `Int` Animatable); forced colors draw a 1dp border and fill the selected button with Highlight.
+- **Sources:** SegmentedButton.kt, SegmentedButtonSamples.kt, Surface.kt, Button.kt (vendored), OutlinedSegmentedButtonTokens.kt; m3.material.io Segmented buttons (page `409b50be-403a-4846-932c-706a9b2137dd`).
 
 ## 38. Pull to refresh — built
 - **Purpose:** refresh a scrolling list by pulling it down at its top (Compose `PullToRefreshBox`; no m3.material.io page at the pin).

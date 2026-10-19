@@ -60,6 +60,11 @@ export interface LiteralRule {
   alias?: string;
   /** `keyword`: the Compose value looked up in KEYWORDS instead of the capture (an implied default). */
   keyword?: string;
+  /**
+   * The `<Object>Tokens` that unqualified token captures belong to, for files that import the
+   * members (`fromToken(OutlineColor)` in SegmentedButton.kt is `OutlinedSegmentedButtonTokens`).
+   */
+  tokens?: string;
   note?: string;
 }
 
@@ -125,7 +130,11 @@ function extractRule(
     throw new Error(
       `${rule.file}: ${rule.owner}.${rule.member} not found (pattern changed upstream?)`,
     );
-  const captured = match[1]!;
+  const qualify = (ref: string) =>
+    rule.tokens !== undefined && !ref.includes('.') ? `${rule.tokens}.${ref}` : ref;
+  const captured = ['token', 'composite', 'alpha', 'shadow', 'typeToken'].includes(rule.kind)
+    ? qualify(match[1]!)
+    : match[1]!;
   const base = {
     name: rule.name,
     owner: rule.owner,
@@ -176,7 +185,7 @@ function extractRule(
     case 'composite': {
       // Color.copy(alpha).compositeOver(role): an opaque mix over the role, in sRGB (Compose
       // composites in the color's space; ColorScheme colors are sRGB).
-      const alpha = match[2];
+      const alpha = match[2] === undefined ? undefined : qualify(match[2]);
       const role = match[3];
       if (alpha === undefined || role === undefined)
         throw new Error(`${label}: ${rule.name} needs the alpha and role captures`);
@@ -193,7 +202,7 @@ function extractRule(
     }
     case 'alpha': {
       // Color.copy(alpha): translucent, drawn over whatever is behind (not composited).
-      const alpha = match[2];
+      const alpha = match[2] === undefined ? undefined : qualify(match[2]);
       if (alpha === undefined) throw new Error(`${label}: ${rule.name} needs the alpha capture`);
       const value = `color-mix(in srgb, ${tokenVar(captured)} calc(${tokenVar(alpha)} * 100%), transparent)`;
       return [{ ...base, value, js: value, raw: `${captured}.copy(alpha = ${alpha})` }];

@@ -4,10 +4,11 @@ import { PRESS_KEYS, isRippleDisabled, pressRipple, releaseRipple } from '../bas
  * Press targets m3e-css draws a ripple for: the hosts in the state-layer.css `:where()` lists
  * (an interactive list item too),
  * plus the proxies (an interactive card's `.m3e-card__action`, a `.m3e-navigation-item`, a
- * checkbox's, radio button's or switch's label or input, a filter chip's input).
+ * checkbox's, radio button's or switch's label or input, a filter chip's or segmented button's
+ * input).
  */
 const TRIGGERS =
-  '.m3e-button,.m3e-icon-button,.m3e-assist-chip,.m3e-filter-chip,.m3e-filter-chip__input,.m3e-input-chip,.m3e-suggestion-chip,.m3e-fab,.m3e-extended-fab,.m3e-fab-menu__item,.m3e-state-layer,.m3e-card__action,.m3e-navigation-item,.m3e-navigation-drawer-item,.m3e-tab,.m3e-list-item--interactive,.m3e-bottom-sheet__handle,.m3e-carousel__action,.m3e-checkbox,.m3e-checkbox__input,.m3e-radio-button,.m3e-radio-button__input,.m3e-switch,.m3e-switch__input';
+  '.m3e-button,.m3e-icon-button,.m3e-assist-chip,.m3e-filter-chip,.m3e-filter-chip__input,.m3e-input-chip,.m3e-suggestion-chip,.m3e-fab,.m3e-extended-fab,.m3e-fab-menu__item,.m3e-state-layer,.m3e-card__action,.m3e-navigation-item,.m3e-navigation-drawer-item,.m3e-tab,.m3e-list-item--interactive,.m3e-bottom-sheet__handle,.m3e-carousel__action,.m3e-checkbox,.m3e-checkbox__input,.m3e-radio-button,.m3e-radio-button__input,.m3e-switch,.m3e-switch__input,.m3e-segmented-button,.m3e-segmented-button__input';
 
 /** Pointer id of a keyboard press (real pointer ids are never negative). */
 const KEYBOARD = -1;
@@ -30,8 +31,8 @@ function rippleHost(trigger: Element): HTMLElement | null {
   if (trigger.matches('.m3e-navigation-item')) {
     return trigger.querySelector<HTMLElement>('.m3e-navigation-item__state');
   }
-  // A filter chip (a label around its native checkbox) draws the ripple itself.
-  const chip = trigger.closest<HTMLElement>('.m3e-filter-chip');
+  // A filter chip or a segmented button (a label around its native input) draws the ripple itself.
+  const chip = trigger.closest<HTMLElement>('.m3e-filter-chip,.m3e-segmented-button');
   if (chip) return chip.querySelector(':disabled') ? null : chip;
   // A selection control's 40dp circle (checkbox, radio button; a switch's around its handle),
   // unless its input is disabled.

@@ -78,6 +78,10 @@ export const MATERIAL3_SOURCES = [
   // Pull to refresh (M9 §38): Modifier.pullToRefresh (the drag multiplier, tension, threshold),
   // PullToRefreshState, PullToRefreshDefaults (indicator box, arrow, LoadingIndicator variant).
   'pulltorefresh/PullToRefresh.kt',
+  // Segmented button (M9 §37, deprecated D4): the rows, SegmentedButtonDefaults, the check icon,
+  // and the selectable / toggleable Surface each segment is (48dp target, border, ripple).
+  'SegmentedButton.kt',
+  'Surface.kt',
 ] as const;
 
 /** Material3 samples the generator reads (values the Compose catalog renders, e.g. icon rotation). */
@@ -104,6 +108,7 @@ export const MATERIAL3_SAMPLE_SOURCES = [
   'ScaffoldSamples.kt',
   'BottomSheetSamples.kt',
   'PullToRefreshSamples.kt',
+  'SegmentedButtonSamples.kt',
 ] as const;
 
 /** Android `actual`s the generator reads (DropdownMenu's popup margins, AndroidMenu.android.kt). */

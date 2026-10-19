@@ -1287,3 +1287,22 @@ button.docs-layout-item:focus-visible {
   flex: 1 1 auto;
   min-block-size: 0;
 }
+
+/* Segmented button (deprecated, D4): one captioned row per example, rows stacked in React. */
+.docs-segmented-example {
+  margin-block: var(--m3e-sys-space-200);
+}
+
+.docs-segmented-caption {
+  margin-block: 0 var(--m3e-sys-space-50);
+  color: var(--m3e-sys-color-on-surface-variant);
+  font: var(--m3e-sys-typescale-label-large-weight) var(--m3e-sys-typescale-label-large-size) /
+    var(--m3e-sys-typescale-label-large-line-height) var(--m3e-sys-typescale-label-large-font);
+}
+
+.docs-segmented-stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--m3e-sys-space-200);
+  align-items: flex-start;
+}
