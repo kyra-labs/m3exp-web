@@ -55,4 +55,5 @@
 @import './snackbar.css';
 @import './bottom-sheet.css';
 @import './side-sheet.css';
+@import './carousel.css';
 @import './layout.css'; /* canonical layouts; imports vertical-drag-handle.css */

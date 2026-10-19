@@ -2520,3 +2520,33 @@ describe('side sheet values (M9, D8)', () => {
     );
   });
 });
+
+describe('carousel values (M9, no CarouselTokens.kt)', () => {
+  const css = output.get('components/carousel-defaults.css')!;
+  const decl = declarations(css.slice(0, css.indexOf('@media')));
+  const t = (name: string) => decl.get(`--m3e-comp-carousel-${name}`);
+
+  it('CarouselDefaults: 40 / 56dp small items, 0dp spacing and padding (register #82)', () => {
+    expect(t('min-small-item-width')).toBe('40px');
+    expect(t('max-small-item-width')).toBe('56px');
+    expect(t('item-spacing')).toBe('0px');
+    expect(t('content-padding-start')).toBe('0px');
+    expect(t('content-padding-end')).toBe('0px');
+  });
+
+  it('the samples’ extra-large mask, the m3.material.io state layer and full-screen gap', () => {
+    expect(t('item-shape')).toBe('var(--m3e-sys-shape-corner-extra-large)');
+    expect(t('item-state-layer-color')).toBe('var(--m3e-sys-color-on-surface)');
+    expect(t('full-screen-item-spacing')).toBe('16px');
+  });
+
+  it('animateScrollToItem’s spring() (ζ 1, k 1500), jumping under reduced motion', () => {
+    expect(t('scroll-damping-ratio')).toBe('1');
+    expect(t('scroll-stiffness')).toBe('1500');
+    expect(t('scroll-duration')).toMatch(/^\d+ms$/);
+    expect(css.slice(css.indexOf('@media'))).toContain('--m3e-comp-carousel-scroll-duration: 0ms;');
+    expect(output.get('PARITY.md')).toMatch(
+      /carousel\/Carousel\.kt@19991f2c0858aadfcb442ce02b2c8e4743c96898 L813 \| `--m3e-comp-carousel-min-small-item-width`/,
+    );
+  });
+});

@@ -4,7 +4,7 @@
 > Source: compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/tokens @ 19991f2c0858aadfcb442ce02b2c8e4743c96898  
 > Values: Copyright (C) The Android Open Source Project, Apache License 2.0 (see NOTICE).  
 
-Emitted: 377 system and 3682 component variables from 137 component token objects.
+Emitted: 377 system and 3693 component variables from 138 component token objects.
 
 ## Not emitted here
 
@@ -926,6 +926,22 @@ Emitted: 377 system and 3682 component variables from 137 component token object
 | `ButtonXSmallTokens.SelectedContainerShapeRound` | `ShapeKeyTokens.CornerFull` | ButtonXSmallTokens.kt:48 | `--m3e-comp-button-x-small-container-shape-round-selected` | `var(--m3e-sys-shape-corner-full)` |  |
 | `ButtonXSmallTokens.SelectedContainerShapeSquare` | `ShapeKeyTokens.CornerMedium` | ButtonXSmallTokens.kt:51 | `--m3e-comp-button-x-small-container-shape-square-selected` | `var(--m3e-sys-shape-corner-medium)` |  |
 | `ButtonXSmallTokens.TrailingSpace` | `16.0.dp` | ButtonXSmallTokens.kt:54 | `--m3e-comp-button-x-small-trailing-space` | `16px` |  |
+
+## carousel-defaults
+
+| Source token | Source value | Line | CSS variable | Emitted | Note |
+|---|---|---|---|---|---|
+| `CarouselDefaults.MinSmallItemSize` | `40.dp` | compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/carousel/Carousel.kt@19991f2c0858aadfcb442ce02b2c8e4743c96898 L813 | `--m3e-comp-carousel-min-small-item-width` | `40px` | minSmallItemWidth of the multi-browse and hero carousels |
+| `CarouselDefaults.MaxSmallItemSize` | `56.dp` | compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/carousel/Carousel.kt@19991f2c0858aadfcb442ce02b2c8e4743c96898 L816 | `--m3e-comp-carousel-max-small-item-width` | `56px` | maxSmallItemWidth of the multi-browse and hero carousels |
+| `CarouselDefaults.ItemSpacing` | `0.dp` | compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/carousel/Carousel.kt@19991f2c0858aadfcb442ce02b2c8e4743c96898 L819 | `--m3e-comp-carousel-item-spacing` | `0px` | SOURCES register #82: the samples and m3.material.io Specs use 8dp (owner’s call) |
+| `CarouselDefaults.ContentPadding` | `0.dp` | compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/carousel/Carousel.kt@19991f2c0858aadfcb442ce02b2c8e4743c96898 L822 | `--m3e-comp-carousel-content-padding-start` | `0px` | before the first item (the strategy shifts the keylines into it); SOURCES register #82: the samples and m3.material.io Specs use 16dp (owner’s call) |
+| `CarouselDefaults.ContentPadding` | `0.dp` | compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/carousel/Carousel.kt@19991f2c0858aadfcb442ce02b2c8e4743c96898 L822 | `--m3e-comp-carousel-content-padding-end` | `0px` | after the last item |
+| `HorizontalMultiBrowseCarouselSample.maskClip` | `MaterialTheme.shapes.extraLarge` | compose/material3/material3/samples/src/main/java/androidx/compose/material3/samples/CarouselSamples.kt@19991f2c0858aadfcb442ce02b2c8e4743c96898 L130 | `--m3e-comp-carousel-item-shape` | `var(--m3e-sys-shape-corner-extra-large)` | owner decision M9 #25: every sample masks its items with it; m3.material.io token DB md.comp.carousel-item.container.shape = md.sys.shape.corner.extra-large |
+| `CarouselState.animateScrollToItem` | `ζ=1, k=1500` | compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/carousel/CarouselState.kt@19991f2c0858aadfcb442ce02b2c8e4743c96898 L101 | `--m3e-comp-carousel-scroll-duration` | `238ms` | springToLinear() (m3e-motion) duration estimate; 0ms with prefers-reduced-motion (spatial). Keyboard / focus moves and scrollToItem; flings are the browser’s (owner decision M9 #23) |
+| `CarouselState.animateScrollToItem` | `Spring.DampingRatioNoBouncy = 1f` | compose/animation/animation-core/src/commonMain/kotlin/androidx/compose/animation/core/VectorizedAnimationSpec.kt@19991f2c0858aadfcb442ce02b2c8e4743c96898 L839 | `--m3e-comp-carousel-scroll-damping-ratio` | `1` | CarouselState.animateScrollToItem(animationSpec = spring()) (CarouselState.kt L101); spring() defaults (AnimationSpec.kt L835) |
+| `CarouselState.animateScrollToItem` | `Spring.StiffnessMedium = 1500f` | compose/animation/animation-core/src/commonMain/kotlin/androidx/compose/animation/core/VectorizedAnimationSpec.kt@19991f2c0858aadfcb442ce02b2c8e4743c96898 L801 | `--m3e-comp-carousel-scroll-stiffness` | `1500` | CarouselState.animateScrollToItem(animationSpec = spring()) (CarouselState.kt L101); spring() defaults (AnimationSpec.kt L835) |
+| `m3.material.io.md.comp.carousel-item.{hover,focus,pressed}.state-layer.color` | `md.comp.carousel-item.hover.state-layer.color = md.sys.color.on-surface` | m3.material.io token DB "Google Material 3" v38.2.9 rev 7989 (_dsm/data/dsdb-m3/2026-10-13_06-10-19/TOKEN_TABLE.43a124d2adc8a2ef.json, Carousel › Tokens & specs: md.comp.carousel-item) | `--m3e-comp-carousel-item-state-layer-color` | `var(--m3e-sys-color-on-surface)` | owner decision M9 #25: interactive items only (Compose’s item has no indication; the samples’ clickable draws the ripple over the image); opacities md.sys.state.*; no hover elevation (Compose draws none) |
+| `m3.material.io.Full-screen › Padding between elements` | `Padding between elements = 16dp` | m3.material.io Carousel › Specs (_dsm/content/m3/2026-10-13_06-10-19/b0726223-2639-4157-84ae-cb84c07ee2e5.json, updated 2026-08-18) | `--m3e-comp-carousel-full-screen-item-spacing` | `16px` | owner decision M9 #22: CSS-only layout (no Compose API); leading / trailing and top / bottom padding 0dp; TODO(verify) SOURCES register #83 |
 
 ## checkbox
 

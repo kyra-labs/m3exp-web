@@ -74,6 +74,20 @@
     outline-offset: var(--m3e-sys-state-focus-indicator-outer-offset);
   }
 
+  /*
+   * Proxy host: a carousel item rings its mask (the mask clips its own outline), for a focused
+   * static item or its focused link / button; carousel.css places the ring on the mask. Drawn
+   * inward: the scroll container clips everything outside the items (the token DB's outer offset
+   * would be cut on every side).
+   */
+  :where(
+    .m3e-carousel__item:focus-visible,
+    .m3e-carousel__item:has(> .m3e-carousel__action:focus-visible)
+  )::after {
+    outline: var(--m3e-sys-state-focus-indicator-thickness) solid var(--m3e-sys-color-secondary);
+    outline-offset: var(--m3e-sys-state-focus-indicator-inner-offset);
+  }
+
   :where(.m3e-focus-ring--inward):focus-visible {
     outline-offset: var(--m3e-sys-state-focus-indicator-inner-offset);
   }
@@ -166,7 +180,11 @@
       .m3e-pane-scaffold__pane
     ):focus-visible,
     :where(.m3e-search__field):has(.m3e-search__input:focus-visible),
-    :where(.m3e-search__result)[data-focus-visible] {
+    :where(.m3e-search__result)[data-focus-visible],
+    :where(
+      .m3e-carousel__item:focus-visible,
+      .m3e-carousel__item:has(> .m3e-carousel__action:focus-visible)
+    )::after {
       outline-color: Highlight;
     }
   }

@@ -26,7 +26,7 @@
 const f = Math.fround;
 
 /** Kotlin `Float.MAX_VALUE`. */
-export const FLOAT_MAX_VALUE = f(3.4028235e38);
+export const FLOAT_MAX_VALUE = 3.4028234663852886e38;
 
 /** `CarouselDefaults.MinSmallItemSize` (Carousel.kt L813): 40dp. */
 export const CAROUSEL_MIN_SMALL_ITEM_SIZE = 40;
@@ -35,9 +35,9 @@ export const CAROUSEL_MAX_SMALL_ITEM_SIZE = 56;
 /** `CarouselDefaults.AnchorSize` (Carousel.kt L824, internal): 10dp. */
 export const CAROUSEL_ANCHOR_SIZE = 10;
 /** `CarouselDefaults.MediumLargeItemDiffThreshold` (Carousel.kt L825, internal). */
-const MEDIUM_LARGE_ITEM_DIFF_THRESHOLD = f(0.85);
+const MEDIUM_LARGE_ITEM_DIFF_THRESHOLD = 0.8500000238418579; // 0.85f
 /** `Arrangement.MediumItemFlexPercentage` (Arrangement.kt L71). */
-const MEDIUM_ITEM_FLEX_PERCENTAGE = f(0.1);
+const MEDIUM_ITEM_FLEX_PERCENTAGE = 0.10000000149011612; // .1f
 
 /** Kotlin `coerceIn`: throws when the range is empty. */
 function coerceIn(value: number, min: number, max: number): number {
@@ -308,8 +308,6 @@ export class KeylineList {
   readonly firstFocalIndex: number;
   readonly lastFocalIndex: number;
   readonly focalCount: number;
-
-  static readonly Empty = new KeylineList([]);
 
   constructor(keylines: readonly Keyline[]) {
     this.keylines = keylines;
@@ -631,7 +629,10 @@ function isCutoffRight(size: number, offset: number, carouselMainAxisSize: numbe
   );
 }
 
-export const emptyKeylineList = (): KeylineList => KeylineList.Empty;
+let empty: KeylineList | undefined;
+
+/** `KeylineList.Empty` (created on first use: no module-level side effects for tree shaking). */
+export const emptyKeylineList = (): KeylineList => (empty ??= new KeylineList([]));
 
 /** A keyline list aligned to the container (L265–278). */
 export function keylineListOf(

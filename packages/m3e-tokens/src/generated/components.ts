@@ -410,6 +410,21 @@ export const buttonXSmallTokens = {
   trailingSpace: 16
 } as const;
 
+/** CarouselDefaults */
+export const carouselDefaults = {
+  carouselMinSmallItemWidth: 40,
+  carouselMaxSmallItemWidth: 56,
+  carouselItemSpacing: 0,
+  carouselContentPaddingStart: 0,
+  carouselContentPaddingEnd: 0,
+  carouselItemShape: "var(--m3e-sys-shape-corner-extra-large)",
+  carouselScrollDuration: 238,
+  carouselScrollDampingRatio: 1,
+  carouselScrollStiffness: 1500,
+  carouselItemStateLayerColor: "var(--m3e-sys-color-on-surface)",
+  carouselFullScreenItemSpacing: 16
+} as const;
+
 /** CheckboxTokens */
 export const checkboxTokens = {
   containerShape: 2,

@@ -24,7 +24,6 @@ import {
   type Keyline,
   KeylineList,
   at,
-  emptyKeylineList,
   keylineListOf,
   lerpFloat,
   lerpKeylineList,
@@ -76,8 +75,6 @@ export class Strategy {
   #cachedMaxScrollOffset = -1;
   #cachedRoundToNearestStep = false;
   #cachedKeylineList: KeylineList | null = null;
-
-  static readonly Empty = new Strategy(emptyKeylineList(), [], [], 0, 0, 0, 0);
 
   private constructor(
     defaultKeylines: KeylineList,
