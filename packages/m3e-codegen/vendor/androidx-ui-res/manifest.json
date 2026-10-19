@@ -3,6 +3,7 @@
   "commit": "19991f2c0858aadfcb442ce02b2c8e4743c96898",
   "path": "compose/ui/ui/src/androidMain/res/values",
   "files": {
+    "strings.xml": "3d76c2fc9aecdd97df58a2fdc9abccfbcd9a9de097b6742aa86d02abcaf44fb3",
     "styles.xml": "129d91d44888ed3608449075ec045ea391e500003e8f753f0ae6cd875aff42f6"
   }
 }

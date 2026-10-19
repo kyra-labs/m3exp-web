@@ -16,5 +16,8 @@ export default defineConfig({
     '@kyralabs/m3e-elements/menu.js',
     '@kyralabs/m3e-elements/pane-motion.js',
     '@kyralabs/m3e-elements/pane-expansion.js',
+    // <m3e-bottom-sheet> loads its layout and its drag handle's tooltip controller on first render.
+    '@kyralabs/m3e-elements/bottom-sheet-layout.js',
+    '@kyralabs/m3e-elements/tooltip-popup.js',
   ],
 });

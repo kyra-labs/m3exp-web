@@ -1,0 +1,10 @@
+---
+'@kyralabs/m3e-tokens': minor
+'@kyralabs/m3e-css': minor
+'@kyralabs/m3e-motion': minor
+'@kyralabs/m3e-elements': minor
+'@kyralabs/m3e-react': minor
+'@kyralabs/m3exp-web': minor
+---
+
+Bottom sheets (M9, COMPONENT_SPEC §30): Compose's `ModalBottomSheet` (a native modal `<dialog>` named "Bottom Sheet" over the 0.32 scrim; the page inert and its scroll locked, Tab kept inside, focus on the drag handle and back to the opener; Escape partially expands an expanded sheet, else hides it, as the scrim does) and `BottomSheet` (the standard sheet, fixed to the bottom of its positioned container, with the `BottomSheetScaffold` peek height as an option). The sheet is surface-container-low with extra-large top corners, at most 640dp wide, centered and flush with the bottom; it opens partially expanded (half the container, or the whole sheet when it is shorter) or, with `skipPartiallyExpanded`, expanded. Show / expand run on the default spatial spring, hide / partially expand on the fast effects spring (both jump under reduced motion), the scrim on the default effects spring; drags settle with Compose's thresholds (56dp from the anchor behind, 125dp/s, a dampened fling near Hidden) on the default spatial spring started at the release velocity. The drag handle is a 32 × 48dp button with its built-in "Drag handle" tooltip: a click expands a partially expanded sheet and dismisses an expanded one; ArrowUp / ArrowDown expand and collapse it. New `components/bottom-sheet-defaults.css` tokens, m3e-css `bottom-sheet.css`, m3e-motion's N-anchor anchored-draggable model (`DraggableAnchors`, `computeTarget`, `AnchoredDraggableAnimation`; reference-tested against the androidx anchored-draggable and sheet tests and against the navigation drawer's two-anchor target selection) and `SheetState`, the m3e-elements `<m3e-bottom-sheet>` and `bottom-sheet-layout` (`BottomSheetLayout`) entries, and m3e-react `<BottomSheet>` and `<ModalBottomSheet>`. The navigation drawer's pointer drags now run on the drag helper it shares with the sheets (no change in behavior).

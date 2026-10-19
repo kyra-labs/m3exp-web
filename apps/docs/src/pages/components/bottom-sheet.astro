@@ -1,0 +1,118 @@
+---
+import BottomSheetPlayground from '../../islands/BottomSheetPlayground.tsx';
+import Base from '../../layouts/Base.astro';
+
+// ModalBottomSheetSample: 25 list items ("Item n", a favorite icon) on the sheet's color.
+const items = (n: number) =>
+  `<ul class="m3e-list docs-sheet-list">${Array.from(
+    { length: n },
+    (_, i) =>
+      `<li class="m3e-list-item"><span class="m3e-list-item__leading"><span class="m3e-icon" aria-hidden="true">favorite</span></span><span class="m3e-list-item__content"><span class="m3e-list-item__headline">Item ${String(i)}</span></span></li>`,
+  ).join('')}</ul>`;
+---
+
+<Base title="Bottom sheets">
+  <link rel="stylesheet" href="/icons/docs-icons.css" slot="head" />
+  <h1>Bottom sheets</h1>
+  <p>
+    Bottom sheets (COMPONENT_SPEC §30) hold supplementary content anchored to the bottom of the screen. The <strong>modal bottom sheet</strong> is Compose's <code>ModalBottomSheet</code>: a dialog over a 32% scrim that opens partially expanded (half the window, or the whole sheet when it is shorter) and can be dragged up to expanded or down to dismiss. The <strong>standard bottom sheet</strong> is Compose's <code>BottomSheet</code>: the same sheet fixed to the bottom of its container, alongside the page content, with an optional peek height (Compose's <code>BottomSheetScaffold</code>; the scaffold's own layout waits for the Scaffold primitive).
+  </p>
+  <p>
+    The sheet takes surface-container-low with extra-large top corners, is at most 640dp wide and centered, and sits flush with the bottom with no margins (Compose; m3.material.io shows 72dp / 56dp margins). It shows and expands on the default spatial spring and hides on the fast effects spring. A drag released 56dp from where it started, or flung at 125dp/s, moves to the next value; the settle starts at the release velocity. The drag handle is a button named "Drag handle" with a built-in tooltip: Enter or Space expands a partially expanded sheet and dismisses an expanded one; ArrowUp and ArrowDown expand and collapse it. Escape partially expands an expanded sheet, else hides it.
+  </p>
+
+  <section aria-labelledby="modal-heading">
+    <h2 id="modal-heading">Modal bottom sheet (element)</h2>
+    <p>
+      <code>&lt;m3e-bottom-sheet variant="modal"&gt;</code>: <code>show()</code> opens it partially expanded (<code>skip-partially-expanded</code>: expanded); the child nodes are the content. The page is inert while it is open, Tab stays inside and focus returns to the opener when it hides. The first one is Compose's <code>ModalBottomSheetSample</code>.
+    </p>
+    <div class="docs-button-row">
+      <button type="button" class="m3e-button m3e-button--filled" data-sheet-open="modal" data-testid="open-modal">Show bottom sheet</button>
+      <button type="button" class="m3e-button m3e-button--tonal" data-sheet-open="modal-skip" data-testid="open-modal-skip">Skip partially expanded</button>
+      <button type="button" class="m3e-button m3e-button--outlined" data-sheet-open="modal-short" data-testid="open-modal-short">Short sheet</button>
+    </div>
+
+    <m3e-bottom-sheet variant="modal" data-testid="modal">
+      <div class="docs-sheet-row"><button type="button" class="m3e-button m3e-button--filled" data-sheet-hide>Hide bottom sheet</button></div>
+      <m3e-text-field label="Text field" variant="outlined" class="docs-sheet-field"></m3e-text-field>
+      <Fragment set:html={items(25)} />
+    </m3e-bottom-sheet>
+
+    <m3e-bottom-sheet variant="modal" skip-partially-expanded data-testid="modal-skip">
+      <div class="docs-sheet-row"><button type="button" class="m3e-button m3e-button--filled" data-sheet-hide>Hide bottom sheet</button></div>
+      <Fragment set:html={items(25)} />
+    </m3e-bottom-sheet>
+
+    <m3e-bottom-sheet variant="modal" data-testid="modal-short">
+      <Fragment set:html={items(3)} />
+    </m3e-bottom-sheet>
+  </section>
+
+  <section aria-labelledby="standard-heading">
+    <h2 id="standard-heading">Standard bottom sheet (element)</h2>
+    <p>
+      <code>&lt;m3e-bottom-sheet value="partially-expanded"&gt;</code> in a positioned container (<code>position: relative</code>): the sheet covers the bottom of the container without a scrim, and the content behind it stays usable. Drag it, use its handle, or Escape in it.
+    </p>
+    <div class="docs-sheet-frame" data-testid="standard-frame">
+      <div class="docs-sheet-frame__content">
+        <p>Page content</p>
+        <button type="button" class="m3e-button m3e-button--tonal" data-sheet-show="standard" data-testid="show-standard">Show sheet</button>
+      </div>
+      <m3e-bottom-sheet value="partially-expanded" label="Standard sheet" data-testid="standard">
+        <Fragment set:html={items(12)} />
+      </m3e-bottom-sheet>
+    </div>
+
+    <h3>Peek height</h3>
+    <p>
+      <code>peek-height="128"</code> (Compose's <code>SimpleBottomSheetScaffoldSample</code>): partially expanded, the sheet shows its top 128dp; <code>skip-hidden-state</code> keeps it from hiding (the scaffold's default), so its handle collapses an expanded sheet instead.
+    </p>
+    <div class="docs-sheet-frame" data-testid="peek-frame">
+      <div class="docs-sheet-frame__content"><p>Scaffold Content</p></div>
+      <m3e-bottom-sheet value="partially-expanded" peek-height="128" skip-hidden-state label="Peek sheet" data-testid="peek">
+        <div class="docs-sheet-peek">Swipe up to expand sheet</div>
+        <p class="docs-sheet-centered">Sheet content</p>
+        <div class="docs-sheet-row"><button type="button" class="m3e-button m3e-button--filled" data-sheet-collapse>Click to collapse sheet</button></div>
+      </m3e-bottom-sheet>
+    </div>
+  </section>
+
+  <section aria-labelledby="react-heading">
+    <h2 id="react-heading">React</h2>
+    <p>
+      <code>&lt;ModalBottomSheet isOpen onOpenChange skipPartiallyExpanded&gt;</code> and <code>&lt;BottomSheet value onValueChange peekHeight skipHiddenState&gt;</code> render the same DOM as the element. <code>onOpenChange(false)</code> reports the handle, a drag, Escape and the scrim (Compose's <code>onDismissRequest</code>).
+    </p>
+    <BottomSheetPlayground client:only="react" />
+  </section>
+</Base>
+
+<script>
+  import '@kyralabs/m3exp-web/elements';
+
+  type SheetHost = HTMLElement & {
+    show(): void;
+    hide(): void;
+    partialExpand(): void;
+  };
+  const sheet = (id: string | undefined) =>
+    document.querySelector<SheetHost>(`m3e-bottom-sheet[data-testid="${id ?? ''}"]`);
+  for (const button of document.querySelectorAll<HTMLButtonElement>('[data-sheet-open]')) {
+    button.addEventListener('click', () => {
+      sheet(button.dataset['sheetOpen'])?.show();
+    });
+  }
+  for (const button of document.querySelectorAll<HTMLButtonElement>('[data-sheet-show]')) {
+    button.addEventListener('click', () => {
+      sheet(button.dataset['sheetShow'])?.show();
+    });
+  }
+  // The samples' buttons inside a sheet hide it, or partially expand it.
+  document.addEventListener('click', (e) => {
+    const target = e.target as Element | null;
+    target?.closest('[data-sheet-hide]')?.closest<SheetHost>('m3e-bottom-sheet')?.hide();
+    target
+      ?.closest('[data-sheet-collapse]')
+      ?.closest<SheetHost>('m3e-bottom-sheet')
+      ?.partialExpand();
+  });
+</script>

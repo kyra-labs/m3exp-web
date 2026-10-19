@@ -19,7 +19,8 @@
     .m3e-fab,
     .m3e-extended-fab,
     .m3e-fab-menu__item,
-    .m3e-pane-scaffold__drag-handle
+    .m3e-pane-scaffold__drag-handle,
+    .m3e-bottom-sheet__handle
   ):focus-visible {
     outline: var(--m3e-sys-state-focus-indicator-thickness) solid var(--m3e-sys-color-secondary);
     outline-offset: var(--m3e-sys-state-focus-indicator-outer-offset);
@@ -129,7 +130,8 @@
       .m3e-fab,
       .m3e-extended-fab,
       .m3e-fab-menu__item,
-      .m3e-pane-scaffold__drag-handle
+      .m3e-pane-scaffold__drag-handle,
+      .m3e-bottom-sheet__handle
     ):focus:not(:focus-visible) {
     outline: none;
   }
@@ -145,7 +147,8 @@
       .m3e-fab,
       .m3e-extended-fab,
       .m3e-fab-menu__item,
-      .m3e-pane-scaffold__drag-handle
+      .m3e-pane-scaffold__drag-handle,
+      .m3e-bottom-sheet__handle
     ):focus-visible,
     :where(.m3e-card--interactive):has(.m3e-card__action:focus-visible),
     :where(.m3e-filter-chip):has(> .m3e-filter-chip__input:focus-visible),

@@ -256,6 +256,35 @@ export const bottomAppBarDefaults = {
   bottomAppBarDefaultsFabShadow: "var(--m3e-sys-elevation-level0-shadow)"
 } as const;
 
+/** BottomSheetDefaults */
+export const bottomSheetDefaults = {
+  bottomSheetMaxWidth: 640,
+  bottomSheetPeekHeight: 56,
+  bottomSheetPositionalThreshold: 56,
+  bottomSheetVelocityThreshold: 125,
+  bottomSheetBoundaryDampeningZone: 125,
+  bottomSheetDragHandleShape: "var(--m3e-sys-shape-corner-extra-large)",
+  bottomSheetDragHandlePaddingVertical: 22,
+  bottomSheetShowDuration: "var(--m3e-sys-motion-spring-default-spatial-duration)",
+  bottomSheetShowEasing: "var(--m3e-sys-motion-spring-default-spatial-easing)",
+  bottomSheetShowDampingRatio: "var(--m3e-sys-motion-spring-default-spatial-damping-ratio)",
+  bottomSheetShowStiffness: "var(--m3e-sys-motion-spring-default-spatial-stiffness)",
+  bottomSheetHideDuration: "var(--m3e-sys-motion-spring-fast-effects-duration)",
+  bottomSheetHideEasing: "var(--m3e-sys-motion-spring-fast-effects-easing)",
+  bottomSheetHideDampingRatio: "var(--m3e-sys-motion-spring-fast-effects-damping-ratio)",
+  bottomSheetHideStiffness: "var(--m3e-sys-motion-spring-fast-effects-stiffness)",
+  bottomSheetSettleDuration: "var(--m3e-sys-motion-spring-default-spatial-duration)",
+  bottomSheetSettleEasing: "var(--m3e-sys-motion-spring-default-spatial-easing)",
+  bottomSheetSettleDampingRatio: "var(--m3e-sys-motion-spring-default-spatial-damping-ratio)",
+  bottomSheetSettleStiffness: "var(--m3e-sys-motion-spring-default-spatial-stiffness)",
+  bottomSheetScrimDuration: "var(--m3e-sys-motion-spring-default-effects-duration)",
+  bottomSheetScrimEasing: "var(--m3e-sys-motion-spring-default-effects-easing)",
+  bottomSheetScrimDampingRatio: "var(--m3e-sys-motion-spring-default-effects-damping-ratio)",
+  bottomSheetScrimStiffness: "var(--m3e-sys-motion-spring-default-effects-stiffness)",
+  bottomSheetScrimColor: "var(--m3e-sys-color-scrim)",
+  bottomSheetScrimOpacity: "0.32"
+} as const;
+
 /** ButtonDefaults */
 export const buttonDefaults = {
   buttonMinWidth: 58,

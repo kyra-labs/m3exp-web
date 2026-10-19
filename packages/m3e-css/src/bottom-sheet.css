@@ -1,0 +1,226 @@
+/*
+ * Bottom sheets (COMPONENT_SPEC §30): the standard sheet (Compose BottomSheet, fixed to the
+ * bottom of its container; owner decision M9 #13) and the modal sheet (Compose ModalBottomSheet,
+ * a dialog over a scrim). CSS places a sheet at rest; the m3e-elements bottom sheet layout
+ * (<m3e-bottom-sheet>, m3e-react's <BottomSheet> / <ModalBottomSheet>) measures it, springs it
+ * between its anchors, follows drags and runs the drag handle.
+ *
+ *   <div class="m3e-bottom-sheet m3e-bottom-sheet--partially-expanded">   (standard)
+ *     <div class="m3e-bottom-sheet__sheet" role="region" aria-label="Bottom Sheet">
+ *       <button class="m3e-bottom-sheet__handle" type="button" aria-label="Drag handle">
+ *         <span class="m3e-bottom-sheet__handle-bar"></span></button>
+ *       <div class="m3e-tooltip" role="tooltip" popover="manual">Drag handle</div>  (optional)
+ *       <div class="m3e-bottom-sheet__content">…</div>
+ *     </div>
+ *   </div>
+ *
+ *   <dialog class="m3e-bottom-sheet m3e-bottom-sheet--modal m3e-bottom-sheet--expanded"
+ *     aria-label="Bottom Sheet">                                                   (modal)
+ *     <div class="m3e-bottom-sheet__scrim" aria-hidden="true"></div>
+ *     <div class="m3e-bottom-sheet__sheet">…</div>
+ *   </dialog>
+ *
+ * - The value (SheetValue): --expanded (the whole sheet, at most its container), --partially-
+ *   expanded (half the container, or the whole sheet when it is shorter), neither: hidden. With
+ *   --peek, PartiallyExpanded shows --m3e-comp-bottom-sheet-peek-height (56dp; BottomSheetScaffold's
+ *   sheetPeekHeight, the standard sheet's peek option).
+ * - Standard: the root fills its positioned container (position: relative) and clips the sheet;
+ *   only the sheet takes the pointer. Modal: a native <dialog> opened with showModal() (the page
+ *   inert), the scrim a child (::backdrop stays transparent).
+ * - The sheet is at most 640dp wide and centered, flush with the bottom, no side or top margins
+ *   (owner decision M9 #12: Compose, not m3.material.io's 72 / 56dp margins).
+ * - The handle is a 32 × 48dp button (the 32 × 4dp bar and 22dp above and below it) with a 48dp
+ *   target; the content scrolls when the sheet reaches its container height.
+ * - JS hooks: [data-animating] while it moves (the layout writes --_m3e-bs-translate, the offset
+ *   from its rest at the bottom, --_m3e-bs-stretch, the overshoot above the Expanded anchor, and,
+ *   modal, --_m3e-bs-scrim, the scrim alpha), [data-dragging] during a drag, and [data-scrolls]
+ *   while the content overflows an expanded sheet (touch then scrolls it instead of dragging).
+ *
+ * Sources (compose/material3 @ 19991f2c; values: sheet-bottom.css, bottom-sheet-defaults.css,
+ * lines in PARITY.md):
+ * - BottomSheet.kt BottomSheetImpl (L188-406): a Surface widthIn(max = SheetMaxWidth) in
+ *   ExpandedShape / ContainerColor with no shadow; anchors Hidden at the container height,
+ *   PartiallyExpanded at container − min(container / 2, sheet) (the deterministic flag, on),
+ *   Expanded at container − sheet; verticalScaleUp stretches the surface when a spring overshoots
+ *   (here a container-colored shadow below it, as the drawer).
+ * - SheetDefaults.kt BottomSheetDefaults.DragHandle (L571-589) in DragHandleWithTooltip
+ *   (L594-608): the bar in DockedDragHandleColor and shapes.extraLarge, 22dp vertical padding,
+ *   centered, a plain tooltip above it (owner decision M9 #30).
+ * - ModalBottomSheet.kt (L96-188): the Scrim (ScrimTokens color at ContainerOpacity, alpha on
+ *   DefaultEffects) under the sheet, aligned TopCenter in a dialog window.
+ * - BottomSheetScaffold.kt StandardBottomSheet (L297-362): PartiallyExpanded at the peek height.
+ */
+@import '@kyralabs/m3e-tokens/components/sheet-bottom.css';
+@import '@kyralabs/m3e-tokens/components/bottom-sheet-defaults.css';
+@import '@kyralabs/m3e-tokens/components/button-defaults.css';
+@import '@kyralabs/m3e-tokens/components/divider.css';
+
+@layer m3e.components {
+  .m3e-bottom-sheet {
+    --_m3e-bs-container: var(--m3e-comp-sheet-bottom-docked-container-color);
+
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    overflow: clip;
+    container-type: size;
+    pointer-events: none;
+  }
+
+  /* --- Modal (ModalBottomSheet: a dialog window) --------------------------------------------- */
+  .m3e-bottom-sheet--modal {
+    position: fixed;
+    box-sizing: border-box;
+    inline-size: 100%;
+    block-size: 100%;
+    max-inline-size: none;
+    max-block-size: none;
+    margin: 0;
+    padding: 0;
+    border: none;
+    outline: none;
+    background: transparent;
+    pointer-events: auto;
+  }
+
+  .m3e-bottom-sheet--modal:not([open]) {
+    display: none;
+  }
+
+  .m3e-bottom-sheet--modal::backdrop {
+    background: transparent;
+  }
+
+  .m3e-bottom-sheet__scrim {
+    position: absolute;
+    inset: 0;
+    background-color: var(--m3e-comp-bottom-sheet-scrim-color);
+    opacity: calc(var(--m3e-comp-bottom-sheet-scrim-opacity) * var(--_m3e-bs-scrim, 1));
+  }
+
+  /* --- Sheet (BottomSheetImpl's Surface) ------------------------------------------------------ */
+  .m3e-bottom-sheet__sheet {
+    position: absolute;
+    inset-inline: 0;
+    inset-block-end: 0;
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    inline-size: 100%;
+    max-inline-size: var(--m3e-comp-bottom-sheet-max-width);
+    max-block-size: 100%;
+    margin-inline: auto;
+    border-start-start-radius: var(--m3e-comp-sheet-bottom-docked-container-shape-start-start);
+    border-start-end-radius: var(--m3e-comp-sheet-bottom-docked-container-shape-start-end);
+    border-end-end-radius: var(--m3e-comp-sheet-bottom-docked-container-shape-end-end);
+    border-end-start-radius: var(--m3e-comp-sheet-bottom-docked-container-shape-end-start);
+    background-color: var(--_m3e-bs-container);
+    color: var(--m3e-sys-color-on-surface);
+    pointer-events: auto;
+    touch-action: none;
+    translate: 0 100%;
+    visibility: hidden;
+  }
+
+  .m3e-bottom-sheet--partially-expanded > .m3e-bottom-sheet__sheet {
+    translate: 0 max(0%, 100% - 50cqh);
+    visibility: visible;
+  }
+
+  .m3e-bottom-sheet--expanded > .m3e-bottom-sheet__sheet {
+    translate: 0 0;
+    visibility: visible;
+  }
+
+  .m3e-bottom-sheet--peek.m3e-bottom-sheet--partially-expanded > .m3e-bottom-sheet__sheet {
+    translate: 0 max(0%, 100% - var(--m3e-comp-bottom-sheet-peek-height));
+  }
+
+  /*
+   * Moving (the layout): the sheet follows the offset; above the Expanded anchor (an overshooting
+   * spring) a container-colored shadow fills the gap below it (verticalScaleUp).
+   */
+  .m3e-bottom-sheet[data-animating] > .m3e-bottom-sheet__sheet {
+    translate: 0 var(--_m3e-bs-translate, 0%);
+    box-shadow: 0 var(--_m3e-bs-stretch, 0%) 0 0 var(--_m3e-bs-container);
+    visibility: visible;
+  }
+
+  .m3e-bottom-sheet[data-dragging] {
+    user-select: none;
+  }
+
+  /* --- Drag handle (BottomSheetDefaults.DragHandle in DragHandleWithTooltip) ------------------ */
+  .m3e-bottom-sheet__handle {
+    position: relative;
+    display: block;
+    flex: none;
+    box-sizing: content-box;
+    inline-size: var(--m3e-comp-sheet-bottom-docked-drag-handle-width);
+    block-size: var(--m3e-comp-sheet-bottom-docked-drag-handle-height);
+    margin: 0 auto;
+    padding: var(--m3e-comp-bottom-sheet-drag-handle-padding-vertical) 0;
+    border: none;
+    background: transparent;
+    color: var(--m3e-sys-color-on-surface);
+    cursor: grab;
+    touch-action: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* The 48dp target around the 32dp-wide box (insets, as icon buttons: tooltips read them). */
+  .m3e-bottom-sheet__handle::after {
+    position: absolute;
+    inset-block: min(0%, calc((100% - var(--m3e-comp-minimum-interactive-component-size)) / 2));
+    inset-inline: min(0%, calc((100% - var(--m3e-comp-minimum-interactive-component-size)) / 2));
+    content: '';
+  }
+
+  .m3e-bottom-sheet__handle-bar {
+    display: block;
+    block-size: 100%;
+    border-radius: var(--m3e-comp-bottom-sheet-drag-handle-shape);
+    background-color: var(--m3e-comp-sheet-bottom-docked-drag-handle-color);
+  }
+
+  .m3e-bottom-sheet[data-dragging] .m3e-bottom-sheet__handle {
+    cursor: grabbing;
+  }
+
+  /* --- Content -------------------------------------------------------------------------------- */
+  .m3e-bottom-sheet__content {
+    flex: 0 1 auto;
+    min-block-size: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding-block-end: env(safe-area-inset-bottom);
+  }
+
+  /* An expanded sheet whose content overflows: touch scrolls the content (the handle drags). */
+  .m3e-bottom-sheet--expanded[data-scrolls]:not([data-animating]) .m3e-bottom-sheet__content {
+    touch-action: pan-y;
+  }
+
+  @media (forced-colors: active) {
+    .m3e-bottom-sheet__sheet {
+      border: var(--m3e-comp-divider-thickness) solid CanvasText;
+      border-block-end: none;
+    }
+
+    .m3e-bottom-sheet__handle-bar {
+      forced-color-adjust: none;
+      background-color: CanvasText;
+    }
+
+    .m3e-bottom-sheet__scrim {
+      forced-color-adjust: none;
+    }
+  }
+}
+
+@layer m3e.base {
+  /* The element renders the contract inside itself (m3e-elements). */
+  :where(m3e-bottom-sheet) {
+    display: contents;
+  }
+}

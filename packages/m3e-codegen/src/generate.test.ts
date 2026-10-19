@@ -2,7 +2,11 @@
 // independent regexes (not the parser) and compared with what the generator emits.
 import { fileURLToPath } from 'node:url';
 import {
+  ANCHORED_DRAGGABLE_MIN_FLING_VELOCITY,
   BADGE_DOT_LABEL,
+  SHEET_BOUNDARY_DAMPENING_ZONE,
+  SHEET_POSITIONAL_THRESHOLD,
+  SHEET_VELOCITY_THRESHOLD,
   DRAWER_POSITIONAL_THRESHOLD,
   SLIDER_KEY_DIVISIONS,
   SLIDER_PAGE_DIVISOR,
@@ -2336,6 +2340,64 @@ describe('snackbar values (M9)', () => {
     expect(output.get('PARITY.md')).toMatch(
       /material3\/Scaffold\.kt@\w+ L\d+ \| `--m3e-comp-snackbar-host-bottom-offset`/,
     );
+  });
+});
+
+describe('bottom sheet values (M9)', () => {
+  const css = output.get('components/bottom-sheet-defaults.css')!;
+  const decl = declarations(css.slice(0, css.indexOf('@media')));
+  const t = (name: string) => decl.get(`--m3e-comp-bottom-sheet-${name}`);
+  const tokens = declarations(output.get('components/sheet-bottom.css')!);
+  const m3 = inputs.material3Sources;
+
+  it('SheetBottomTokens: surface-container-low, extra-large top corners, a 32 × 4dp handle', () => {
+    expect(tokens.get('--m3e-comp-sheet-bottom-docked-container-color')).toBe(
+      'var(--m3e-sys-color-surface-container-low)',
+    );
+    expect(tokens.get('--m3e-comp-sheet-bottom-docked-container-shape-start-start')).toBe(
+      'var(--m3e-sys-shape-corner-extra-large-top-start-start)',
+    );
+    expect(tokens.get('--m3e-comp-sheet-bottom-docked-drag-handle-width')).toBe('32px');
+    expect(tokens.get('--m3e-comp-sheet-bottom-docked-drag-handle-height')).toBe('4px');
+  });
+
+  it('BottomSheetDefaults: 640dp max width (no margins, #12), 56dp peek (#13), handle padding 22dp', () => {
+    expect(t('max-width')).toBe('640px');
+    expect(t('peek-height')).toBe('56px');
+    expect(t('drag-handle-padding-vertical')).toBe('22px');
+    expect(t('drag-handle-shape')).toBe('var(--m3e-sys-shape-corner-extra-large)');
+  });
+
+  it('the release thresholds equal m3e-motion’s constants (56dp absolute, 125dp/s, 125dp zone)', () => {
+    const dp = (re: RegExp, file: string) => Number(re.exec(m3[file]!)?.[1]);
+    expect(dp(/internal val PositionalThreshold = (\d+)\.dp/, 'SheetDefaults.kt')).toBe(
+      SHEET_POSITIONAL_THRESHOLD,
+    );
+    expect(dp(/internal val VelocityThreshold = (\d+)\.dp/, 'SheetDefaults.kt')).toBe(
+      SHEET_VELOCITY_THRESHOLD,
+    );
+    expect(dp(/internal val BoundaryDampeningZone = (\d+)\.dp/, 'SheetDefaults.kt')).toBe(
+      SHEET_BOUNDARY_DAMPENING_ZONE,
+    );
+    expect(
+      dp(/AnchoredDraggableMinFlingVelocity\n\s*get\(\) = (\d+)\.dp/, 'AnchoredDraggable.kt'),
+    ).toBe(ANCHORED_DRAGGABLE_MIN_FLING_VELOCITY);
+    expect(t('positional-threshold')).toBe(`${String(SHEET_POSITIONAL_THRESHOLD)}px`);
+    expect(t('velocity-threshold')).toBe(String(SHEET_VELOCITY_THRESHOLD));
+  });
+
+  it('springs: show / settle DefaultSpatial, hide FastEffects (0ms reduced), scrim DefaultEffects', () => {
+    expect(t('show-stiffness')).toBe('var(--m3e-sys-motion-spring-default-spatial-stiffness)');
+    expect(t('settle-damping-ratio')).toBe(
+      'var(--m3e-sys-motion-spring-default-spatial-damping-ratio)',
+    );
+    expect(t('hide-stiffness')).toBe('var(--m3e-sys-motion-spring-fast-effects-stiffness)');
+    expect(t('scrim-stiffness')).toBe('var(--m3e-sys-motion-spring-default-effects-stiffness)');
+    expect(css.slice(css.indexOf('@media'))).toContain(
+      '--m3e-comp-bottom-sheet-hide-duration: 0ms;',
+    );
+    expect(t('scrim-color')).toBe('var(--m3e-sys-color-scrim)');
+    expect(t('scrim-opacity')).toBe('0.32');
   });
 });
 
