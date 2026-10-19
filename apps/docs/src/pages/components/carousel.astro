@@ -1,0 +1,125 @@
+---
+import CarouselPlayground from '../../islands/CarouselPlayground.tsx';
+import Base from '../../layouts/Base.astro';
+
+const tones = ['primary', 'secondary', 'tertiary', 'error'];
+/** A placeholder picture: a two-tone panel with its number (the docs have no photos). */
+const tile = (i: number) =>
+  `<div class="docs-carousel-tile" data-tone="${tones[i % tones.length]}"><span class="docs-carousel-tile__label">${String(i + 1)}</span></div>`;
+const items = (count: number, attrs: (i: number) => string = () => '') =>
+  Array.from(
+    { length: count },
+    (_, i) => `<m3e-carousel-item${attrs(i)}>${tile(i)}</m3e-carousel-item>`,
+  ).join('');
+const cssItems = (count: number) =>
+  Array.from(
+    { length: count },
+    (_, i) =>
+      `<div class="m3e-carousel__item" role="group" aria-roledescription="slide" aria-label="${String(i + 1)} of ${String(count)}" tabindex="0"><div class="m3e-carousel__mask">${tile(i)}</div></div>`,
+  ).join('');
+---
+
+<Base title="Carousel">
+  <h1>Carousel</h1>
+  <p>
+    A carousel (COMPONENT_SPEC §36) shows a row of visual items that scroll horizontally. As an item scrolls, its visible part grows and shrinks between the large, medium and small sizes and the items stay pinned together: the keylines of Compose's carousels, ported from <code>androidx.compose.material3.carousel</code> (the <code>Arrangement</code>, <code>Keylines</code>, <code>Strategy</code> and snap position math in m3e-motion). Items are masked with extra-large (28dp) corners. Scrolling is the browser's, with native snapping: one item at a time for the multi-browse and hero layouts, free for the uncontained layout.
+  </p>
+  <p>
+    Keyboard: every item is a tab stop, and the arrow keys also move between items (Home and End to the ends); a focused item scrolls to its place. Items are APG slides ("2 of 5") in a region with the carousel role description; give the carousel a name. With reduced motion, items keep one size and are not masked. Compose's defaults put no space between items and no padding at the ends (<code>CarouselDefaults</code>); the examples here use the 8dp spacing and 16dp padding of the Compose samples and m3.material.io specs (<code>item-spacing</code>, <code>content-padding</code>).
+  </p>
+
+  <section aria-labelledby="multi-browse-heading">
+    <h2 id="multi-browse-heading">Multi-browse (element)</h2>
+    <p>
+      <code>&lt;m3e-carousel layout="multi-browse" item-width="186"&gt;</code> fits large, medium and small items into the width, changing the large size as little as possible (here 412dp wide, as the Compose sample: two 178dp items, a 40dp one). Small items are 40–56dp. The <strong>Show all</strong> button is the m3.material.io way to reach every item without scrolling sideways.
+    </p>
+    <div class="docs-carousel-frame">
+      <m3e-carousel label="Featured" item-width="186" item-spacing="8" content-padding="16" data-testid="multi-browse">
+        <Fragment set:html={items(8)} />
+      </m3e-carousel>
+      <div class="docs-carousel-show-all">
+        <button type="button" class="m3e-button m3e-button--text">Show all</button>
+      </div>
+    </div>
+
+    <h3>Interactive items</h3>
+    <p>
+      <code>href</code> makes an item a link and <code>action</code> a button (the carousel fires <code>item-click</code>): the item then shows the state layer and ripple over its content. Static items take the focus themselves.
+    </p>
+    <div class="docs-carousel-frame">
+      <m3e-carousel label="Albums" item-width="186" item-spacing="8" content-padding="16" data-testid="interactive">
+        <Fragment set:html={items(6, (i) => (i % 2 === 0 ? ` href="#carousel-item-${String(i + 1)}"` : ' action'))} />
+      </m3e-carousel>
+    </div>
+  </section>
+
+  <section aria-labelledby="uncontained-heading">
+    <h2 id="uncontained-heading">Uncontained (element)</h2>
+    <p>
+      <code>layout="uncontained" item-width="186"</code>: items keep their width and the last visible one is cut off at the edge, shrinking as it leaves. It does not snap.
+    </p>
+    <div class="docs-carousel-frame">
+      <m3e-carousel layout="uncontained" label="Recent" item-width="186" item-spacing="8" content-padding="16" data-testid="uncontained">
+        <Fragment set:html={items(8)} />
+      </m3e-carousel>
+    </div>
+  </section>
+
+  <section aria-labelledby="hero-heading">
+    <h2 id="hero-heading">Hero (element)</h2>
+    <p>
+      <code>layout="hero"</code>: one large item and a small one after it. Without <code>item-width</code> the large item fills the width but for the small item; with it, more large items fit. One item per swipe.
+    </p>
+    <div class="docs-carousel-frame">
+      <m3e-carousel layout="hero" label="Spotlight" item-spacing="8" content-padding="16" data-testid="hero">
+        <Fragment set:html={items(6)} />
+      </m3e-carousel>
+    </div>
+
+    <h3>Center-aligned hero</h3>
+    <p>
+      <code>layout="centered-hero"</code> (Compose's <code>HorizontalCenteredHeroCarousel</code>): the large item between two small ones; the first and last items align with the edges instead. Fewer than three items stay start-aligned.
+    </p>
+    <div class="docs-carousel-frame docs-carousel-frame--inset">
+      <m3e-carousel layout="centered-hero" label="Highlights" item-spacing="8" content-padding="16" data-testid="centered-hero">
+        <Fragment set:html={items(6)} />
+      </m3e-carousel>
+    </div>
+  </section>
+
+  <section aria-labelledby="full-screen-heading">
+    <h2 id="full-screen-heading">Full screen (CSS)</h2>
+    <p>
+      <code>layout="full-screen"</code>: one item fills the carousel and the items scroll vertically, 16dp apart, snapping to each one (m3.material.io; Compose has no full-screen carousel). Give the carousel a height (here 360dp); ArrowUp and ArrowDown move between items.
+    </p>
+    <div class="docs-carousel-full-screen">
+      <m3e-carousel layout="full-screen" label="Stories" data-testid="full-screen">
+        <Fragment set:html={items(4)} />
+      </m3e-carousel>
+    </div>
+  </section>
+
+  <section aria-labelledby="css-heading">
+    <h2 id="css-heading">Without JavaScript (CSS)</h2>
+    <p>
+      The m3e-css markup alone scrolls and snaps items at <code>--m3e-comp-carousel-item-width</code>, without the keyline sizes or masks (the same layout reduced motion shows).
+    </p>
+    <div class="docs-carousel-frame">
+      <div class="m3e-carousel m3e-carousel--multi-browse" role="region" aria-roledescription="carousel" aria-label="Static" style="--m3e-comp-carousel-item-width: 186px; --m3e-comp-carousel-item-spacing: 8px; --m3e-comp-carousel-content-padding-start: 16px; --m3e-comp-carousel-content-padding-end: 16px" data-testid="css-only">
+        <div class="m3e-carousel__viewport" tabindex="-1"><Fragment set:html={cssItems(6)} /></div>
+      </div>
+    </div>
+  </section>
+
+  <section aria-labelledby="react-heading">
+    <h2 id="react-heading">React</h2>
+    <p>
+      <code>&lt;Carousel layout itemWidth itemSpacing contentPadding aria-label&gt;</code> with <code>&lt;CarouselItem href onPress&gt;</code> children renders the same DOM as the element; its ref has <code>scrollToItem(index)</code> and <code>currentItem</code>.
+    </p>
+    <CarouselPlayground client:only="react" />
+  </section>
+</Base>
+
+<script>
+  import '@kyralabs/m3exp-web/elements';
+</script>
