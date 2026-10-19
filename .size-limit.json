@@ -278,9 +278,9 @@
     "limit": "1.2 KB"
   },
   {
-    "name": "m3e-elements (all) — D17: reported, 100 KB sanity cap (not a budget)",
+    "name": "m3e-elements (all) — D17/D18: reported, 130 KB sanity cap (not a budget)",
     "path": "packages/m3e-elements/dist/index.js",
-    "limit": "100 KB"
+    "limit": "130 KB"
   },
   {
     "name": "m3e-elements: common-page set (D17: icon + ripple + menu + top-app-bar + loading-indicator)",
