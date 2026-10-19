@@ -2550,3 +2550,50 @@ describe('carousel values (M9, no CarouselTokens.kt)', () => {
     );
   });
 });
+
+describe('pull-to-refresh values (M9, no PullToRefreshTokens.kt)', () => {
+  const css = output.get('components/pull-to-refresh-defaults.css')!;
+  const decl = declarations(css.slice(0, css.indexOf('@media')));
+  const t = (name: string) => decl.get(`--m3e-comp-pull-to-refresh-${name}`);
+
+  it('PullToRefreshDefaults: circle, surface-container-high / on-surface-variant, 80dp, Level2', () => {
+    expect(t('indicator-shape')).toBe('var(--m3e-sys-shape-corner-full)');
+    expect(t('indicator-container-color')).toBe('var(--m3e-sys-color-surface-container-high)');
+    expect(t('indicator-color')).toBe('var(--m3e-sys-color-on-surface-variant)');
+    expect(t('positional-threshold')).toBe('80px');
+    expect(t('indicator-max-distance')).toBe('80px');
+    expect(t('indicator-shadow')).toBe('var(--m3e-sys-elevation-level2-shadow)');
+  });
+
+  it('the LoadingIndicator variant (owner decision M9 #27): contained colors, 48dp, no shadow', () => {
+    expect(t('loading-indicator-container-color')).toBe('var(--m3e-sys-color-primary-container)');
+    expect(t('loading-indicator-color')).toBe('var(--m3e-sys-color-on-primary-container)');
+    expect(t('loading-indicator-container-width')).toBe('48px');
+    expect(t('loading-indicator-container-height')).toBe('48px');
+    expect(t('loading-indicator-shadow')).toBe('var(--m3e-sys-elevation-level0-shadow)');
+  });
+
+  it('the private sizes: 40dp box, 16dp spinner, 2.5dp stroke; alpha 0.3 → 1', () => {
+    expect(t('indicator-container-size')).toBe('40px');
+    expect(t('spinner-size')).toBe('16px');
+    expect(t('stroke-width')).toBe('2.5px');
+    expect(t('arrow-min-alpha')).toBe('0.3');
+    expect(t('arrow-max-alpha')).toBe('1');
+  });
+
+  it('springs: DefaultEffects alpha / cross-fade, Animatable’s spring() for the state', () => {
+    for (const part of ['arrow-alpha', 'crossfade']) {
+      expect(t(`${part}-duration`)).toBe('var(--m3e-sys-motion-spring-default-effects-duration)');
+      expect(t(`${part}-easing`)).toBe('var(--m3e-sys-motion-spring-default-effects-easing)');
+    }
+    expect(t('state-damping-ratio')).toBe('1');
+    expect(t('state-stiffness')).toBe('1500');
+    expect(t('state-duration')).toMatch(/^\d+ms$/);
+    expect(css.slice(css.indexOf('@media'))).toContain(
+      '--m3e-comp-pull-to-refresh-state-duration: 0ms;',
+    );
+    expect(output.get('PARITY.md')).toMatch(
+      /pulltorefresh\/PullToRefresh\.kt@19991f2c0858aadfcb442ce02b2c8e4743c96898 L490 \| `--m3e-comp-pull-to-refresh-positional-threshold`/,
+    );
+  });
+});

@@ -2803,6 +2803,37 @@ export const progressIndicatorDefaults = {
   progressIndicatorDefaultsLinearThickHeight: 8
 } as const;
 
+/** PullToRefreshDefaults */
+export const pullToRefreshDefaults = {
+  pullToRefreshIndicatorShape: "var(--m3e-sys-shape-corner-full)",
+  pullToRefreshPositionalThreshold: 80,
+  pullToRefreshIndicatorMaxDistance: 80,
+  pullToRefreshIndicatorContainerSize: 40,
+  pullToRefreshSpinnerSize: 16,
+  pullToRefreshStrokeWidth: 2.5,
+  pullToRefreshArrowMinAlpha: 0.3,
+  pullToRefreshArrowMaxAlpha: 1,
+  pullToRefreshArrowAlphaDuration: "var(--m3e-sys-motion-spring-default-effects-duration)",
+  pullToRefreshArrowAlphaEasing: "var(--m3e-sys-motion-spring-default-effects-easing)",
+  pullToRefreshArrowAlphaDampingRatio: "var(--m3e-sys-motion-spring-default-effects-damping-ratio)",
+  pullToRefreshArrowAlphaStiffness: "var(--m3e-sys-motion-spring-default-effects-stiffness)",
+  pullToRefreshCrossfadeDuration: "var(--m3e-sys-motion-spring-default-effects-duration)",
+  pullToRefreshCrossfadeEasing: "var(--m3e-sys-motion-spring-default-effects-easing)",
+  pullToRefreshCrossfadeDampingRatio: "var(--m3e-sys-motion-spring-default-effects-damping-ratio)",
+  pullToRefreshCrossfadeStiffness: "var(--m3e-sys-motion-spring-default-effects-stiffness)",
+  pullToRefreshIndicatorContainerColor: "var(--m3e-sys-color-surface-container-high)",
+  pullToRefreshIndicatorColor: "var(--m3e-sys-color-on-surface-variant)",
+  pullToRefreshLoadingIndicatorContainerColor: "var(--m3e-sys-color-primary-container)",
+  pullToRefreshLoadingIndicatorColor: "var(--m3e-sys-color-on-primary-container)",
+  pullToRefreshIndicatorShadow: "var(--m3e-sys-elevation-level2-shadow)",
+  pullToRefreshLoadingIndicatorShadow: "var(--m3e-sys-elevation-level0-shadow)",
+  pullToRefreshLoadingIndicatorContainerWidth: "48px",
+  pullToRefreshLoadingIndicatorContainerHeight: "48px",
+  pullToRefreshStateDuration: 238,
+  pullToRefreshStateDampingRatio: 1,
+  pullToRefreshStateStiffness: 1500
+} as const;
+
 /** RadioButtonTokens */
 export const radioButtonTokens = {
   iconColorDisabledSelected: "var(--m3e-sys-color-on-surface)",
