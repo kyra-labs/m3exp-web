@@ -2474,3 +2474,49 @@ describe('dialog values (M9)', () => {
     expect(fs('padding')).toBe('24px');
   });
 });
+
+describe('side sheet values (M9, D8)', () => {
+  const css = output.get('components/side-sheet-defaults.css')!;
+  const decl = declarations(css.slice(0, css.indexOf('@media')));
+  const t = (name: string) => decl.get(`--m3e-comp-side-sheet-${name}`);
+  const drawerCss = output.get('components/navigation-drawer-defaults.css')!;
+  const drawer = declarations(drawerCss.slice(0, drawerCss.indexOf('@media')));
+
+  it('m3.material.io token DB: 256dp docked width, 400dp max (#14), colors, shapes, divider outline (#15)', () => {
+    expect(t('container-width')).toBe('256px');
+    expect(t('max-width')).toBe('400px');
+    expect(t('standard-container-color')).toBe('var(--m3e-sys-color-surface)');
+    expect(t('modal-container-color')).toBe('var(--m3e-sys-color-surface-container-low)');
+    expect(t('modal-container-shadow')).toBe('var(--m3e-sys-elevation-level1-shadow)');
+    expect(t('modal-container-shape-start-start')).toBe(
+      'var(--m3e-sys-shape-corner-large-start-start-start)',
+    );
+    expect(t('detached-container-shape')).toBe('var(--m3e-sys-shape-corner-large)');
+    expect(t('detached-margin')).toBe('16px');
+    expect(t('divider-color')).toBe('var(--m3e-sys-color-outline)');
+    expect(t('headline-size')).toBe('var(--m3e-sys-typescale-title-large-size)');
+    expect(t('headline-color')).toBe('var(--m3e-sys-color-on-surface-variant)');
+  });
+
+  it('Specs tables: 24 / 16dp padding, 12dp between top elements, 72dp actions (16 / 24dp)', () => {
+    expect(t('padding-inline')).toBe('24px');
+    expect(t('padding-inline-start-icon')).toBe('16px');
+    expect(t('header-spacing')).toBe('12px');
+    expect(t('actions-height')).toBe('72px');
+    expect([t('actions-padding-top'), t('actions-padding-bottom')]).toEqual(['16px', '24px']);
+  });
+
+  it('motion and scrim: the navigation drawer’s (#16), the close jumping under reduced motion', () => {
+    for (const field of ['duration', 'easing', 'damping-ratio', 'stiffness']) {
+      expect(t(`open-${field}`)).toBe(drawer.get(`--m3e-comp-navigation-drawer-open-${field}`));
+      expect(t(`close-${field}`)).toBe(drawer.get(`--m3e-comp-navigation-drawer-close-${field}`));
+    }
+    expect(t('scrim-opacity')).toBe('0.32');
+    expect(css.slice(css.indexOf('@media'))).toContain(
+      '--m3e-comp-side-sheet-close-duration: 0ms;',
+    );
+    expect(output.get('PARITY.md')).toMatch(
+      /TOKEN_TABLE\.06c2c925cf96adca\.json, Side sheets › Tokens & specs: md\.comp\.sheet\.side\) \| `--m3e-comp-side-sheet-container-width`/,
+    );
+  });
+});
