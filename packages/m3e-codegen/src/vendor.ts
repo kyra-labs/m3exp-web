@@ -87,6 +87,17 @@ export const MATERIAL3_SOURCES = [
   'TimePicker.kt',
   'TimePickerDialog.kt',
   'ScrollField.kt',
+  // Date picker (M10 §27): DatePicker / DateRangePicker / DateInput / DateRangeInput, their
+  // Defaults, colors, state, layout and keyboard handling, the dialog, and the calendar model
+  // (ported by m3e-motion's date-picker.ts).
+  'DatePicker.kt',
+  'DateRangePicker.kt',
+  'DateInput.kt',
+  'DateRangeInput.kt',
+  'DatePickerDialog.kt',
+  'CalendarLocale.kt',
+  'internal/CalendarModel.kt',
+  'internal/KeyboardUtil.kt',
 ] as const;
 
 /** Material3 samples the generator reads (values the Compose catalog renders, e.g. icon rotation). */
@@ -115,6 +126,7 @@ export const MATERIAL3_SAMPLE_SOURCES = [
   'PullToRefreshSamples.kt',
   'SegmentedButtonSamples.kt',
   'TimePickerSamples.kt',
+  'DatePickerSamples.kt',
 ] as const;
 
 /** Android `actual`s the generator reads (DropdownMenu's popup margins, AndroidMenu.android.kt). */
@@ -134,6 +146,10 @@ export const MATERIAL3_ANDROID_SOURCES = [
   // The time picker's layout type (portrait / landscape), invalid-input feedback and 24h setting.
   'TimePicker.android.kt',
   'TimeFormat.android.kt',
+  'DatePickerDialog.android.kt',
+  'CalendarLocale.android.kt',
+  'internal/CalendarModel.android.kt',
+  'internal/CalendarModelImpl.android.kt',
 ] as const;
 
 /**
@@ -187,6 +203,22 @@ export const MATERIAL3_TEST_SOURCES = [
   'BottomSheetTest.kt',
   'ModalBottomSheetTest.kt',
   'SheetStateTest.kt',
+] as const;
+
+/**
+ * Date picker (M10 §27): the JVM `actual`s the reference harness compiles (`CalendarLocale`'s
+ * number formatting, the `DatePickerFormatter` helpers) and the device tests whose cases
+ * m3e-motion's date-picker.test.ts ports (fixtures, not shipped, not read by the generator).
+ */
+export const MATERIAL3_DATE_PATH = 'compose/material3/material3/src';
+export const MATERIAL3_DATE_SOURCES = [
+  'jvmAndAndroidMain/kotlin/androidx/compose/material3/CalendarLocale.jvmAndAndroid.kt',
+  'jvmAndAndroidMain/kotlin/androidx/compose/material3/DatePicker.jvmAndAndroid.kt',
+  'androidDeviceTest/kotlin/androidx/compose/material3/CalendarModelTest.kt',
+  'androidDeviceTest/kotlin/androidx/compose/material3/DatePickerTest.kt',
+  'androidDeviceTest/kotlin/androidx/compose/material3/DateRangePickerTest.kt',
+  'androidDeviceTest/kotlin/androidx/compose/material3/DateInputTest.kt',
+  'androidDeviceTest/kotlin/androidx/compose/material3/DateRangeInputTest.kt',
 ] as const;
 
 /**

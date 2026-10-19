@@ -1,0 +1,23 @@
+{
+  "repo": "https://android.googlesource.com/platform/frameworks/support",
+  "commit": "19991f2c0858aadfcb442ce02b2c8e4743c96898",
+  "path": "compose/material3/material3/src",
+  "files": {
+    "CalendarModelTest.kt": "2ece00d3dd78a448c08d29e2337e40e8e51c1edcda839f7903b2fd2b2c054064",
+    "DateInputTest.kt": "0c92fe70aab6c490c67a65245e29898baa65a4994e840c3746e75498f4253913",
+    "DatePickerTest.kt": "8f92e80432432b1b9de8a1669577043545a5bfb3f9817e9def9d0a9002201e4d",
+    "DateRangeInputTest.kt": "b8ecd6c44a0841f49ab12838b2ea654a9b0e3114e0fab5d14b1c91ff554a8b65",
+    "DateRangePickerTest.kt": "a0c66c7b9f5dca068de2d75a31bd3873f9634af9b992e2da9b3056bf8b1f4492",
+    "CalendarLocale.jvmAndAndroid.kt": "bc47a051affa29f20ea823d1bd8629414ed8215af97d76d40e72740af398069d",
+    "DatePicker.jvmAndAndroid.kt": "c9e967fa93c5ea19f9a487850329e0cfa4119b8a17eb4f891e5d44cbb548b7f0"
+  },
+  "upstream": {
+    "CalendarModelTest.kt": "androidDeviceTest/kotlin/androidx/compose/material3/CalendarModelTest.kt",
+    "DateInputTest.kt": "androidDeviceTest/kotlin/androidx/compose/material3/DateInputTest.kt",
+    "DatePickerTest.kt": "androidDeviceTest/kotlin/androidx/compose/material3/DatePickerTest.kt",
+    "DateRangeInputTest.kt": "androidDeviceTest/kotlin/androidx/compose/material3/DateRangeInputTest.kt",
+    "DateRangePickerTest.kt": "androidDeviceTest/kotlin/androidx/compose/material3/DateRangePickerTest.kt",
+    "CalendarLocale.jvmAndAndroid.kt": "jvmAndAndroidMain/kotlin/androidx/compose/material3/CalendarLocale.jvmAndAndroid.kt",
+    "DatePicker.jvmAndAndroid.kt": "jvmAndAndroidMain/kotlin/androidx/compose/material3/DatePicker.jvmAndAndroid.kt"
+  }
+}
