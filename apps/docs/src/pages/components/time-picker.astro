@@ -1,0 +1,156 @@
+---
+import TimePickerPlayground from '../../islands/TimePickerPlayground.tsx';
+import Base from '../../layouts/Base.astro';
+
+// Every picker sets hour-cycle, so the page looks the same in every locale (the default is the
+// locale's, from lang).
+const text = (label: string, testid: string) =>
+  `<button type="button" class="m3e-button m3e-button--text" data-dialog-close data-testid="${testid}">${label}</button>`;
+---
+
+<Base title="Time pickers">
+  <link rel="stylesheet" href="/icons/docs-icons.css" slot="head" />
+  <h1>Time pickers</h1>
+  <p>
+    Time pickers (COMPONENT_SPEC §28) are Compose's <code>TimePicker</code> (a clock dial), <code>TimeInput</code> (two text fields) and the expressive <code>TimeScroll</code> (two infinite wheels), with <code>TimePickerDialog</code> and <code>VibrantTimePickerDialog</code> around them. The dial and AM/PM toggle buttons follow Compose's
+    <code>isUpdatedTimepickerToggleEnabled</code> design at the pinned version: the period is a pair of toggle buttons in primary container, bold when selected. The vibrant variants are the expressive overloads (larger, rounder fields; a filled field in place of the outlined one).
+  </p>
+  <p>
+    The dial is a radio group of hours or minutes: arrow keys move the selection around the dial, a tap or drag picks a value and, for hours, moves on to the minutes after a short delay, as Compose. The selector rotates on the default spatial spring and the faces crossfade on the default effects spring. The time input runs every edit through a port
+    of Compose's <code>TimeInputTransformation</code> (two digits at most, the hour read in the current period, invalid values kept and shown in the error colors) and its fields are spin buttons (Up / Down step and wrap). The wheels are spin buttons too; they settle on Compose's <code>ScrollField</code> springs.
+  </p>
+
+  <section aria-labelledby="dial-heading">
+    <h2 id="dial-heading">Dial (element)</h2>
+    <p>
+      <code>&lt;m3e-time-picker hour minute hour-cycle="12 | 24" selection="hour | minute" vibrant layout="auto | vertical | horizontal"&gt;</code> fires <code>change</code> (<code>detail: {'{'} hour, minute {'}'}</code>) and <code>selection-change</code>. <code>layout="auto"</code> lays the picker out horizontally in a landscape
+      window, as Compose.
+    </p>
+    <div class="docs-time-picker-row">
+      <figure>
+        <figcaption>12-hour</figcaption>
+        <m3e-time-picker data-testid="dial-12h" hour="9" minute="41" hour-cycle="12" layout="vertical"></m3e-time-picker>
+      </figure>
+      <figure>
+        <figcaption>24-hour, minutes, vibrant</figcaption>
+        <m3e-time-picker data-testid="dial-24h-vibrant" hour="17" minute="23" hour-cycle="24" selection="minute" vibrant layout="vertical"></m3e-time-picker>
+      </figure>
+      <figure>
+        <figcaption>Horizontal (landscape)</figcaption>
+        <m3e-time-picker data-testid="dial-horizontal" hour="14" minute="5" hour-cycle="12" layout="horizontal"></m3e-time-picker>
+      </figure>
+    </div>
+  </section>
+
+  <section aria-labelledby="input-heading">
+    <h2 id="input-heading">Time input (element)</h2>
+    <p>
+      <code>&lt;m3e-time-input&gt;</code> takes the same attributes as the dial; <code>vibrant</code> fills the fields, <code>uncontained</code> is Compose's time input with a side column (AM, PM and a mode toggle that fires <code>mode-toggle</code>).
+    </p>
+    <div class="docs-time-picker-row">
+      <figure>
+        <figcaption>12-hour</figcaption>
+        <m3e-time-input data-testid="input-12h" hour="9" minute="5" hour-cycle="12"></m3e-time-input>
+      </figure>
+      <figure>
+        <figcaption>24-hour, vibrant</figcaption>
+        <m3e-time-input data-testid="input-24h-vibrant" hour="21" minute="30" hour-cycle="24" vibrant></m3e-time-input>
+      </figure>
+      <figure>
+        <figcaption>Uncontained, side column</figcaption>
+        <m3e-time-input data-testid="input-uncontained" hour="7" minute="0" hour-cycle="12" uncontained></m3e-time-input>
+      </figure>
+    </div>
+  </section>
+
+  <section aria-labelledby="scroll-heading">
+    <h2 id="scroll-heading">Scroll wheels (element)</h2>
+    <p>
+      <code>&lt;m3e-time-scroll&gt;</code>: drag, scroll or use the arrow keys on a wheel; a click on a row scrolls to it. <code>uncontained</code> adds the side column, whose toggle switches to the keyboard input.
+    </p>
+    <div class="docs-time-picker-row">
+      <figure>
+        <figcaption>12-hour</figcaption>
+        <m3e-time-scroll data-testid="scroll-12h" hour="18" minute="30" hour-cycle="12"></m3e-time-scroll>
+      </figure>
+      <figure>
+        <figcaption>24-hour, uncontained</figcaption>
+        <m3e-time-scroll data-testid="scroll-24h-uncontained" hour="6" minute="45" hour-cycle="24" uncontained></m3e-time-scroll>
+      </figure>
+    </div>
+  </section>
+
+  <section aria-labelledby="dialog-heading">
+    <h2 id="dialog-heading">Dialog (element)</h2>
+    <p>
+      Put a picker in a <code>.m3e-time-picker-dialog</code> surface (<code>__title</code>, <code>__content</code>, <code>__actions</code> with a <code>__spacer</code> after the mode toggle) inside <code>&lt;m3e-dialog variant="custom"&gt;</code>; <code>--vibrant</code> is the vibrant dialog, with no title.
+    </p>
+    <div class="docs-button-row">
+      <button type="button" class="m3e-button m3e-button--filled" data-dialog-open="dialog" data-testid="open-dialog">Time picker dialog</button>
+      <button type="button" class="m3e-button m3e-button--tonal" data-dialog-open="dialog-vibrant" data-testid="open-dialog-vibrant">Vibrant dialog</button>
+    </div>
+    <p>Picked: <output data-testid="dialog-result">none</output></p>
+
+    <m3e-dialog data-testid="dialog" variant="custom" label="Select Time">
+      <div class="m3e-time-picker-dialog">
+        <div class="m3e-time-picker-dialog__title">Select Time</div>
+        <div class="m3e-time-picker-dialog__content">
+          <m3e-time-picker hour="10" minute="15" hour-cycle="12" layout="vertical"></m3e-time-picker>
+        </div>
+        <div class="m3e-time-picker-dialog__actions">
+          <span class="m3e-time-picker-dialog__spacer"></span>
+          <Fragment set:html={text('Cancel', 'dialog-cancel') + text('OK', 'dialog-ok')} />
+        </div>
+      </div>
+    </m3e-dialog>
+
+    <m3e-dialog data-testid="dialog-vibrant" variant="custom" label="Select time">
+      <div class="m3e-time-picker-dialog m3e-time-picker-dialog--vibrant">
+        <div class="m3e-time-picker-dialog__content">
+          <m3e-time-scroll hour="10" minute="15" hour-cycle="12"></m3e-time-scroll>
+        </div>
+        <div class="m3e-time-picker-dialog__actions">
+          <span class="m3e-time-picker-dialog__spacer"></span>
+          <Fragment set:html={text('Cancel', 'dialog-vibrant-cancel') + text('OK', 'dialog-vibrant-ok')} />
+        </div>
+      </div>
+    </m3e-dialog>
+  </section>
+
+  <section aria-labelledby="react-heading">
+    <h2 id="react-heading">React</h2>
+    <p>
+      <code>&lt;TimePicker value defaultValue onChange is24Hour selection onSelectionChange vibrant layout locale labels&gt;</code>, <code>&lt;TimeInput vibrant uncontained onModeToggle&gt;</code> and <code>&lt;TimeScroll uncontained onModeToggle&gt;</code> render the same DOM as the elements.
+      <code>&lt;TimePickerDialog title modeToggleButton dismissButton confirmButton&gt;</code> and <code>&lt;VibrantTimePickerDialog&gt;</code> wrap a picker in <code>&lt;BasicAlertDialog&gt;</code>; <code>&lt;TimePickerModeToggle displayMode onDisplayModeChange&gt;</code> is the icon button with its tooltip that switches between the picker and the
+      input (Compose's switchable sample).
+    </p>
+    <TimePickerPlayground client:only="react" />
+  </section>
+</Base>
+
+<script>
+  import '@kyralabs/m3exp-web/elements';
+
+  type DialogHost = HTMLElement & { show(): void; close(): void };
+  for (const button of document.querySelectorAll<HTMLButtonElement>('[data-dialog-open]')) {
+    button.addEventListener('click', () => {
+      document
+        .querySelector<DialogHost>(`m3e-dialog[data-testid="${button.dataset['dialogOpen'] ?? ''}"]`)
+        ?.show();
+    });
+  }
+  const result = document.querySelector('[data-testid="dialog-result"]');
+  const pad = (n: number) => String(n).padStart(2, '0');
+  document.addEventListener('click', (e) => {
+    const target = (e.target as Element | null)?.closest<HTMLElement>('[data-dialog-close]');
+    const dialog = target?.closest<DialogHost>('m3e-dialog');
+    if (!target || !dialog) return;
+    if (target.textContent === 'OK' && result) {
+      const picker = dialog.querySelector<HTMLElement & { hour: number; minute: number }>(
+        'm3e-time-picker, m3e-time-scroll',
+      );
+      if (picker) result.textContent = `${pad(picker.hour)}:${pad(picker.minute)}`;
+    }
+    dialog.close();
+  });
+</script>
