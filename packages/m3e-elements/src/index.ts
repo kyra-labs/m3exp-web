@@ -57,6 +57,8 @@ export * from './time-picker-layout/index.js';
 export * from './time-picker/index.js';
 export * from './time-input/index.js';
 export * from './time-scroll/index.js';
+export * from './date-picker-layout/index.js';
+export * from './date-picker/index.js';
 export * from './pane-scaffold-layout/index.js';
 export * from './list-detail-layout/index.js';
 export * from './supporting-pane-layout/index.js';

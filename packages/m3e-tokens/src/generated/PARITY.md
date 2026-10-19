@@ -4,7 +4,7 @@
 > Source: compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/tokens @ 19991f2c0858aadfcb442ce02b2c8e4743c96898  
 > Values: Copyright (C) The Android Open Source Project, Apache License 2.0 (see NOTICE).  
 
-Emitted: 377 system and 3985 component variables from 142 component token objects.
+Emitted: 377 system and 3989 component variables from 142 component token objects.
 
 ## Not emitted here
 
@@ -1222,6 +1222,10 @@ Emitted: 377 system and 3985 component variables from 142 component token object
 | `DatePicker.kt.DatePickerHeadlinePadding.start` | `24.dp` | compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/DatePicker.kt@19991f2c0858aadfcb442ce02b2c8e4743c96898 L2626 | `--m3e-comp-date-picker-headline-padding-start` | `24px` | DatePickerDefaults.DatePickerHeadline |
 | `DatePicker.kt.DatePickerHeadlinePadding.end` | `12.dp` | compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/DatePicker.kt@19991f2c0858aadfcb442ce02b2c8e4743c96898 L2626 | `--m3e-comp-date-picker-headline-padding-end` | `12px` | DatePickerDefaults.DatePickerHeadline |
 | `DatePicker.kt.DatePickerHeadlinePadding.bottom` | `12.dp` | compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/DatePicker.kt@19991f2c0858aadfcb442ce02b2c8e4743c96898 L2626 | `--m3e-comp-date-picker-headline-padding-bottom` | `12px` | DatePickerDefaults.DatePickerHeadline |
+| `ButtonDefaults.TextButtonHorizontalPadding` | `12.dp` | compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/Button.kt@19991f2c0858aadfcb442ce02b2c8e4743c96898 L1015 | `--m3e-comp-date-picker-year-button-padding-inline` | `12px` | the year menu button: a TextButton (TextButtonContentPadding) |
+| `ButtonDefaults.ButtonVerticalPadding` | `8.dp` | compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/Button.kt@19991f2c0858aadfcb442ce02b2c8e4743c96898 L915 | `--m3e-comp-date-picker-year-button-padding-block` | `8px` | the year menu button: a TextButton (TextButtonContentPadding) |
+| `ButtonDefaults.MinHeight` | `ButtonSmallTokens.ContainerHeight` | compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/Button.kt@19991f2c0858aadfcb442ce02b2c8e4743c96898 L1064 | `--m3e-comp-date-picker-year-button-height` | `40px` | the year menu button’s min height (touch sizing) |
+| `ButtonDefaults.IconSpacing` | `ButtonSmallTokens.IconLabelSpace` | compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/Button.kt@19991f2c0858aadfcb442ce02b2c8e4743c96898 L1102 | `--m3e-comp-date-picker-year-button-icon-gap` | `8px` | between the month and year and the arrow |
 | `DatePicker.kt.YearsVerticalPadding` | `16.dp` | compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/DatePicker.kt@19991f2c0858aadfcb442ce02b2c8e4743c96898 L2629 | `--m3e-comp-date-picker-years-vertical-padding` | `16px` | the year grid’s row gap (Arrangement.spacedBy) |
 | `DatePicker.kt.MaxCalendarRows` | `6f` | compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/DatePicker.kt@19991f2c0858aadfcb442ce02b2c8e4743c96898 L2631 | `--m3e-comp-date-picker-calendar-rows` | `6` | a month always takes six rows (Month requiredHeight); the year grid is one row more, less the divider |
 | `DatePicker.kt.YearsInRow` | `3f` | compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/DatePicker.kt@19991f2c0858aadfcb442ce02b2c8e4743c96898 L2632 | `--m3e-comp-date-picker-years-in-row` | `3` | the year grid’s columns (GridCells.Fixed) |

@@ -1,0 +1,25 @@
+---
+import Base from '../../layouts/Base.astro';
+---
+
+<Base title="Date pickers">
+  <link rel="stylesheet" href="/icons/docs-icons.css" slot="head" />
+  <h1>Date pickers</h1>
+  <section aria-labelledby="modal-heading">
+    <h2 id="modal-heading">Date picker (element)</h2>
+    <div class="docs-time-picker-row">
+      <figure>
+        <figcaption>Calendar</figcaption>
+        <m3e-date-picker data-testid="picker" value="2025-08-17" displayed-month="2025-08"></m3e-date-picker>
+      </figure>
+      <figure>
+        <figcaption>Input</figcaption>
+        <m3e-date-picker data-testid="input" value="2025-08-17" display-mode="input"></m3e-date-picker>
+      </figure>
+    </div>
+  </section>
+</Base>
+
+<script>
+  import '@kyralabs/m3exp-web/elements';
+</script>

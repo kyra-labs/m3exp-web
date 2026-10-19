@@ -38,13 +38,22 @@ const INPUT = 'DateInput.kt';
 const RANGE_INPUT = 'DateRangeInput.kt';
 const DIALOG = 'DatePickerDialog.kt';
 const DIALOG_ANDROID = 'DatePickerDialog.android.kt';
+const BUTTON = 'Button.kt';
 const LAZY = 'LazyLayoutScrollScope.kt';
 const LIST_STATE = 'LazyListState.kt';
 const SUSPEND = 'SuspendAnimation.kt';
 const SPEC = 'AnimationSpec.kt';
 const VECTORIZED = 'VectorizedAnimationSpec.kt';
 
-export const DATE_PICKER_DEFAULTS_SOURCES = [KT, RANGE, INPUT, RANGE_INPUT, DIALOG, DIALOG_ANDROID];
+export const DATE_PICKER_DEFAULTS_SOURCES = [
+  KT,
+  RANGE,
+  INPUT,
+  RANGE_INPUT,
+  DIALOG,
+  DIALOG_ANDROID,
+  BUTTON,
+];
 
 const P = '--m3e-comp-date-picker';
 
@@ -167,6 +176,43 @@ const RULES: readonly LiteralRule[] = [
     'bottom',
     'DatePickerDefaults.DatePickerHeadline',
   ),
+  {
+    kind: 'dp',
+    name: `${P}-year-button-padding-inline`,
+    owner: 'ButtonDefaults',
+    member: 'TextButtonHorizontalPadding',
+    file: BUTTON,
+    pattern: /private val TextButtonHorizontalPadding = (\d+)\.dp/d,
+    note: 'the year menu button: a TextButton (TextButtonContentPadding)',
+  },
+  {
+    kind: 'dp',
+    name: `${P}-year-button-padding-block`,
+    owner: 'ButtonDefaults',
+    member: 'ButtonVerticalPadding',
+    file: BUTTON,
+    pattern: /private val ButtonVerticalPadding = (\d+)\.dp/d,
+    note: 'the year menu button: a TextButton (TextButtonContentPadding)',
+  },
+  {
+    kind: 'token',
+    name: `${P}-year-button-height`,
+    owner: 'ButtonDefaults',
+    member: 'MinHeight',
+    file: BUTTON,
+    pattern:
+      /public val MinHeight: Dp\n\s*get\(\) =\n\s*if \(shouldUsePrecisionPointerComponentSizing\.value\) \{\n\s*\d+\.dp\n\s*\} else \{\n\s*(ButtonSmallTokens\.ContainerHeight)/d,
+    note: 'the year menu button’s min height (touch sizing)',
+  },
+  {
+    kind: 'token',
+    name: `${P}-year-button-icon-gap`,
+    owner: 'ButtonDefaults',
+    member: 'IconSpacing',
+    file: BUTTON,
+    pattern: /public val IconSpacing: Dp = (ButtonSmallTokens\.IconLabelSpace)/d,
+    note: 'between the month and year and the arrow',
+  },
   dp(
     'years-vertical-padding',
     'YearsVerticalPadding',

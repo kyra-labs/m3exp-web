@@ -24,7 +24,11 @@
     .m3e-time-picker__selector,
     .m3e-time-picker__period-item,
     .m3e-time-picker__label,
-    .m3e-time-scroll__field
+    .m3e-time-scroll__field,
+    .m3e-date-picker__day,
+    .m3e-date-picker__year,
+    .m3e-date-picker__menu-button,
+    .m3e-date-picker__menu-item
   ):focus-visible {
     outline: var(--m3e-sys-state-focus-indicator-thickness) solid var(--m3e-sys-color-secondary);
     outline-offset: var(--m3e-sys-state-focus-indicator-outer-offset);
@@ -157,7 +161,11 @@
       .m3e-time-picker__selector,
       .m3e-time-picker__period-item,
       .m3e-time-picker__label,
-      .m3e-time-scroll__field
+      .m3e-time-scroll__field,
+    .m3e-date-picker__day,
+    .m3e-date-picker__year,
+    .m3e-date-picker__menu-button,
+    .m3e-date-picker__menu-item
     ):focus:not(:focus-visible) {
     outline: none;
   }
@@ -178,7 +186,11 @@
       .m3e-time-picker__selector,
       .m3e-time-picker__period-item,
       .m3e-time-picker__label,
-      .m3e-time-scroll__field
+      .m3e-time-scroll__field,
+    .m3e-date-picker__day,
+    .m3e-date-picker__year,
+    .m3e-date-picker__menu-button,
+    .m3e-date-picker__menu-item
     ):focus-visible,
     :where(.m3e-card--interactive):has(.m3e-card__action:focus-visible),
     :where(.m3e-filter-chip):has(> .m3e-filter-chip__input:focus-visible),
