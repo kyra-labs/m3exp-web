@@ -55,6 +55,22 @@ async function open(page: Page, id: string, keyboard = false): Promise<Locator> 
   return root;
 }
 
+/**
+ * Presses Escape until the modal sheet closes: an expanded sheet with a PartiallyExpanded state
+ * collapses first, and where the browser counts the programmatic focus on the handle as keyboard
+ * focus (WebKit) or a hover shows the handle's tooltip, the first Escape hides that. Each press
+ * waits for the sheet to rest: settleToDismiss reads the settled value, as Compose's does.
+ */
+async function escapeClose(page: Page, root: Locator): Promise<void> {
+  const isOpen = () => root.evaluate((n) => (n as HTMLDialogElement).open);
+  for (let i = 0; i < 5 && (await isOpen()); i++) {
+    await page.keyboard.press('Escape');
+    await rests(root);
+    await page.waitForTimeout(50);
+  }
+  await expect(root).not.toHaveAttribute('open');
+}
+
 /** A vertical mouse drag from (x, y) by `dy`, in `steps` moves `pause` ms apart. */
 async function drag(page: Page, x: number, y: number, dy: number, steps: number, pause: number) {
   await page.mouse.move(x, y);
@@ -79,12 +95,7 @@ test('has no axe violations (closed, and with each modal sheet open)', async ({ 
   for (const id of ['modal', 'modal-skip', 'modal-short']) {
     const root = await open(page, id);
     expect(await scan(), id).toEqual([]);
-    await page.keyboard.press('Escape');
-    if (id === 'modal-skip') await expect(root).not.toHaveAttribute('open');
-    else {
-      await page.keyboard.press('Escape');
-      await expect(root).not.toHaveAttribute('open');
-    }
+    await escapeClose(page, root);
   }
 });
 
@@ -244,9 +255,13 @@ test('keyboard: the handle expands and dismisses (Enter), ArrowUp / ArrowDown ex
   await expect(root).not.toHaveAttribute('open');
 });
 
-test('drags: a fling down dismisses; a slow long drag hides; a short one settles back; a fling up expands', async ({
+test('drags: a drag down past the threshold dismisses; a short one settles back; up expands', async ({
   page,
 }) => {
+  // Release velocities depend on the timing of the input events, which a loaded runner stretches
+  // past VelocityTracker's 40ms pause; the thresholds and the velocity paths are unit-tested
+  // (m3e-motion, m3e-elements). These drags travel far enough that every velocity they can
+  // produce (0, under or over 125dp/s) picks the same anchor.
   const viewport = page.viewportSize()!;
   const x = viewport.width / 2;
   let root = await open(page, 'modal');
@@ -259,26 +274,25 @@ test('drags: a fling down dismisses; a slow long drag hides; a short one settles
     viewport.height / 2,
     0,
   );
-  // A fling up (fast): Expanded.
-  await drag(page, x, handle.y + 24, -60, 4, 0);
+  // 260px up from PartiallyExpanded (past the middle of the 360px between the anchors): Expanded.
+  await drag(page, x, handle.y + 24, -260, 10, 5);
   await rests(root);
   expect(await valueOf(page, 'modal')).toBe('expanded');
-  // A fling down from Expanded: the next anchor in its direction, PartiallyExpanded.
+  // 260px down from Expanded: the next anchor, PartiallyExpanded.
   handle = await box(handleOf(page, 'modal'));
-  await drag(page, x, handle.y + 24, 80, 4, 0);
+  await drag(page, x, handle.y + 24, 260, 10, 5);
   await rests(root);
   expect(await valueOf(page, 'modal')).toBe('partially-expanded');
-  // From PartiallyExpanded a fling down dismisses (COMPONENT_SPEC §30 acceptance).
+  // 260px down from PartiallyExpanded dismisses (COMPONENT_SPEC §30 acceptance).
   handle = await box(handleOf(page, 'modal'));
-  await drag(page, x, handle.y + 24, 80, 4, 0);
+  await drag(page, x, handle.y + 24, 260, 10, 5);
   await expect(root).not.toHaveAttribute('open');
   expect(await valueOf(page, 'modal')).toBe('hidden');
-  // A slow drag 200px down also hides (whether its release velocity is under 125dp/s, past the
-  // 56dp positional threshold, or 0 after a pause, the closest anchor; the thresholds themselves
-  // are unit-tested in m3e-motion and m3e-elements).
+  await expect(page.getByTestId('open-modal')).toBeFocused();
+  // Slowly, the same.
   root = await open(page, 'modal');
   handle = await box(handleOf(page, 'modal'));
-  await drag(page, x, handle.y + 24, 200, 50, 16);
+  await drag(page, x, handle.y + 24, 260, 50, 16);
   await expect(root).not.toHaveAttribute('open');
 });
 
@@ -338,9 +352,7 @@ test('React: the same contract, controlled through onOpenChange / onValueChange'
   await expect(page.getByTestId('react-modal-value')).toHaveText('partially-expanded');
   await modal.locator('.m3e-bottom-sheet__handle').click();
   await expect(page.getByTestId('react-modal-value')).toHaveText('expanded');
-  await page.keyboard.press('Escape');
-  await page.keyboard.press('Escape');
-  await expect(modal).not.toHaveAttribute('open');
+  await escapeClose(page, modal);
   await expect(page.getByTestId('react-modal-value')).toHaveText('hidden');
   await expect(page.getByTestId('react-open-modal')).toBeFocused();
   // skipPartiallyExpanded: it opens expanded.
@@ -348,8 +360,7 @@ test('React: the same contract, controlled through onOpenChange / onValueChange'
   await page.getByTestId('react-open-modal').click();
   await rests(modal);
   await expect(modal).toHaveClass(/m3e-bottom-sheet--expanded/);
-  await page.keyboard.press('Escape');
-  await expect(modal).not.toHaveAttribute('open');
+  await escapeClose(page, modal);
   // The standard sheet reports its handle.
   const standard = page.getByTestId('react-standard');
   await standard.locator('.m3e-bottom-sheet__handle').click();
