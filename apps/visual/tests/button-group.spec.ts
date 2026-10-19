@@ -418,6 +418,118 @@ test('overflow: items that do not fit move to the menu; resizing brings them bac
   }
 });
 
+/** Waits until a tooltip's show springs have settled (scale and opacity at 1). */
+const settledTooltip = async (tooltip: Locator) => {
+  await expect(tooltip).toBeVisible();
+  await expect
+    .poll(() =>
+      tooltip.evaluate((el) =>
+        ['--_m3e-tooltip-scale', '--_m3e-tooltip-opacity'].map((n) =>
+          (el as HTMLElement).style.getPropertyValue(n),
+        ),
+      ),
+    )
+    .toEqual(['1', '1']);
+};
+
+/** The overflow button and its tooltip, with 16px around them (page + clip, as for focus rings). */
+const clipAround = async (a: Locator, t: Locator) => {
+  const ab = await box(a);
+  const tb = await box(t);
+  const left = Math.max(0, Math.min(ab.x, tb.x) - 16);
+  const top = Math.max(0, Math.min(ab.y, tb.y) - 16);
+  const right = Math.max(ab.x + ab.width, tb.x + tb.width) + 16;
+  const bottom = Math.max(ab.y + ab.height, tb.y + tb.height) + 16;
+  return { x: left, y: top, width: right - left, height: bottom - top };
+};
+
+test.describe('overflow indicator tooltip (ButtonGroupDefaults.OverflowIndicator, M9 #30)', () => {
+  test('hover shows the name above the button, aria-hidden; leaving hides it after 1.5s', async ({
+    page,
+  }) => {
+    for (const [id, name] of [
+      ['el-overflow-label', 'More text styles'],
+      ['el-overflow', 'More options'],
+      ['react-overflow', 'More options'],
+    ] as const) {
+      const container = page.getByTestId(`${id}-box`);
+      const trigger = container.locator('.m3e-button-group__overflow');
+      const tooltip = container.locator('.m3e-tooltip');
+      await expect(trigger, id).toBeVisible();
+      await expect(tooltip, id).toBeHidden();
+      await trigger.hover();
+      await settledTooltip(tooltip);
+      await expect(tooltip, id).toHaveText(name);
+      await expect(tooltip, id).toHaveRole('tooltip');
+      // It repeats the button's name (owner decision M9 #2): no description, hidden from AT.
+      await expect(tooltip, id).toHaveAttribute('aria-hidden', 'true');
+      await expect(trigger, id).toHaveAccessibleName(name);
+      await expect(trigger, id).not.toHaveAttribute('aria-describedby');
+      // TooltipAnchorPosition.Above, centered: 4dp above the button's 48dp target.
+      const t = await box(tooltip);
+      const b = await box(trigger);
+      const target = await px(page, '--m3e-comp-minimum-interactive-component-size');
+      const spacing = await px(page, '--m3e-comp-tooltip-spacing');
+      const top = b.y + b.height / 2 - Math.max(target, b.height) / 2;
+      expect(top - (t.y + t.height), id).toBeCloseTo(spacing, 0);
+      expect(t.x + t.width / 2, id).toBeCloseTo(b.x + b.width / 2, 0);
+      await page.mouse.move(1, 1);
+      await expect(tooltip, id).toBeHidden({ timeout: 5000 });
+    }
+  });
+
+  test('keyboard focus shows it; opening the menu hides it (element, React)', async ({ page }) => {
+    for (const id of ['el-overflow', 'react-overflow']) {
+      const container = page.getByTestId(`${id}-box`);
+      const trigger = container.locator('.m3e-button-group__overflow');
+      const tooltip = container.locator('.m3e-tooltip');
+      // Tab from the last visible item reaches the overflow button (:focus-visible).
+      await items(container).first().focus();
+      await page.keyboard.press('End');
+      await expect(trigger, id).toBeFocused();
+      await settledTooltip(tooltip);
+      await page.keyboard.press('Enter');
+      await expect(page.locator('.m3e-menu:popover-open'), id).toBeVisible();
+      await expect(tooltip, id).toBeHidden();
+      await page.keyboard.press('Escape');
+      await expect(page.locator('.m3e-menu:popover-open'), id).toHaveCount(0);
+      await page.mouse.click(1, 1);
+    }
+  });
+
+  test('has no axe violations with the tooltip shown', async ({ page }) => {
+    const trigger = page
+      .getByTestId('el-overflow-label-box')
+      .locator('.m3e-button-group__overflow');
+    await trigger.hover();
+    await settledTooltip(page.getByTestId('el-overflow-label-box').locator('.m3e-tooltip'));
+    const results = await new AxeBuilder({ page }).withTags(AXE_TAGS).analyze();
+    expect(results.violations).toEqual([]);
+  });
+
+  test('shown tooltips match the visual baseline (hover, keyboard focus)', async ({ page }) => {
+    const hovered = page.getByTestId('el-overflow-label-box');
+    const trigger = hovered.locator('.m3e-button-group__overflow');
+    await trigger.hover();
+    await settledTooltip(hovered.locator('.m3e-tooltip'));
+    await expect(page).toHaveScreenshot('button-group-overflow-tooltip-hover.png', {
+      clip: await clipAround(trigger, hovered.locator('.m3e-tooltip')),
+    });
+    await page.mouse.move(1, 1);
+    await expect(hovered.locator('.m3e-tooltip')).toBeHidden({ timeout: 5000 });
+    // React: focused from the keyboard (focus ring + tooltip).
+    const focused = page.getByTestId('react-overflow-box');
+    const reactTrigger = focused.locator('.m3e-button-group__overflow');
+    await items(focused).first().focus();
+    await page.keyboard.press('End');
+    await expect(reactTrigger).toBeFocused();
+    await settledTooltip(focused.locator('.m3e-tooltip'));
+    await expect(page).toHaveScreenshot('button-group-overflow-tooltip-focus.png', {
+      clip: await clipAround(reactTrigger, focused.locator('.m3e-tooltip')),
+    });
+  });
+});
+
 test('touch targets ≥ 48dp on XS buttons', async ({ page }) => {
   const [first] = await items(page.getByTestId('standard-xs')).all();
   const b = await box(first!);
