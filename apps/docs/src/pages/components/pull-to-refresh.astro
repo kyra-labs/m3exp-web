@@ -1,0 +1,94 @@
+---
+import PullToRefreshPlayground from '../../islands/PullToRefreshPlayground.tsx';
+import Base from '../../layouts/Base.astro';
+
+/** PullToRefreshSample's list: 15 one-line items, newest first. */
+const items = (count: number) =>
+  Array.from(
+    { length: count },
+    (_, i) =>
+      `<li class="m3e-list-item"><span class="m3e-list-item__content"><span class="m3e-list-item__headline">Item ${String(count - i)}</span></span></li>`,
+  ).join('');
+/** The sample's top app bar: a title and the "Trigger Refresh" icon button (the keyboard path). */
+const appBar = (id: string) =>
+  `<header class="m3e-top-app-bar"><div class="m3e-top-app-bar__headline"><p class="m3e-top-app-bar__title">Title</p></div><div class="m3e-top-app-bar__actions"><button type="button" class="m3e-icon-button m3e-icon-button--standard" aria-label="Trigger Refresh" data-refresh data-testid="refresh-${id}"><span class="m3e-icon" aria-hidden="true">refresh</span></button></div></header>`;
+---
+
+<Base title="Pull to refresh">
+  <link rel="stylesheet" href="/icons/docs-icons.css" slot="head" />
+  <h1>Pull to refresh</h1>
+  <p>
+    Pull to refresh (COMPONENT_SPEC §38) refreshes a scrolling list: pulled down at its top, an indicator follows the finger, and a release past the threshold asks for a refresh. It is Compose's <code>PullToRefreshBox</code>: the pull counts half and slows past the 80dp threshold (its tension curve, ported to m3e-motion), the indicator springs back, or rests at the threshold and spins while the app refreshes. The content is the scroll container, with overscroll contained so the browser's own pull-to-refresh never starts.
+  </p>
+  <p>
+    Pulls come from touch and pen only, never from a mouse drag or wheel. The keyboard path is a visible Refresh button, as in every Compose sample (here the app bar's <strong>Trigger Refresh</strong>): it calls the same refresh. Set <code>refreshing</code> from the <code>refresh</code> event and clear it when done; these demos wait 5 seconds and add five items, like the samples.
+  </p>
+
+  <section aria-labelledby="default-heading">
+    <h2 id="default-heading">Arrow indicator (element)</h2>
+    <p>
+      <code>&lt;m3e-pull-to-refresh&gt;</code> draws Compose's default indicator: a 40dp circle with an arrow that grows from 40% of the threshold and turns fully opaque at it, then a circular progress while refreshing.
+    </p>
+    <div class="docs-ptr-frame" data-ptr-demo>
+      <Fragment set:html={appBar('default')} />
+      <m3e-pull-to-refresh data-testid="default">
+        <ul class="m3e-list" aria-label="Items"><Fragment set:html={items(15)} /></ul>
+      </m3e-pull-to-refresh>
+    </div>
+  </section>
+
+  <section aria-labelledby="loading-heading">
+    <h2 id="loading-heading">Loading indicator (element)</h2>
+    <p>
+      <code>indicator="loading-indicator"</code> is Compose's <code>PullToRefreshDefaults.LoadingIndicator</code>: a contained loading indicator that morphs with the pull, turns past the threshold and keeps morphing while refreshing. The element drives <code>&lt;m3e-loading-indicator&gt;</code> children and loads that entry on first use.
+    </p>
+    <div class="docs-ptr-frame" data-ptr-demo>
+      <Fragment set:html={appBar('loading')} />
+      <m3e-pull-to-refresh indicator="loading-indicator" data-testid="loading">
+        <ul class="m3e-list" aria-label="Items"><Fragment set:html={items(15)} /></ul>
+      </m3e-pull-to-refresh>
+    </div>
+  </section>
+
+  <section aria-labelledby="react-heading">
+    <h2 id="react-heading">React</h2>
+    <p>
+      <code>&lt;PullToRefresh isRefreshing onRefresh indicator&gt;</code> renders the same DOM as the element; the app bar's button calls the same <code>onRefresh</code>.
+    </p>
+    <PullToRefreshPlayground client:only="react" />
+  </section>
+</Base>
+
+<script>
+  import '@kyralabs/m3exp-web/elements';
+
+  // The samples' onRefresh: refreshing for 5 s (`?delay=` in ms for tests), then five more items.
+  const delay = Number(new URLSearchParams(location.search).get('delay')) || 5000;
+  for (const demo of document.querySelectorAll<HTMLElement>('[data-ptr-demo]')) {
+    const ptr = demo.querySelector('m3e-pull-to-refresh');
+    const list = demo.querySelector('ul');
+    if (!ptr || !list) continue;
+    let count = list.children.length;
+    const refresh = () => {
+      if (ptr.refreshing) return;
+      ptr.refreshing = true;
+      setTimeout(() => {
+        count += 5;
+        const doc = list.ownerDocument;
+        list.replaceChildren(
+          ...Array.from({ length: count }, (_, i) => {
+            const li = doc.createElement('li');
+            li.className = 'm3e-list-item';
+            li.innerHTML = `<span class="m3e-list-item__content"><span class="m3e-list-item__headline">Item ${String(count - i)}</span></span>`;
+            return li;
+          }),
+        );
+        ptr.refreshing = false;
+      }, delay);
+    };
+    ptr.addEventListener('refresh', refresh);
+    demo.querySelector('[data-refresh]')?.addEventListener('click', () => {
+      ptr.refresh();
+    });
+  }
+</script>

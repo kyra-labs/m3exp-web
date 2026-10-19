@@ -870,13 +870,31 @@
   - [ ] Dev warning on use.
   - [ ] Plus CAC.
 
-## 38. Pull to refresh
-- **Behavior:** pull past threshold shows LoadingIndicator (`TODO(verify)` PullToRefreshBox). Enabled only inside custom scroll containers with `overscroll-behavior: contain`.
-- **ARIA:** visible "Refresh" button as keyboard alternative.
-- **Layers:** elements + react.
+## 38. Pull to refresh — built
+- **Purpose:** refresh a scrolling list by pulling it down at its top (Compose `PullToRefreshBox`; no m3.material.io page at the pin).
+- **Behavior:** a pull at the top of the content brings the indicator down: the drag counts × 0.5 (`DragMultiplier`) up to the threshold (`PositionalThreshold`, 80dp), then follows the tension curve `threshold × (1 + t − t²/4)`, `t = min(overshoot, 2)`, so at most twice the threshold; moving back up retracts the pull before the content scrolls. A release with the adjusted distance past the threshold calls `onRefresh`; the indicator then springs back to hidden, or, while the app's `isRefreshing` is true, to the threshold, where it stays until it is false. Pulls are ignored while refreshing and while the indicator animates. The default indicator is Compose's `PullToRefreshDefaults.Indicator` (the arrow, then a circular progress while refreshing); `PullToRefreshDefaults.LoadingIndicator` (a contained loading indicator) is the `loading-indicator` modifier (owner decision M9 #27; the earlier wording "pull past threshold shows LoadingIndicator" was not Compose's default). Enabled only inside the component's own scroll container (`__content`), with `overscroll-behavior: contain`.
+- **Tokens (no `PullToRefreshTokens.kt` at the pin; generated `components/pull-to-refresh-defaults.css` by `pull-to-refresh-defaults.ts`, PARITY.md lines):**
+
+  | | value | source |
+  |---|---|---|
+  | indicator box | 40dp circle (`SpinnerContainerSize`, `indicatorShape` CircleShape), surface-container-high, Level2 shadow while pulled or refreshing, moved by `distanceFraction × IndicatorMaxDistance (80dp) − its height` and clipped at the content's top | `PullToRefreshDefaults` L455–502, `IndicatorBox` L521–567 |
+  | arrow / spinner | on-surface-variant, 16dp (`SpinnerSize`), 2.5dp stroke; arrow alpha 0.3 → 1 at the threshold on DefaultEffects; cross-fade to the spinner on DefaultEffects | L582–616, L788–922 |
+  | loading indicator variant | 48dp box (`LoadingIndicatorDefaults.ContainerWidth / Height`), primary-container / on-primary-container (the contained colors), no shadow; determinate by `distanceFraction`, rotated −(fraction − 1) × 180° past the threshold; indeterminate while refreshing | L471–487, L635–699 |
+  | threshold | 80dp (`PositionalThreshold`), `IndicatorMaxDistance` the same | L490, L496 |
+  | state spring | Animatable's default `spring()` (ζ 1, k 1500; 0ms under reduced motion) | `PullToRefreshStateImpl` L765–771; animation-core Animatable.kt L122–123, L229 |
+
+- **Math (m3e-motion `pull-to-refresh.ts`, float32-faithful port with the Apache header):** `PullToRefreshPull` (the node's `consumeAvailableOffset`, `calculateVerticalOffset`, `onRelease`, the animations' `finally`s, `distanceFraction`), `pullToRefreshArrowValues` / `pullToRefreshArrowGeometry` (ArrowValues, the arc and head drawing) and `pullToRefreshArrowPaths` (their SVG paths), the box translation and the loading indicator's rotation. Compared bit for bit with a JVM reference running the vendored code verbatim (`pnpm reference:pull-to-refresh`; a test fails if the verbatim copies drift).
+- **Input (owner decision M9 #28):** touch and pen drags (base/drag.ts `pointerDrag`) starting at the content's top and moving down; mouse drags and wheels never pull. Touch moves down at the top are kept from the browser (a non-passive `touchmove`; `touch-action: pan-x pan-down` while `[data-at-top]`).
+- **ARIA / keyboard:** the arrow is a `role="progressbar"` (0–100, named by `indicator-label`, default "Refresh", register #85) while pulled; the spinner (or the loading indicators) a progress bar while refreshing; hidden parts are `aria-hidden`. The keyboard path is a visible Refresh button (every Compose sample has "Trigger Refresh" in its app bar) calling the same refresh (`refresh()` on the element). Overflowing content is a focusable scroll region (`tabindex="0"`, ring drawn inside).
+- **Layers:** css (the indicator box, arrow, variant) + elements (`<m3e-pull-to-refresh>`, 6.2 kB with `PullToRefreshLayout`; the loading indicator variant drives `<m3e-loading-indicator contained>` children, whose entry it imports on first use instead of bundling it, owner decision M9 #28) + react (`<PullToRefresh>` on `PullToRefreshLayout`, with `<LoadingIndicator>` for the variant).
+- **Classes:** `.m3e-pull-to-refresh` (`--loading-indicator`) > `__content`, `__indicator` > `__box` > `__pull` (> `svg.__arrow` > `__arc`, `__head`), `__refreshing` (> `.m3e-circular-progress`). JS hooks `[data-at-top]`, `[data-pulled]`, `[data-armed]`, `[data-refreshing]`, `[data-animating]`, `[data-dragging]`, `--_m3e-ptr-fraction`.
+- **API:** Element `<m3e-pull-to-refresh refreshing indicator="default | loading-indicator" disabled threshold indicator-label>` (child nodes are the content); event `refresh`; `refresh()`, `distanceFraction`. React `<PullToRefresh isRefreshing onRefresh isDisabled indicator threshold indicatorLabel ref>`; other props go to the root.
 - **Acceptance:**
-  - [ ] Keyboard alternative refreshes.
-  - [ ] Plus CAC.
+  - [x] Keyboard alternative refreshes.
+  - [x] Element / React DOM parity (`pull-to-refresh.test.tsx`).
+  - [x] Plus CAC.
+- **Fidelity:** a pull starts only from a gesture that begins at the content's top (Compose's nested scroll also turns a scroll that reaches the top into a pull); release velocity is not consumed (no list fling to stop); a cancelled pointer goes back without refreshing; the arrow head angle uses density 1 (register #86); pulls from mouse and wheel are not supported (decision #28).
+- **Sources:** pulltorefresh/PullToRefresh.kt, PullToRefreshSamples.kt, LoadingIndicator.kt, ProgressIndicator.kt, animation-core Animatable.kt, AnimationSpec.kt, VectorizedAnimationSpec.kt (vendored).
 
 ## 39. Primitives (Surface, Icon, Scaffold, StateLayer, FocusRing)
 - `.m3e-surface--container-{lowest…highest}`.

@@ -68,6 +68,7 @@ export class PullToRefreshLayout {
   #pulling = false;
   #touch: { y: number; eligible: boolean } | null = null;
   #reported = Number.NaN;
+  #resize: ResizeObserver | undefined;
 
   constructor(root: HTMLElement, options: PullToRefreshLayoutOptions = {}) {
     this.root = root;
@@ -192,16 +193,37 @@ export class PullToRefreshLayout {
         );
       }
     }
+    // The content and its children: their sizes decide whether the content overflows.
+    if (typeof ResizeObserver !== 'undefined') {
+      this.#resize ??= new ResizeObserver(() => {
+        this.#updateScrolls();
+      });
+      this.#resize.disconnect();
+      if (content) {
+        this.#resize.observe(content);
+        for (const child of content.children) this.#resize.observe(child);
+      }
+    }
+    this.#updateScrolls();
     this.#syncAtTop();
     this.#render();
   }
 
   destroy(): void {
     this.#abort.abort();
+    this.#resize?.disconnect();
     this.#scrollAbort?.abort();
     this.#drag.destroy();
     cancelAnimationFrame(this.#frame);
     this.#frame = 0;
+  }
+
+  /** Overflowing content is a keyboard-focusable scroll region (`tabindex="0"`), as the sheets'. */
+  #updateScrolls(): void {
+    const content = this.#content;
+    if (!content) return;
+    if (content.scrollHeight > content.clientHeight) content.setAttribute('tabindex', '0');
+    else if (content.getAttribute('tabindex') === '0') content.removeAttribute('tabindex');
   }
 
   // --- Pulls -------------------------------------------------------------------------------------

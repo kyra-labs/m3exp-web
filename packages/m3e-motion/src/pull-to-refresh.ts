@@ -35,11 +35,11 @@ const f = Math.fround;
 /** `DragMultiplier` (L922): the distance pulled counts half. */
 export const PULL_TO_REFRESH_DRAG_MULTIPLIER = 0.5;
 /** `MinAlpha` / `MaxAlpha` (L913–914): the arrow's alpha below / at the threshold. */
-export const PULL_TO_REFRESH_MIN_ALPHA = f(0.3);
+export const PULL_TO_REFRESH_MIN_ALPHA = /* @__PURE__ */ f(0.3);
 export const PULL_TO_REFRESH_MAX_ALPHA = 1;
 
 // The arrow's private constants (L890–903), dp.
-const MAX_PROGRESS_ARC = f(0.8);
+const MAX_PROGRESS_ARC = /* @__PURE__ */ f(0.8);
 const STROKE_WIDTH = 2.5;
 const ARC_RADIUS = 5.5;
 const ARROW_WIDTH = 10;
