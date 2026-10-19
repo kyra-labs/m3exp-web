@@ -295,6 +295,15 @@ const RULES: readonly LiteralRule[] = [
     note: 'pageSize = PageSize.Fixed(ScrollFieldHeight / 3): a wheel row is a third of this',
   },
   {
+    kind: 'fraction',
+    name: `${P}-scroll-field-pages`,
+    owner: 'ScrollField',
+    member: 'pageSize',
+    file: SCROLL,
+    pattern: /pageSize = PageSize\.Fixed\(ScrollFieldDefaults\.ScrollFieldHeight \/ (\d+)\),/d,
+    note: 'a wheel row is ScrollFieldHeight / this',
+  },
+  {
     kind: 'keyword',
     name: `${P}-scroll-field-shape`,
     owner: 'ScrollFieldDefaults',

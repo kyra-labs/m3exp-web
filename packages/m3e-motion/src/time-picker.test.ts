@@ -64,6 +64,13 @@ const pos = (p: { x: number; y: number }) => ({ x: f(p.x), y: f(p.y) });
 describe('constants', () => {
   it('match TimePicker.kt', () => {
     expect(TIME_PICKER_FULL_CIRCLE).toBe(f(reference.constants.fullCircle));
+    // The literals are the float32 values of TimePicker.kt's expressions.
+    expect(TIME_PICKER_FULL_CIRCLE).toBe(f(Math.PI * 2));
+    expect(TIME_PICKER_OUTER_RATIO).toBe(f(101 / 256));
+    expect(TIME_PICKER_INNER_RATIO).toBe(f(69 / 256));
+    expect(f(TIME_PICKER_FULL_CIRCLE / 2)).toBe(3.1415927410125732);
+    expect(f(TIME_PICKER_FULL_CIRCLE / 60)).toBe(0.10471975803375244);
+    expect(f(TIME_PICKER_FULL_CIRCLE / 12)).toBe(0.5235987901687622);
     expect(TIME_PICKER_OUTER_RATIO).toBe(f(reference.constants.outerRatio));
     expect(TIME_PICKER_INNER_RATIO).toBe(f(reference.constants.innerRatio));
     expect(TIME_PICKER_MAX_DISTANCE).toBe(reference.constants.maxDistance);

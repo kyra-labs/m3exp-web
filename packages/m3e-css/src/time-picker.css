@@ -1,0 +1,985 @@
+/*
+ * Time pickers (COMPONENT_SPEC §28): Compose's TimePicker (the dial), TimeInput, TimeScroll and
+ * the TimePickerDialog / VibrantTimePickerDialog surfaces, each baseline or vibrant (expressive;
+ * TimeScroll is vibrant only). The dial, the inputs and the wheels need m3e-elements' time picker
+ * layouts (shared with m3e-react), which build this DOM and write its state; the CSS draws it.
+ *
+ *   <div class="m3e-time-picker [m3e-time-picker--vibrant] [m3e-time-picker--horizontal]
+ *               [m3e-time-picker--24h]" data-selection="hour | minute">
+ *     <div class="m3e-time-picker__display">
+ *       <div class="m3e-time-picker__fields">           (always left to right)
+ *         <button class="m3e-time-picker__selector" role="radio" aria-checked="true">
+ *           <span class="m3e-time-picker__value">07</span></button>
+ *         <span class="m3e-time-picker__separator" aria-hidden="true">:</span>
+ *         <button class="m3e-time-picker__selector" role="radio" aria-checked="false">…</button>
+ *       </div>
+ *       <div class="m3e-time-picker__period" role="radiogroup">   (12-hour only)
+ *         <button class="m3e-time-picker__period-item" role="radio" aria-checked="true">AM</button>
+ *         <button class="m3e-time-picker__period-item" role="radio" aria-checked="false">PM</button>
+ *       </div>
+ *     </div>
+ *     <div class="m3e-time-picker__dial" style="--_m3e-time-picker-cos: …; --_m3e-time-picker-sin: …">
+ *       <div class="m3e-time-picker__face" data-face="hour" data-active role="radiogroup">
+ *         <span class="m3e-time-picker__label [m3e-time-picker__label--inner]" role="radio"
+ *               style="--_m3e-time-picker-label-cos: …; --_m3e-time-picker-label-sin: …">12</span> …
+ *       </div>
+ *       <div class="m3e-time-picker__face" data-face="minute" role="radiogroup">…</div>
+ *       <span class="m3e-time-picker__handle"></span>
+ *       <span class="m3e-time-picker__track"></span>
+ *       <span class="m3e-time-picker__center"></span>
+ *       <div class="m3e-time-picker__highlight" aria-hidden="true">   (the faces again, on-primary,
+ *         <div class="m3e-time-picker__face" data-face="hour" data-active>…</div> …  clipped to the handle)
+ *       </div>
+ *     </div>
+ *   </div>
+ *
+ *   <div class="m3e-time-input [m3e-time-input--vibrant] [m3e-time-input--uncontained]">
+ *     <div class="m3e-time-input__fields">
+ *       <div class="m3e-time-input__field" [data-selected] [data-invalid]>
+ *         <input class="m3e-time-input__input" inputmode="numeric" role="spinbutton" value="07">
+ *         <span class="m3e-time-input__supporting">Hour</span>    (baseline, or invalid)
+ *       </div>
+ *       <span class="m3e-time-input__separator" aria-hidden="true">:</span>
+ *       <div class="m3e-time-input__field">…</div>
+ *     </div>
+ *     <div class="m3e-time-picker__period">…</div>   or, uncontained, <div class="m3e-time-picker__side">
+ *   </div>                                              AM, PM and the mode toggle </div>
+ *
+ *   <div class="m3e-time-scroll [m3e-time-scroll--uncontained]">
+ *     <div class="m3e-time-scroll__fields">
+ *       <div class="m3e-time-scroll__field" role="spinbutton" tabindex="0">
+ *         <span class="m3e-time-scroll__item" [data-selected]
+ *               style="--_m3e-time-scroll-offset: -1">06</span> …
+ *       </div>
+ *       <span class="m3e-time-scroll__separator" aria-hidden="true">:</span> …
+ *     </div>
+ *     <div class="m3e-time-picker__period">…</div> | <div class="m3e-time-picker__side">…</div>
+ *   </div>
+ *
+ *   <dialog class="m3e-dialog m3e-dialog--custom"> … <div class="m3e-dialog__container">
+ *     <div class="m3e-time-picker-dialog [m3e-time-picker-dialog--vibrant]">
+ *       <div class="m3e-time-picker-dialog__title">Select time</div>      (baseline)
+ *       <div class="m3e-time-picker-dialog__content">a picker</div>
+ *       <div class="m3e-time-picker-dialog__actions">[mode toggle] <span class="m3e-time-picker-dialog__spacer"></span>
+ *         Cancel OK</div>
+ *     </div>
+ *   </div></dialog>
+ *
+ * Sources (compose/material3 @ 19991f2c; values in time-picker.css, time-input.css and
+ * time-picker-defaults.css, lines in PARITY.md):
+ * - TimePickerTokens / TimeInputTokens through TimePicker.kt's defaults, with
+ *   ComposeMaterial3Flags.isUpdatedTimepickerToggleEnabled on (owner decision M10 T3): the AM/PM
+ *   toggle is two ToggleButtons (CircleShape → 12dp pressed / checked on the fast spatial spring,
+ *   primary-container checked, surface-container-lowest unchecked, bold when checked, 4dp apart,
+ *   no outline), not the tokens' outlined tertiary segmented control.
+ * - VerticalTimePicker / HorizontalTimePicker (L1958–2013): the display (fields + AM/PM) then the
+ *   256dp dial, below (vertical) or beside (horizontal); vibrant gaps and sizes (L1454–1479).
+ *   The layout type is Compose's screen orientation (TimePicker.android.kt), resolved by the
+ *   layouts (owner decision M10 T6); the dial does not shrink in short windows (gap, T6).
+ * - ClockFace / drawSelector / CircularLayout (L3270–3480, L3935–3972): labels on a 101dp circle
+ *   (24-hour: 0, 13–23 on a 69dp one), the 48dp primary handle at the selector's angle with the
+ *   labels under it in on-primary (Compose's Clear / Xor / DstOver blending), a 2dp track from
+ *   the center and an 8dp center dot; the faces cross-fade on DefaultEffects.
+ * - TimeSelector (L3060–3128): a RadioButton surface; vibrant: a 2dp primary border when selected.
+ * - TimeInputImpl / TimePickerTextField (L2033–2227, L3789–3928): an unselected field is a
+ *   TimeSelector; the selected one an outlined text field (1dp / 2dp outline borders, error
+ *   container and border when invalid); "Hour" / "Minute" or the error below (baseline, invalid).
+ * - TimeScrollImpl / ScrollField (L2230–2380; ScrollField.kt): two infinite wheels of
+ *   ScrollFieldHeight / 3 rows, the centered row selected (display large emphasized, on-surface)
+ *   and the others display medium in outline, interpolated on the fast spatial spring.
+ * - SideControlColumn (L2693–2767): the uncontained variants' AM, PM and mode toggle column.
+ * - TimePickerDialog.kt: the dialogs' surfaces and their portrait / landscape layouts.
+ * - Touch targets ≥ 48dp (::after), :focus-visible rings, forced colors, reduced motion (the
+ *   selector and the wheels jump).
+ */
+@import '@kyralabs/m3e-tokens/components/time-picker.css';
+@import '@kyralabs/m3e-tokens/components/time-input.css';
+@import '@kyralabs/m3e-tokens/components/time-picker-defaults.css';
+@import '@kyralabs/m3e-tokens/components/dialog.css';
+
+@layer m3e.components {
+  /* --- Roots: sizes and colors per variant ---------------------------------------------------- */
+  .m3e-time-picker {
+    --_m3e-time-picker-selector-width: var(--m3e-comp-time-picker-time-selector-container-width);
+    --_m3e-time-picker-selector-height: var(--m3e-comp-time-picker-time-selector-container-height);
+    --_m3e-time-picker-selector-shape: var(--m3e-comp-time-picker-time-selector-container-shape);
+    --_m3e-time-picker-separator-width: var(--m3e-comp-time-picker-separator-width);
+    --_m3e-time-picker-separator-height: var(
+      --m3e-comp-time-picker-period-selector-vertical-container-height
+    );
+    --_m3e-time-picker-separator-font: var(--m3e-comp-time-picker-time-selector-label-text-font);
+    --_m3e-time-picker-separator-size: var(--m3e-comp-time-picker-time-selector-label-text-size);
+    --_m3e-time-picker-separator-weight: var(
+      --m3e-comp-time-picker-time-selector-label-text-weight
+    );
+    --_m3e-time-picker-separator-tracking: var(
+      --m3e-comp-time-picker-time-selector-label-text-tracking
+    );
+    --_m3e-time-picker-period-width: var(
+      --m3e-comp-time-picker-period-selector-vertical-container-width
+    );
+    --_m3e-time-picker-period-height: var(
+      --m3e-comp-time-picker-period-selector-vertical-container-height
+    );
+    --_m3e-time-picker-period-gap: var(--m3e-comp-time-picker-period-gap);
+    --_m3e-time-picker-period-offset: var(--m3e-comp-time-picker-period-gap);
+    --_m3e-time-picker-period-container: var(--m3e-comp-time-picker-period-container-color);
+    --_m3e-time-picker-period-container-selected: var(
+      --m3e-comp-time-picker-period-container-color-selected
+    );
+    --_m3e-time-picker-period-label-selected: var(
+      --m3e-comp-time-picker-period-label-color-selected
+    );
+    --_m3e-time-picker-gap: var(--m3e-comp-time-picker-display-gap);
+    --_m3e-time-picker-dial-color: var(--m3e-comp-time-picker-clock-dial-color);
+    --_m3e-time-picker-selector-container: var(
+      --m3e-comp-time-picker-time-selector-container-color-unselected
+    );
+    --_m3e-time-picker-selector-label: var(
+      --m3e-comp-time-picker-time-selector-label-text-color-unselected
+    );
+    --_m3e-time-picker-selector-container-selected: var(
+      --m3e-comp-time-picker-time-selector-container-color-selected
+    );
+    --_m3e-time-picker-selector-label-selected: var(
+      --m3e-comp-time-picker-time-selector-label-text-color-selected
+    );
+    --_m3e-time-picker-selector-outline: transparent;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    inline-size: fit-content;
+    padding-block-end: var(--m3e-comp-time-picker-face-bottom-margin);
+  }
+
+  .m3e-time-picker--vibrant {
+    --_m3e-time-picker-selector-width: var(--m3e-comp-time-picker-vibrant-time-field-width);
+    --_m3e-time-picker-selector-height: var(--m3e-comp-time-picker-vibrant-time-field-height);
+    --_m3e-time-picker-selector-shape: var(--m3e-comp-time-picker-vibrant-time-field-shape);
+    --_m3e-time-picker-separator-width: var(--m3e-comp-time-picker-vibrant-separator-width);
+    --_m3e-time-picker-separator-height: var(--m3e-comp-time-picker-vibrant-time-field-height);
+    --_m3e-time-picker-period-width: var(--m3e-comp-time-picker-vibrant-period-width);
+    --_m3e-time-picker-period-height: var(--m3e-comp-time-picker-vibrant-period-height);
+    --_m3e-time-picker-period-gap: var(--m3e-comp-time-picker-vibrant-period-padding);
+    --_m3e-time-picker-period-offset: var(--m3e-comp-time-picker-vibrant-period-large-padding);
+    --_m3e-time-picker-period-container: var(--m3e-comp-time-picker-vibrant-period-container-color);
+    --_m3e-time-picker-period-container-selected: var(
+      --m3e-comp-time-picker-vibrant-period-container-color-selected
+    );
+    --_m3e-time-picker-period-label-selected: var(
+      --m3e-comp-time-picker-vibrant-period-label-color-selected
+    );
+    --_m3e-time-picker-gap: var(--m3e-comp-time-picker-vibrant-vertical-gap);
+    --_m3e-time-picker-dial-color: var(--m3e-comp-time-picker-vibrant-clock-dial-color);
+    --_m3e-time-picker-selector-container: var(
+      --m3e-comp-time-picker-vibrant-time-selector-container-color
+    );
+    --_m3e-time-picker-selector-label: var(
+      --m3e-comp-time-picker-vibrant-time-selector-label-color
+    );
+    --_m3e-time-picker-selector-container-selected: var(
+      --m3e-comp-time-picker-vibrant-time-selector-container-color-selected
+    );
+    --_m3e-time-picker-selector-label-selected: var(
+      --m3e-comp-time-picker-vibrant-time-selector-label-color-selected
+    );
+    --_m3e-time-picker-selector-outline: var(--m3e-comp-time-picker-vibrant-selector-outline-color);
+
+    padding-block-end: 0;
+  }
+
+  .m3e-time-picker--horizontal {
+    --_m3e-time-picker-period-width: var(
+      --m3e-comp-time-picker-period-selector-horizontal-container-width
+    );
+    --_m3e-time-picker-period-height: var(
+      --m3e-comp-time-picker-period-selector-horizontal-container-height
+    );
+
+    flex-direction: row;
+    padding-block-end: 0;
+  }
+
+  .m3e-time-picker--horizontal.m3e-time-picker--vibrant {
+    --_m3e-time-picker-period-height: var(--m3e-comp-time-picker-vibrant-period-horizontal-height);
+    --_m3e-time-picker-period-gap: var(--m3e-comp-time-picker-vibrant-separator-width);
+    --_m3e-time-picker-gap: var(--m3e-comp-time-picker-vibrant-horizontal-gap);
+  }
+
+  /* Vibrant, vertical, 24-hour: wider selectors (ClockDisplayNumbers). */
+  .m3e-time-picker--vibrant.m3e-time-picker--24h:not(.m3e-time-picker--horizontal) {
+    --_m3e-time-picker-selector-width: var(
+      --m3e-comp-time-picker-vibrant-time-field-width-portrait
+    );
+  }
+
+  .m3e-time-input,
+  .m3e-time-scroll {
+    --_m3e-time-picker-field-width: var(--m3e-comp-time-input-time-field-container-width);
+    --_m3e-time-picker-field-height: var(--m3e-comp-time-input-time-field-container-height);
+    --_m3e-time-picker-field-shape: var(--m3e-comp-time-input-time-field-container-shape);
+    --_m3e-time-picker-field-font: var(--m3e-comp-time-input-time-field-label-text-font);
+    --_m3e-time-picker-field-size: var(--m3e-comp-time-input-time-field-label-text-size);
+    --_m3e-time-picker-field-weight: var(--m3e-comp-time-input-time-field-label-text-weight);
+    --_m3e-time-picker-field-line-height: var(
+      --m3e-comp-time-input-time-field-label-text-line-height
+    );
+    --_m3e-time-picker-field-tracking: var(--m3e-comp-time-input-time-field-label-text-tracking);
+    --_m3e-time-picker-separator-width: var(--m3e-comp-time-picker-separator-width);
+    --_m3e-time-picker-separator-height: var(
+      --m3e-comp-time-input-period-selector-container-height
+    );
+    --_m3e-time-picker-separator-font: var(--_m3e-time-picker-field-font);
+    --_m3e-time-picker-separator-size: var(--_m3e-time-picker-field-size);
+    --_m3e-time-picker-separator-weight: var(--_m3e-time-picker-field-weight);
+    --_m3e-time-picker-separator-tracking: var(--_m3e-time-picker-field-tracking);
+    --_m3e-time-picker-period-width: var(--m3e-comp-time-input-period-selector-container-width);
+    --_m3e-time-picker-period-height: var(--m3e-comp-time-input-period-selector-container-height);
+    --_m3e-time-picker-period-gap: var(--m3e-comp-time-picker-period-gap);
+    --_m3e-time-picker-period-offset: var(--m3e-comp-time-picker-period-gap);
+    --_m3e-time-picker-period-container: var(--m3e-comp-time-picker-period-container-color);
+    --_m3e-time-picker-period-container-selected: var(
+      --m3e-comp-time-picker-period-container-color-selected
+    );
+    --_m3e-time-picker-period-label-selected: var(
+      --m3e-comp-time-picker-period-label-color-selected
+    );
+    --_m3e-time-picker-selector-container: var(
+      --m3e-comp-time-picker-time-selector-container-color-unselected
+    );
+    --_m3e-time-picker-selector-label: var(
+      --m3e-comp-time-picker-time-selector-label-text-color-unselected
+    );
+    --_m3e-time-picker-selector-container-selected: var(
+      --m3e-comp-time-picker-time-selector-container-color-selected
+    );
+    --_m3e-time-picker-selector-label-selected: var(
+      --m3e-comp-time-picker-time-selector-label-text-color-selected
+    );
+    --_m3e-time-picker-outline: var(--m3e-comp-time-picker-input-outline-color);
+    --_m3e-time-picker-outline-focused: var(--m3e-comp-time-picker-input-outline-color-focused);
+    --_m3e-time-picker-container-error: var(--m3e-comp-time-picker-input-container-color-error);
+    --_m3e-time-picker-outline-error: var(--m3e-comp-time-picker-input-outline-color-error);
+    --_m3e-time-picker-caret: var(--m3e-comp-time-picker-input-caret-color);
+
+    display: flex;
+    align-items: flex-start;
+    inline-size: fit-content;
+  }
+
+  .m3e-time-input--vibrant,
+  .m3e-time-scroll {
+    --_m3e-time-picker-field-width: var(--m3e-comp-time-picker-vibrant-time-field-width);
+    --_m3e-time-picker-field-height: var(--m3e-comp-time-picker-vibrant-time-field-height);
+    --_m3e-time-picker-field-shape: var(--m3e-comp-time-picker-vibrant-time-field-shape);
+    --_m3e-time-picker-field-font: var(--m3e-comp-time-picker-vibrant-time-field-label-text-font);
+    --_m3e-time-picker-field-size: var(--m3e-comp-time-picker-vibrant-time-field-label-text-size);
+    --_m3e-time-picker-field-weight: var(
+      --m3e-comp-time-picker-vibrant-time-field-label-text-weight
+    );
+    --_m3e-time-picker-field-line-height: var(
+      --m3e-comp-time-picker-vibrant-time-field-label-text-line-height
+    );
+    --_m3e-time-picker-field-tracking: var(
+      --m3e-comp-time-picker-vibrant-time-field-label-text-tracking
+    );
+    --_m3e-time-picker-separator-width: var(--m3e-comp-time-picker-vibrant-separator-width);
+    --_m3e-time-picker-separator-height: var(--_m3e-time-picker-field-height);
+    --_m3e-time-picker-period-width: var(--m3e-comp-time-picker-vibrant-period-width);
+    --_m3e-time-picker-period-height: var(--m3e-comp-time-picker-vibrant-period-height);
+    --_m3e-time-picker-period-gap: var(--m3e-comp-time-picker-vibrant-period-padding);
+    --_m3e-time-picker-period-offset: var(--m3e-comp-time-picker-vibrant-period-padding);
+    --_m3e-time-picker-period-container: var(--m3e-comp-time-picker-vibrant-period-container-color);
+    --_m3e-time-picker-period-container-selected: var(
+      --m3e-comp-time-picker-vibrant-period-container-color-selected
+    );
+    --_m3e-time-picker-period-label-selected: var(
+      --m3e-comp-time-picker-vibrant-period-label-color-selected
+    );
+    --_m3e-time-picker-selector-container: var(
+      --m3e-comp-time-picker-vibrant-input-container-color
+    );
+    --_m3e-time-picker-selector-label: var(--m3e-comp-time-picker-vibrant-input-label-color);
+    --_m3e-time-picker-selector-container-selected: var(
+      --m3e-comp-time-picker-vibrant-input-container-color-focused
+    );
+    --_m3e-time-picker-selector-label-selected: var(
+      --m3e-comp-time-picker-vibrant-input-label-color-focused
+    );
+    --_m3e-time-picker-outline: var(--m3e-comp-time-picker-vibrant-input-outline-color);
+    --_m3e-time-picker-outline-focused: var(
+      --m3e-comp-time-picker-vibrant-input-outline-color-focused
+    );
+    --_m3e-time-picker-container-error: var(
+      --m3e-comp-time-picker-vibrant-input-container-color-error
+    );
+    --_m3e-time-picker-outline-error: var(--m3e-comp-time-picker-vibrant-input-outline-color-error);
+    --_m3e-time-picker-caret: var(--m3e-comp-time-picker-vibrant-input-label-color-focused);
+  }
+
+  .m3e-time-input--uncontained,
+  .m3e-time-scroll--uncontained {
+    --_m3e-time-picker-field-height: var(--m3e-comp-time-picker-uncontained-time-field-height);
+  }
+
+  /* --- The display (TimePicker): selectors, separator, AM/PM --------------------------------- */
+  .m3e-time-picker__display {
+    display: flex;
+    flex: none;
+    align-items: flex-start;
+    justify-content: center;
+    margin-block-end: var(--_m3e-time-picker-gap);
+  }
+
+  .m3e-time-picker--horizontal > .m3e-time-picker__display {
+    flex-direction: column;
+    align-items: center;
+    margin-block-end: 0;
+    margin-inline-end: var(--_m3e-time-picker-gap);
+  }
+
+  .m3e-time-picker__fields,
+  .m3e-time-input__fields,
+  .m3e-time-scroll__fields {
+    display: flex;
+    flex: none;
+    direction: ltr;
+  }
+
+  .m3e-time-picker__selector {
+    --m3e-comp-state-layer-color: var(--_m3e-time-picker-selector-label);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    inline-size: var(--_m3e-time-picker-selector-width);
+    block-size: var(--_m3e-time-picker-selector-height);
+    margin: 0;
+    padding: 0;
+    border: none;
+    border-radius: var(--_m3e-time-picker-selector-shape);
+    background-color: var(--_m3e-time-picker-selector-container);
+    color: var(--_m3e-time-picker-selector-label);
+    font-family: var(--m3e-comp-time-picker-time-selector-label-text-font);
+    font-size: var(--m3e-comp-time-picker-time-selector-label-text-size);
+    font-weight: var(--m3e-comp-time-picker-time-selector-label-text-weight);
+    line-height: var(--m3e-comp-time-picker-time-selector-label-text-line-height);
+    letter-spacing: var(--m3e-comp-time-picker-time-selector-label-text-tracking);
+    font-variant-numeric: tabular-nums;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* Vibrant: a 2dp primary border inside the selected selector (Surface border). */
+  .m3e-time-picker__selector[aria-checked='true'] {
+    --_m3e-time-picker-selector-container: var(--_m3e-time-picker-selector-container-selected);
+    --_m3e-time-picker-selector-label: var(--_m3e-time-picker-selector-label-selected);
+
+    box-shadow: inset 0 0 0 var(--m3e-comp-time-picker-vibrant-selector-outline-width)
+      var(--_m3e-time-picker-selector-outline);
+  }
+
+  .m3e-time-picker__separator,
+  .m3e-time-input__separator,
+  .m3e-time-scroll__separator {
+    display: flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    inline-size: var(--_m3e-time-picker-separator-width);
+    block-size: var(--_m3e-time-picker-separator-height);
+    color: var(--m3e-comp-time-input-time-field-separator-color);
+    font-family: var(--_m3e-time-picker-separator-font);
+    font-size: var(--_m3e-time-picker-separator-size);
+    font-weight: var(--_m3e-time-picker-separator-weight);
+    letter-spacing: var(--_m3e-time-picker-separator-tracking);
+    line-height: 1;
+    translate: 0 var(--m3e-comp-time-picker-separator-offset);
+    user-select: none;
+  }
+
+  /* --- The AM/PM toggle (ToggleButtons with isUpdatedTimepickerToggleEnabled) ---------------- */
+  .m3e-time-picker__period {
+    display: grid;
+    flex: none;
+    grid-template-rows: 1fr 1fr;
+    gap: var(--_m3e-time-picker-period-gap);
+    box-sizing: border-box;
+    inline-size: var(--_m3e-time-picker-period-width);
+    block-size: var(--_m3e-time-picker-period-height);
+    margin-inline-start: var(--_m3e-time-picker-period-offset);
+  }
+
+  .m3e-time-picker--horizontal .m3e-time-picker__period {
+    grid-template-rows: none;
+    grid-template-columns: 1fr 1fr;
+    margin-block-start: var(--m3e-comp-time-picker-vibrant-period-large-padding);
+    margin-inline-start: 0;
+  }
+
+  .m3e-time-picker__period-item {
+    --_m3e-time-picker-item-height: calc(
+      (var(--_m3e-time-picker-period-height) - var(--_m3e-time-picker-period-gap)) / 2
+    );
+    --_m3e-time-picker-item-shape: calc(var(--_m3e-time-picker-item-height) / 2);
+    --_m3e-time-picker-item-container: var(--_m3e-time-picker-period-container);
+    --_m3e-time-picker-item-label: var(
+      --m3e-comp-time-picker-period-selector-label-text-color-unselected
+    );
+    --m3e-comp-state-layer-color: var(--_m3e-time-picker-item-label);
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    min-inline-size: 0;
+    margin: 0;
+    padding: 0;
+    border: none;
+    border-radius: var(--_m3e-time-picker-item-shape);
+    background-color: var(--_m3e-time-picker-item-container);
+    color: var(--_m3e-time-picker-item-label);
+    font-family: var(--m3e-comp-time-picker-period-selector-label-text-font);
+    font-size: var(--m3e-comp-time-picker-period-selector-label-text-size);
+    font-weight: var(--m3e-comp-time-picker-period-selector-label-text-weight);
+    line-height: var(--m3e-comp-time-picker-period-selector-label-text-line-height);
+    letter-spacing: var(--m3e-comp-time-picker-period-selector-label-text-tracking);
+    cursor: pointer;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    transition:
+      border-radius var(--m3e-sys-motion-spring-fast-spatial-duration)
+        var(--m3e-sys-motion-spring-fast-spatial-easing),
+      background-color var(--m3e-sys-motion-spring-fast-effects-duration)
+        var(--m3e-sys-motion-spring-fast-effects-easing),
+      color var(--m3e-sys-motion-spring-fast-effects-duration)
+        var(--m3e-sys-motion-spring-fast-effects-easing);
+  }
+
+  .m3e-time-picker__period-item[aria-checked='true'] {
+    --_m3e-time-picker-item-shape: var(--m3e-comp-time-picker-period-shape-selected);
+    --_m3e-time-picker-item-container: var(--_m3e-time-picker-period-container-selected);
+    --_m3e-time-picker-item-label: var(--_m3e-time-picker-period-label-selected);
+
+    font-weight: var(--m3e-comp-time-picker-period-label-weight-selected);
+  }
+
+  .m3e-time-picker__period-item:is(:active, [data-pressed]) {
+    --_m3e-time-picker-item-shape: var(--m3e-comp-time-picker-period-shape-pressed);
+  }
+
+  .m3e-time-picker--horizontal .m3e-time-picker__period-item {
+    --_m3e-time-picker-item-height: var(--_m3e-time-picker-period-height);
+  }
+
+  /* 38–40dp tall: the touch target grows to 48dp (::before is the state layer). */
+  .m3e-time-picker__period-item::after {
+    content: '';
+    position: absolute;
+    inset-block: min(
+      0%,
+      calc(
+        (var(--_m3e-time-picker-item-height) - var(--m3e-comp-minimum-interactive-component-size)) /
+          2
+      )
+    );
+    inset-inline: 0;
+  }
+
+  /* --- The uncontained variants' side column (SideControlColumn) ----------------------------- */
+  .m3e-time-picker__side {
+    position: relative;
+    flex: none;
+    box-sizing: border-box;
+    min-inline-size: var(--m3e-comp-time-picker-minimum-interactive-size);
+    block-size: var(--m3e-comp-time-picker-uncontained-toggle-height);
+    margin-inline-start: var(--m3e-comp-time-picker-period-gap);
+  }
+
+  .m3e-time-picker-dialog__actions .m3e-icon-button {
+    color: var(--m3e-sys-color-on-surface-variant);
+  }
+
+  /* AM / PM keep their radio group, laid out by the column. */
+  .m3e-time-picker__side > .m3e-time-picker__period {
+    display: contents;
+  }
+
+  .m3e-time-picker__side :is(.m3e-time-picker__period-item, .m3e-icon-button) {
+    position: absolute;
+    inset-inline: 0;
+    margin-inline: auto;
+  }
+
+  /* AM's 40dp button starts at the fields' top, PM 8dp below it, the toggle's icon 16dp below. */
+  .m3e-time-picker__side .m3e-time-picker__period-item {
+    --_m3e-time-picker-item-height: var(--m3e-comp-time-picker-side-item-height);
+
+    inset-block-start: 0;
+    inline-size: fit-content;
+    min-inline-size: var(--m3e-comp-time-picker-side-item-min-width);
+    block-size: var(--m3e-comp-time-picker-side-item-height);
+    padding-inline: var(--m3e-comp-time-picker-side-item-padding);
+  }
+
+  .m3e-time-picker__side .m3e-time-picker__period-item + .m3e-time-picker__period-item {
+    inset-block-start: calc(
+      var(--m3e-comp-time-picker-side-item-height) + var(--m3e-comp-time-picker-side-period-gap)
+    );
+  }
+
+  .m3e-time-picker__side > .m3e-icon-button {
+    inset-block-start: calc(
+      var(--m3e-comp-time-picker-side-item-height) + var(--m3e-comp-time-picker-side-item-height) +
+        var(--m3e-comp-time-picker-side-period-gap) + var(--m3e-comp-time-picker-side-toggle-gap) -
+        (var(--m3e-comp-minimum-interactive-component-size) - var(--m3e-comp-icon-size)) / 2
+    );
+  }
+
+  /* 24-hour: the toggle alone, its icon's bottom on the fields' bottom. */
+  .m3e-time-picker__side > .m3e-icon-button:only-child {
+    inset-block-start: var(--m3e-comp-time-picker-side-toggle-top-24h);
+  }
+
+  /* --- The dial (ClockFace) ------------------------------------------------------------------ */
+  .m3e-time-picker__dial {
+    --_m3e-time-picker-radius: var(--m3e-comp-time-picker-outer-radius);
+    --_m3e-time-picker-handle: var(
+      --m3e-comp-time-picker-clock-dial-selector-handle-container-size
+    );
+    --_m3e-time-picker-handle-x: calc(
+      50% + var(--_m3e-time-picker-cos, 0) * var(--_m3e-time-picker-radius)
+    );
+    --_m3e-time-picker-handle-y: calc(
+      50% + var(--_m3e-time-picker-sin, -1) * var(--_m3e-time-picker-radius)
+    );
+
+    position: relative;
+    flex: none;
+    inline-size: var(--m3e-comp-time-picker-clock-dial-container-size);
+    block-size: var(--m3e-comp-time-picker-clock-dial-container-size);
+    border-radius: var(--m3e-comp-time-picker-clock-dial-shape);
+    background-color: var(--_m3e-time-picker-dial-color);
+
+    /* LTR geometry (physical positions) whatever the direction. */
+    direction: ltr;
+    touch-action: none;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* 24-hour PM hours: the selector on the inner circle (selectorPos). */
+  .m3e-time-picker__dial[data-inner] {
+    --_m3e-time-picker-radius: var(--m3e-comp-time-picker-inner-radius);
+  }
+
+  .m3e-time-picker__face {
+    position: absolute;
+    inset: 0;
+
+    /* visibility is discrete: visible for the whole cross-fade, hidden after a fade out. */
+    transition:
+      opacity var(--m3e-comp-time-picker-face-duration) var(--m3e-comp-time-picker-face-easing),
+      visibility var(--m3e-comp-time-picker-face-duration) var(--m3e-sys-motion-easing-linear);
+  }
+
+  .m3e-time-picker__face:not([data-active]) {
+    opacity: 0;
+    visibility: hidden;
+  }
+
+  .m3e-time-picker__label {
+    --m3e-comp-state-layer-color: var(
+      --m3e-comp-time-picker-clock-dial-label-text-color-unselected
+    );
+    --_m3e-time-picker-label-radius: var(--m3e-comp-time-picker-outer-radius);
+
+    position: absolute;
+    inset-block-start: calc(
+      50% + var(--_m3e-time-picker-label-sin) * var(--_m3e-time-picker-label-radius) -
+        var(--m3e-comp-time-picker-minimum-interactive-size) / 2
+    );
+    inset-inline-start: calc(
+      50% + var(--_m3e-time-picker-label-cos) * var(--_m3e-time-picker-label-radius) -
+        var(--m3e-comp-time-picker-minimum-interactive-size) / 2
+    );
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    inline-size: var(--m3e-comp-time-picker-minimum-interactive-size);
+    block-size: var(--m3e-comp-time-picker-minimum-interactive-size);
+    border-radius: var(--m3e-sys-shape-corner-full);
+    outline-offset: calc(var(--m3e-sys-state-focus-indicator-thickness) * -1);
+    color: var(--m3e-comp-time-picker-clock-dial-label-text-color-unselected);
+    font-family: var(--m3e-comp-time-picker-clock-dial-label-text-font);
+    font-size: var(--m3e-comp-time-picker-clock-dial-label-text-size);
+    font-weight: var(--m3e-comp-time-picker-clock-dial-label-text-weight);
+    line-height: var(--m3e-comp-time-picker-clock-dial-label-text-line-height);
+    letter-spacing: var(--m3e-comp-time-picker-clock-dial-label-text-tracking);
+    cursor: pointer;
+  }
+
+  .m3e-time-picker__label--inner {
+    --_m3e-time-picker-label-radius: var(--m3e-comp-time-picker-inner-radius);
+  }
+
+  .m3e-time-picker__handle,
+  .m3e-time-picker__track,
+  .m3e-time-picker__center {
+    position: absolute;
+    pointer-events: none;
+  }
+
+  .m3e-time-picker__handle {
+    inset-block-start: calc(var(--_m3e-time-picker-handle-y) - var(--_m3e-time-picker-handle) / 2);
+    inset-inline-start: calc(var(--_m3e-time-picker-handle-x) - var(--_m3e-time-picker-handle) / 2);
+    inline-size: var(--_m3e-time-picker-handle);
+    block-size: var(--_m3e-time-picker-handle);
+    border-radius: var(--m3e-comp-time-picker-clock-dial-selector-handle-container-shape);
+    background-color: var(--m3e-comp-time-picker-clock-dial-selector-handle-container-color);
+  }
+
+  /* From the center to the handle's edge, along the selector's angle. */
+  .m3e-time-picker__track {
+    inset-block-start: calc(
+      50% - var(--m3e-comp-time-picker-clock-dial-selector-track-container-width) / 2
+    );
+    inset-inline-start: 50%;
+    inline-size: calc(var(--_m3e-time-picker-radius) - var(--_m3e-time-picker-handle) / 2);
+    block-size: var(--m3e-comp-time-picker-clock-dial-selector-track-container-width);
+    background-color: var(--m3e-comp-time-picker-clock-dial-selector-track-container-color);
+    transform-origin: 0 50%;
+    rotate: atan2(var(--_m3e-time-picker-sin, -1), var(--_m3e-time-picker-cos, 0));
+  }
+
+  .m3e-time-picker__center {
+    inset-block-start: calc(
+      50% - var(--m3e-comp-time-picker-clock-dial-selector-center-container-size) / 2
+    );
+    inset-inline-start: calc(
+      50% - var(--m3e-comp-time-picker-clock-dial-selector-center-container-size) / 2
+    );
+    inline-size: var(--m3e-comp-time-picker-clock-dial-selector-center-container-size);
+    block-size: var(--m3e-comp-time-picker-clock-dial-selector-center-container-size);
+    border-radius: var(--m3e-comp-time-picker-clock-dial-selector-center-container-shape);
+    background-color: var(--m3e-comp-time-picker-clock-dial-selector-center-container-color);
+  }
+
+  /* The labels under the handle, in the selected color (drawSelector's blending). */
+  .m3e-time-picker__highlight {
+    position: absolute;
+    inset: 0;
+    clip-path: circle(
+      calc(var(--_m3e-time-picker-handle) / 2) at var(--_m3e-time-picker-handle-x)
+        var(--_m3e-time-picker-handle-y)
+    );
+    pointer-events: none;
+  }
+
+  .m3e-time-picker__highlight .m3e-time-picker__label {
+    color: var(--m3e-comp-time-picker-clock-dial-label-text-color-selected);
+  }
+
+  /* --- TimeInput fields ------------------------------------------------------------------------ */
+  .m3e-time-input__field {
+    display: flex;
+    flex-direction: column;
+    inline-size: var(--_m3e-time-picker-field-width);
+  }
+
+  /*
+   * One <input> for both of Compose's looks: an unselected field is a TimeSelector (no border); the
+   * selected one an outlined text field (the outline thickens while focused).
+   */
+  .m3e-time-input__input {
+    --_m3e-time-picker-input-container: var(--_m3e-time-picker-selector-container);
+    --_m3e-time-picker-input-label: var(--_m3e-time-picker-selector-label);
+    --_m3e-time-picker-input-border: transparent;
+    --_m3e-time-picker-input-border-width: 0;
+
+    box-sizing: border-box;
+    inline-size: var(--_m3e-time-picker-field-width);
+    block-size: var(--_m3e-time-picker-field-height);
+    margin: 0;
+    padding: 0;
+    border: none;
+    border-radius: var(--_m3e-time-picker-field-shape);
+    outline: none;
+    background-color: var(--_m3e-time-picker-input-container);
+    box-shadow: inset 0 0 0 var(--_m3e-time-picker-input-border-width)
+      var(--_m3e-time-picker-input-border);
+    color: var(--_m3e-time-picker-input-label);
+    caret-color: var(--_m3e-time-picker-caret);
+    font-family: var(--_m3e-time-picker-field-font);
+    font-size: var(--_m3e-time-picker-field-size);
+    font-weight: var(--_m3e-time-picker-field-weight);
+    line-height: var(--_m3e-time-picker-field-line-height);
+    letter-spacing: var(--_m3e-time-picker-field-tracking);
+    font-variant-numeric: tabular-nums;
+    text-align: center;
+    cursor: pointer;
+    appearance: none;
+  }
+
+  .m3e-time-input__field[data-invalid] > .m3e-time-input__input {
+    --_m3e-time-picker-input-container: var(
+      --m3e-comp-time-picker-time-selector-container-color-error
+    );
+    --_m3e-time-picker-input-label: var(--m3e-comp-time-picker-time-selector-label-color-error);
+  }
+
+  .m3e-time-input__field[data-selected] > .m3e-time-input__input {
+    --_m3e-time-picker-input-container: var(--_m3e-time-picker-selector-container);
+    --_m3e-time-picker-input-label: var(--_m3e-time-picker-selector-label-selected);
+    --_m3e-time-picker-input-border: var(--_m3e-time-picker-outline);
+    --_m3e-time-picker-input-border-width: var(--m3e-comp-time-picker-input-outline-width);
+
+    cursor: text;
+  }
+
+  .m3e-time-input__field[data-selected] > .m3e-time-input__input:focus {
+    --_m3e-time-picker-input-container: var(--_m3e-time-picker-selector-container-selected);
+    --_m3e-time-picker-input-border: var(--_m3e-time-picker-outline-focused);
+    --_m3e-time-picker-input-border-width: var(--m3e-comp-time-picker-input-outline-width-focused);
+  }
+
+  .m3e-time-input__field[data-invalid][data-selected] > .m3e-time-input__input {
+    --_m3e-time-picker-input-container: var(--_m3e-time-picker-container-error);
+    --_m3e-time-picker-input-label: var(--m3e-comp-time-picker-input-label-color-error);
+    --_m3e-time-picker-input-border: var(--_m3e-time-picker-outline-error);
+  }
+
+  .m3e-time-input__supporting {
+    min-block-size: calc(
+      var(--m3e-comp-time-input-time-field-supporting-text-line-height) +
+        var(--m3e-comp-time-input-time-field-supporting-text-line-height)
+    );
+    padding-block-start: var(--m3e-comp-time-picker-supporting-text-top);
+    color: var(--m3e-comp-time-input-time-field-supporting-text-color);
+    font-family: var(--m3e-comp-time-input-time-field-supporting-text-font);
+    font-size: var(--m3e-comp-time-input-time-field-supporting-text-size);
+    font-weight: var(--m3e-comp-time-input-time-field-supporting-text-weight);
+    line-height: var(--m3e-comp-time-input-time-field-supporting-text-line-height);
+    letter-spacing: var(--m3e-comp-time-input-time-field-supporting-text-tracking);
+  }
+
+  .m3e-time-input__field[data-invalid] > .m3e-time-input__supporting {
+    color: var(--m3e-comp-time-picker-supporting-text-color-error);
+  }
+
+  /* --- TimeScroll (ScrollField wheels) --------------------------------------------------------- */
+  .m3e-time-scroll__field {
+    --_m3e-time-scroll-page: calc(
+      var(--m3e-comp-time-picker-scroll-field-height) /
+        var(--m3e-comp-time-picker-scroll-field-pages)
+    );
+
+    position: relative;
+    flex: none;
+    box-sizing: border-box;
+    inline-size: var(--m3e-comp-time-picker-scroll-field-width);
+    block-size: var(--_m3e-time-picker-field-height);
+    overflow: hidden;
+    border-radius: var(--m3e-comp-time-picker-scroll-field-shape);
+    outline-offset: calc(var(--m3e-sys-state-focus-indicator-thickness) * -1);
+    background-color: var(--m3e-comp-time-picker-scroll-field-container-color);
+    touch-action: none;
+    user-select: none;
+    cursor: grab;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .m3e-time-scroll__field[data-dragging] {
+    cursor: grabbing;
+  }
+
+  /* A page at its offset from the wheel's position, centered (SnapPosition.Center). */
+  .m3e-time-scroll__item {
+    position: absolute;
+    inset-inline: 0;
+    inset-block-start: calc(
+      50% - var(--_m3e-time-scroll-page) / 2 + var(--_m3e-time-scroll-offset, 0) *
+        var(--_m3e-time-scroll-page)
+    );
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    block-size: var(--_m3e-time-scroll-page);
+    color: var(--m3e-comp-time-picker-scroll-field-label-color);
+    font-family: var(--m3e-comp-time-picker-scroll-item-font);
+    font-size: var(--m3e-comp-time-picker-scroll-item-size);
+    font-weight: var(--m3e-comp-time-picker-scroll-item-weight);
+    line-height: var(--m3e-comp-time-picker-scroll-item-line-height);
+    letter-spacing: var(--m3e-comp-time-picker-scroll-item-tracking);
+    font-variant-numeric: tabular-nums;
+    cursor: pointer;
+    transition-property: color, font-size, font-weight, line-height, letter-spacing;
+    transition-duration: var(--m3e-comp-time-picker-scroll-item-duration);
+    transition-timing-function: var(--m3e-comp-time-picker-scroll-item-easing);
+  }
+
+  .m3e-time-scroll__item[data-selected] {
+    color: var(--m3e-comp-time-picker-scroll-field-label-color-selected);
+    font-family: var(--m3e-comp-time-picker-scroll-item-selected-font);
+    font-size: var(--m3e-comp-time-picker-scroll-item-selected-size);
+    font-weight: var(--m3e-comp-time-picker-scroll-item-selected-weight);
+    line-height: var(--m3e-comp-time-picker-scroll-item-selected-line-height);
+    letter-spacing: var(--m3e-comp-time-picker-scroll-item-selected-tracking);
+  }
+
+  /* --- The dialogs (TimePickerDialog, VibrantTimePickerDialog) -------------------------------- */
+  .m3e-dialog--custom > .m3e-dialog__container:has(> .m3e-time-picker-dialog) {
+    min-inline-size: 0;
+    max-inline-size: 100%;
+  }
+
+  .m3e-time-picker-dialog {
+    display: grid;
+    grid-template-rows: auto auto auto;
+    justify-items: center;
+    box-sizing: border-box;
+    inline-size: fit-content;
+    max-block-size: 100%;
+    padding: var(--m3e-comp-time-picker-dialog-padding-top)
+      var(--m3e-comp-time-picker-dialog-padding) var(--m3e-comp-time-picker-dialog-padding-bottom);
+    overflow: auto;
+    border-radius: var(--m3e-comp-time-picker-dialog-container-shape);
+    background-color: var(--m3e-comp-time-picker-dialog-container-color);
+    color: var(--m3e-sys-color-on-surface);
+  }
+
+  /* The title starts at the dialog's 24dp inset (the content's 24dp padding here). */
+  .m3e-time-picker-dialog__title {
+    justify-self: start;
+    margin: 0;
+    margin-inline-start: calc(
+      var(--m3e-comp-time-picker-dialog-padding-top) - var(--m3e-comp-time-picker-dialog-padding)
+    );
+    padding-block-end: var(--m3e-comp-time-picker-dialog-title-padding-bottom);
+    font-family: var(--m3e-comp-time-picker-dialog-title-font);
+    font-size: var(--m3e-comp-time-picker-dialog-title-size);
+    font-weight: var(--m3e-comp-time-picker-dialog-title-weight);
+    line-height: var(--m3e-comp-time-picker-dialog-title-line-height);
+    letter-spacing: var(--m3e-comp-time-picker-dialog-title-tracking);
+  }
+
+  .m3e-time-picker-dialog__content {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .m3e-time-picker-dialog__actions {
+    display: flex;
+    align-items: center;
+    gap: var(--m3e-comp-time-picker-dialog-actions-gap);
+    inline-size: 100%;
+  }
+
+  .m3e-time-picker-dialog__spacer {
+    flex: 1;
+  }
+
+  .m3e-time-picker-dialog--vibrant {
+    row-gap: var(--m3e-comp-time-picker-vibrant-dialog-padding);
+    padding: var(--m3e-comp-time-picker-vibrant-dialog-padding);
+    border-radius: var(--m3e-sys-shape-corner-extra-large);
+    background-color: var(--m3e-comp-time-picker-vibrant-dialog-container-color);
+  }
+
+  /*
+   * Landscape (the horizontal dial: content wider than tall, at least 200dp tall): as tall as the
+   * window allows, the title in the top corner, the content centered above the actions, which
+   * sit 8dp from the bottom (24dp from 384dp tall). Vibrant: content and actions centered.
+   */
+  .m3e-dialog__container:has(> .m3e-time-picker-dialog .m3e-time-picker--horizontal) {
+    block-size: 100%;
+  }
+
+  .m3e-time-picker-dialog:has(.m3e-time-picker--horizontal) {
+    position: relative;
+    grid-template-rows: minmax(0, 1fr) auto;
+    row-gap: var(--m3e-comp-time-picker-dialog-landscape-content-actions);
+    block-size: 100%;
+    padding-block: var(--m3e-comp-time-picker-dialog-landscape-content-top)
+      var(--m3e-comp-time-picker-dialog-landscape-actions-bottom);
+  }
+
+  .m3e-time-picker-dialog:has(.m3e-time-picker--horizontal) > .m3e-time-picker-dialog__title {
+    position: absolute;
+    inset-block-start: var(--m3e-comp-time-picker-dialog-padding-top);
+    inset-inline-start: var(--m3e-comp-time-picker-dialog-padding-top);
+    margin: 0;
+  }
+
+  .m3e-time-picker-dialog:has(.m3e-time-picker--horizontal) > .m3e-time-picker-dialog__content {
+    align-self: center;
+  }
+
+  /* landMaxDialogHeight (384dp) plus the window margins (2 × 24dp, register #73). */
+  @media (height >= 432px) {
+    .m3e-time-picker-dialog:has(.m3e-time-picker--horizontal) > .m3e-time-picker-dialog__actions {
+      translate: 0
+        calc(
+          var(--m3e-comp-time-picker-dialog-padding-top) -
+            var(--m3e-comp-time-picker-dialog-padding-bottom) -
+            var(--m3e-comp-time-picker-dialog-landscape-content-top)
+        );
+    }
+  }
+
+  .m3e-time-picker-dialog--vibrant:has(.m3e-time-picker--horizontal) {
+    grid-template-rows: auto auto;
+    align-content: center;
+    row-gap: var(--m3e-comp-time-picker-vibrant-dialog-landscape-padding);
+    padding: var(--m3e-comp-time-picker-vibrant-dialog-padding)
+      var(--m3e-comp-time-picker-vibrant-dialog-landscape-padding);
+  }
+
+  /* --- Reduced motion, forced colors ------------------------------------------------------------ */
+  @media (prefers-reduced-motion: reduce) {
+    .m3e-time-picker__period-item {
+      transition-property: background-color, color;
+    }
+  }
+
+  @media (forced-colors: active) {
+    .m3e-time-picker__selector,
+    .m3e-time-picker__period-item,
+    .m3e-time-input__input,
+    .m3e-time-scroll__field,
+    .m3e-time-picker-dialog {
+      border: var(--m3e-comp-time-picker-input-outline-width) solid ButtonText;
+    }
+
+    .m3e-time-picker__selector[aria-checked='true'],
+    .m3e-time-picker__period-item[aria-checked='true'],
+    .m3e-time-input__field[data-selected] > .m3e-time-input__input {
+      border-color: Highlight;
+      outline: var(--m3e-comp-time-picker-input-outline-width-focused) solid Highlight;
+    }
+
+    .m3e-time-input__field[data-invalid] > .m3e-time-input__input {
+      border-style: dashed;
+    }
+
+    .m3e-time-picker__dial {
+      border: var(--m3e-comp-time-picker-input-outline-width) solid CanvasText;
+    }
+
+    .m3e-time-picker__handle,
+    .m3e-time-picker__track,
+    .m3e-time-picker__center {
+      background-color: Highlight;
+    }
+
+    .m3e-time-picker__highlight .m3e-time-picker__label {
+      color: HighlightText;
+    }
+
+    .m3e-time-scroll__item[data-selected] {
+      color: Highlight;
+    }
+  }
+}

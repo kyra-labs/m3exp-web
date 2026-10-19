@@ -41,6 +41,7 @@
     --m3e-comp-time-picker-vibrant-selector-outline-width: 2px;
     --m3e-comp-time-picker-scroll-field-width: 100px;
     --m3e-comp-time-picker-scroll-field-height: 200px;
+    --m3e-comp-time-picker-scroll-field-pages: 3;
     --m3e-comp-time-picker-scroll-field-shape: var(--m3e-sys-shape-corner-large);
     --m3e-comp-time-picker-scroll-item-font: var(--m3e-sys-typescale-display-medium-font);
     --m3e-comp-time-picker-scroll-item-weight: var(--m3e-sys-typescale-display-medium-weight);

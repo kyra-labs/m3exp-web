@@ -4202,6 +4202,7 @@ export const timePickerDefaults = {
   timePickerVibrantSelectorOutlineWidth: 2,
   timePickerScrollFieldWidth: 100,
   timePickerScrollFieldHeight: 200,
+  timePickerScrollFieldPages: 3,
   timePickerScrollFieldShape: "var(--m3e-sys-shape-corner-large)",
   timePickerScrollItemFont: "var(--m3e-sys-typescale-display-medium-font)",
   timePickerScrollItemWeight: "var(--m3e-sys-typescale-display-medium-weight)",

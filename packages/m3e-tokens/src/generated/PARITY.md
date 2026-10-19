@@ -4,7 +4,7 @@
 > Source: compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/tokens @ 19991f2c0858aadfcb442ce02b2c8e4743c96898  
 > Values: Copyright (C) The Android Open Source Project, Apache License 2.0 (see NOTICE).  
 
-Emitted: 377 system and 3876 component variables from 141 component token objects.
+Emitted: 377 system and 3877 component variables from 141 component token objects.
 
 ## Not emitted here
 
@@ -4791,6 +4791,7 @@ Emitted: 377 system and 3876 component variables from 141 component token object
 | `TimeSelector.border` | `2.dp` | compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/TimePicker.kt@19991f2c0858aadfcb442ce02b2c8e4743c96898 L3107 | `--m3e-comp-time-picker-vibrant-selector-outline-width` | `2px` | a selected vibrant time selector (primary; error when invalid) |
 | `TimeScrollImpl.ScrollField size(width)` | `100.dp` | compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/TimePicker.kt@19991f2c0858aadfcb442ce02b2c8e4743c96898 L2313 | `--m3e-comp-time-picker-scroll-field-width` | `100px` |  |
 | `ScrollFieldDefaults.ScrollFieldHeight` | `200.dp` | compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/ScrollField.kt@19991f2c0858aadfcb442ce02b2c8e4743c96898 L357 | `--m3e-comp-time-picker-scroll-field-height` | `200px` | pageSize = PageSize.Fixed(ScrollFieldHeight / 3): a wheel row is a third of this |
+| `ScrollField.pageSize` | `3f` | compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/ScrollField.kt@19991f2c0858aadfcb442ce02b2c8e4743c96898 L261 | `--m3e-comp-time-picker-scroll-field-pages` | `3` | a wheel row is ScrollFieldHeight / this |
 | `ScrollFieldDefaults.shape` | `MaterialTheme.shapes.large` | compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/ScrollField.kt@19991f2c0858aadfcb442ce02b2c8e4743c96898 L360 | `--m3e-comp-time-picker-scroll-field-shape` | `var(--m3e-sys-shape-corner-large)` |  |
 | `ScrollFieldDefaults.Item.style (unselected)` | `MaterialTheme.typography.displayMedium` | compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/ScrollField.kt@19991f2c0858aadfcb442ce02b2c8e4743c96898 L455 | `--m3e-comp-time-picker-scroll-item-font` | `var(--m3e-sys-typescale-display-medium-font)` | lerp(…, selectionFraction): the unselected end |
 | `ScrollFieldDefaults.Item.style (unselected)` | `MaterialTheme.typography.displayMedium` | compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/ScrollField.kt@19991f2c0858aadfcb442ce02b2c8e4743c96898 L455 | `--m3e-comp-time-picker-scroll-item-weight` | `var(--m3e-sys-typescale-display-medium-weight)` | lerp(…, selectionFraction): the unselected end |

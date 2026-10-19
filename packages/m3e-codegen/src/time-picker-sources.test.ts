@@ -4,6 +4,11 @@
 // constants.
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
+import {
+  TIME_PICKER_EXTRA_HOURS,
+  TIME_PICKER_HOURS,
+  TIME_PICKER_MINUTES,
+} from '@kyralabs/m3e-motion';
 import { describe, expect, it } from 'vitest';
 
 const root = fileURLToPath(new URL('../../../', import.meta.url));
@@ -76,21 +81,33 @@ describe('time picker port', () => {
     expect(constant(/private val OuterCircleToSizeRatio: Float\n\s*get\(\) = (\d+)\.dp/)).toBe(
       '101',
     );
-    expect(port).toContain(
-      'TIME_PICKER_OUTER_RATIO = /* @__PURE__ */ f(101 / TIME_PICKER_CLOCK_DIAL_SIZE);',
-    );
+    expect(port).toContain('TIME_PICKER_OUTER_RATIO = 0.39453125;');
     expect(constant(/private val InnerCircleToSizeRatio: Float\n\s*get\(\) = (\d+)\.dp/)).toBe(
       '69',
     );
-    expect(port).toContain(
-      'TIME_PICKER_INNER_RATIO = /* @__PURE__ */ f(69 / TIME_PICKER_CLOCK_DIAL_SIZE);',
-    );
+    expect(port).toContain('TIME_PICKER_INNER_RATIO = 0.26953125;');
     expect(constant(/private val MaxDistance\n\s*get\(\) = (\d+)\.dp/)).toBe('74');
     expect(port).toContain('TIME_PICKER_MAX_DISTANCE = 74;');
+    expect(constant(/private val MinimumInteractiveSize\n\s*get\(\) = (\d+)\.dp/)).toBe('48');
+    expect(port).toContain('TIME_PICKER_LABEL_SIZE = 48;');
     expect(constant(/private const val MaxValueForTextField = (\d+)/)).toBe('99');
     expect(port).toContain('MAX_TEXT_FIELD_VALUE = 99;');
     expect(scrollField).toContain('private const val InfinitePageCount = 100_000');
     expect(port).toContain('SCROLL_FIELD_PAGE_COUNT = 100_000;');
+  });
+
+  it('labels the dial with Minutes, Hours and ExtraHours (Hours.map { it % 12 + 12 })', () => {
+    const list = (name: string) =>
+      new RegExp(`private val ${name} = intListOf\\(([\\d, ]+)\\)`)
+        .exec(vendored)?.[1]
+        ?.split(',')
+        .map((v) => Number(v.trim()));
+    expect(TIME_PICKER_MINUTES).toEqual(list('Minutes'));
+    expect(TIME_PICKER_HOURS).toEqual(list('Hours'));
+    expect(vendored).toContain(
+      'MutableIntList(Hours.size).apply { Hours.forEach { add((it % 12 + 12)) } }',
+    );
+    expect(TIME_PICKER_EXTRA_HOURS).toEqual(TIME_PICKER_HOURS.map((h) => (h % 12) + 12));
   });
 
   it('switches to minutes 100ms after an hour tap (left to the layouts) and on drag end', () => {

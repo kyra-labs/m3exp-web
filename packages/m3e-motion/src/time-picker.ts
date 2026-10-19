@@ -37,15 +37,18 @@
 
 const f = Math.fround;
 
+// The Float constants are written as their float32 values (Math.fround of the Kotlin expression,
+// pinned by time-picker.test.ts): calls at module level, even pure-annotated ones, survive the
+// bundlers' tree shaking and would leak into every m3e-react / m3e-elements import.
 /** `FullCircle` (L4030): `(PI * 2).toFloat()`. */
-export const TIME_PICKER_FULL_CIRCLE = /* @__PURE__ */ f(Math.PI * 2);
-/** `HalfCircle` (L4031). */
-const HALF_CIRCLE = /* @__PURE__ */ f(TIME_PICKER_FULL_CIRCLE / 2);
-/** `QuarterCircle` (L4032): a Double. */
-const QUARTER_CIRCLE = Math.PI / 2;
-/** `RadiansPerMinute` / `RadiansPerHour` (L4033–4034). */
-const RADIANS_PER_MINUTE = /* @__PURE__ */ f(TIME_PICKER_FULL_CIRCLE / 60);
-const RADIANS_PER_HOUR = /* @__PURE__ */ f(TIME_PICKER_FULL_CIRCLE / 12);
+export const TIME_PICKER_FULL_CIRCLE = 6.2831854820251465;
+/** `HalfCircle` (L4031): `FullCircle / 2f`. */
+const HALF_CIRCLE = 3.1415927410125732;
+/** `QuarterCircle` (L4032): `PI / 2`, a Double. */
+const QUARTER_CIRCLE = 1.5707963267948966;
+/** `RadiansPerMinute` / `RadiansPerHour` (L4033–4034): `FullCircle / 60`, `FullCircle / 12f`. */
+const RADIANS_PER_MINUTE = 0.10471975803375244;
+const RADIANS_PER_HOUR = 0.5235987901687622;
 /** `MaxHourValue` / `MaxMinuteValue` (L1452–1453). */
 const MAX_HOUR = 23;
 const MAX_MINUTE = 59;
@@ -56,9 +59,11 @@ const MAX_TEXT_FIELD_VALUE = 99;
 export const TIME_PICKER_CLOCK_DIAL_SIZE = 256;
 /** `ClockDialSelectorHandleContainerSize` (48dp). */
 const HANDLE_SIZE = 48;
-/** `OuterCircleToSizeRatio` / `InnerCircleToSizeRatio` (L4038–4041): 101dp / 69dp of the dial. */
-export const TIME_PICKER_OUTER_RATIO = /* @__PURE__ */ f(101 / TIME_PICKER_CLOCK_DIAL_SIZE);
-export const TIME_PICKER_INNER_RATIO = /* @__PURE__ */ f(69 / TIME_PICKER_CLOCK_DIAL_SIZE);
+/** `OuterCircleToSizeRatio` / `InnerCircleToSizeRatio` (L4038–4041): 101dp / 69dp of the dial (exact in float32). */
+export const TIME_PICKER_OUTER_RATIO = 0.39453125;
+export const TIME_PICKER_INNER_RATIO = 0.26953125;
+/** `MinimumInteractiveSize` (L4053), dp: each dial label's box (CircularLayout places it). */
+export const TIME_PICKER_LABEL_SIZE = 48;
 /** `MaxDistance` (L4051), dp at the 256dp dial: closer to the center is the inner (24h) circle. */
 export const TIME_PICKER_MAX_DISTANCE = 74;
 
@@ -68,7 +73,7 @@ export const TIME_PICKER_MINUTES: readonly number[] = [
 ];
 export const TIME_PICKER_HOURS: readonly number[] = [12, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
 export const TIME_PICKER_EXTRA_HOURS: readonly number[] = [
-  0, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23,
+  12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23,
 ];
 
 export type TimePickerSelection = 'hour' | 'minute';
