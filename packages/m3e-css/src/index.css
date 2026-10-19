@@ -56,4 +56,5 @@
 @import './bottom-sheet.css';
 @import './side-sheet.css';
 @import './carousel.css';
+@import './pull-to-refresh.css'; /* re-imports circular-progress.css and loading-indicator.css */
 @import './layout.css'; /* canonical layouts; imports vertical-drag-handle.css */

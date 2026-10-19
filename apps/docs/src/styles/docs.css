@@ -1260,3 +1260,30 @@ button.docs-layout-item:focus-visible {
 .docs-carousel-full-screen .docs-carousel-tile {
   block-size: 100%;
 }
+
+/*
+ * Pull to refresh: PullToRefreshSample's screen (a 412dp-wide phone, 480dp tall here): the top
+ * app bar with the "Trigger Refresh" button above the PullToRefreshBox, which fills the rest.
+ */
+.docs-ptr-frame {
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  inline-size: min(100%, 412px);
+  block-size: 480px;
+  margin-block: var(--m3e-sys-space-300);
+  overflow: hidden;
+  background-color: var(--m3e-sys-color-surface);
+  outline: var(--m3e-comp-divider-thickness) solid var(--m3e-sys-color-outline-variant);
+}
+
+.docs-ptr-frame > header {
+  flex: none;
+}
+
+/* The pull-to-refresh root: React's, or the one inside the element (display: contents). */
+.docs-ptr-frame > :not(header, m3e-pull-to-refresh),
+.docs-ptr-frame > m3e-pull-to-refresh > * {
+  flex: 1 1 auto;
+  min-block-size: 0;
+}

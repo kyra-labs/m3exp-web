@@ -30,5 +30,8 @@ export default defineConfig({
     '@kyralabs/m3e-elements/tooltip-popup.js',
     // <m3e-carousel> loads its layout (the keyline math) on first render.
     '@kyralabs/m3e-elements/carousel-layout.js',
+    // <m3e-pull-to-refresh indicator="loading-indicator"> loads the loading indicator it drives
+    // (owner decision M9 #28: not bundled, D17).
+    '@kyralabs/m3e-elements/loading-indicator.js',
   ],
 });

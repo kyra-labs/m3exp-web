@@ -1,0 +1,201 @@
+/*
+ * Pull to refresh (COMPONENT_SPEC §38; Compose PullToRefreshBox with PullToRefreshDefaults.Indicator,
+ * or PullToRefreshDefaults.LoadingIndicator: owner decisions M9 #27, #28): a scroll container
+ * (the content, overscroll contained) under an indicator that a touch or pen pull at the top of
+ * the content brings down. The pull itself is script (m3e-elements' PullToRefreshLayout, run by
+ * <m3e-pull-to-refresh> and m3e-react's <PullToRefresh>); without it the content just scrolls.
+ *
+ *   <div class="m3e-pull-to-refresh" style="block-size: 480px">
+ *     <div class="m3e-pull-to-refresh__content">…</div>
+ *     <div class="m3e-pull-to-refresh__indicator">
+ *       <div class="m3e-pull-to-refresh__box">
+ *         <div class="m3e-pull-to-refresh__pull" role="progressbar" aria-label="Pull to refresh"
+ *           aria-valuemin="0" aria-valuemax="100" aria-valuenow="50">
+ *           <svg class="m3e-pull-to-refresh__arrow" viewBox="0 0 16 16" aria-hidden="true"
+ *             focusable="false">
+ *             <path class="m3e-pull-to-refresh__arc" d="…"></path>
+ *             <path class="m3e-pull-to-refresh__head" d="…"></path>
+ *           </svg>
+ *         </div>
+ *         <div class="m3e-pull-to-refresh__refreshing" aria-hidden="true">
+ *           <div class="m3e-circular-progress" role="progressbar" aria-label="Pull to refresh">…</div>
+ *         </div>
+ *       </div>
+ *     </div>
+ *   </div>
+ *
+ * - The indicator (IndicatorBox): a 40dp surface-container-high circle at the top center, moved
+ *   down by distanceFraction × IndicatorMaxDistance (80dp) from just above the content
+ *   (--_m3e-ptr-fraction, written by the layout), clipped at the content's top, with the Level2
+ *   shadow while pulled or refreshing ([data-pulled], [data-refreshing]).
+ * - __pull: the arrow (CircularArrowProgressIndicator; the layout writes the paths from
+ *   m3e-motion's port), at MinAlpha 0.3 below the threshold and MaxAlpha 1 from it ([data-armed]),
+ *   on DefaultEffects. __refreshing: the indeterminate circular progress (16dp, 2.5dp stroke, the
+ *   indicator color), cross-faded with __pull on DefaultEffects while [data-refreshing]; it
+ *   starts spinning from its first frame when the refresh starts.
+ * - --loading-indicator (owner decision M9 #27): PullToRefreshDefaults.LoadingIndicator, a 48dp
+ *   primary-container circle without a shadow; __pull holds a determinate contained loading
+ *   indicator (progress = distanceFraction; rotated −(fraction − 1) × 180° past the threshold),
+ *   __refreshing an indeterminate one (<m3e-loading-indicator contained> children the element
+ *   drives, owner decision M9 #28; m3e-react's <LoadingIndicator>).
+ * - The content scrolls with overscroll contained (no browser pull-to-refresh or scroll chaining);
+ *   while a pull can start ([data-at-top]: scrolled to the top, enabled, not refreshing) touch and
+ *   pen gestures moving down are left to the pull (touch-action), those moving up scroll.
+ * - Reduced motion: the indicator jumps (its spring is spatial: the layout reads 0ms); the alpha
+ *   and cross-fade stay. Forced colors: a CanvasText outline around the indicator.
+ *
+ * Sources (values: pull-to-refresh-defaults.css, lines in PARITY.md): compose/material3 @ 19991f2c
+ * pulltorefresh/PullToRefresh.kt (PullToRefreshBox, Modifier.pullToRefresh,
+ * PullToRefreshDefaults), PullToRefreshSamples.kt; no m3.material.io page.
+ */
+@import '@kyralabs/m3e-tokens/components/pull-to-refresh-defaults.css';
+@import '@kyralabs/m3e-tokens/components/divider.css';
+@import './circular-progress.css';
+@import './loading-indicator.css';
+
+@layer m3e.components {
+  /* Fills its container's height (PullToRefreshBox is usually given the screen's). */
+  .m3e-pull-to-refresh {
+    position: relative;
+    display: flex;
+    block-size: 100%;
+    flex-direction: column;
+    isolation: isolate;
+  }
+
+  .m3e-pull-to-refresh__content {
+    flex: 1 1 auto;
+    min-block-size: 0;
+    overflow: hidden auto;
+    overscroll-behavior-y: contain;
+  }
+
+  /* Overflowing content is a focusable scroll region (the layout): the ring drawn inside it. */
+  .m3e-pull-to-refresh__content:focus-visible {
+    outline: var(--m3e-sys-state-focus-indicator-thickness) solid var(--m3e-sys-color-secondary);
+    outline-offset: var(--m3e-sys-state-focus-indicator-inner-offset);
+  }
+
+  .m3e-pull-to-refresh[data-at-top] > .m3e-pull-to-refresh__content {
+    touch-action: pan-x pan-down pinch-zoom;
+  }
+
+  /* Covers the content; clips what is above its top only (IndicatorBox's clipRect). */
+  .m3e-pull-to-refresh__indicator {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    pointer-events: none;
+    clip-path: inset(0 -100vmax -100vmax);
+  }
+
+  .m3e-pull-to-refresh__box {
+    --_m3e-ptr-shadow: var(--m3e-comp-pull-to-refresh-indicator-shadow);
+
+    display: grid;
+    flex: none;
+    place-items: center;
+    box-sizing: border-box;
+    inline-size: var(--m3e-comp-pull-to-refresh-indicator-container-size);
+    block-size: var(--m3e-comp-pull-to-refresh-indicator-container-size);
+    overflow: clip;
+    border-radius: var(--m3e-comp-pull-to-refresh-indicator-shape);
+    background-color: var(--m3e-comp-pull-to-refresh-indicator-container-color);
+    color: var(--m3e-comp-pull-to-refresh-indicator-color);
+    translate: 0
+      calc(
+        var(--_m3e-ptr-fraction, 0) * var(--m3e-comp-pull-to-refresh-indicator-max-distance) - 100%
+      );
+  }
+
+  /* PullToRefreshDefaults.LoadingIndicator. */
+  .m3e-pull-to-refresh--loading-indicator .m3e-pull-to-refresh__box {
+    --_m3e-ptr-shadow: var(--m3e-comp-pull-to-refresh-loading-indicator-shadow);
+    --m3e-comp-loading-indicator-contained-container-color: var(
+      --m3e-comp-pull-to-refresh-loading-indicator-container-color
+    );
+    --m3e-comp-loading-indicator-contained-active-color: var(
+      --m3e-comp-pull-to-refresh-loading-indicator-color
+    );
+
+    inline-size: var(--m3e-comp-pull-to-refresh-loading-indicator-container-width);
+    block-size: var(--m3e-comp-pull-to-refresh-loading-indicator-container-height);
+    background-color: var(--m3e-comp-pull-to-refresh-loading-indicator-container-color);
+    color: var(--m3e-comp-pull-to-refresh-loading-indicator-color);
+  }
+
+  .m3e-pull-to-refresh:is([data-pulled], [data-refreshing]) .m3e-pull-to-refresh__box {
+    box-shadow: var(--_m3e-ptr-shadow);
+  }
+
+  /* At rest the box sits just above the content's top: nothing of it may show. */
+  .m3e-pull-to-refresh:not([data-pulled], [data-refreshing]) .m3e-pull-to-refresh__box {
+    visibility: hidden;
+  }
+
+  /* Crossfade(isRefreshing): both in one cell. */
+  .m3e-pull-to-refresh__pull,
+  .m3e-pull-to-refresh__refreshing {
+    display: grid;
+    grid-area: 1 / 1;
+    place-items: center;
+    transition: opacity var(--m3e-comp-pull-to-refresh-crossfade-duration)
+      var(--m3e-comp-pull-to-refresh-crossfade-easing);
+  }
+
+  /* Past the threshold the determinate loading indicator turns counterclockwise. */
+  .m3e-pull-to-refresh--loading-indicator .m3e-pull-to-refresh__pull {
+    rotate: calc(min(0, 1 - var(--_m3e-ptr-fraction, 0)) * 0.5turn);
+  }
+
+  .m3e-pull-to-refresh[data-refreshing] .m3e-pull-to-refresh__pull,
+  .m3e-pull-to-refresh:not([data-refreshing]) .m3e-pull-to-refresh__refreshing {
+    opacity: 0;
+  }
+
+  .m3e-pull-to-refresh__arrow {
+    display: block;
+    inline-size: var(--m3e-comp-pull-to-refresh-spinner-size);
+    block-size: var(--m3e-comp-pull-to-refresh-spinner-size);
+    overflow: visible;
+    fill: none;
+    stroke: currentcolor;
+    stroke-width: var(--m3e-comp-pull-to-refresh-stroke-width);
+    opacity: var(--m3e-comp-pull-to-refresh-arrow-min-alpha);
+    transition: opacity var(--m3e-comp-pull-to-refresh-arrow-alpha-duration)
+      var(--m3e-comp-pull-to-refresh-arrow-alpha-easing);
+  }
+
+  .m3e-pull-to-refresh[data-armed] .m3e-pull-to-refresh__arrow {
+    opacity: var(--m3e-comp-pull-to-refresh-arrow-max-alpha);
+  }
+
+  /* CircularProgressIndicator(strokeWidth = StrokeWidth, color, Modifier.size(SpinnerSize)). */
+  .m3e-pull-to-refresh__refreshing > .m3e-circular-progress {
+    --_m3e-cp-size: var(--m3e-comp-pull-to-refresh-spinner-size);
+    --_m3e-progress-thickness: var(--m3e-comp-pull-to-refresh-stroke-width);
+    --_m3e-progress-track-thickness: var(--m3e-comp-pull-to-refresh-stroke-width);
+
+    color: inherit;
+  }
+
+  /* The spinner starts from its first frame when the refresh starts (Crossfade composes it). */
+  .m3e-pull-to-refresh:not([data-refreshing])
+    .m3e-pull-to-refresh__refreshing
+    .m3e-circular-progress {
+    animation-name: none;
+  }
+
+  @media (forced-colors: active) {
+    .m3e-pull-to-refresh__box {
+      border: var(--m3e-comp-divider-thickness) solid CanvasText;
+    }
+
+    .m3e-pull-to-refresh__arrow {
+      stroke: CanvasText;
+    }
+  }
+}

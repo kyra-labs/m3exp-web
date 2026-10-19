@@ -205,6 +205,12 @@
     "limit": "2 KB"
   },
   {
+    "name": "m3e-css: pull to refresh (indicator box, arrow, loading-indicator variant; re-imports circular-progress.css and loading-indicator.css for its spinners)",
+    "path": "packages/m3e-css/dist/pull-to-refresh.css",
+    "rolldown": false,
+    "limit": "2 KB"
+  },
+  {
     "name": "m3e-css: legacy navigation bar + rail (D4)",
     "path": [
       "packages/m3e-css/dist/navigation-bar.css",
@@ -608,6 +614,17 @@
     "limit": "8 KB"
   },
   {
+    "name": "m3e-elements: <m3e-pull-to-refresh> entry (renders the contract, bundles PullToRefreshLayout, pointerDrag and m3e-motion's pull / arrow port; the loading-indicator entry its LoadingIndicator variant drives is imported on first use and measured on its own, owner decision M9 #28)",
+    "path": "packages/m3e-elements/dist/pull-to-refresh/index.js",
+    "ignore": ["@kyralabs/m3e-elements"],
+    "limit": "8 KB"
+  },
+  {
+    "name": "m3e-elements: pull-to-refresh-layout entry (PullToRefreshLayout, pointerDrag, m3e-motion's pull / arrow port, SpringAnimatable; used by m3e-react's PullToRefresh)",
+    "path": "packages/m3e-elements/dist/pull-to-refresh-layout/index.js",
+    "limit": "8 KB"
+  },
+  {
     "name": "m3e-elements: tabs-layout entry (TabsLayout, used by m3e-react <Tabs>)",
     "path": "packages/m3e-elements/dist/tabs-layout/index.js",
     "limit": "6 KB"
@@ -857,6 +874,13 @@
     "limit": "18 KB"
   },
   {
+    "name": "m3e-react: { PullToRefresh } only (PullToRefreshLayout from m3e-elements, LoadingIndicator with m3e-shapes for the LoadingIndicator variant)",
+    "path": "packages/m3e-react/dist/index.js",
+    "import": "{ PullToRefresh }",
+    "ignore": ["react", "react-dom"],
+    "limit": "16 KB"
+  },
+  {
     "name": "m3e-react: { FilterChip } only (incl. react-aria useCheckbox press/focus + react-stately toggle state, Icon, motion shape spring)",
     "path": "packages/m3e-react/dist/index.js",
     "import": "{ FilterChip }",
@@ -888,10 +912,10 @@
     "limit": "1 KB"
   },
   {
-    "name": "m3exp-web (root): { Icon } (the root entry registers every custom element by design, with <m3e-menu>, <m3e-split-button>, <m3e-button-group>, the toolbars, the progress indicators, <m3e-search>, the navigation bar / rails, <m3e-navigation-drawer>, <m3e-navigation-suite>, the window size class observer, <m3e-tabs>, <m3e-checkbox>, <m3e-chip-set>, <m3e-slider>, <m3e-text-field>, <m3e-list>, <m3e-tooltip>, <m3e-dialog>, <m3e-snackbar-host>, <m3e-bottom-sheet>, <m3e-side-sheet>, <m3e-carousel> and the canonical layouts (~60.0 kB with their lazily imported pane-motion / pane-expansion entries); a leaked React component adds ~10 kB of react-aria. Raised 53 → 54 kB for <m3e-chip-set>, 54 → 56 kB for <m3e-slider> and m3e-motion's slider math, 56 → 57 kB for <m3e-text-field>, 57 → 58 kB for <m3e-list> and its list-layout (M8), 58 → 61 kB for <m3e-tooltip> and its tooltip-popup controller (M9), 61 → 62 kB for <m3e-dialog> and its dialog-layout (M9), 62 → 64 kB for <m3e-snackbar-host> and its snackbar-layout (M9), 64 → 70 kB for <m3e-bottom-sheet>, its bottom-sheet-layout and m3e-motion's anchored draggable / SheetState (M9), 70 → 72 kB for <m3e-side-sheet> and its side-sheet-layout (M9), 72 → 78 kB for <m3e-carousel> and its carousel-layout with m3e-motion's keyline port (M9). Raise with m3e-elements (all); D17)",
+    "name": "m3exp-web (root): { Icon } (the root entry registers every custom element by design, with <m3e-menu>, <m3e-split-button>, <m3e-button-group>, the toolbars, the progress indicators, <m3e-search>, the navigation bar / rails, <m3e-navigation-drawer>, <m3e-navigation-suite>, the window size class observer, <m3e-tabs>, <m3e-checkbox>, <m3e-chip-set>, <m3e-slider>, <m3e-text-field>, <m3e-list>, <m3e-tooltip>, <m3e-dialog>, <m3e-snackbar-host>, <m3e-bottom-sheet>, <m3e-side-sheet>, <m3e-carousel>, <m3e-pull-to-refresh> and the canonical layouts (~60.0 kB with their lazily imported pane-motion / pane-expansion entries); a leaked React component adds ~10 kB of react-aria. Raised 53 → 54 kB for <m3e-chip-set>, 54 → 56 kB for <m3e-slider> and m3e-motion's slider math, 56 → 57 kB for <m3e-text-field>, 57 → 58 kB for <m3e-list> and its list-layout (M8), 58 → 61 kB for <m3e-tooltip> and its tooltip-popup controller (M9), 61 → 62 kB for <m3e-dialog> and its dialog-layout (M9), 62 → 64 kB for <m3e-snackbar-host> and its snackbar-layout (M9), 64 → 70 kB for <m3e-bottom-sheet>, its bottom-sheet-layout and m3e-motion's anchored draggable / SheetState (M9), 70 → 72 kB for <m3e-side-sheet> and its side-sheet-layout (M9), 72 → 78 kB for <m3e-carousel> and its carousel-layout with m3e-motion's keyline port (M9), 78 → 80 kB for <m3e-pull-to-refresh> and its pull-to-refresh-layout with m3e-motion's pull / arrow port (M9). Raise with m3e-elements (all); D17)",
     "path": "packages/m3exp-web/dist/index.js",
     "import": "{ Icon }",
     "ignore": ["react", "react-dom"],
-    "limit": "78 KB"
+    "limit": "80 KB"
   }
 ]

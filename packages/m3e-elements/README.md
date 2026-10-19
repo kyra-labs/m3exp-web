@@ -641,6 +641,35 @@ fires `item-click` with `detail: { index }`). `label` names the carousel; items 
 the `carousel-layout.js` entry (`CarouselLayout`, imported on first render) runs. It is shared with
 m3e-react's `<Carousel>`, which renders the same DOM.
 
+## Pull to refresh
+
+```html
+<button type="button" aria-label="Trigger Refresh" id="refresh">…</button>
+<m3e-pull-to-refresh id="feed">
+  <ul>…</ul>
+</m3e-pull-to-refresh>
+<script type="module">
+  const feed = document.getElementById('feed');
+  feed.addEventListener('refresh', async () => {
+    feed.refreshing = true;
+    await load();
+    feed.refreshing = false;
+  });
+  document.getElementById('refresh').addEventListener('click', () => feed.refresh());
+</script>
+```
+
+`<m3e-pull-to-refresh>` renders a `.m3e-pull-to-refresh` inside itself (it fills its container's
+height) and moves its child nodes into the scroll container, under Compose's pull indicator. A
+touch or pen pull down at the top of the content brings the indicator down (half the drag, slowing
+past the 80dp threshold); a release past the threshold fires `refresh`. Mouse drags and wheels never
+pull: give keyboard and mouse users a visible Refresh button that calls `refresh()` (the same
+event). `refreshing` (reflected) is the app's state: the indicator rests at the threshold and spins
+meanwhile. `indicator="loading-indicator"` uses contained `<m3e-loading-indicator>`s, whose entry
+it imports on first use; `disabled`, `threshold` (px), `indicator-label` (default "Refresh"),
+`distanceFraction`. The `pull-to-refresh-layout.js` entry (`PullToRefreshLayout`) is shared with
+m3e-react's `<PullToRefresh>`, which renders the same DOM.
+
 ## Ripple for plain HTML
 
 m3e-css draws hover, focus and pressed overlays without JS; the press ripple needs a little.
