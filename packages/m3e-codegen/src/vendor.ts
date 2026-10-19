@@ -191,6 +191,9 @@ export const FOUNDATION_SOURCES = [
   // spring() and the fling's snapAnimationSpec / snap distance / positional threshold.
   'commonMain/kotlin/androidx/compose/foundation/pager/Pager.kt',
   'commonMain/kotlin/androidx/compose/foundation/pager/PagerState.kt',
+  // LazyListState.animateScrollToItem: the date picker's previous / next month buttons.
+  'commonMain/kotlin/androidx/compose/foundation/lazy/LazyListState.kt',
+  'commonMain/kotlin/androidx/compose/foundation/lazy/layout/LazyLayoutScrollScope.kt',
 ] as const;
 
 /**
@@ -264,6 +267,9 @@ export const ANIMATION_CORE_SPEC_SOURCES = [
   'Animatable.kt',
   'AnimationSpec.kt',
   'VectorizedAnimationSpec.kt',
+  // AnimationState.animateTo's default spring(): the date picker's month arrows page with it
+  // (LazyListState.animateScrollToItem, foundation's LazyLayoutScrollScope.kt).
+  'SuspendAnimation.kt',
 ] as const;
 
 /** MaterialShapes and its helpers, ported by m3e-shapes (also compiled by its JVM harness). */
