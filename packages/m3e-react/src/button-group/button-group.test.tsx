@@ -14,6 +14,7 @@ beforeEach(() => {
 
 afterEach(() => {
   document.body.innerHTML = '';
+  vi.useRealTimers();
   vi.unstubAllGlobals();
   vi.restoreAllMocks();
 });
@@ -170,6 +171,8 @@ describe('<ButtonGroup>', () => {
     expect(trigger.getAttribute('aria-label')).toBe('More options');
     expect(trigger.getAttribute('aria-haspopup')).toBe('true');
     expect(trigger.getAttribute('aria-expanded')).toBe('false');
+    // OverflowIndicator's built-in plain tooltip follows the button (owner decision M9 #30).
+    expect(trigger.nextElementSibling!.className).toBe('m3e-tooltip');
     await press(trigger);
     const menu = document.querySelector('.m3e-menu')!;
     expect(menu.className).toBe('m3e-menu m3e-menu--baseline');
@@ -177,6 +180,44 @@ describe('<ButtonGroup>', () => {
     expect(entry.textContent).toBe('starC');
     await press(entry);
     expect(onAction).toHaveBeenCalledWith('c');
+  });
+});
+
+describe('<ButtonGroup> overflow tooltip (ButtonGroupDefaults.OverflowIndicator)', () => {
+  it('a plain tooltip of the button name above it, aria-hidden; hover shows it (M9 #30, #2)', async () => {
+    vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout'] });
+    const container = await renderReact(
+      <ButtonGroup overflow overflowLabel="More formatting">
+        <ButtonGroupItem id="a">A</ButtonGroupItem>
+      </ButtonGroup>,
+    );
+    await flush();
+    const group = container.querySelector('.m3e-button-group')!;
+    const trigger = group.querySelector<HTMLButtonElement>('.m3e-button-group__overflow')!;
+    const tip = group.querySelector<HTMLElement>('.m3e-tooltip')!;
+    expect(trigger.nextElementSibling).toBe(tip);
+    expect([
+      tip.getAttribute('role'),
+      tip.getAttribute('popover'),
+      tip.getAttribute('aria-hidden'),
+      tip.textContent,
+    ]).toEqual(['tooltip', 'manual', 'true', 'More formatting']);
+    expect(trigger.getAttribute('aria-label')).toBe('More formatting');
+    expect(trigger.hasAttribute('aria-describedby')).toBe(false);
+    trigger.hidden = false;
+    tip.style.setProperty('--m3e-comp-tooltip-duration', '1500ms');
+    await act(async () => {
+      trigger.dispatchEvent(new PointerEvent('pointerenter', { pointerType: 'mouse' }));
+      await Promise.resolve();
+    });
+    expect(tip.hasAttribute('data-positioned')).toBe(true);
+    await act(async () => {
+      trigger.dispatchEvent(new PointerEvent('pointerleave', { pointerType: 'mouse' }));
+      vi.advanceTimersByTime(1500);
+      await Promise.resolve();
+    });
+    for (const cb of frames.splice(0)) cb(performance.now() + 10_000);
+    expect(tip.hasAttribute('data-positioned')).toBe(false);
   });
 });
 
@@ -220,6 +261,22 @@ describe('<ButtonGroup> ⇔ <m3e-button-group> DOM parity', () => {
     expect(contract(host.querySelector('.m3e-button-group')!)).toBe(
       contract(react.querySelector('.m3e-button-group')!),
     );
+  });
+
+  it('overflow button renamed: the button and its tooltip carry the label', async () => {
+    const react = await renderReact(
+      <ButtonGroup overflow overflowLabel="More formatting" isDisabled>
+        <ButtonGroupItem id="a">A</ButtonGroupItem>
+      </ButtonGroup>,
+    );
+    const host = await renderElement(`
+      <m3e-button-group overflow overflow-label="More formatting" disabled>
+        <m3e-button-group-item value="a">A</m3e-button-group-item>
+      </m3e-button-group>`);
+    await flush();
+    const element = contract(host.querySelector('.m3e-button-group')!);
+    expect(element).toContain('More formatting</div>');
+    expect(element).toBe(contract(react.querySelector('.m3e-button-group')!));
   });
 
   it('connected single-select group', async () => {

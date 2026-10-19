@@ -2,6 +2,7 @@ import { M3eElement } from '../base/M3eElement.js';
 import { attachRipple } from '../base/ripple.js';
 import { ButtonGroupLayout } from '../button-group-layout/button-group-layout.js';
 import type { M3eMenu, M3eMenuItem } from '../menu/menu.js';
+import type { TooltipController } from '../tooltip-popup/tooltip-popup.js';
 
 /** Compose `Strings.ButtonGroupMoreOptions` (androidMain res/values/strings.xml L19). */
 export const BUTTON_GROUP_MORE_OPTIONS = 'More options';
@@ -89,7 +90,11 @@ const valueOf = (item: M3eButtonGroupItem, index: number) =>
  *   keeps one item selected. `disabled` disables every item. `label`: the group's accessible name.
  * - `overflow` (standard groups): trailing items that do not fit collapse into a menu opened from
  *   a "More options" icon button (`overflow-label` renames it). The menu is `<m3e-menu
- *   variant="baseline">`, loaded on first use.
+ *   variant="baseline">`, loaded on first use. The button carries the plain tooltip Compose builds
+ *   into ButtonGroupDefaults.OverflowIndicator (owner decision M9 #30): its name, above it
+ *   (`<m3e-tooltip>`'s TooltipController, imported from the `tooltip-popup.js` entry when the
+ *   button is first rendered). It repeats the button's name, so it is `aria-hidden` (owner
+ *   decision M9 #2).
  * - Keyboard: Tab enters on one item (the last focused, else the checked one, else the first);
  *   ArrowLeft/ArrowRight (mirrored in RTL), Home and End move focus; Enter/Space activate.
  * - Events: `change` on the group when the selection changes, `detail: { value, selected, values }`;
@@ -125,6 +130,9 @@ export class M3eButtonGroup extends M3eElement {
   #layout: ButtonGroupLayout | undefined;
   #buttons = new Map<M3eButtonGroupItem, HTMLButtonElement>();
   #trigger: HTMLButtonElement | undefined;
+  #tip: HTMLDivElement | undefined;
+  #tooltip: TooltipController | undefined;
+  #tooltipLoading = false;
   #menu: M3eMenu | undefined;
   #observer: MutationObserver | undefined;
   #visible = Number.POSITIVE_INFINITY;
@@ -157,10 +165,14 @@ export class M3eButtonGroup extends M3eElement {
     this.#observer?.disconnect();
     this.#layout?.destroy();
     this.#layout = undefined;
+    this.#tooltip?.destroy();
+    this.#tooltip = undefined;
+    this.#tooltipLoading = false;
   }
 
   protected override update(): void {
     const root = this.#render();
+    this.#bindTooltip();
     if (!this.#layout) {
       this.#layout = new ButtonGroupLayout(root, {
         onVisibleCountChange: (count) => {
@@ -213,7 +225,8 @@ export class M3eButtonGroup extends M3eElement {
     const parts: Element[] = [...buttons];
     for (const item of this.#buttons.keys()) if (!items.includes(item)) this.#buttons.delete(item);
     if (overflow) {
-      parts.push(this.#renderTrigger(size, visible >= items.length));
+      const trigger = this.#renderTrigger(size, visible >= items.length);
+      parts.push(trigger, this.#renderTip(trigger));
       const hidden = items.slice(Math.min(visible, items.length));
       if (hidden.length > 0) parts.push(this.#renderMenu(hidden, items, mode));
       else if (this.#menu) parts.push(this.#menu);
@@ -295,6 +308,58 @@ export class M3eButtonGroup extends M3eElement {
     trigger.disabled = Boolean(this.disabled);
     trigger.hidden = hidden;
     return trigger;
+  }
+
+  /**
+   * OverflowIndicator's TooltipBox(TooltipAnchorPosition.Above, rememberTooltipState()) with
+   * PlainTooltipInternal(contentDescription): the button's name as a plain tooltip.
+   */
+  #renderTip(trigger: HTMLButtonElement): HTMLDivElement {
+    let tip = this.#tip;
+    if (!tip) {
+      tip = this.ownerDocument.createElement('div');
+      tip.className = 'm3e-tooltip';
+      tip.id = `m3e-button-group-${String(++nextId)}`;
+      tip.setAttribute('role', 'tooltip');
+      tip.setAttribute('popover', 'manual');
+      this.#tip = tip;
+    }
+    const label = this.overflowLabel ?? BUTTON_GROUP_MORE_OPTIONS;
+    if (tip.textContent !== label) tip.textContent = label;
+    // Its text is the button's name (owner decision M9 #2): not a description, unless it is empty
+    // (then it describes the button, as m3e-react's <TooltipTrigger> does).
+    const repeats = label.trim() !== '';
+    attr(tip, 'aria-hidden', repeats && 'true');
+    attr(trigger, 'aria-describedby', !repeats && tip.id);
+    return tip;
+  }
+
+  /** Binds the overflow button's tooltip (the controller is loaded on first use). */
+  #bindTooltip(): void {
+    const trigger = this.#trigger;
+    const tip = this.#tip;
+    if (!trigger || !tip?.isConnected) {
+      this.#tooltip?.setAnchor(null);
+      return;
+    }
+    if (this.#tooltip) {
+      this.#tooltip.setAnchor(trigger);
+      return;
+    }
+    if (this.#tooltipLoading) return;
+    this.#tooltipLoading = true;
+    void import('@kyralabs/m3e-elements/tooltip-popup.js').then(({ TooltipController }) => {
+      // Disconnected meanwhile, or a reconnect's load got there first.
+      if (this.#tooltip || !this.isConnected) return;
+      const tooltip = new TooltipController({
+        tooltip: tip,
+        onVisibleChange: (visible) => {
+          tooltip.render(visible);
+        },
+      });
+      this.#tooltip = tooltip;
+      this.#bindTooltip();
+    });
   }
 
   /** `<m3e-menu variant="baseline">` with the hidden items (Compose: DropdownMenu + DropdownMenuItem). */

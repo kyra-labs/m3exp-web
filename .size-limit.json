@@ -314,10 +314,20 @@
     "limit": "4 KB"
   },
   {
-    "name": "m3e-elements: <m3e-button-group> entry (bundles ButtonGroupLayout + m3e-motion; the <m3e-menu> entry is imported lazily on the first overflow and measured on its own)",
+    "name": "m3e-elements: <m3e-button-group> entry (bundles ButtonGroupLayout + m3e-motion; the <m3e-menu> entry is imported lazily on the first overflow and the tooltip-popup entry when the overflow button first renders, both measured on their own)",
     "path": "packages/m3e-elements/dist/button-group/index.js",
     "ignore": ["@kyralabs/m3e-elements"],
     "limit": "8 KB"
+  },
+  {
+    "name": "m3e-elements: button group + menu + tooltip-popup (what a page with an overflowing element button group loads in all)",
+    "path": [
+      "packages/m3e-elements/dist/button-group/index.js",
+      "packages/m3e-elements/dist/menu/index.js",
+      "packages/m3e-elements/dist/tooltip-popup/index.js"
+    ],
+    "ignore": ["@kyralabs/m3e-elements"],
+    "limit": "16 KB"
   },
   {
     "name": "m3e-elements: button-group-layout entry (ButtonGroupLayout, used by m3e-react <ButtonGroup>)",
@@ -710,7 +720,7 @@
     "limit": "34 KB"
   },
   {
-    "name": "m3e-react: { ButtonGroup, ButtonGroupItem } only (incl. react-aria buttons + menu hooks, ButtonGroupLayout)",
+    "name": "m3e-react: { ButtonGroup, ButtonGroupItem } only (incl. react-aria buttons + menu hooks, ButtonGroupLayout, TooltipTrigger / PlainTooltip with TooltipController for the overflow button)",
     "path": "packages/m3e-react/dist/index.js",
     "import": "{ ButtonGroup, ButtonGroupItem }",
     "ignore": ["react", "react-dom"],
