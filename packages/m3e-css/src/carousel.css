@@ -1,0 +1,203 @@
+/*
+ * Carousel (COMPONENT_SPEC §36; Compose HorizontalMultiBrowseCarousel /
+ * HorizontalUncontainedCarousel / HorizontalCenteredHeroCarousel, owner decisions M9 #22–#26):
+ * a horizontal scroll container of items with native scroll snapping. Without JavaScript the
+ * items keep their full width (--m3e-comp-carousel-item-width) and snap to the start; the
+ * m3e-elements carousel layout (<m3e-carousel>, m3e-react's <Carousel>) sizes them from Compose's
+ * keylines and masks them as they scroll.
+ *
+ *   <div class="m3e-carousel m3e-carousel--multi-browse" role="region"
+ *     aria-roledescription="carousel" aria-label="Featured" style="--m3e-comp-carousel-item-width: 186px">
+ *     <div class="m3e-carousel__viewport" tabindex="-1">
+ *       <div class="m3e-carousel__item" role="group" aria-roledescription="slide"
+ *         aria-label="1 of 5" tabindex="0">
+ *         <div class="m3e-carousel__mask"><img src="…" alt="…"></div>
+ *       </div>
+ *       <div class="m3e-carousel__item" role="group" aria-roledescription="slide"
+ *         aria-label="2 of 5">
+ *         <a class="m3e-carousel__mask m3e-carousel__action" href="…">…</a>     (interactive)
+ *       </div>
+ *     </div>
+ *   </div>
+ *
+ * - Layouts: --multi-browse, --uncontained, --hero (start-aligned), --centered-hero (Compose's
+ *   keyline math, m3e-motion carousel.ts) and --full-screen (CSS only, owner decision M9 #22: one
+ *   item filling the container, scrolling vertically, 16dp apart, no padding or corners).
+ * - Snapping (owner decision M9 #23): every item snaps, one at a time (scroll-snap-stop), to its
+ *   keyline (Compose's KeylineSnapPosition, a scroll margin the layout writes); the uncontained
+ *   layout does not snap (noSnapFlingBehavior). The fling is the browser's.
+ * - Items: the mask is the item's visible part, rounded extra-large (the samples'
+ *   maskClip(MaterialTheme.shapes.extraLarge); owner decision M9 #25), clipping its content. An
+ *   interactive item's mask is its link or button (.m3e-carousel__action): state layer and ripple
+ *   over the content, no elevation. Static items take the focus themselves (tabindex="0"); every
+ *   item is a tab stop and the layout's arrow keys move between them (owner decision M9 #26).
+ * - Reduced motion (owner decision M9 #24, m3.material.io): items keep one size and are not
+ *   masked; the layout stops writing the keyline variables.
+ * - Spacing and padding: --m3e-comp-carousel-item-spacing and
+ *   --m3e-comp-carousel-content-padding-start / -end (CarouselDefaults: 0dp; the samples and
+ *   m3.material.io use 8 / 16dp). Set them on the carousel.
+ * - JS hooks (the layout): [data-keylines] while it masks; --_m3e-carousel-item-size on the root;
+ *   per item --_m3e-carousel-snap (its scroll margin), --_m3e-carousel-inset (the mask's inset on
+ *   each side), --_m3e-carousel-translate (physical) and --_m3e-carousel-z; [data-scrolling] while
+ *   it scrolls on its spring (snapping is off meanwhile).
+ *
+ * Sources (values: carousel-defaults.css, lines in PARITY.md): compose/material3 @ 19991f2c
+ * carousel/Carousel.kt (CarouselDefaults, Modifier.carouselItem), CarouselSamples.kt;
+ * m3.material.io Carousel (Specs, Accessibility; token DB md.comp.carousel-item).
+ */
+@import '@kyralabs/m3e-tokens/components/carousel-defaults.css';
+
+@layer m3e.components {
+  .m3e-carousel {
+    --_m3e-carousel-shape: var(--m3e-comp-carousel-item-shape);
+
+    position: relative;
+    display: block;
+  }
+
+  .m3e-carousel__viewport {
+    display: flex;
+    align-items: center;
+    gap: var(--m3e-comp-carousel-item-spacing);
+    padding-inline: var(--m3e-comp-carousel-content-padding-start)
+      var(--m3e-comp-carousel-content-padding-end);
+    overflow: auto hidden;
+    overscroll-behavior-x: contain;
+    scroll-padding-inline: var(--m3e-comp-carousel-content-padding-start)
+      var(--m3e-comp-carousel-content-padding-end);
+    scroll-snap-type: x mandatory;
+
+    /* Compose's pager draws no scrollbar. */
+    scrollbar-width: none;
+    outline: none;
+  }
+
+  .m3e-carousel__viewport::-webkit-scrollbar {
+    display: none;
+  }
+
+  .m3e-carousel__item {
+    position: relative;
+    z-index: var(--_m3e-carousel-z, auto);
+    flex: none;
+    inline-size: var(--_m3e-carousel-item-size, var(--m3e-comp-carousel-item-width, 100%));
+    outline: none;
+    scroll-margin-inline-start: var(--_m3e-carousel-snap, 0);
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+  }
+
+  .m3e-carousel__mask {
+    display: block;
+    box-sizing: border-box;
+    inline-size: 100%;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    border-radius: var(--_m3e-carousel-shape);
+    background: none;
+    color: inherit;
+    font: inherit;
+    text-align: inherit;
+    text-decoration: none;
+    clip-path: inset(0 var(--_m3e-carousel-inset, 0) round var(--_m3e-carousel-shape));
+    translate: var(--_m3e-carousel-translate, 0) 0;
+  }
+
+  .m3e-carousel__mask > :where(img, video, picture, svg) {
+    display: block;
+    inline-size: 100%;
+    object-fit: cover;
+  }
+
+  .m3e-carousel__action {
+    --m3e-comp-state-layer-color: var(--m3e-comp-carousel-item-state-layer-color);
+
+    cursor: pointer;
+    outline: none;
+  }
+
+  /* The ripple draws over the content (Compose's clickable indication draws after it). */
+  .m3e-carousel__action::before {
+    z-index: 1;
+  }
+
+  /*
+   * The item draws the mask's focus ring (the mask clips its own outline): the ring follows the
+   * mask's inset and translation. Color and thickness: focus-ring.css.
+   */
+  .m3e-carousel__item::after {
+    content: '';
+    position: absolute;
+    inset-block: 0;
+    inset-inline: var(--_m3e-carousel-inset, 0);
+    display: none;
+    border-radius: var(--_m3e-carousel-shape);
+    pointer-events: none;
+    translate: var(--_m3e-carousel-translate, 0) 0;
+  }
+
+  .m3e-carousel__item:is(:focus-visible, :has(> .m3e-carousel__action:focus-visible))::after {
+    display: block;
+  }
+
+  /* Full screen: one item filling the container, scrolling vertically (owner decision M9 #22). */
+  .m3e-carousel--full-screen {
+    --_m3e-carousel-shape: var(--m3e-sys-shape-corner-none);
+  }
+
+  .m3e-carousel--full-screen > .m3e-carousel__viewport {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--m3e-comp-carousel-full-screen-item-spacing);
+    block-size: 100%;
+    padding: 0;
+    overflow: hidden auto;
+    overscroll-behavior: contain;
+    scroll-padding: 0;
+    scroll-snap-type: y mandatory;
+  }
+
+  .m3e-carousel--full-screen .m3e-carousel__item {
+    inline-size: auto;
+    block-size: 100%;
+    scroll-margin: 0;
+  }
+
+  .m3e-carousel--full-screen .m3e-carousel__mask {
+    block-size: 100%;
+  }
+
+  .m3e-carousel--full-screen .m3e-carousel__mask > :where(img, video, picture, svg) {
+    block-size: 100%;
+  }
+
+  /* After the full-screen layout's: a spring scroll turns snapping off in every layout. */
+  .m3e-carousel--uncontained > .m3e-carousel__viewport,
+  .m3e-carousel[data-scrolling] > .m3e-carousel__viewport {
+    scroll-snap-type: none;
+  }
+
+  /* With keylines the padding is the strategy's (Compose: main-axis padding is not the pager's). */
+  .m3e-carousel[data-keylines] > .m3e-carousel__viewport {
+    padding-inline: 0;
+    scroll-padding-inline: 0;
+  }
+
+  /* Owner decision M9 #24: one size, no masks (the layout writes no keylines either). */
+  @media (prefers-reduced-motion: reduce) {
+    .m3e-carousel__mask,
+    .m3e-carousel__item::after {
+      inset-inline: 0;
+      clip-path: inset(0 round var(--_m3e-carousel-shape));
+      translate: none;
+    }
+  }
+
+  @media (forced-colors: active) {
+    .m3e-carousel__item::after {
+      display: block;
+      border: thin solid CanvasText;
+    }
+  }
+}

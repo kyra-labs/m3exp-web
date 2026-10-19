@@ -167,6 +167,34 @@ export const MATERIAL3_TEST_SOURCES = [
   'SheetStateTest.kt',
 ] as const;
 
+/**
+ * Carousel (M9 §36), ported by m3e-motion's carousel.ts: the composables and `CarouselDefaults`
+ * (Carousel.kt), the keyline math (Arrangement, Keylines, KeylineList, Strategy,
+ * KeylineSnapPosition), CarouselState and the item scope's mask helpers; the samples the docs and
+ * defaults follow (sizes, spacing, `maskClip(extraLarge)`); and the pure-JVM host tests whose cases
+ * m3e-motion's carousel.test.ts ports (fixtures, not shipped). Parallax is out of scope (owner
+ * decision M9 #22), so `CarouselParallaxScrollEffect.kt` and its test are not vendored.
+ */
+export const MATERIAL3_CAROUSEL_PATH = 'compose/material3/material3';
+export const MATERIAL3_CAROUSEL_SOURCES = [
+  'src/commonMain/kotlin/androidx/compose/material3/carousel/Arrangement.kt',
+  'src/commonMain/kotlin/androidx/compose/material3/carousel/Carousel.kt',
+  'src/commonMain/kotlin/androidx/compose/material3/carousel/CarouselItemScope.kt',
+  'src/commonMain/kotlin/androidx/compose/material3/carousel/CarouselState.kt',
+  'src/commonMain/kotlin/androidx/compose/material3/carousel/KeylineList.kt',
+  'src/commonMain/kotlin/androidx/compose/material3/carousel/KeylineSnapPosition.kt',
+  'src/commonMain/kotlin/androidx/compose/material3/carousel/Keylines.kt',
+  'src/commonMain/kotlin/androidx/compose/material3/carousel/Strategy.kt',
+  'samples/src/main/java/androidx/compose/material3/samples/CarouselSamples.kt',
+  'src/androidHostTest/kotlin/androidx/compose/material3/carousel/ArrangementTest.kt',
+  'src/androidHostTest/kotlin/androidx/compose/material3/carousel/CenteredHeroTest.kt',
+  'src/androidHostTest/kotlin/androidx/compose/material3/carousel/KeylineSnapPositionTest.kt',
+  'src/androidHostTest/kotlin/androidx/compose/material3/carousel/KeylineTest.kt',
+  'src/androidHostTest/kotlin/androidx/compose/material3/carousel/MultiBrowseTest.kt',
+  'src/androidHostTest/kotlin/androidx/compose/material3/carousel/StrategyTest.kt',
+  'src/androidHostTest/kotlin/androidx/compose/material3/carousel/UncontainedTest.kt',
+] as const;
+
 /** Compose spring physics ported by m3e-motion (and compiled as-is by its JVM reference harness). */
 export const ANIMATION_CORE_PATH =
   'compose/animation/animation-core/src/commonMain/kotlin/androidx/compose/animation/core';

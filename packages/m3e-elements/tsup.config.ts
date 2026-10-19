@@ -28,5 +28,7 @@ export default defineConfig({
     // <m3e-bottom-sheet> loads its layout and its drag handle's tooltip controller on first render.
     '@kyralabs/m3e-elements/bottom-sheet-layout.js',
     '@kyralabs/m3e-elements/tooltip-popup.js',
+    // <m3e-carousel> loads its layout (the keyline math) on first render.
+    '@kyralabs/m3e-elements/carousel-layout.js',
   ],
 });

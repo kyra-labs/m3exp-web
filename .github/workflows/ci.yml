@@ -151,4 +151,6 @@ jobs:
         run: pnpm reference:shapes
       - name: Loading indicator reference (LoadingIndicator.kt geometry)
         run: pnpm reference:loading-indicator
+      - name: Carousel reference (Keylines.kt, Strategy.kt, KeylineSnapPosition.kt, carouselItem)
+        run: pnpm reference:carousel
       - run: git diff --exit-code -- packages/m3e-motion/src/__fixtures__ packages/m3e-shapes/src/__fixtures__

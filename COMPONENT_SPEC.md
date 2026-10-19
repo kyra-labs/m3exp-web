@@ -833,14 +833,34 @@
   - [ ] Renders at 1 device-independent px.
   - [ ] Plus CAC.
 
-## 36. Carousel
-- **Tokens:** `TODO(verify)` CarouselTokens.
-- **Motion:** scroll-linked masking.
-- **ARIA:** APG carousel.
-- **Layers:** css (scroll-snap) + elements (masking) + react.
+## 36. Carousel — built
+- **Purpose:** a horizontally scrolling row of visual items whose visible size changes as they scroll (large, medium, small), pinned together; one item per screen for full screen.
+- **Layouts (owner decision M9 #22):** Compose's three public carousels, `multi-browse` (`HorizontalMultiBrowseCarousel`), `uncontained` (`HorizontalUncontainedCarousel`), `centered-hero` (`HorizontalCenteredHeroCarousel`); `hero`, the start-aligned hero Compose has only as `heroKeylineList(isCentered = false)` (same port); `full-screen`, CSS only (m3.material.io; no Compose API). Out of scope: the uncontained multi-aspect layout and `carouselParallaxScrollEffect`, vertical keyline carousels.
+- **Tokens (no `CarouselTokens.kt` at the pin; generated `components/carousel-defaults.css` by `carousel-defaults.ts`, PARITY.md lines):**
+
+  | | value | source |
+  |---|---|---|
+  | small items | 40–56dp (`min-small-item-width`, `max-small-item-width`) | `CarouselDefaults.MinSmallItemSize` / `MaxSmallItemSize` (Carousel.kt L813, L816) |
+  | spacing, padding | 0dp (`item-spacing`, `content-padding-start` / `-end`); the samples and m3.material.io Specs use 8 / 16dp (register #82) | `CarouselDefaults.ItemSpacing` / `ContentPadding` (L819, L822) |
+  | item mask | extra-large (28dp) | the samples' `maskClip(MaterialTheme.shapes.extraLarge)` (CarouselSamples.kt L130); token DB `md.comp.carousel-item.container.shape` |
+  | interactive items | state layer on-surface (`md.sys.state.*` opacities) and ripple, no elevation (owner decision M9 #25) | token DB `md.comp.carousel-item.*.state-layer.color`; Compose's item has no indication of its own |
+  | programmatic scroll | `spring()` ζ 1, k 1500 (`scroll-*`; 0ms under reduced motion) | `CarouselState.animateScrollToItem` (CarouselState.kt L101), AnimationSpec.kt / VectorizedAnimationSpec.kt |
+  | full screen | 0dp padding, 16dp between items, vertical (register #83) | m3.material.io Carousel › Specs, Guidelines |
+
+  Keyline constants (`AnchorSize` 10dp, `MediumLargeItemDiffThreshold` 0.85, `MediumItemFlexPercentage` 0.1) are part of the m3e-motion port.
+- **Math (m3e-motion, float32-faithful ports with the Apache header):** `carousel-keylines.ts` (Arrangement.kt, KeylineList.kt, Keylines.kt), `carousel-strategy.ts` (Strategy.kt, KeylineSnapPosition.kt), `carousel.ts` (Carousel.kt: the layouts' keyline lists, `CarouselPageSize`'s strategy, `calculateMaxScrollOffset`, Modifier.carouselItem's mask / translation / z-index). Tested against every case of the pure-JVM androidHostTest suites at the pin (`ArrangementTest`, `CenteredHeroTest`, `KeylineSnapPositionTest`, `KeylineTest`, `MultiBrowseTest`, `StrategyTest`, `UncontainedTest`) and a JVM reference dump of 16 layouts (`pnpm reference:carousel`, bit for bit).
+- **Motion:** scroll-linked masking, no time-based animation. Snapping (owner decision M9 #23): native CSS scroll snapping, every item one at a time (`scroll-snap-stop: always`, Compose's `singleAdvanceFlingBehavior`) at its keyline snap position (a scroll margin from `getSnapPositionOffset`); the uncontained layout does not snap (`noSnapFlingBehavior`); flings are the browser's (fidelity gap). Keyboard / focus moves and `scrollToItem` run `animateScrollToItem`'s spring with snapping off. Reduced motion (owner decision M9 #24, m3.material.io): every item at the focal size, no masks.
+- **Web realization:** `.m3e-carousel` (`role="region"`, `aria-roledescription="carousel"`, named) > `__viewport` (the scroll container, `tabindex="-1"`, no scrollbar) > `__item` (`role="group"`, `aria-roledescription="slide"`, "n of N"; laid out end to end at the focal size, the snap target) > `__mask` (the visible part: `clip-path: inset()` with the shape, `translate`; a link or button is `.m3e-carousel__action`). m3e-elements' `CarouselLayout` (shared by `<m3e-carousel>` and React) reads the width (ResizeObserver) and `--m3e-comp-carousel-*`, writes `--_m3e-carousel-item-size` on the root and per item `--_m3e-carousel-snap`, and on each scroll frame `--_m3e-carousel-inset`, `--_m3e-carousel-translate` (mirrored in RTL) and `--_m3e-carousel-z` (`[data-keylines]`; `[data-scrolling]` during its spring). Without JavaScript (or without an item width for multi-browse / uncontained) the CSS layout scrolls and snaps full-width items with the padding. The item draws the mask's focus ring (`::after`, inward: the scroll container clips anything outside the items). Content helpers: `img`, `video`, `picture`, `svg` fill the mask.
+- **ARIA / keys (owner decision M9 #26):** WAI-ARIA APG carousel; every item keeps its tab stop (a static item itself, an interactive item its link / button); ArrowLeft / ArrowRight (mirrored in RTL; ArrowUp / ArrowDown for full screen), Home and End move between them without wrapping; a focused item scrolls to its snap position. Docs show the m3.material.io "Show all" button.
+- **Layers:** css + elements (`<m3e-carousel>`, `<m3e-carousel-item>`; the entry is 2.6 kB and imports the `carousel-layout` entry, 7.9 kB with the keyline port, on first render) + react (`<Carousel>`, `<CarouselItem>` on `CarouselLayout`).
+- **Classes:** `.m3e-carousel` (`--multi-browse`, `--uncontained`, `--hero`, `--centered-hero`, `--full-screen`) > `__viewport` > `__item` > `__mask` (`.m3e-carousel__action`). JS hooks `[data-keylines]`, `[data-scrolling]`, `--_m3e-carousel-*`.
+- **API:** Element `<m3e-carousel layout item-width item-spacing content-padding label>` with `<m3e-carousel-item href target action label>` children (their child nodes move into the mask); `scrollToItem(index, animate)`, `currentItem`, `ready`, `itemLabel(index, count)`; event `item-click` (`detail: { index }`) from `action` items. React `<Carousel layout itemWidth itemSpacing contentPadding itemLabel aria-label ref={CarouselHandle}>` with `<CarouselItem href target onPress aria-label>` children; `CarouselHandle`: `scrollToItem`, `currentItem`, `element`.
 - **Acceptance:**
-  - [ ] Keyboard scrolls item by item.
-  - [ ] Plus CAC.
+  - [x] Keyboard scrolls item by item.
+  - [x] Element / React DOM parity (`carousel.test.tsx`).
+  - [x] Plus CAC.
+- **Fidelity:** browser fling physics instead of Compose's (one-item fling and snap spring k400; owner decision M9 #23); no mouse drag-to-scroll (touch, trackpads, Shift + wheel and the keyboard scroll it); `CarouselItemDrawInfo` (the item's current size) is not exposed to content; the uncontained items are `itemWidth + itemSpacing` wide, as Compose lays them out (`uncontainedKeylineList` L168); m3.material.io's Up / Down to leave the carousel is not built in (every item is a Tab stop); RTL is read when the layout runs (a later direction change needs a re-render).
+- **Sources:** carousel/Carousel.kt, Arrangement.kt, Keylines.kt, KeylineList.kt, Strategy.kt, KeylineSnapPosition.kt, CarouselState.kt, CarouselItemScope.kt, CarouselSamples.kt and the androidHostTest suites (vendored, `androidx-material3-carousel`); animation-core AnimationSpec.kt, VectorizedAnimationSpec.kt; m3.material.io Carousel (page `b0726223-2639-4157-84ae-cb84c07ee2e5`: Specs, Guidelines, Accessibility; token DB `TOKEN_TABLE.43a124d2adc8a2ef`, `md.comp.carousel-item`).
 
 ## 37. Segmented button — @deprecated (D4)
 - **Status:** shipped for migration; docs point to connected button groups. `TODO(verify)` m3.material.io guidance.

@@ -277,3 +277,36 @@ export {
   threePaneScaffoldLayout,
 } from './three-pane-scaffold.js';
 export { BADGE_DOT_LABEL, BADGE_MAX_COUNT, badgeText } from './badge.js';
+export {
+  Arrangement,
+  CAROUSEL_ANCHOR_SIZE,
+  CAROUSEL_MAX_SMALL_ITEM_SIZE,
+  CAROUSEL_MIN_SMALL_ITEM_SIZE,
+  type CarouselAlignment,
+  type Keyline,
+  KeylineList,
+  type KeylineListScope,
+  createCenterAlignedKeylineList,
+  createLeftAlignedKeylineList,
+  emptyKeylineList,
+  heroKeylineList,
+  keylineEquals,
+  keylineListOf,
+  lerpKeyline,
+  lerpKeylineList,
+  multiBrowseKeylineList,
+  uncontainedKeylineList,
+} from './carousel-keylines.js';
+export { Strategy, getSnapPositionOffset } from './carousel-strategy.js';
+export {
+  type CarouselItemLayout,
+  type CarouselKeylineInput,
+  type CarouselLayoutName,
+  calculateMaxScrollOffset,
+  carouselCurrentItem,
+  carouselItemLayout,
+  carouselItemScrollOffset,
+  carouselItemZIndex,
+  carouselKeylineList,
+  carouselStrategy,
+} from './carousel.js';

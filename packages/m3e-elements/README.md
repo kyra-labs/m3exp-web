@@ -618,6 +618,29 @@ along its start edge, or the modal sheet's line above its actions. `open` (refle
 (the navigation drawer's motion, mirrored). The `side-sheet-layout.js` entry (`SideSheetLayout`)
 is shared with m3e-react's `<SideSheet>`, which renders the same DOM.
 
+## Carousel
+
+```html
+<m3e-carousel label="Featured" item-width="186" item-spacing="8" content-padding="16">
+  <m3e-carousel-item><img src="1.jpg" alt="…" /></m3e-carousel-item>
+  <m3e-carousel-item href="/albums/2"><img src="2.jpg" alt="…" /></m3e-carousel-item>
+  <m3e-carousel-item action label="Play the third"><img src="3.jpg" alt="…" /></m3e-carousel-item>
+</m3e-carousel>
+```
+
+`<m3e-carousel>` renders a `.m3e-carousel` inside itself and moves each `<m3e-carousel-item>`'s
+child nodes into an item's mask. `layout`: `multi-browse` (default), `uncontained`, `hero`,
+`centered-hero` (Compose's keylines: items grow and shrink as they scroll and stay pinned
+together) or `full-screen` (one item per screen, scrolling vertically). `item-width` (px) is the
+preferred large item width (multi-browse, hero; hero without it fills the carousel but for the
+small items) or the item width (uncontained). Items snap natively one at a time (the uncontained
+layout does not snap); every item is a tab stop and the arrow keys, Home and End move between them,
+scrolling the focused item into place. `href` items are links, `action` items buttons (the carousel
+fires `item-click` with `detail: { index }`). `label` names the carousel; items are named "n of N"
+(`label` on an item, or `itemLabel`). `scrollToItem(index)`, `currentItem`; `ready` resolves once
+the `carousel-layout.js` entry (`CarouselLayout`, imported on first render) runs. It is shared with
+m3e-react's `<Carousel>`, which renders the same DOM.
+
 ## Ripple for plain HTML
 
 m3e-css draws hover, focus and pressed overlays without JS; the press ripple needs a little.

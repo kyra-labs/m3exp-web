@@ -54,6 +54,11 @@ export function readGeneratorInputs(root: string, pin: SourcePin): GenerateOptio
         // The anchored draggable and snap fling the bottom sheets' release runs
         // (bottom-sheet-defaults.ts).
         ...vendorFile(vendor('androidx-foundation-sources'), 'AnchoredDraggable.kt', commit).files,
+        // The carousel composables, state and samples (carousel-defaults.ts; the host tests in
+        // the same directory are m3e-motion fixtures, not generator inputs).
+        ...vendorFile(vendor('androidx-material3-carousel'), 'Carousel.kt', commit).files.filter(
+          (f) => /^(Carousel|CarouselState|CarouselSamples)\.kt$/.test(f.name),
+        ),
         // md-dialog's animations / sizes (dialog-defaults.ts; Material Web, secondary source).
         ...vendorFile(vendor('material-web'), 'animations.js', materialWebVersion).files.filter(
           (f) => /^(animations?\.js|_dialog\.scss)$/.test(f.name),

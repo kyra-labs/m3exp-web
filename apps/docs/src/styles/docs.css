@@ -1188,3 +1188,75 @@ button.docs-layout-item:focus-visible {
   padding: 0;
   list-style: none;
 }
+
+/* Carousel: a 412dp window, as the Compose samples; placeholder pictures in the scheme's tones. */
+.docs-carousel-frame {
+  box-sizing: border-box;
+  inline-size: min(100%, 412px);
+  padding-block: var(--m3e-sys-space-100);
+  margin-block: var(--m3e-sys-space-300);
+  outline: var(--m3e-comp-divider-thickness) solid var(--m3e-sys-color-outline-variant);
+}
+
+/* HorizontalCenteredHeroCarouselSample pads the carousel by 24dp. */
+.docs-carousel-frame--inset {
+  padding-inline: var(--m3e-sys-space-300);
+}
+
+.docs-carousel-show-all {
+  display: flex;
+  justify-content: flex-end;
+  padding: var(--m3e-sys-space-50) var(--m3e-sys-space-200);
+}
+
+.docs-carousel-tile {
+  display: flex;
+  align-items: flex-start;
+  box-sizing: border-box;
+  block-size: 205px;
+  padding: var(--m3e-sys-space-200);
+  background: linear-gradient(150deg, var(--_docs-tile-a) 0 45%, var(--_docs-tile-b) 45% 100%);
+  color: var(--_docs-tile-on);
+  font: var(--m3e-sys-typescale-headline-small-weight)
+    var(--m3e-sys-typescale-headline-small-size) /
+    var(--m3e-sys-typescale-headline-small-line-height) var(--m3e-sys-typescale-headline-small-font);
+}
+
+.docs-carousel-tile[data-tone='primary'] {
+  --_docs-tile-a: var(--m3e-sys-color-primary-container);
+  --_docs-tile-b: var(--m3e-sys-color-primary-fixed-dim);
+  --_docs-tile-on: var(--m3e-sys-color-on-primary-container);
+}
+
+.docs-carousel-tile[data-tone='secondary'] {
+  --_docs-tile-a: var(--m3e-sys-color-secondary-container);
+  --_docs-tile-b: var(--m3e-sys-color-secondary-fixed-dim);
+  --_docs-tile-on: var(--m3e-sys-color-on-secondary-container);
+}
+
+.docs-carousel-tile[data-tone='tertiary'] {
+  --_docs-tile-a: var(--m3e-sys-color-tertiary-container);
+  --_docs-tile-b: var(--m3e-sys-color-tertiary-fixed-dim);
+  --_docs-tile-on: var(--m3e-sys-color-on-tertiary-container);
+}
+
+.docs-carousel-tile[data-tone='error'] {
+  --_docs-tile-a: var(--m3e-sys-color-error-container);
+  --_docs-tile-b: var(--m3e-sys-color-surface-container-highest);
+  --_docs-tile-on: var(--m3e-sys-color-on-error-container);
+}
+
+.docs-carousel-full-screen {
+  inline-size: min(100%, 412px);
+  block-size: 360px;
+  margin-block: var(--m3e-sys-space-300);
+  outline: var(--m3e-comp-divider-thickness) solid var(--m3e-sys-color-outline-variant);
+}
+
+.docs-carousel-full-screen [aria-roledescription='carousel'] {
+  block-size: 100%;
+}
+
+.docs-carousel-full-screen .docs-carousel-tile {
+  block-size: 100%;
+}
