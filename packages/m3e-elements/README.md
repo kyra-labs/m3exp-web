@@ -586,6 +586,38 @@ builds in. `action-on-new-line` puts the action under the text. `hostState` is t
 (`SnackbarHostState`, `SnackbarHostController`) is shared with m3e-react's `<SnackbarHost>`, which
 renders the same DOM.
 
+## Side sheet
+
+```html
+<div style="display: flex; block-size: 100dvh">
+  <main style="flex: 1; min-inline-size: 0">…</main>
+  <m3e-side-sheet id="details" headline="Details" open>…</m3e-side-sheet>
+</div>
+
+<m3e-side-sheet id="filters" variant="modal" headline="Filters" back detached divider>
+  …filters…
+  <button class="m3e-button m3e-button--filled" slot="actions">Save</button>
+  <button class="m3e-button m3e-button--outlined" slot="actions">Cancel</button>
+</m3e-side-sheet>
+```
+
+`<m3e-side-sheet>` (D8: m3.material.io only) renders a `.m3e-side-sheet` inside itself and moves
+its own child nodes into it: `slot="actions"` children into the bottom actions, the rest into the
+content, which scrolls on its own. `variant`: `standard` (default; an `<aside>` that, as the last
+child of a flex row, takes the sheet's width from the row while open, so the content beside it
+shrinks), `modal` (a native `<dialog>` at the window's end edge over a scrim: the page inert, the
+scroll locked, Tab kept inside, focus on its first button and back on the opener when it closes)
+or `adaptive` (modal below 600px, the medium window size class, standard from it; it switches when
+the window crosses 600px and stays open). The header has the close button m3.material.io requires
+(`close-label`, default "Close"), the `headline` (it names the sheet; without one, `label`, default
+"Side sheet") and, with `back`, a back button (`back-label`, default "Back") that fires `back`.
+`detached` insets it by 16px with all corners rounded; `divider` draws the standard sheet's line
+along its start edge, or the modal sheet's line above its actions. `open` (reflected), `show()`,
+`close()`, `toggle()`; the close button, Escape and the scrim emit a cancelable `open-change`
+(`detail: { open }`). It opens on the default spatial spring and closes on the fast effects spring
+(the navigation drawer's motion, mirrored). The `side-sheet-layout.js` entry (`SideSheetLayout`)
+is shared with m3e-react's `<SideSheet>`, which renders the same DOM.
+
 ## Ripple for plain HTML
 
 m3e-css draws hover, focus and pressed overlays without JS; the press ripple needs a little.
