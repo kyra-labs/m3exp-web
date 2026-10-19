@@ -29,19 +29,29 @@ export const placement = (badge: Locator, bounds: string): Promise<Placement> =>
     };
   }, bounds);
 
-/** Compose's unclamped placement: the dot 6dp inside the corner; text 12dp in, 2dp above. */
-export async function expectComposePlacement(badge: Locator, bounds: string): Promise<void> {
+/**
+ * Compose's placement: the dot 6dp inside the corner; text 12dp in, 2dp above — or, with
+ * `rulers`, moved back so it ends at the bounding item's end edge when it would cross it.
+ */
+export async function expectComposePlacement(
+  badge: Locator,
+  bounds: string,
+  { rulers = false }: { rulers?: boolean } = {},
+): Promise<void> {
   const p = await placement(badge, bounds);
   const large = await badge.evaluate((el) => el.classList.contains('m3e-badge--large'));
+  const clamped = rulers && p.end < (large ? p.width - 12 : 0) - 0.05;
+  // (WebKit lays out in 1/64 px: allow a subpixel.)
+  if (clamped) expect(p.overflow).toBeCloseTo(0, 0);
   if (large) {
     expect(p.height).toBeCloseTo(16, 1);
     expect(p.width).toBeGreaterThanOrEqual(16);
-    expect(p.end).toBeCloseTo(p.width - 12, 1);
+    if (!clamped) expect(p.end).toBeCloseTo(p.width - 12, 1);
     expect(p.top).toBeCloseTo(-2, 1);
   } else {
     expect(p.width).toBeCloseTo(6, 1);
     expect(p.height).toBeCloseTo(6, 1);
-    expect(p.end).toBeCloseTo(0, 1);
+    if (!clamped) expect(p.end).toBeCloseTo(0, 1);
     expect(p.top).toBeCloseTo(0, 1);
   }
 }

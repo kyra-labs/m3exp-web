@@ -260,7 +260,7 @@ test.describe('badges', () => {
     });
     const mail = bar.locator('.m3e-navigation-item').nth(3).locator('.m3e-badge');
     const clamped = await placement(mail, '.m3e-navigation-item');
-    expect(clamped.overflow).toBeCloseTo(0, 1);
+    expect(clamped.overflow).toBeCloseTo(0, 0);
     expect(clamped.end).toBeLessThan(clamped.width - 12 - 1);
     expect(clamped.top).toBeCloseTo(-2, 1);
     await bar.evaluate((el) => {

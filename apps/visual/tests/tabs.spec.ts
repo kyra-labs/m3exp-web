@@ -618,8 +618,9 @@ test.describe('badges', () => {
     await expect(react.nth(0)).toHaveAccessibleName('Inbox 1200 unread');
     await expect(react.nth(3)).toHaveAccessibleName('Starred 3');
     for (const id of ['element-badges-primary', 'element-badges-icons', 'react-badges-frame']) {
+      // A Tab clamps a badge that would cross its end (Starred's 999+, by font metrics).
       for (const badge of await badges(page, id).all()) {
-        await expectComposePlacement(badge, '.m3e-tab');
+        await expectComposePlacement(badge, '.m3e-tab', { rulers: true });
       }
     }
     // Stacked tabs keep their 72dp height and the label baseline (the box wraps the label).
@@ -642,7 +643,7 @@ test.describe('badges', () => {
     expect(p.end).toBeLessThan(p.width - 12 - 4);
     expect(p.top).toBeCloseTo(-2, 1);
     for (const badge of [scrollable.nth(0), scrollable.nth(2)]) {
-      await expectComposePlacement(badge, '.m3e-tab');
+      await expectComposePlacement(badge, '.m3e-tab', { rulers: true });
     }
     // The Compose sample: 999+ at the end of each LeadingIconTab's text, never clamped.
     const leading = badges(page, 'element-badges-leading');
