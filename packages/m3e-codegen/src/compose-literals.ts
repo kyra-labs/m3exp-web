@@ -84,6 +84,7 @@ const KEYWORDS: Readonly<Record<string, string>> = {
   'SnapSpec<Float>()': '0ms',
   CircleShape: 'var(--m3e-sys-shape-corner-full)',
   'MaterialTheme.shapes.extraLarge': 'var(--m3e-sys-shape-corner-extra-large)',
+  'MaterialTheme.shapes.large': 'var(--m3e-sys-shape-corner-large)',
 };
 
 const normalize = (text: string | undefined, file: string) => {

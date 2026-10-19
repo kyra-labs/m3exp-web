@@ -2598,6 +2598,78 @@ describe('pull-to-refresh values (M9, no PullToRefreshTokens.kt)', () => {
   });
 });
 
+describe('time picker values (M10 §28)', () => {
+  const css = output.get('components/time-picker-defaults.css')!;
+  const decl = declarations(css.slice(0, css.indexOf('@media')));
+  const t = (name: string) => decl.get(`--m3e-comp-time-picker-${name}`);
+
+  it('the dial: 101dp / 69dp label circles of the 256dp dial, 74dp inner threshold, 48dp labels', () => {
+    expect(t('outer-radius')).toBe('101px');
+    expect(t('inner-radius')).toBe('69px');
+    expect(t('max-distance')).toBe('74px');
+    expect(t('minimum-interactive-size')).toBe('48px');
+    expect(t('display-gap')).toBe('36px');
+    expect(t('separator-width')).toBe('24px');
+    expect(t('separator-offset')).toBe('-4px');
+  });
+
+  it('isUpdatedTimepickerToggleEnabled (owner decision M10 T3): primary-container toggle buttons, 4dp gap, bold, 12dp checked', () => {
+    expect(t('period-container-color-selected')).toBe('var(--m3e-sys-color-primary-container)');
+    expect(t('period-container-color')).toBe('var(--m3e-sys-color-surface-container-lowest)');
+    expect(t('period-label-color-selected')).toBe('var(--m3e-sys-color-on-primary-container)');
+    expect(t('period-gap')).toBe('4px');
+    expect(t('period-label-weight-selected')).toBe('700');
+    expect(t('period-shape-selected')).toBe('12px');
+    expect(t('period-shape-pressed')).toBe('12px');
+  });
+
+  it('vibrant: lowest containers, primary selection, 100 × 120dp fields in display large, large corners', () => {
+    expect(t('vibrant-clock-dial-color')).toBe('var(--m3e-sys-color-surface-container-lowest)');
+    expect(t('vibrant-time-selector-label-color-selected')).toBe('var(--m3e-sys-color-primary)');
+    expect(t('vibrant-time-field-width')).toBe('100px');
+    expect(t('vibrant-time-field-height')).toBe('120px');
+    expect(t('vibrant-time-field-shape')).toBe('var(--m3e-sys-shape-corner-large)');
+    expect(t('vibrant-time-field-label-text-size')).toBe(
+      'var(--m3e-sys-typescale-display-large-size)',
+    );
+    expect(t('vibrant-input-outline-color')).toBe('transparent');
+  });
+
+  it('TimeInput: outline borders 1 / 2dp (not TimeFieldFocusOutlineColor), error container / border', () => {
+    expect(t('input-outline-color')).toBe('var(--m3e-sys-color-outline)');
+    expect(t('input-outline-color-focused')).toBe('var(--m3e-sys-color-outline)');
+    expect(t('input-outline-width')).toBe('1px');
+    expect(t('input-outline-width-focused')).toBe('2px');
+    expect(t('input-container-color-error')).toBe('var(--m3e-sys-color-error-container)');
+  });
+
+  it('motion: DefaultSpatial selector, DefaultEffects faces, FastSpatial wheel items, pager springs; reduced motion jumps', () => {
+    expect(t('selector-duration')).toBe('var(--m3e-sys-motion-spring-default-spatial-duration)');
+    expect(t('face-duration')).toBe('var(--m3e-sys-motion-spring-default-effects-duration)');
+    expect(t('scroll-item-duration')).toBe('var(--m3e-sys-motion-spring-fast-spatial-duration)');
+    expect(t('auto-switch-delay')).toBe('100ms');
+    expect(t('scroll-page-stiffness')).toBe('1500');
+    expect(t('scroll-settle-stiffness')).toBe('400');
+    expect(t('scroll-settle-damping-ratio')).toBe('1');
+    const reduced = css.slice(css.indexOf('@media'));
+    for (const name of ['selector', 'scroll-item', 'scroll-page', 'scroll-settle']) {
+      expect(reduced).toContain(`--m3e-comp-time-picker-${name}-duration: 0ms;`);
+    }
+  });
+
+  it('dialogs: dialog shape / color, label medium title, 24dp padding; vibrant surface container, 12dp', () => {
+    expect(t('dialog-container-color')).toBe('var(--m3e-sys-color-surface-container-high)');
+    expect(t('dialog-container-shape')).toBe('var(--m3e-sys-shape-corner-extra-large)');
+    expect(t('dialog-title-size')).toBe('var(--m3e-sys-typescale-label-medium-size)');
+    expect(t('dialog-padding')).toBe('24px');
+    expect(t('vibrant-dialog-container-color')).toBe('var(--m3e-sys-color-surface-container)');
+    expect(t('vibrant-dialog-padding')).toBe('12px');
+    expect(output.get('PARITY.md')).toMatch(
+      /TimePicker\.kt@19991f2c0858aadfcb442ce02b2c8e4743c96898 L\d+ \| `--m3e-comp-time-picker-outer-radius`/,
+    );
+  });
+});
+
 describe('segmented button values (M9, deprecated D4)', () => {
   const css = output.get('components/segmented-button-defaults.css')!;
   const decl = declarations(css);

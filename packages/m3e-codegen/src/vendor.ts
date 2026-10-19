@@ -171,6 +171,10 @@ export const FOUNDATION_SOURCES = [
   'commonMain/kotlin/androidx/compose/foundation/gestures/AnchoredDraggable.kt',
   'commonMain/kotlin/androidx/compose/foundation/gestures/snapping/SnapFlingBehavior.kt',
   'androidDeviceTest/kotlin/androidx/compose/foundation/anchoredDraggable/AnchoredDraggableStateTest.kt',
+  // The time picker's scroll wheels (ScrollField, M10 §28) are pagers: animateScrollToPage's
+  // spring() and the fling's snapAnimationSpec / snap distance / positional threshold.
+  'commonMain/kotlin/androidx/compose/foundation/pager/Pager.kt',
+  'commonMain/kotlin/androidx/compose/foundation/pager/PagerState.kt',
 ] as const;
 
 /**
