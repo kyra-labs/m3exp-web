@@ -18,6 +18,17 @@ import Base from '../../layouts/Base.astro';
       </figure>
     </div>
   </section>
+  <section aria-labelledby="range-heading">
+    <h2 id="range-heading">Range (element)</h2>
+    <div style="block-size: 560px; inline-size: 360px; display: flex; flex-direction: column;">
+      <m3e-date-range-picker data-testid="range" start="2025-08-10" end="2025-08-20" displayed-month="2025-08" style="display: contents"></m3e-date-range-picker>
+    </div>
+  </section>
+  <section aria-labelledby="docked-heading">
+    <h2 id="docked-heading">Docked (element)</h2>
+    <m3e-docked-date-picker data-testid="docked" value="2025-08-17"></m3e-docked-date-picker>
+    <div style="block-size: 480px"></div>
+  </section>
 </Base>
 
 <script>

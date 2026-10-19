@@ -33,5 +33,11 @@ export default defineConfig({
     // <m3e-pull-to-refresh indicator="loading-indicator"> loads the loading indicator it drives
     // (owner decision M9 #28: not bundled, D17).
     '@kyralabs/m3e-elements/loading-indicator.js',
+    // The date pickers load their layouts on first render.
+    '@kyralabs/m3e-elements/date-picker-layout.js',
+    '@kyralabs/m3e-elements/date-range-picker-layout.js',
+    '@kyralabs/m3e-elements/docked-date-picker-layout.js',
+    // The date and range pickers load the date field the first time their input mode shows.
+    '@kyralabs/m3e-elements/date-field.js',
   ],
 });

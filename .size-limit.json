@@ -670,6 +670,68 @@
     "limit": "12 KB"
   },
   {
+    "name": "m3e-elements: <m3e-date-picker> entry (renders the host; the date-picker-layout entry is imported on first render and measured on its own)",
+    "path": "packages/m3e-elements/dist/date-picker/index.js",
+    "ignore": ["@kyralabs/m3e-elements"],
+    "limit": "8 KB"
+  },
+  {
+    "name": "m3e-elements: date-picker-layout entry (DatePickerLayout: the header, calendar, paging and year grid with m3e-motion's DatePicker port, SpringAnimatable; the date-field entry for the input mode is imported on first use and measured on its own; used by m3e-react's <DatePicker>. 10 KB: a layout entry, not an element entry, like the time-picker-layout entry (12 KB), M10)",
+    "path": "packages/m3e-elements/dist/date-picker-layout/index.js",
+    "limit": "10 KB",
+    "ignore": ["@kyralabs/m3e-elements"]
+  },
+  {
+    "name": "m3e-elements: date-field entry (DateField: the outlined date text field with m3e-motion's DateInputValidator / transformation port; imported lazily by the date picker layouts for the input mode)",
+    "path": "packages/m3e-elements/dist/date-field/index.js",
+    "ignore": ["@kyralabs/m3e-elements"],
+    "limit": "8 KB"
+  },
+  {
+    "name": "m3e-elements: date picker + date-picker-layout + date-field (what a page with an element date picker loads in all, input mode included)",
+    "path": [
+      "packages/m3e-elements/dist/date-picker/index.js",
+      "packages/m3e-elements/dist/date-picker-layout/index.js",
+      "packages/m3e-elements/dist/date-field/index.js"
+    ],
+    "ignore": ["@kyralabs/m3e-elements"],
+    "limit": "14 KB"
+  },
+  {
+    "name": "m3e-elements: <m3e-date-range-picker> entry (renders the host; the date-range-picker-layout entry is imported on first render)",
+    "path": "packages/m3e-elements/dist/date-range-picker/index.js",
+    "ignore": ["@kyralabs/m3e-elements"],
+    "limit": "8 KB"
+  },
+  {
+    "name": "m3e-elements: date-range-picker-layout entry (DateRangePickerLayout: the month list and range band; the date-field entry for the input mode is imported on first use; used by m3e-react's <DateRangePicker>)",
+    "path": "packages/m3e-elements/dist/date-range-picker-layout/index.js",
+    "limit": "8 KB",
+    "ignore": ["@kyralabs/m3e-elements"]
+  },
+  {
+    "name": "m3e-elements: date range picker + date-range-picker-layout + date-field (what a page with an element date range picker loads in all, input mode included)",
+    "path": [
+      "packages/m3e-elements/dist/date-range-picker/index.js",
+      "packages/m3e-elements/dist/date-range-picker-layout/index.js",
+      "packages/m3e-elements/dist/date-field/index.js"
+    ],
+    "ignore": ["@kyralabs/m3e-elements"],
+    "limit": "14 KB"
+  },
+  {
+    "name": "m3e-elements: <m3e-docked-date-picker> entry (renders the host; the docked-date-picker-layout entry is imported on first render)",
+    "path": "packages/m3e-elements/dist/docked-date-picker/index.js",
+    "ignore": ["@kyralabs/m3e-elements"],
+    "limit": "8 KB"
+  },
+  {
+    "name": "m3e-elements: docked-date-picker-layout entry (DockedDatePickerLayout: the field, the drop-down calendar, the month / year menus; used by m3e-react's <DockedDatePicker>)",
+    "path": "packages/m3e-elements/dist/docked-date-picker-layout/index.js",
+    "limit": "8 KB",
+    "ignore": ["@kyralabs/m3e-elements"]
+  },
+  {
     "name": "m3e-elements: tabs-layout entry (TabsLayout, used by m3e-react <Tabs>)",
     "path": "packages/m3e-elements/dist/tabs-layout/index.js",
     "limit": "6 KB"

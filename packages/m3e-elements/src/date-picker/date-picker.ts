@@ -1,6 +1,6 @@
 import { M3eDatePickerElement } from '../date-picker-layout/element.js';
 import { parseIsoDate, toIsoDate } from '../date-picker-layout/locale.js';
-import { DatePickerLayout, type DatePickerLayoutOptions } from '../date-picker-layout/picker.js';
+import type { DatePickerLayout, DatePickerLayoutOptions } from '../date-picker-layout/picker.js';
 
 /** `change` event detail: the date the user picked or entered (ISO, UTC), or null. */
 export interface DatePickerChangeDetail {
@@ -35,10 +35,11 @@ export class M3eDatePicker extends M3eDatePickerElement<DatePickerLayout, DatePi
     };
   }
 
-  protected override createLayout(
-    root: HTMLElement,
-    options: DatePickerLayoutOptions,
-  ): DatePickerLayout {
-    return new DatePickerLayout(root, options);
+  protected override loadLayout() {
+    return import('@kyralabs/m3e-elements/date-picker-layout.js').then(
+      ({ DatePickerLayout }) =>
+        (root: HTMLElement, options: DatePickerLayoutOptions) =>
+          new DatePickerLayout(root, options),
+    );
   }
 }

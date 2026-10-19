@@ -59,6 +59,12 @@ export interface DatePickerStrings {
   rangeInputTitle: string;
   /** L77 */
   invalidRange: string;
+  /**
+   * The docked picker's year arrows (m3.material.io only; no Compose string, worded as Compose's
+   * month ones: TODO(verify) SOURCES register #89).
+   */
+  previousYear: string;
+  nextYear: string;
 }
 
 export const DATE_PICKER_STRINGS: DatePickerStrings = {
@@ -89,4 +95,6 @@ export const DATE_PICKER_STRINGS: DatePickerStrings = {
   inRange: 'In range',
   rangeInputTitle: 'Enter dates',
   invalidRange: 'Invalid date range input',
+  previousYear: 'Change to previous year',
+  nextYear: 'Change to next year',
 };

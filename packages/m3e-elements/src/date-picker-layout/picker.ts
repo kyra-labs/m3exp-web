@@ -30,7 +30,7 @@ import {
   setRovingDay,
   updateMonth,
 } from './calendar.js';
-import { DateField } from './field.js';
+import type { DateField, DateFieldOptions } from './field.js';
 
 export interface DatePickerLayoutOptions extends DatePickerBaseOptions {
   /** The selected date (UTC milliseconds of any time that day), or null. */
@@ -62,7 +62,8 @@ interface Page {
  *   (one month per fling, the snap on DefaultEffects).
  * - The year grid (YearPicker): a listbox of the year range's years, three per row, opened at a
  *   row above the displayed year; arrows move, Enter / Space pick and close it.
- * - The input: a date field (DateInputContent) with Compose's validator and transformations.
+ * - The input: a date field (DateInputContent) with Compose's validator and transformations, from
+ *   the date-field entry, imported the first time the input mode shows.
  */
 export class DatePickerLayout extends DatePickerBase<DatePickerLayoutOptions> {
   model: DatePickerModel;
@@ -86,7 +87,9 @@ export class DatePickerLayout extends DatePickerBase<DatePickerLayoutOptions> {
     this.root.replaceChildren(this.content);
     this.panes.input.hidden = this.model.displayMode !== 'input';
     this.panes.picker.hidden = !this.panes.input.hidden;
-    this.buildPane(this.model.displayMode);
+    void Promise.resolve(this.buildPane(this.model.displayMode)).then(() => {
+      this.render();
+    });
     this.render();
   }
 
@@ -136,11 +139,21 @@ export class DatePickerLayout extends DatePickerBase<DatePickerLayoutOptions> {
 
   // --- Building -----------------------------------------------------------------------------
 
-  protected buildPane(mode: DatePickerDisplayMode): void {
+  protected buildPane(mode: DatePickerDisplayMode): Promise<void> | void {
     const pane = this.panes[mode];
     if (pane.firstChild) return;
-    if (mode === 'input') this.#buildInput(pane);
-    else this.#buildPicker(pane);
+    if (mode === 'picker') {
+      this.#buildPicker(pane);
+      return;
+    }
+    return import('@kyralabs/m3e-elements/date-field.js').then(({ DateField }) => {
+      if (pane.firstChild) return;
+      const wrap = el(this.root.ownerDocument, 'div', `${ROOT}__input`);
+      this.#field = new DateField(this.root.ownerDocument, this.#fieldOptions(), this.abort.signal);
+      this.#field.setDate(this.model.selectedDateMillis);
+      wrap.append(this.#field.root);
+      pane.append(wrap);
+    });
   }
 
   #buildPicker(pane: HTMLElement): void {
@@ -226,15 +239,7 @@ export class DatePickerLayout extends DatePickerBase<DatePickerLayoutOptions> {
     });
   }
 
-  #buildInput(pane: HTMLElement): void {
-    const wrap = el(this.root.ownerDocument, 'div', `${ROOT}__input`);
-    this.#field = new DateField(this.root.ownerDocument, this.#fieldOptions(), this.abort.signal);
-    this.#field.setDate(this.model.selectedDateMillis);
-    wrap.append(this.#field.root);
-    pane.append(wrap);
-  }
-
-  #fieldOptions() {
+  #fieldOptions(): DateFieldOptions {
     return {
       label: this.strings.inputLabel,
       format: this.format,

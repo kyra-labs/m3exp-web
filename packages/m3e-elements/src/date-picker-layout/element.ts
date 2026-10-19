@@ -1,6 +1,6 @@
 import type { DatePickerDisplayMode, SelectableDates } from '@kyralabs/m3e-motion';
 import { M3eElement } from '../base/M3eElement.js';
-import type { DatePickerBase, DatePickerBaseOptions } from './base.js';
+import type { DatePickerBaseOptions } from './base.js';
 import { parseIsoDate, parseYearRange, toIsoDate } from './locale.js';
 import type { DatePickerStrings } from './strings.js';
 
@@ -12,7 +12,7 @@ import type { DatePickerStrings } from './strings.js';
  * (`display: contents`) that the layout builds. Dates are ISO strings (`YYYY-MM-DD`, UTC).
  */
 export abstract class M3eDatePickerElement<
-  L extends DatePickerBase<O>,
+  L extends { update(options: O): void; destroy(): void },
   O extends DatePickerBaseOptions,
 > extends M3eElement {
   static override properties = {
@@ -45,7 +45,15 @@ export abstract class M3eDatePickerElement<
     return this.#layout;
   }
 
-  protected abstract createLayout(root: HTMLElement, options: O): L;
+  /** Imports the layout's entry (on first render) and creates the layout. */
+  protected abstract loadLayout(): Promise<(root: HTMLElement, options: O) => L>;
+
+  #loading: Promise<void> | null = null;
+
+  /** Resolves once the layout has rendered (its entry is imported on first render). */
+  get ready(): Promise<void> {
+    return this.#loading ?? Promise.resolve();
+  }
 
   /** The element's options for the layout (subclasses add theirs). */
   protected options(): O {
@@ -77,15 +85,20 @@ export abstract class M3eDatePickerElement<
     super.disconnectedCallback();
     this.#layout?.destroy();
     this.#layout = undefined;
+    this.#loading = null;
   }
 
   protected override update(): void {
-    if (!this.#layout) {
+    if (this.#layout) {
+      this.#layout.update(this.options());
+      return;
+    }
+    this.#loading ??= this.loadLayout().then((create) => {
+      this.#loading = null;
+      if (this.#layout || !this.isConnected) return;
       const root = this.ownerDocument.createElement('div');
       this.replaceChildren(root);
-      this.#layout = this.createLayout(root, this.options());
-    } else {
-      this.#layout.update(this.options());
-    }
+      this.#layout = create(root, this.options());
+    });
   }
 }

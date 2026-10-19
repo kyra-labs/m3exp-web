@@ -52,7 +52,8 @@
  * placed `__range-month`s (a `__subhead` and a `__month` grid with `__band` rectangles behind the
  * days: drawRangeBackground, computed by the layout). The docked picker's navigation is
  * `__docked-nav` (two groups of previous / `__menu-button` / next), and its month and year menus
- * are a `__menu` listbox of `__menu-item`s that replaces the calendar.
+ * are a `__menu` listbox of `__menu-item`s that replaces the calendar; it drops down under a date
+ * field in `.m3e-docked-date-picker` (the field's end has a calendar icon button).
  *
  * - DatePicker.kt (DateEntryContainer L1368–1439, DatePickerHeader L1774–1802, MonthsNavigation
  *   L2453–2526, WeekDays L1890–1939, Month L1941–2084, Day L2241–2307, YearPicker / Year
@@ -590,6 +591,13 @@
     letter-spacing: var(--m3e-comp-date-picker-modal-range-selection-header-headline-tracking);
   }
 
+  /* The range picker fills its container (a full-screen dialog): the month list scrolls. */
+  .m3e-date-picker--range {
+    flex: 1 1 auto;
+    block-size: 100%;
+    min-block-size: 0;
+  }
+
   .m3e-date-picker--range > .m3e-date-picker__content {
     display: flex;
     flex: 1 1 auto;
@@ -651,6 +659,7 @@
   }
 
   /* --- Docked (m3.material.io, owner decision M10 D1) -------------------------------------------- */
+
   .m3e-date-picker--docked {
     --_m3e-date-picker-day: var(--m3e-comp-date-picker-modal-date-container-width);
 
@@ -659,6 +668,23 @@
     border-radius: var(--m3e-comp-date-picker-docked-container-shape);
     background-color: var(--m3e-comp-date-picker-docked-container-color);
     box-shadow: var(--m3e-comp-date-picker-docked-container-shadow);
+  }
+
+  /* The field and the calendar that drops down below it ("appear just below the input field"). */
+  .m3e-docked-date-picker {
+    position: relative;
+    display: inline-block;
+  }
+
+  .m3e-docked-date-picker > .m3e-date-picker--docked {
+    position: absolute;
+    inset-block-start: 100%;
+    inset-inline-start: 0;
+    z-index: 1;
+  }
+
+  .m3e-docked-date-picker > .m3e-date-picker--docked[hidden] {
+    display: none;
   }
 
   .m3e-date-picker__docked-nav {

@@ -115,8 +115,8 @@ export abstract class DatePickerBase<O extends DatePickerBaseOptions> {
   protected abstract get mode(): DatePickerDisplayMode;
   protected abstract set mode(mode: DatePickerDisplayMode);
   protected abstract render(): void;
-  /** Builds a pane's content the first time it shows. */
-  protected abstract buildPane(mode: DatePickerDisplayMode): void;
+  /** Builds a pane's content the first time it shows (the input pane imports the field entry). */
+  protected abstract buildPane(mode: DatePickerDisplayMode): Promise<void> | void;
 
   update(options: O): void {
     this.options = options;
@@ -191,7 +191,13 @@ export abstract class DatePickerBase<O extends DatePickerBaseOptions> {
     const from = this.mode;
     if (from === to) return;
     this.mode = to;
-    this.buildPane(to);
+    this.render();
+    void Promise.resolve(this.buildPane(to)).then(() => {
+      if (this.mode === to) this.#switch(from, to, animate);
+    });
+  }
+
+  #switch(from: DatePickerDisplayMode, to: DatePickerDisplayMode, animate: boolean): void {
     for (const a of this.#switching) a.finish();
     const incoming = this.panes[to];
     const outgoing = this.panes[from];
