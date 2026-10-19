@@ -3141,6 +3141,47 @@ export const sheetBottomTokens = {
   focusIndicatorColor: "var(--m3e-sys-color-secondary)"
 } as const;
 
+/** SideSheetDefaults */
+export const sideSheetDefaults = {
+  sideSheetOpenDuration: "var(--m3e-sys-motion-spring-default-spatial-duration)",
+  sideSheetOpenEasing: "var(--m3e-sys-motion-spring-default-spatial-easing)",
+  sideSheetOpenDampingRatio: "var(--m3e-sys-motion-spring-default-spatial-damping-ratio)",
+  sideSheetOpenStiffness: "var(--m3e-sys-motion-spring-default-spatial-stiffness)",
+  sideSheetCloseDuration: "var(--m3e-sys-motion-spring-fast-effects-duration)",
+  sideSheetCloseEasing: "var(--m3e-sys-motion-spring-fast-effects-easing)",
+  sideSheetCloseDampingRatio: "var(--m3e-sys-motion-spring-fast-effects-damping-ratio)",
+  sideSheetCloseStiffness: "var(--m3e-sys-motion-spring-fast-effects-stiffness)",
+  sideSheetScrimColor: "var(--m3e-sys-color-scrim)",
+  sideSheetScrimOpacity: "0.32",
+  sideSheetActionsSpacing: 8,
+  sideSheetContainerWidth: 256,
+  sideSheetMaxWidth: 400,
+  sideSheetStandardContainerColor: "var(--m3e-sys-color-surface)",
+  sideSheetModalContainerColor: "var(--m3e-sys-color-surface-container-low)",
+  sideSheetModalContainerShadow: "var(--m3e-sys-elevation-level1-shadow)",
+  sideSheetModalContainerShapeStartStart: "var(--m3e-sys-shape-corner-large-start-start-start)",
+  sideSheetModalContainerShapeStartEnd: "var(--m3e-sys-shape-corner-large-start-start-end)",
+  sideSheetModalContainerShapeEndEnd: "var(--m3e-sys-shape-corner-large-start-end-end)",
+  sideSheetModalContainerShapeEndStart: "var(--m3e-sys-shape-corner-large-start-end-start)",
+  sideSheetDetachedContainerShape: "var(--m3e-sys-shape-corner-large)",
+  sideSheetDetachedMargin: 16,
+  sideSheetDividerColor: "var(--m3e-sys-color-outline)",
+  sideSheetHeadlineColor: "var(--m3e-sys-color-on-surface-variant)",
+  sideSheetHeadlineFont: "var(--m3e-sys-typescale-title-large-font)",
+  sideSheetHeadlineWeight: "var(--m3e-sys-typescale-title-large-weight)",
+  sideSheetHeadlineSize: "var(--m3e-sys-typescale-title-large-size)",
+  sideSheetHeadlineLineHeight: "var(--m3e-sys-typescale-title-large-line-height)",
+  sideSheetHeadlineTracking: "var(--m3e-sys-typescale-title-large-tracking)",
+  sideSheetIconColor: "var(--m3e-sys-color-on-surface-variant)",
+  sideSheetPaddingInline: 24,
+  sideSheetPaddingInlineStartIcon: 16,
+  sideSheetHeaderSpacing: 12,
+  sideSheetHeaderPaddingTop: 24,
+  sideSheetActionsHeight: 72,
+  sideSheetActionsPaddingTop: 16,
+  sideSheetActionsPaddingBottom: 24
+} as const;
+
 /** SliderTokens */
 export const sliderTokens = {
   activeContainerOpacity: 1,
