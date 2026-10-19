@@ -211,6 +211,12 @@
     "limit": "2 KB"
   },
   {
+    "name": "m3e-css: time pickers (dial, input, scroll wheels, AM/PM toggle buttons, side column, the dialog surfaces)",
+    "path": "packages/m3e-css/dist/time-picker.css",
+    "rolldown": false,
+    "limit": "4 KB"
+  },
+  {
     "name": "m3e-css: segmented button (D4; rows, item shapes, check and label motion)",
     "path": "packages/m3e-css/dist/segmented-button.css",
     "rolldown": false,
@@ -641,6 +647,29 @@
     "limit": "8 KB"
   },
   {
+    "name": "m3e-elements: <m3e-time-picker> entry (bundles TimePickerLayout: the display, AM/PM and the dial with m3e-motion's AnalogTimePickerState port, SpringAnimatable)",
+    "path": "packages/m3e-elements/dist/time-picker/index.js",
+    "ignore": ["@kyralabs/m3e-elements"],
+    "limit": "8 KB"
+  },
+  {
+    "name": "m3e-elements: <m3e-time-input> entry (bundles TimeInputLayout with m3e-motion's TimeInputTransformation port)",
+    "path": "packages/m3e-elements/dist/time-input/index.js",
+    "ignore": ["@kyralabs/m3e-elements"],
+    "limit": "8 KB"
+  },
+  {
+    "name": "m3e-elements: <m3e-time-scroll> entry (bundles TimeScrollLayout: the ScrollField wheels, SpringAnimatable)",
+    "path": "packages/m3e-elements/dist/time-scroll/index.js",
+    "ignore": ["@kyralabs/m3e-elements"],
+    "limit": "8 KB"
+  },
+  {
+    "name": "m3e-elements: time-picker-layout entry (TimePickerLayout, TimeInputLayout, TimeScrollLayout; used by m3e-react's time pickers)",
+    "path": "packages/m3e-elements/dist/time-picker-layout/index.js",
+    "limit": "12 KB"
+  },
+  {
     "name": "m3e-elements: tabs-layout entry (TabsLayout, used by m3e-react <Tabs>)",
     "path": "packages/m3e-elements/dist/tabs-layout/index.js",
     "limit": "6 KB"
@@ -903,6 +932,13 @@
     "limit": "16 KB"
   },
   {
+    "name": "m3e-react: { TimePicker, TimeInput, TimeScroll, TimePickerDialog, VibrantTimePickerDialog, TimePickerModeToggle } only (the m3e-elements layouts, BasicAlertDialog, IconButton, the tooltip)",
+    "path": "packages/m3e-react/dist/index.js",
+    "import": "{ TimePicker, TimeInput, TimeScroll, TimePickerDialog, VibrantTimePickerDialog, TimePickerModeToggle }",
+    "ignore": ["react", "react-dom"],
+    "limit": "30 KB"
+  },
+  {
     "name": "m3e-react: { FilterChip } only (incl. react-aria useCheckbox press/focus + react-stately toggle state, Icon, motion shape spring)",
     "path": "packages/m3e-react/dist/index.js",
     "import": "{ FilterChip }",
@@ -934,10 +970,10 @@
     "limit": "1 KB"
   },
   {
-    "name": "m3exp-web (root): { Icon } (the root entry registers every custom element by design, with <m3e-menu>, <m3e-split-button>, <m3e-button-group>, the toolbars, the progress indicators, <m3e-search>, the navigation bar / rails, <m3e-navigation-drawer>, <m3e-navigation-suite>, the window size class observer, <m3e-tabs>, <m3e-checkbox>, <m3e-chip-set>, <m3e-slider>, <m3e-text-field>, <m3e-list>, <m3e-tooltip>, <m3e-dialog>, <m3e-snackbar-host>, <m3e-bottom-sheet>, <m3e-side-sheet>, <m3e-carousel>, <m3e-pull-to-refresh> and the canonical layouts (~60.0 kB with their lazily imported pane-motion / pane-expansion entries); a leaked React component adds ~10 kB of react-aria. Raised 53 → 54 kB for <m3e-chip-set>, 54 → 56 kB for <m3e-slider> and m3e-motion's slider math, 56 → 57 kB for <m3e-text-field>, 57 → 58 kB for <m3e-list> and its list-layout (M8), 58 → 61 kB for <m3e-tooltip> and its tooltip-popup controller (M9), 61 → 62 kB for <m3e-dialog> and its dialog-layout (M9), 62 → 64 kB for <m3e-snackbar-host> and its snackbar-layout (M9), 64 → 70 kB for <m3e-bottom-sheet>, its bottom-sheet-layout and m3e-motion's anchored draggable / SheetState (M9), 70 → 72 kB for <m3e-side-sheet> and its side-sheet-layout (M9), 72 → 78 kB for <m3e-carousel> and its carousel-layout with m3e-motion's keyline port (M9), 78 → 80 kB for <m3e-pull-to-refresh> and its pull-to-refresh-layout with m3e-motion's pull / arrow port (M9), 80 → 81 kB for the badges built into the navigation items and tabs (M9 B2). Raise with m3e-elements (all); D17)",
+    "name": "m3exp-web (root): { Icon } (the root entry registers every custom element by design, with <m3e-menu>, <m3e-split-button>, <m3e-button-group>, the toolbars, the progress indicators, <m3e-search>, the navigation bar / rails, <m3e-navigation-drawer>, <m3e-navigation-suite>, the window size class observer, <m3e-tabs>, <m3e-checkbox>, <m3e-chip-set>, <m3e-slider>, <m3e-text-field>, <m3e-list>, <m3e-tooltip>, <m3e-dialog>, <m3e-snackbar-host>, <m3e-bottom-sheet>, <m3e-side-sheet>, <m3e-carousel>, <m3e-pull-to-refresh>, the time pickers and the canonical layouts (~60.0 kB with their lazily imported pane-motion / pane-expansion entries); a leaked React component adds ~10 kB of react-aria. Raised 53 → 54 kB for <m3e-chip-set>, 54 → 56 kB for <m3e-slider> and m3e-motion's slider math, 56 → 57 kB for <m3e-text-field>, 57 → 58 kB for <m3e-list> and its list-layout (M8), 58 → 61 kB for <m3e-tooltip> and its tooltip-popup controller (M9), 61 → 62 kB for <m3e-dialog> and its dialog-layout (M9), 62 → 64 kB for <m3e-snackbar-host> and its snackbar-layout (M9), 64 → 70 kB for <m3e-bottom-sheet>, its bottom-sheet-layout and m3e-motion's anchored draggable / SheetState (M9), 70 → 72 kB for <m3e-side-sheet> and its side-sheet-layout (M9), 72 → 78 kB for <m3e-carousel> and its carousel-layout with m3e-motion's keyline port (M9), 78 → 80 kB for <m3e-pull-to-refresh> and its pull-to-refresh-layout with m3e-motion's pull / arrow port (M9), 80 → 81 kB for the badges built into the navigation items and tabs (M9 B2), 81 → 88 kB for <m3e-time-picker>, <m3e-time-input> and <m3e-time-scroll> with their time-picker-layout and m3e-motion's TimePicker.kt port (M10). Raise with m3e-elements (all); D17)",
     "path": "packages/m3exp-web/dist/index.js",
     "import": "{ Icon }",
     "ignore": ["react", "react-dom"],
-    "limit": "81 KB"
+    "limit": "88 KB"
   }
 ]

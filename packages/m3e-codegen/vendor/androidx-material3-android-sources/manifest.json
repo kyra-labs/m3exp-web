@@ -6,6 +6,8 @@
     "AndroidAlertDialog.android.kt": "966b048cce1fe6c111b863d204bf714e6f6641856b8f922f49233d0a0518c9f0",
     "AndroidMenu.android.kt": "78e4994e3772d58e594972fd902ba42bdba7e56bc9faa64534a4c57febe05d9c",
     "ModalBottomSheet.android.kt": "f4cda44f0f2182e50a7efcd3dd9ae2607349624c4d407a05fc59c3dacde12253",
+    "TimeFormat.android.kt": "eb5c69c707c6274a44174cbd9a4597be47e2eeb55563f45760a9b62faa7ac21d",
+    "TimePicker.android.kt": "4853aca130e18c67c290dbefaab04d6ace90a5dd562da77417ad924b063d7d53",
     "Tooltip.android.kt": "a5683c858676ca82549377822f623a8e17216b066278083d8b07b46101477d70",
     "BasicTooltip.android.kt": "37212a13dd78005f80a7258866f75c6bf4653780c8085d10b93283c41b7c2f47",
     "Strings.android.kt": "72db1d475408e756f4b007f5a055f892ec4b9f2500a21a98b229c19918fee8c4"

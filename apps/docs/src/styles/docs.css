@@ -1306,3 +1306,23 @@ button.docs-layout-item:focus-visible {
   gap: var(--m3e-sys-space-200);
   align-items: flex-start;
 }
+
+/* Time pickers: a wrapping row of pickers, each with its caption above. */
+.docs-time-picker-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--m3e-sys-space-400);
+  align-items: flex-start;
+  margin-block: var(--m3e-sys-space-200);
+}
+
+.docs-time-picker-row > figure {
+  margin: 0;
+}
+
+.docs-time-picker-row figcaption {
+  margin-block-end: var(--m3e-sys-space-100);
+  color: var(--m3e-sys-color-on-surface-variant);
+  font: var(--m3e-sys-typescale-label-large-weight) var(--m3e-sys-typescale-label-large-size) /
+    var(--m3e-sys-typescale-label-large-line-height) var(--m3e-sys-typescale-label-large-font);
+}
