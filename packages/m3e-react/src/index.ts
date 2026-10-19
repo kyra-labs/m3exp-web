@@ -21,6 +21,7 @@ export * from './bottom-sheet/index.js';
 export * from './side-sheet/index.js';
 export * from './carousel/index.js';
 export * from './pull-to-refresh/index.js';
+export * from './time-picker/index.js';
 export * from './segmented-button/index.js'; // @deprecated (D4)
 export * from './top-app-bar/index.js';
 export * from './assist-chip/index.js';
