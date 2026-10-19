@@ -1001,6 +1001,13 @@
     "limit": "30 KB"
   },
   {
+    "name": "m3e-react: { DatePicker, DateRangePicker, DockedDatePicker, DatePickerDialog } only (the m3e-elements date picker layouts, the date field, BasicAlertDialog; m3e-react is one bundle, so the date field comes inline)",
+    "path": "packages/m3e-react/dist/index.js",
+    "import": "{ DatePicker, DateRangePicker, DockedDatePicker, DatePickerDialog }",
+    "ignore": ["react", "react-dom"],
+    "limit": "30 KB"
+  },
+  {
     "name": "m3e-react: { FilterChip } only (incl. react-aria useCheckbox press/focus + react-stately toggle state, Icon, motion shape spring)",
     "path": "packages/m3e-react/dist/index.js",
     "import": "{ FilterChip }",

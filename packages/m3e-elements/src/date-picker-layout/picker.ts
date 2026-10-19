@@ -81,7 +81,7 @@ export class DatePickerLayout extends DatePickerBase<DatePickerLayoutOptions> {
   #focus: number | null = null;
   #field: DateField | null = null;
 
-  constructor(root: HTMLElement, options: DatePickerLayoutOptions = {}) {
+  constructor(root: HTMLElement, options: DatePickerLayoutOptions) {
     super(root, options);
     this.model = this.#newModel();
     this.root.replaceChildren(this.content);
@@ -146,10 +146,10 @@ export class DatePickerLayout extends DatePickerBase<DatePickerLayoutOptions> {
       this.#buildPicker(pane);
       return;
     }
-    return import('@kyralabs/m3e-elements/date-field.js').then(({ DateField }) => {
+    return this.options.loadDateField().then((Field) => {
       if (pane.firstChild) return;
       const wrap = el(this.root.ownerDocument, 'div', `${ROOT}__input`);
-      this.#field = new DateField(this.root.ownerDocument, this.#fieldOptions(), this.abort.signal);
+      this.#field = new Field(this.root.ownerDocument, this.#fieldOptions(), this.abort.signal);
       this.#field.setDate(this.model.selectedDateMillis);
       wrap.append(this.#field.root);
       pane.append(wrap);

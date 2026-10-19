@@ -16,6 +16,7 @@ import {
   weekdayNames,
   zeroDigitOf,
 } from './locale.js';
+import type { DateField } from './field.js';
 import { DATE_PICKER_STRINGS, type DatePickerStrings } from './strings.js';
 
 /** What every date picker layout takes (Compose's states and DatePicker parameters, plus the web's locale). */
@@ -40,6 +41,12 @@ export interface DatePickerBaseOptions {
   className?: string | undefined;
   onDisplayModeChange?: ((mode: DatePickerDisplayMode) => void) | undefined;
   onDisplayedMonthChange?: ((monthMillis: number) => void) | undefined;
+  /**
+   * Loads the input mode's date field the first time it shows: the elements import the date-field
+   * entry, m3e-react passes the class it bundles (a lazy import in a shared layout would stay in
+   * m3e-react's single bundle for every page).
+   */
+  loadDateField: () => Promise<typeof DateField>;
 }
 
 /**

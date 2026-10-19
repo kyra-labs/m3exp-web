@@ -68,7 +68,7 @@ export class DateRangePickerLayout extends DatePickerBase<DateRangePickerLayoutO
   #frame = 0;
   #resize: ResizeObserver | null = null;
 
-  constructor(root: HTMLElement, options: DateRangePickerLayoutOptions = {}) {
+  constructor(root: HTMLElement, options: DateRangePickerLayoutOptions) {
     super(root, options);
     this.model = this.#newModel();
     this.root.replaceChildren(this.content);
@@ -143,12 +143,12 @@ export class DateRangePickerLayout extends DatePickerBase<DateRangePickerLayoutO
     const doc = this.root.ownerDocument;
     const { signal } = this.abort;
     if (mode === 'input') {
-      return import('@kyralabs/m3e-elements/date-field.js').then(({ DateField }) => {
+      return this.options.loadDateField().then((Field) => {
         if (pane.firstChild) return;
         const wrap = el(doc, 'div', `${ROOT}__input`);
         const fields: [DateField, DateField] = [
-          new DateField(doc, this.#fieldOptions('start'), signal),
-          new DateField(doc, this.#fieldOptions('end'), signal),
+          new Field(doc, this.#fieldOptions('start'), signal),
+          new Field(doc, this.#fieldOptions('end'), signal),
         ];
         this.#fields = fields;
         fields[0].setDate(this.model.selectedStartDateMillis);

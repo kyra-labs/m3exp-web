@@ -73,6 +73,8 @@ export abstract class M3eDatePickerElement<
       onDisplayedMonthChange: (month: number) => {
         this.emit('displayed-month-change', { month: toIsoDate(month).slice(0, 7) });
       },
+      loadDateField: () =>
+        import('@kyralabs/m3e-elements/date-field.js').then(({ DateField }) => DateField),
     } as O;
   }
 
