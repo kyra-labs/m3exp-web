@@ -211,6 +211,12 @@
     "limit": "2 KB"
   },
   {
+    "name": "m3e-css: segmented button (D4; rows, item shapes, check and label motion)",
+    "path": "packages/m3e-css/dist/segmented-button.css",
+    "rolldown": false,
+    "limit": "2 KB"
+  },
+  {
     "name": "m3e-css: legacy navigation bar + rail (D4)",
     "path": [
       "packages/m3e-css/dist/navigation-bar.css",
@@ -800,6 +806,12 @@
     "path": "packages/m3e-react/dist/index.js",
     "import": "{ RadioGroup, Radio }",
     "limit": "17 KB"
+  },
+  {
+    "name": "m3e-react: { SingleChoiceSegmentedButtonRow, MultiChoiceSegmentedButtonRow, SegmentedButton } only (D4; incl. react-aria useRadioGroup / useRadio and useCheckboxGroup / useCheckboxGroupItem + react-stately group states, Icon)",
+    "path": "packages/m3e-react/dist/index.js",
+    "import": "{ SingleChoiceSegmentedButtonRow, MultiChoiceSegmentedButtonRow, SegmentedButton }",
+    "limit": "19 KB"
   },
   {
     "name": "m3e-react: { Switch } only (incl. react-aria useSwitch press/focus/keyboard + react-stately toggle state)",

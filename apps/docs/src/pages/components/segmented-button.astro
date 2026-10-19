@@ -1,0 +1,152 @@
+---
+import SegmentedButtonPlayground from '../../islands/SegmentedButtonPlayground.tsx';
+import Base from '../../layouts/Base.astro';
+
+// Static segmented buttons in the m3e-css contract (segmented-button.css): Compose's single-select
+// and multi-select samples, the check without an unselected icon, disabled rows, one button
+// alone and RTL.
+interface Button {
+  label: string;
+  checked?: boolean;
+  disabled?: boolean;
+  icon?: string;
+}
+interface Row {
+  id: string;
+  title: string;
+  type: 'radio' | 'checkbox';
+  dir?: 'rtl';
+  buttons: Button[];
+}
+const ROWS: Row[] = [
+  {
+    id: 'single',
+    title: 'Range',
+    type: 'radio',
+    buttons: [{ label: 'Day', checked: true }, { label: 'Month' }, { label: 'Week' }],
+  },
+  {
+    id: 'multi',
+    title: 'Filters',
+    type: 'checkbox',
+    buttons: [
+      { label: 'Favorites', icon: 'star' },
+      { label: 'Trending', icon: 'trending_up', checked: true },
+      { label: 'Saved', icon: 'bookmark' },
+    ],
+  },
+  {
+    id: 'check',
+    title: 'Notifications',
+    type: 'checkbox',
+    buttons: [{ label: 'Email', checked: true }, { label: 'Push' }, { label: 'SMS', checked: true }],
+  },
+  {
+    id: 'disabled',
+    title: 'Disabled range',
+    type: 'radio',
+    buttons: [
+      { label: 'Day', disabled: true },
+      { label: 'Month', checked: true, disabled: true },
+      { label: 'Week', disabled: true },
+    ],
+  },
+  {
+    id: 'partly',
+    title: 'Size',
+    type: 'radio',
+    buttons: [
+      { label: 'Small', checked: true },
+      { label: 'Medium', disabled: true },
+      { label: 'Large' },
+    ],
+  },
+  { id: 'one', title: 'Alone', type: 'checkbox', buttons: [{ label: 'Only one' }] },
+  {
+    id: 'rtl',
+    title: 'Right to left',
+    type: 'radio',
+    dir: 'rtl',
+    buttons: [{ label: 'Day', checked: true }, { label: 'Month' }, { label: 'Week' }],
+  },
+];
+---
+
+<Base title="Segmented button">
+  <link rel="stylesheet" href="/icons/docs-icons.css" slot="head" />
+  <h1>Segmented button</h1>
+  <div data-deprecated>
+    <p class="docs-deprecated" role="note">
+      Deprecated (DECISIONS D4): the segmented button ships until 2.0 for migration and gets no new features. Use the <a href="/components/button-group/">connected button group</a> (<code>.m3e-button-group--connected</code>, <code>&lt;ButtonGroup variant="connected" selectionMode="single | multiple"&gt;</code>), which m3.material.io recommends instead since the M3 Expressive update. React warns once in development.
+    </p>
+  </div>
+  <p>
+    Segmented buttons (COMPONENT_SPEC §37; Compose <code>SingleChoiceSegmentedButtonRow</code> / <code>MultiChoiceSegmentedButtonRow</code> with <code>SegmentedButton</code>) on native inputs: radios for a single choice in a <code>role="radiogroup"</code>, checkboxes for several in a <code>role="group"</code>. The buttons share the widest one's width and overlap by their 1dp outline; the row is 48dp high for the touch targets, the 40dp buttons centered in it. Selecting scales the check in from its bottom corner on the fast spatial spring while the label slides aside; unselecting removes the check at once and slides the label back. No JavaScript is needed: arrow keys move a single choice and wrap (WebKit stops at the ends), Tab enters at the selected button, Space selects or toggles.
+  </p>
+
+  <section aria-labelledby="static-heading" id="static-segmented">
+    <h2 id="static-heading">Static (m3e-css)</h2>
+    <p>
+      A <code>.m3e-segmented-button-row</code> of <code>&lt;label class="m3e-segmented-button"&gt;</code>s around the <code>__input</code>, the <code>__icon</code> slot (the <code>check</code> icon, then an optional icon shown while unselected) and the <code>__label</code>. The first button takes the full corners on its start side, the last on its end side. The ripple needs <code>@kyralabs/m3e-elements/ripple.js</code> (this section uses <code>attachAutoRipple</code>).
+    </p>
+    {
+      ROWS.map((row) => (
+        <div class="docs-segmented-example">
+          <p class="docs-segmented-caption" id={`static-${row.id}-label`}>
+            {row.title}
+          </p>
+          <div
+            class="m3e-segmented-button-row"
+            role={row.type === 'radio' ? 'radiogroup' : 'group'}
+            aria-labelledby={`static-${row.id}-label`}
+            dir={row.dir}
+            data-testid={`static-${row.id}`}
+          >
+            {row.buttons.map((b, i) => (
+              <label class="m3e-segmented-button" data-testid={`static-${row.id}-${i}`}>
+                <input
+                  class="m3e-segmented-button__input"
+                  type={row.type}
+                  name={row.type === 'radio' ? `static-${row.id}` : undefined}
+                  value={b.label}
+                  checked={b.checked}
+                  disabled={b.disabled}
+                />
+                <span class="m3e-segmented-button__icon" aria-hidden="true">
+                  <span class="m3e-icon m3e-segmented-button__check" data-fill>
+                    check
+                  </span>
+                  {b.icon && <span class="m3e-icon">{b.icon}</span>}
+                </span>
+                <span class="m3e-segmented-button__label">{b.label}</span>
+              </label>
+            ))}
+          </div>
+        </div>
+      ))
+    }
+  </section>
+
+  <section aria-labelledby="element-heading">
+    <h2 id="element-heading">Element</h2>
+    <p>
+      There is no <code>&lt;m3e-segmented-button&gt;</code> (owner decision M9 #29): native radios and checkboxes already select, take part in forms and handle the keyboard, so the plain markup above is the element-layer API. Load <code>@kyralabs/m3e-elements/ripple.js</code> for the press ripple.
+    </p>
+  </section>
+
+  <section aria-labelledby="react-heading">
+    <h2 id="react-heading">React</h2>
+    <p>
+      <code>&lt;SingleChoiceSegmentedButtonRow value defaultValue onChange isDisabled name aria-label&gt;</code> (React Aria <code>useRadioGroup</code>) or <code>&lt;MultiChoiceSegmentedButtonRow value defaultValue onChange isDisabled&gt;</code> (<code>useCheckboxGroup</code>) around <code>&lt;SegmentedButton value icon isDisabled&gt;</code>; the same DOM as the static markup. Below, Compose's two samples and a checkbox that disables both rows.
+    </p>
+    <SegmentedButtonPlayground client:only="react" />
+  </section>
+</Base>
+
+<script>
+  import { attachAutoRipple } from '@kyralabs/m3exp-web/elements';
+
+  // The ripple for the static buttons (React drives its own).
+  const statics = document.querySelector<HTMLElement>('#static-segmented');
+  if (statics) attachAutoRipple(statics, new AbortController().signal);
+</script>
