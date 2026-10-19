@@ -1,0 +1,41 @@
+{
+  "repo": "https://android.googlesource.com/platform/frameworks/support",
+  "commit": "19991f2c0858aadfcb442ce02b2c8e4743c96898",
+  "path": "compose/material3/material3",
+  "files": {
+    "CarouselSamples.kt": "9c1028ce0e7780cb8b4e9e70656fcdc5a2d27397ce33c989204fc1b7aa905060",
+    "ArrangementTest.kt": "7e1b02fbe34adb19bcea237bc4f965dcc669106cf9bb73c57664d3bcfcded090",
+    "CenteredHeroTest.kt": "fcead9b9a2b28ac73fb9319beb7c4a03ed41d8c956e68ce9e4db43965120dcf7",
+    "KeylineSnapPositionTest.kt": "54da7b6974b5e832f56a62658f5aac2dbc0d61608a6e25ea1991b292d5ba473a",
+    "KeylineTest.kt": "fc729218156b0b6cd297ba6a8392ebd31136bb3b0e983029ce15d4d00bf8f944",
+    "MultiBrowseTest.kt": "e1de729e72e2d7cb259dc108fbe1e98ce768bcd749a37173e9cbe76e0f583476",
+    "StrategyTest.kt": "80b6f5780c5c2a6a2873ee88e1759cabc8c6d55e91c01b2605f622980473dcd1",
+    "UncontainedTest.kt": "70d9d8e2af5ee4fa6dfd693c039e55a3b40e007419c358d3de8b369a1b8dcb3d",
+    "Arrangement.kt": "39ff3ff95a28cd995bffdb8da9410313a27b60a6d173fc33a9c0b67cbfcc9010",
+    "Carousel.kt": "d634e48d71794251b63c8eb5a78b413ec6adb492a8c9c500d63ae50f154cc2c4",
+    "CarouselItemScope.kt": "a62a925fb62dd81e45b7710e3edda43e1e32b3190105fce422b19f4fb173aa0d",
+    "CarouselState.kt": "e2714731a806978b7aca674ab66c2a5a23da7ad74750e7ea383936f6a9dac823",
+    "KeylineList.kt": "718bb58b748f898482241d121d1bc681cc4b3e6722e39c16dc19a1753f67eca7",
+    "KeylineSnapPosition.kt": "23cbccbffc81bf8d3b534aee40d496b6aeb819e4217da5af26906e19050f4135",
+    "Keylines.kt": "a33ed44d518421f0014fdc489774846a9160fc894026da9df3509feb0c50ce4e",
+    "Strategy.kt": "0a58694f0095071b90196c0ee40f0bd3942fe71ab6271b638c6de388cc22b3c2"
+  },
+  "upstream": {
+    "CarouselSamples.kt": "samples/src/main/java/androidx/compose/material3/samples/CarouselSamples.kt",
+    "ArrangementTest.kt": "src/androidHostTest/kotlin/androidx/compose/material3/carousel/ArrangementTest.kt",
+    "CenteredHeroTest.kt": "src/androidHostTest/kotlin/androidx/compose/material3/carousel/CenteredHeroTest.kt",
+    "KeylineSnapPositionTest.kt": "src/androidHostTest/kotlin/androidx/compose/material3/carousel/KeylineSnapPositionTest.kt",
+    "KeylineTest.kt": "src/androidHostTest/kotlin/androidx/compose/material3/carousel/KeylineTest.kt",
+    "MultiBrowseTest.kt": "src/androidHostTest/kotlin/androidx/compose/material3/carousel/MultiBrowseTest.kt",
+    "StrategyTest.kt": "src/androidHostTest/kotlin/androidx/compose/material3/carousel/StrategyTest.kt",
+    "UncontainedTest.kt": "src/androidHostTest/kotlin/androidx/compose/material3/carousel/UncontainedTest.kt",
+    "Arrangement.kt": "src/commonMain/kotlin/androidx/compose/material3/carousel/Arrangement.kt",
+    "Carousel.kt": "src/commonMain/kotlin/androidx/compose/material3/carousel/Carousel.kt",
+    "CarouselItemScope.kt": "src/commonMain/kotlin/androidx/compose/material3/carousel/CarouselItemScope.kt",
+    "CarouselState.kt": "src/commonMain/kotlin/androidx/compose/material3/carousel/CarouselState.kt",
+    "KeylineList.kt": "src/commonMain/kotlin/androidx/compose/material3/carousel/KeylineList.kt",
+    "KeylineSnapPosition.kt": "src/commonMain/kotlin/androidx/compose/material3/carousel/KeylineSnapPosition.kt",
+    "Keylines.kt": "src/commonMain/kotlin/androidx/compose/material3/carousel/Keylines.kt",
+    "Strategy.kt": "src/commonMain/kotlin/androidx/compose/material3/carousel/Strategy.kt"
+  }
+}
