@@ -12,10 +12,33 @@
  *     </span>
  *   </a>
  *
+ * With a badge (badge.css; Compose BadgedBox in the item's icon slot), the label comes first and
+ * the icon follows in a badged box, so the badge's hidden text is read after the label ("Inbox
+ * 8"; owner decision M9 #7). Without a label the item's aria-label carries both and the badge has
+ * no hidden label:
+ *
+ *       <span class="m3e-navigation-item__label">Inbox</span>
+ *       <span class="m3e-badged-box">
+ *         <span class="m3e-icon m3e-navigation-item__icon" aria-hidden="true">inbox</span>
+ *         <span class="m3e-badge m3e-badge--large">
+ *           <span class="m3e-badge__text" aria-hidden="true">8</span>
+ *           <span class="m3e-badge__label">8</span>
+ *         </span>
+ *       </span>
+ *
  * Selected: aria-current (any value but "false") or data-selected. Disabled: aria-disabled="true".
  * Layout: icon above the label; icon before the label inside a horizontal short navigation bar
  * (Compose NavigationItemIconPosition.Start). The wide navigation rail lays its items out itself
- * (wide-navigation-rail.css: one formula of the animated icon position).
+ * (wide-navigation-rail.css: one formula of the animated icon position). The badged box takes the
+ * icon's place in every layout. Badges are drawn as Compose places them: over the label in the
+ * horizontal bar (placeLabelAndStartIcon places the icon last), under it in the wide rail
+ * (placeAnimatedLabelAndIcon places the label last).
+ *
+ * Badge bounds (Compose Modifier.badgeBounds() on NavigationItemLayout and
+ * AnimatedNavigationItemLayout, NavigationItem.kt L571 / L624; legacy NavigationBar.kt L536,
+ * NavigationRail.kt L542): the layout fills the item, so a badge never leaves the item. Each
+ * container sets --_m3e-badged-box-bounds-end / -top (badge.css) to the icon's distances from the
+ * item's end and top edges.
  *
  * Sources (compose/material3 @ 19991f2c):
  * - NavigationItem.kt (ShortNavigationBarItem, WideNavigationRailItem): the whole item is the
@@ -31,6 +54,7 @@
  * - Icon and label colors: NavigationItemColors (selected / unselected / disabled = unselected at
  *   DisabledAlpha). Selected icons switch to FILL 1 (COMPONENT_SPEC §0, §13).
  */
+@import './badge.css';
 
 /* Registered so the indicator's spring can drive its width and alpha (linear() may overshoot 1). */
 @property --_m3e-nav-indicator-progress {
@@ -117,6 +141,11 @@
       var(--m3e-sys-motion-spring-default-effects-easing);
   }
 
+  /* A badged icon takes the icon's place (the label comes before it in the DOM). */
+  .m3e-navigation-item__content > .m3e-badged-box {
+    grid-area: pill;
+  }
+
   .m3e-navigation-item__label {
     grid-area: label;
     font-family: var(--_m3e-nav-label-font);
@@ -175,11 +204,14 @@
 
   :where(.m3e-short-navigation-bar--horizontal)
     > .m3e-navigation-item:has(.m3e-navigation-item__label)
-    .m3e-navigation-item__icon {
+    :is(.m3e-navigation-item__icon, .m3e-badged-box) {
     grid-area: icon;
   }
 
-  /* Positioned so they paint above the absolutely positioned indicator and overlay. */
+  /*
+   * Positioned so they paint above the absolutely positioned indicator and overlay (a badged box
+   * is positioned already, and after the label, so its badge paints over the label).
+   */
   :where(.m3e-short-navigation-bar--horizontal)
     > .m3e-navigation-item:has(.m3e-navigation-item__label)
     :is(.m3e-navigation-item__icon, .m3e-navigation-item__label) {

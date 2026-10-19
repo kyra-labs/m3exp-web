@@ -1,4 +1,5 @@
 import { M3eElement } from '../base/M3eElement.js';
+import { badgeContent, nameWithBadge, renderBadgedBox } from '../base/badge.js';
 import { attachRipple } from '../base/ripple.js';
 import { TabsLayout } from '../tabs-layout/tabs-layout.js';
 
@@ -29,7 +30,10 @@ const requestParentUpdate = (el: Element) => {
  * `<m3e-tab value="photos" icon="photo">Photos</m3e-tab>` — data for one tab of a `<m3e-tabs>`
  * (it renders nothing itself; the row renders the `.m3e-tab` contract): `value` (default: the
  * label), `icon` (Material Symbols, filled while selected), `disabled`, `label-hidden` (icon only;
- * the label becomes the accessible name). The label is the text content.
+ * the label becomes the accessible name), `badge` (a Compose Badge on the label, or on the icon
+ * when the label is hidden: `""` the dot, digits a count — `999+` above 999 — other text as is)
+ * and `badge-label` (its visually hidden text, read after the label: default "New notification"
+ * for the dot, the shown text otherwise; `""` leaves it out). The label is the text content.
  */
 export class M3eTab extends M3eElement {
   static override properties = {
@@ -38,12 +42,16 @@ export class M3eTab extends M3eElement {
     icon: {},
     disabled: { type: Boolean },
     labelHidden: { type: Boolean },
+    badge: {},
+    badgeLabel: {},
   };
 
   declare value: string | null | undefined;
   declare icon: string | null | undefined;
   declare disabled: boolean | undefined;
   declare labelHidden: boolean | undefined;
+  declare badge: string | null | undefined;
+  declare badgeLabel: string | null | undefined;
 
   /** The tab's key: `value`, else its label. */
   get key(): string {
@@ -247,28 +255,36 @@ export class M3eTabs extends M3eElement {
     setAttr(el, 'aria-selected', String(selected));
     setAttr(el, 'aria-controls', controls);
     setAttr(el, 'aria-disabled', tab.disabled ? 'true' : null);
-    setAttr(el, 'aria-label', tab.labelHidden ? label : null);
     const content = el.firstElementChild as HTMLElement;
-    let icon = content.querySelector(`:scope > .${TAB}__icon`);
+    let icon: Element | null = null;
     if (tab.icon) {
+      icon = content.querySelector(`.${TAB}__icon`);
       if (!icon) {
         icon = span(doc, `m3e-icon ${TAB}__icon`);
         icon.setAttribute('aria-hidden', 'true');
-        content.prepend(icon);
       }
       if (icon.textContent !== tab.icon) icon.textContent = tab.icon;
-    } else {
-      icon?.remove();
     }
-    let text = content.querySelector(`:scope > .${TAB}__label`);
-    if (tab.labelHidden) {
-      text?.remove();
-    } else {
-      if (!text) {
-        text = span(doc, `${TAB}__label`);
-        content.append(text);
-      }
+    let text: Element | null = null;
+    if (!tab.labelHidden) {
+      text = content.querySelector(`.${TAB}__label`) ?? span(doc, `${TAB}__label`);
       if (text.textContent !== label) text.textContent = label;
+    }
+    // The badge sits on the label (on the icon when the label is hidden): read after the label.
+    const anchor = tab.labelHidden ? icon : text;
+    const badge = anchor ? badgeContent(tab.badge, tab.badgeLabel) : null;
+    setAttr(el, 'aria-label', tab.labelHidden ? nameWithBadge(label, badge) : null);
+    const parts: Element[] = [];
+    if (anchor && badge) {
+      const box = content.querySelector(':scope > .m3e-badged-box');
+      if (icon && !tab.labelHidden) parts.push(icon);
+      parts.push(renderBadgedBox(doc, box, anchor, badge, !tab.labelHidden));
+    } else {
+      parts.push(...[icon, text].filter((p): p is Element => p !== null));
+    }
+    const current = [...content.children];
+    if (current.length !== parts.length || parts.some((p, i) => current[i] !== p)) {
+      content.replaceChildren(...parts);
     }
   }
 

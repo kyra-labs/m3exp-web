@@ -15,6 +15,13 @@ const withDisabled: Item[] = [
   { icon: 'star', label: 'Starred', disabled: true },
 ];
 const iconOnly: Item[] = items.map((item) => ({ ...item, iconOnly: true }));
+// Badges (badge.css on the icon): none, a count, the dot, 999+.
+const badged: Item[] = [
+  { icon: 'home', label: 'Home', selected: true },
+  { icon: 'inbox', label: 'Inbox', badge: '8' },
+  { icon: 'chat', label: 'Chat', badge: '' },
+  { icon: 'mail', label: 'Mail', badge: '999+', badgeLabel: '1200 unread' },
+];
 ---
 
 <Base title="Navigation bar">
@@ -86,6 +93,34 @@ const iconOnly: Item[] = items.map((item) => ({ ...item, iconOnly: true }));
     <NavigationPlayground client:only="react" kind="bar" />
   </section>
 
+  <section aria-labelledby="badges-heading">
+    <h2 id="badges-heading">Badges</h2>
+    <p>A badge on the destination's icon (Compose puts a <code>BadgedBox</code> in the item's icon; <code>NavigationSuiteScaffold</code> builds it in). Set <code>badge</code> on <code>&lt;m3e-navigation-item&gt;</code> or on the React destination: empty (or <code>true</code>) for the dot, a number for a count (<code>999+</code> above 999), other short text as is. The badge's hidden text is read after the label ("Inbox 8", "Chat New notification"); <code>badge-label</code> / <code>badgeLabel</code> replaces it. m3.material.io hides a badge once its destination is selected; Compose leaves that to the app, so remove the badge yourself.</p>
+    <div class="docs-nav-frame">
+      <nav class="m3e-short-navigation-bar" aria-label="Badges example" data-testid="short-badges">
+        <NavItems items={badged} prefix="b" />
+      </nav>
+    </div>
+    <div class="docs-nav-frame docs-nav-frame--wide">
+      <nav
+        class="m3e-short-navigation-bar m3e-short-navigation-bar--horizontal"
+        aria-label="Horizontal badges example"
+        data-testid="short-badges-horizontal"
+      >
+        <NavItems items={badged} prefix="bh" />
+      </nav>
+    </div>
+    <div class="docs-nav-frame">
+      <m3e-short-navigation-bar label="Element badges example" selected="home" data-testid="element-badges">
+        <m3e-navigation-item value="home" icon="home">Home</m3e-navigation-item>
+        <m3e-navigation-item value="inbox" icon="inbox" badge="8">Inbox</m3e-navigation-item>
+        <m3e-navigation-item value="chat" icon="chat" badge="">Chat</m3e-navigation-item>
+        <m3e-navigation-item value="mail" icon="mail" badge="1200" badge-label="1200 unread">Mail</m3e-navigation-item>
+      </m3e-short-navigation-bar>
+    </div>
+    <NavigationPlayground client:only="react" kind="bar-badges" />
+  </section>
+
   <section aria-labelledby="legacy-heading" data-deprecated>
     <h2 id="legacy-heading">Navigation bar (deprecated)</h2>
     <p class="docs-deprecated" role="note">
@@ -95,6 +130,12 @@ const iconOnly: Item[] = items.map((item) => ({ ...item, iconOnly: true }));
     <div class="docs-nav-frame">
       <nav class="m3e-navigation-bar" aria-label="Legacy example" data-testid="legacy-bar">
         <NavItems items={items} prefix="l" />
+      </nav>
+    </div>
+    <p>Compose's <code>NavigationBarItem</code> takes the same badge in its icon (<code>BadgeSamples.kt</code>), so the legacy bar shows it too:</p>
+    <div class="docs-nav-frame">
+      <nav class="m3e-navigation-bar" aria-label="Legacy badges example" data-testid="legacy-badges">
+        <NavItems items={badged} prefix="lb" />
       </nav>
     </div>
   </section>

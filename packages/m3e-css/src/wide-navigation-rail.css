@@ -257,6 +257,14 @@
         var(--_f)
     );
 
+    /*
+     * Badge bounds (navigation-item.css): the icon's distance from the item's end — exact while
+     * collapsed (the item is the rail's width, the icon centered); expanded the label lies
+     * between, farther than a four-character badge reaches — and from its top (--_icon-y).
+     */
+    --_m3e-badged-box-bounds-end: calc(var(--_m3e-wnr-pad) + var(--_pad-x));
+    --_m3e-badged-box-bounds-top: var(--_icon-y);
+
     display: flex;
     flex-direction: column;
     align-items: flex-start;
@@ -319,7 +327,7 @@
   .m3e-wide-navigation-rail
     > .m3e-navigation-item
     > .m3e-navigation-item__content
-    > :is(.m3e-navigation-item__icon, .m3e-navigation-item__label) {
+    > :is(.m3e-navigation-item__icon, .m3e-navigation-item__label, .m3e-badged-box) {
     position: relative;
     flex: none;
   }
@@ -327,9 +335,21 @@
   .m3e-wide-navigation-rail
     > .m3e-navigation-item
     > .m3e-navigation-item__content
-    > .m3e-navigation-item__icon {
+    > :is(.m3e-navigation-item__icon, .m3e-badged-box) {
     translate: calc((var(--_pad-x) - var(--_m3e-wnr-expanded-pad-x)) * var(--_m3e-wnr-dir))
       var(--_icon-y);
+  }
+
+  /*
+   * A badged icon follows the label in the DOM (read after it): order puts it back before the
+   * label in the flow, and the label paints over its badge (placeAnimatedLabelAndIcon places the
+   * label last).
+   */
+  .m3e-wide-navigation-rail
+    > .m3e-navigation-item
+    > .m3e-navigation-item__content
+    > .m3e-badged-box {
+    order: -1;
   }
 
   /*
@@ -393,6 +413,8 @@
   /* --- Icon only: a centered circle (TopIconOrIconOnlyMeasurePolicy, no icon animation) ---- */
   .m3e-wide-navigation-rail > .m3e-navigation-item:not(:has(.m3e-navigation-item__label)) {
     --_pill-w: 100%;
+    --_m3e-badged-box-bounds-end: calc(var(--_m3e-wnr-pad) + var(--_m3e-wnr-collapsed-pad-x));
+    --_m3e-badged-box-bounds-top: var(--_m3e-wnr-collapsed-pad-x);
 
     justify-content: center;
     block-size: max(
@@ -421,7 +443,7 @@
   .m3e-wide-navigation-rail
     > .m3e-navigation-item:not(:has(.m3e-navigation-item__label))
     > .m3e-navigation-item__content
-    > .m3e-navigation-item__icon {
+    > :is(.m3e-navigation-item__icon, .m3e-badged-box) {
     translate: none;
   }
 

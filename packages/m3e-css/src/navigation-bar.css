@@ -58,8 +58,26 @@
     color: var(--m3e-sys-color-on-surface);
   }
 
+  /*
+   * Badge bounds (NavigationBarItemLayout's badgeBounds(), L536; the badge itself is Compose's own
+   * BadgedBox-in-the-icon use, BadgeSamples.kt): weight(1) items, the icon centered, so the end
+   * ruler lies half the item less half the icon past the icon (inline-size container for cqi);
+   * the top ruler at least the pill's padding above it.
+   */
   .m3e-navigation-bar > .m3e-navigation-item {
+    --_m3e-badged-box-bounds-end: calc(
+      (100cqi - var(--m3e-comp-navigation-bar-vertical-item-icon-size)) / 2
+    );
+    --_m3e-badged-box-bounds-top: calc(
+      (
+          var(--m3e-comp-navigation-bar-vertical-item-active-indicator-height) -
+            var(--m3e-comp-navigation-bar-vertical-item-icon-size)
+        ) /
+        2
+    );
+
     flex: 1 1 0;
+    container-type: inline-size;
   }
 
   .m3e-navigation-bar > .m3e-navigation-item:has(.m3e-navigation-item__label) {

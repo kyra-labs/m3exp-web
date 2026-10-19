@@ -287,3 +287,76 @@ describe('<m3e-tabs>', () => {
     expect(frames).toHaveLength(0);
   });
 });
+
+describe('badges', () => {
+  const BADGED = [
+    '<m3e-tab value="inbox" icon="inbox" badge="1200">Inbox</m3e-tab>',
+    '<m3e-tab value="chat" badge>Chat</m3e-tab>',
+    '<m3e-tab value="fav" icon="favorite" label-hidden badge="3">Favorites</m3e-tab>',
+  ].join('');
+  /** Tabs 100px wide from x = 100 × index, a badged box 40px wide at 30px, 14px down. */
+  const layout = () =>
+    vi.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockImplementation(function (
+      this: HTMLElement,
+    ) {
+      const tab = this.closest('.m3e-tab');
+      const index = tab ? [...tab.parentElement!.children].indexOf(tab) : 0;
+      const x = index * 100 + (this.classList.contains('m3e-badged-box') ? 30 : 0);
+      const w = this.classList.contains('m3e-badged-box') ? 40 : 100;
+      const y = this.classList.contains('m3e-badged-box') ? 14 : 0;
+      return new DOMRect(x, y, w, this.classList.contains('m3e-badged-box') ? 20 : 48);
+    });
+  const bounds = (box: Element) => [
+    (box as HTMLElement).style.getPropertyValue('--_m3e-badged-box-bounds-end'),
+    (box as HTMLElement).style.getPropertyValue('--_m3e-badged-box-bounds-top'),
+  ];
+
+  it('wraps the label (the icon when the label is hidden) and renders the badge contract', async () => {
+    const host = await mount(`<m3e-tabs>${BADGED}</m3e-tabs>`);
+    const [inbox, chat, fav] = tabsOf(host);
+    // (happy-dom lays nothing out: TabsLayout's bounds are 0px; tested below.)
+    for (const box of host.rootElement!.querySelectorAll('.m3e-badged-box')) {
+      box.removeAttribute('style');
+    }
+    expect(inbox!.querySelector('.m3e-tab__content')!.innerHTML).toBe(
+      '<span class="m3e-icon m3e-tab__icon" aria-hidden="true">inbox</span>' +
+        '<span class="m3e-badged-box"><span class="m3e-tab__label">Inbox</span>' +
+        '<span class="m3e-badge m3e-badge--large">' +
+        '<span class="m3e-badge__text" aria-hidden="true">999+</span>' +
+        '<span class="m3e-badge__label">999+</span></span></span>',
+    );
+    expect(chat!.querySelector('.m3e-badge')!.innerHTML).toBe(
+      '<span class="m3e-badge__label">New notification</span>',
+    );
+    expect(fav!.getAttribute('aria-label')).toBe('Favorites 3');
+    expect(fav!.querySelector('.m3e-badged-box > .m3e-tab__icon')).not.toBeNull();
+    // Removing the badge restores the plain contract.
+    host.querySelector('m3e-tab')!.removeAttribute('badge');
+    await flush();
+    expect(inbox!.querySelector('.m3e-tab__content')!.innerHTML).toBe(
+      '<span class="m3e-icon m3e-tab__icon" aria-hidden="true">inbox</span>' +
+        '<span class="m3e-tab__label">Inbox</span>',
+    );
+  });
+
+  it('TabsLayout keeps badges inside their tab (Tab.badgeBounds), LTR and RTL', async () => {
+    layout();
+    const host = await mount(`<m3e-tabs>${BADGED}</m3e-tabs>`);
+    for (const box of host.rootElement!.querySelectorAll('.m3e-badged-box')) {
+      expect(bounds(box)).toEqual(['30px', '14px']);
+    }
+    const rtl = await mount(`<m3e-tabs dir="rtl">${BADGED}</m3e-tabs>`, 'direction: rtl;');
+    const box = rtl.rootElement!.querySelector('.m3e-badged-box')!;
+    expect(bounds(box)).toEqual(['30px', '14px']);
+  });
+
+  it('a leading-icon tab with an icon and a label has no bounds (LeadingIconTab)', async () => {
+    layout();
+    const host = await mount(`<m3e-tabs icon-position="leading">${BADGED}</m3e-tabs>`);
+    const [inbox, chat, fav] = tabsOf(host).map((t) => t.querySelector('.m3e-badged-box')!);
+    expect(bounds(inbox!)).toEqual(['', '']);
+    expect(inbox!.hasAttribute('style')).toBe(false);
+    expect(bounds(chat!)).toEqual(['30px', '14px']);
+    expect(bounds(fav!)).toEqual(['30px', '14px']);
+  });
+});

@@ -1,6 +1,7 @@
 import AxeBuilder from '@axe-core/playwright';
 import { springValue, springVelocity } from '@kyralabs/m3e-motion';
 import { type Locator, type Page, expect, test } from '@playwright/test';
+import { expectComposePlacement, placement } from './badge-placement.js';
 
 // Tabs (COMPONENT_SPEC §17): static primary / secondary rows (fixed, scrollable; text, icon,
 // icon + text, leading icon), the element rows with panels and React. Acceptance + light/dark ×
@@ -592,5 +593,82 @@ test.describe('springs (frames driven by the Playwright clock)', () => {
     expect(shift).toBeLessThan(0);
     expect(shift).toBeGreaterThan(-clip.width);
     await expect(page).toHaveScreenshot('tabs-mid-animation.png', { clip });
+  });
+});
+
+// Badges (M9 B2): on the label (TabSamples.kt LeadingIconTabs), on the icon when the label is
+// hidden; Tab keeps its badge inside itself (badgeBounds), LeadingIconTab does not.
+test.describe('badges', () => {
+  const badges = (page: Page, id: string) =>
+    page.getByTestId(id).locator('.m3e-tab .m3e-badged-box > .m3e-badge');
+
+  test('the badge sits on the label (the icon when hidden) and is read after it', async ({
+    page,
+  }) => {
+    const primary = tabs(page, 'element-badges-primary');
+    await expect(primary.nth(1)).toHaveAccessibleName('Photos 8');
+    await expect(primary.nth(2)).toHaveAccessibleName('Audio New notification');
+    await expect(primary.nth(3)).toHaveAccessibleName('Starred 1200 new');
+    await expect(primary.nth(3).locator('.m3e-badge__text')).toHaveText('999+');
+    const icons = tabs(page, 'element-badges-icons');
+    await expect(icons.nth(1)).toHaveAccessibleName('Starred 3');
+    await expect(icons.nth(2)).toHaveAccessibleName('Settings New notification');
+    await expect(icons.locator('.m3e-badged-box > .m3e-tab__icon')).toHaveCount(2);
+    const react = tabs(page, 'react-badges-frame');
+    await expect(react.nth(0)).toHaveAccessibleName('Inbox 1200 unread');
+    await expect(react.nth(3)).toHaveAccessibleName('Starred 3');
+    for (const id of ['element-badges-primary', 'element-badges-icons', 'react-badges-frame']) {
+      // A Tab clamps a badge that would cross its end (Starred's 999+, by font metrics).
+      for (const badge of await badges(page, id).all()) {
+        await expectComposePlacement(badge, '.m3e-tab', { rulers: true });
+      }
+    }
+    // Stacked tabs keep their 72dp height and the label baseline (the box wraps the label).
+    for (const tab of await primary.all()) expect((await box(tab)).height).toBeCloseTo(72, 0);
+    const plain = await box(primary.nth(0).locator('.m3e-tab__label'));
+    expect((await box(primary.nth(1).locator('.m3e-tab__label'))).y).toBeCloseTo(plain.y, 1);
+  });
+
+  test('badgeBounds(): TabsLayout keeps a Tab’s badge inside it; LeadingIconTab overflows', async ({
+    page,
+  }) => {
+    const scrollable = badges(page, 'element-badges-scrollable');
+    await expect(scrollable).toHaveCount(3);
+    // Promotions: a 999+ badge would end 8.6dp past the tab; the ruler moves it back inside.
+    const promotions = scrollable.nth(1);
+    await expect
+      .poll(async () => (await placement(promotions, '.m3e-tab')).overflow)
+      .toBeCloseTo(0, 0);
+    const p = await placement(promotions, '.m3e-tab');
+    expect(p.end).toBeLessThan(p.width - 12 - 4);
+    expect(p.top).toBeCloseTo(-2, 1);
+    for (const badge of [scrollable.nth(0), scrollable.nth(2)]) {
+      await expectComposePlacement(badge, '.m3e-tab', { rulers: true });
+    }
+    // The Compose sample: 999+ at the end of each LeadingIconTab's text, never clamped.
+    const leading = badges(page, 'element-badges-leading');
+    for (const badge of await leading.all()) await expectComposePlacement(badge, '.m3e-tab');
+    expect((await placement(leading.nth(2), '.m3e-tab')).overflow).toBeGreaterThan(0);
+    // Leading-icon labels still ellipsize inside their badged box.
+    const label = tabs(page, 'element-badges-leading').nth(2).locator('.m3e-tab__label');
+    expect(await label.evaluate((el) => el.scrollWidth > el.clientWidth)).toBe(true);
+  });
+
+  test('visual baselines', async ({ page }) => {
+    await page.mouse.move(0, 0);
+    await page.locator('#badges-heading').evaluate((el) => {
+      el.scrollIntoView({ block: 'start' });
+    });
+    const section = page.locator('section[aria-labelledby="badges-heading"]');
+    const frames = await box(section.locator('.docs-tabs-frames'));
+    const react = await box(page.getByTestId('react-badges-frame'));
+    await expect(page).toHaveScreenshot('tabs-badges.png', {
+      clip: {
+        x: frames.x - 8,
+        y: frames.y - 8,
+        width: frames.width + 16,
+        height: react.y + react.height - frames.y + 16,
+      },
+    });
   });
 });

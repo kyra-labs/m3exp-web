@@ -29,11 +29,65 @@ function MenuButton({ expanded, onPress }: { expanded: boolean; onPress: () => v
   );
 }
 
+/** Badges (Compose BadgedBox in the item icon): none, a count, the dot, 999+. */
+const BADGE_ITEMS: NavigationDestination[] = [
+  { key: 'home', icon: 'home', label: 'Home' },
+  { key: 'inbox', icon: 'inbox', label: 'Inbox', badge: 8 },
+  { key: 'chat', icon: 'chat', label: 'Chat', badge: true },
+  { key: 'mail', icon: 'mail', label: 'Mail', badge: 1200, badgeLabel: '1200 unread' },
+];
+
+/** React navigation bar / rails with badges; the rail's menu button toggles isExpanded. */
+function BadgesPlayground({ kind }: { kind: 'bar' | 'rail' }) {
+  const [selected, setSelected] = useState('home');
+  const [expanded, setExpanded] = useState(false);
+  if (kind === 'bar') {
+    return (
+      <div className="docs-nav-frame">
+        <ShortNavigationBar
+          aria-label="React badges example"
+          data-testid="react-badges-bar"
+          items={BADGE_ITEMS}
+          selectedKey={selected}
+          onSelectionChange={setSelected}
+        />
+      </div>
+    );
+  }
+  return (
+    <div className="docs-rail-frames">
+      <WideNavigationRail
+        aria-label="React badges example"
+        data-testid="react-badges-rail"
+        items={BADGE_ITEMS}
+        selectedKey={selected}
+        onSelectionChange={setSelected}
+        isExpanded={expanded}
+        header={
+          <MenuButton
+            expanded={expanded}
+            onPress={() => {
+              setExpanded((value) => !value);
+            }}
+          />
+        }
+      />
+    </div>
+  );
+}
+
 /** React navigation bar / rails with live selection (React Aria; the shared rail layout). */
-export default function NavigationPlayground({ kind }: { kind: 'bar' | 'rail' }) {
+export default function NavigationPlayground({
+  kind,
+}: {
+  kind: 'bar' | 'rail' | 'bar-badges' | 'rail-badges';
+}) {
   const [selected, setSelected] = useState('home');
   const [expanded, setExpanded] = useState(false);
   const [modalExpanded, setModalExpanded] = useState(false);
+  if (kind === 'bar-badges' || kind === 'rail-badges') {
+    return <BadgesPlayground kind={kind === 'bar-badges' ? 'bar' : 'rail'} />;
+  }
   if (kind === 'bar') {
     return (
       <div className="docs-nav-frame">

@@ -8,10 +8,39 @@ const ITEMS: TabItem[] = [
   { key: 'starred', label: 'Starred', icon: 'star' },
 ];
 
+/** Badges on the labels (the dot, a count, 999+) and on an icon-only tab. */
+const BADGED: TabItem[] = [
+  { key: 'inbox', label: 'Inbox', badge: 1200, badgeLabel: '1200 unread' },
+  { key: 'chat', label: 'Chat', badge: true },
+  { key: 'mail', label: 'Mail', badge: 8 },
+  { key: 'starred', label: 'Starred', icon: 'star', isLabelHidden: true, badge: 3 },
+];
+
 type Variant = 'primary' | 'secondary';
 
+/** React tabs with badges (`badge`, `badgeLabel` on the items). */
+function BadgedTabs() {
+  const [selected, setSelected] = useState('inbox');
+  return (
+    <div className="docs-tabs-frame" data-testid="react-badges-frame">
+      <Tabs
+        aria-label="React badges example"
+        data-testid="react-badges-tabs"
+        items={BADGED}
+        selectedKey={selected}
+        onSelectionChange={setSelected}
+      />
+    </div>
+  );
+}
+
 /** React tabs: switch the variant, scrolling and icon position; panels follow the selection. */
-export default function TabsPlayground() {
+export default function TabsPlayground({ badges = false }: { badges?: boolean }) {
+  if (badges) return <BadgedTabs />;
+  return <TabsControls />;
+}
+
+function TabsControls() {
   const [variant, setVariant] = useState<Variant>('primary');
   const [scrollable, setScrollable] = useState(false);
   const [leading, setLeading] = useState(false);

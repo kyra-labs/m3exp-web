@@ -1,7 +1,4 @@
 import { M3eElement } from '../base/M3eElement.js';
-import { attachRipple } from '../base/ripple.js';
-
-const ITEM = 'm3e-navigation-item';
 
 /**
  * `<m3e-navigation-item value="home" icon="home" href="/">Home</m3e-navigation-item>` — data for
@@ -9,9 +6,13 @@ const ITEM = 'm3e-navigation-item';
  * `<m3e-modal-wide-navigation-rail>` (it renders nothing itself; the container renders the
  * `.m3e-navigation-item` contract): `value` (default: the label), `icon` (Material Symbols,
  * filled while selected), `href` (renders a link; otherwise a button that only selects),
- * `disabled`, `label-hidden` (icon only; the label becomes the accessible name). The label is the
- * text content. In a `<m3e-navigation-drawer>` (Compose NavigationDrawerItem) the icon is
- * optional and `badge` adds the trailing badge text.
+ * `disabled`, `label-hidden` (icon only; the label becomes the accessible name), `badge` (a
+ * Compose Badge on the icon, as NavigationSuiteScaffold's NavigationItemIcon builds it: `""` the
+ * dot, digits a count — `999+` above 999 — other text as is) and `badge-label` (the badge's
+ * visually hidden text, read after the label: default "New notification" for the dot, the shown
+ * text otherwise; `""` leaves it out). The label is the text content. In a
+ * `<m3e-navigation-drawer>` (Compose NavigationDrawerItem) the icon is optional and `badge` is the
+ * trailing badge text instead (`badge-label` unused).
  */
 export class M3eNavigationItem extends M3eElement {
   static override properties = {
@@ -22,6 +23,7 @@ export class M3eNavigationItem extends M3eElement {
     disabled: { type: Boolean },
     labelHidden: { type: Boolean },
     badge: {},
+    badgeLabel: {},
   };
 
   declare value: string | null | undefined;
@@ -30,6 +32,7 @@ export class M3eNavigationItem extends M3eElement {
   declare disabled: boolean | undefined;
   declare labelHidden: boolean | undefined;
   declare badge: string | null | undefined;
+  declare badgeLabel: string | null | undefined;
 
   /** The destination's key: `value`, else its label. */
   get key(): string {
@@ -86,9 +89,10 @@ export function setItemAttributes(
 }
 
 /**
- * Base of the navigation bar / rail elements: renders their `<m3e-navigation-item>` children as
- * the m3e-css `.m3e-navigation-item` contract, exactly as m3e-react's NavigationItem does (React
- * Aria's link / button attributes included), and tracks the selection.
+ * Base of the navigation bar / rail / drawer / suite elements: renders their
+ * `<m3e-navigation-item>` children as items — the m3e-css `.m3e-navigation-item` contract
+ * (item-element.js), exactly as m3e-react's NavigationItem does (React Aria's link / button
+ * attributes included), or the drawer item (drawer-item.js) — and tracks the selection.
  *
  * - Attributes: `label` (the `<nav>`'s accessible name), `selected` (the selected item's value,
  *   reflected; exactly one item gets `aria-current="page"`).
@@ -195,45 +199,19 @@ export abstract class M3eNavigationContainer extends M3eElement {
     });
   }
 
-  /** Builds a new item's fixed DOM inside `el` (`<a>` or `<button>`) and its ripple. */
-  protected createItemElement(doc: Document, el: HTMLElement, signal: AbortSignal): void {
-    el.className = ITEM;
-    const content = span(doc, `${ITEM}__content`, undefined, false);
-    const state = span(doc, `${ITEM}__state`);
-    content.append(span(doc, `${ITEM}__indicator`), state);
-    el.append(content);
-    attachRipple(state, signal, el);
-  }
+  /**
+   * Builds a new item's fixed DOM inside `el` (`<a>` or `<button>`) and its ripple: the bar /
+   * rail item (`item-element.js`) or the drawer item (`drawer-item.js`).
+   */
+  protected abstract createItemElement(doc: Document, el: HTMLElement, signal: AbortSignal): void;
 
   /** Writes an item's attributes (React Aria's link / button attributes) and content. */
-  protected fillItemElement(
+  protected abstract fillItemElement(
     doc: Document,
     item: M3eNavigationItem,
     el: HTMLElement,
     selected: boolean,
-  ): void {
-    const label = item.textContent.trim();
-    setItemAttributes(el, item, selected);
-    setAttr(el, 'aria-label', item.labelHidden ? label : null);
-    const content = el.firstElementChild;
-    if (!content) return;
-    let icon = content.querySelector(`:scope > .${ITEM}__icon`);
-    if (!icon) {
-      icon = span(doc, `m3e-icon ${ITEM}__icon`);
-      content.append(icon);
-    }
-    if (icon.textContent !== (item.icon ?? '')) icon.textContent = item.icon ?? '';
-    let text = content.querySelector(`:scope > .${ITEM}__label`);
-    if (item.labelHidden) {
-      text?.remove();
-    } else {
-      if (!text) {
-        text = span(doc, `${ITEM}__label`, undefined, false);
-        content.append(text);
-      }
-      if (text.textContent !== label) text.textContent = label;
-    }
-  }
+  ): void;
 
   #onClick = (e: MouseEvent): void => {
     const el = e.currentTarget as HTMLElement;

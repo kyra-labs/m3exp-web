@@ -1,4 +1,8 @@
-import { M3eNavigationContainer } from '../navigation-item/navigation-item.js';
+import { createItemElement, fillItemElement } from '../navigation-item/item-element.js';
+import {
+  M3eNavigationContainer,
+  type M3eNavigationItem,
+} from '../navigation-item/navigation-item.js';
 
 const BLOCK = 'm3e-short-navigation-bar';
 
@@ -33,5 +37,18 @@ export class M3eShortNavigationBar extends M3eNavigationContainer {
     if (this.label) nav.setAttribute('aria-label', this.label);
     else nav.removeAttribute('aria-label');
     this.renderItems(nav, null);
+  }
+
+  protected override createItemElement(doc: Document, el: HTMLElement, signal: AbortSignal): void {
+    createItemElement(doc, el, signal);
+  }
+
+  protected override fillItemElement(
+    doc: Document,
+    item: M3eNavigationItem,
+    el: HTMLElement,
+    selected: boolean,
+  ): void {
+    fillItemElement(doc, item, el, selected);
   }
 }

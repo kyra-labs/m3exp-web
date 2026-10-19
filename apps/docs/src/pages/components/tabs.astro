@@ -206,6 +206,44 @@ const rowClass = (row: StaticRow) =>
     </p>
     <TabsPlayground client:only="react" />
   </section>
+
+  <section aria-labelledby="badges-heading">
+    <h2 id="badges-heading">Badges</h2>
+    <p><code>badge</code> on <code>&lt;m3e-tab&gt;</code> or on the React tab puts a badge at the end of the label, as Compose's <code>LeadingIconTabs</code> sample wraps the tab's text in a <code>BadgedBox</code> and m3.material.io places a large badge at the trailing edge (on the icon when the label is hidden): empty (or <code>true</code>) for the dot, a number for a count (<code>999+</code> above 999), other short text as is. The hidden text is read after the label; <code>badge-label</code> / <code>badgeLabel</code> replaces it. A <code>Tab</code> keeps its badge inside itself (Compose <code>badgeBounds()</code>, measured by the tab row's layout script); a <code>LeadingIconTab</code> does not.</p>
+    <div class="docs-tabs-frames">
+      <div class="docs-tabs-frame">
+        <m3e-tabs label="Badged media" selected="videos" data-testid="element-badges-primary">
+          <m3e-tab value="videos" icon="videocam">Videos</m3e-tab>
+          <m3e-tab value="photos" icon="photo" badge="8">Photos</m3e-tab>
+          <m3e-tab value="audio" icon="music_note" badge="">Audio</m3e-tab>
+          <m3e-tab value="starred" icon="star" badge="1200" badge-label="1200 new">Starred</m3e-tab>
+        </m3e-tabs>
+      </div>
+      <div class="docs-tabs-frame">
+        <m3e-tabs icon-position="leading" label="Badged leading icon tabs" selected="t1" data-testid="element-badges-leading">
+          <m3e-tab value="t1" icon="favorite" badge="999+">Tab</m3e-tab>
+          <m3e-tab value="t2" icon="favorite" badge="999+">Tab &amp; icon</m3e-tab>
+          <m3e-tab value="t3" icon="favorite" badge="999+">Tab 3 with lots of text</m3e-tab>
+        </m3e-tabs>
+      </div>
+      <div class="docs-tabs-frame">
+        <m3e-tabs variant="secondary" scrollable label="Badged mailboxes" selected="inbox" data-testid="element-badges-scrollable">
+          <m3e-tab value="inbox" badge="12">Inbox</m3e-tab>
+          <m3e-tab value="promotions" badge="1200">Promotions</m3e-tab>
+          <m3e-tab value="updates" badge="">Updates</m3e-tab>
+          <m3e-tab value="forums">Forums</m3e-tab>
+        </m3e-tabs>
+      </div>
+      <div class="docs-tabs-frame">
+        <m3e-tabs label="Badged icon tabs" selected="favorites" data-testid="element-badges-icons">
+          <m3e-tab value="favorites" icon="favorite" label-hidden>Favorites</m3e-tab>
+          <m3e-tab value="starred" icon="star" label-hidden badge="3">Starred</m3e-tab>
+          <m3e-tab value="settings" icon="settings" label-hidden badge="">Settings</m3e-tab>
+        </m3e-tabs>
+      </div>
+    </div>
+    <TabsPlayground client:only="react" badges />
+  </section>
 </Base>
 
 <script>
