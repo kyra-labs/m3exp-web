@@ -1,0 +1,113 @@
+---
+import SnackbarPlayground from '../../islands/SnackbarPlayground.tsx';
+import Base from '../../layouts/Base.astro';
+
+const action = (label: string) =>
+  `<button type="button" class="m3e-button m3e-button--text m3e-snackbar__action">${label}</button>`;
+const dismiss =
+  '<button type="button" class="m3e-icon-button m3e-snackbar__dismiss" aria-label="Dismiss"><span class="m3e-icon" aria-hidden="true">close</span></button>';
+const long =
+  'Very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very long message';
+---
+
+<Base title="Snackbar">
+  <link rel="stylesheet" href="/icons/docs-icons.css" slot="head" />
+  <h1>Snackbar</h1>
+  <p>
+    Snackbars (COMPONENT_SPEC §32) show a brief message about an app process at the bottom of the window, with an optional action and an optional dismiss button. They are Compose's <code>Snackbar</code>: inverse surface, extra-small corners, a level 3 shadow, the text in body medium and the action in inverse primary; 48dp tall for one line of text and 68dp for two, at most 600dp wide. The layout is Compose's padding-based one (<code>isSnackbarStylingFixEnabled</code>), which gives the same sizes for the one or two lines m3.material.io allows.
+  </p>
+  <p>
+    A snackbar host (Compose's <code>SnackbarHost</code> and <code>SnackbarHostState</code>) shows one snackbar at a time from a first-in, first-out queue: the current one scales and fades in on the fast springs while the previous one fades out. Without an action a snackbar leaves after 4 seconds (<code>short</code>; <code>long</code> is 10 seconds); with an action it stays until it is addressed (<code>indefinite</code>), as m3.material.io asks. The timer pauses while the pointer is over the snackbar or focus is in it, and Escape in it dismisses it. The host is a polite live region (<code>role="status"</code>); focus never moves to a snackbar on its own, so give keyboard users a shortcut that calls <code>focus()</code>.
+  </p>
+
+  <section aria-labelledby="specimens-heading">
+    <h2 id="specimens-heading">Snackbars (CSS)</h2>
+    <p>
+      <code>.m3e-snackbar</code> with <code>__text</code> and <code>__actions</code> (a text button <code>__action</code> and an icon button <code>__dismiss</code>); <code>--action-on-new-line</code> puts the action under the text. The texts are the Compose samples'.
+    </p>
+    <div class="docs-snackbar-specimens" data-testid="specimens">
+      <div class="m3e-snackbar" data-testid="specimen-text">
+        <div class="m3e-snackbar__text">Snackbar # 1</div>
+      </div>
+      <div class="m3e-snackbar" data-testid="specimen-action">
+        <div class="m3e-snackbar__text">Snackbar # 1</div>
+        <div class="m3e-snackbar__actions"><Fragment set:html={action('Action on 1')} /></div>
+      </div>
+      <div class="m3e-snackbar" data-testid="specimen-dismiss">
+        <div class="m3e-snackbar__text">Snackbar # 1</div>
+        <div class="m3e-snackbar__actions"><Fragment set:html={action('Action') + dismiss} /></div>
+      </div>
+      <div class="m3e-snackbar" data-testid="specimen-two-lines">
+        <div class="m3e-snackbar__text"><span class="docs-snackbar-two-lines">{long}</span></div>
+      </div>
+      <div class="m3e-snackbar m3e-snackbar--action-on-new-line" data-testid="specimen-new-line">
+        <div class="m3e-snackbar__text">Photo uploaded to your shared album</div>
+        <div class="m3e-snackbar__actions"><Fragment set:html={action('Open the shared album') + dismiss} /></div>
+      </div>
+    </div>
+  </section>
+
+  <section aria-labelledby="host-heading">
+    <h2 id="host-heading">Snackbar host (element)</h2>
+    <p>
+      <code>&lt;m3e-snackbar-host&gt;</code>: <code>showSnackbar(message | &#123; message, actionLabel, withDismissAction, duration &#125;)</code> resolves with <code>'action-performed'</code> or <code>'dismissed'</code>. The dismiss button carries the plain tooltip Compose builds in. Raise the host above a FAB with <code>--m3e-comp-snackbar-host-bottom-offset</code> (the FAB height plus <code>--m3e-comp-snackbar-host-fab-spacing</code>, as Compose's <code>Scaffold</code> places it).
+    </p>
+    <div class="docs-button-row">
+      <button type="button" class="m3e-button m3e-button--filled" data-show="simple" data-testid="show-simple">Show snackbar</button>
+      <button type="button" class="m3e-button m3e-button--tonal" data-show="action" data-testid="show-action">With action</button>
+      <button type="button" class="m3e-button m3e-button--tonal" data-show="indefinite" data-testid="show-indefinite">Indefinite, with dismiss</button>
+      <button type="button" class="m3e-button m3e-button--outlined" data-testid="focus-snackbar">Move focus to the snackbar</button>
+    </div>
+    <p>
+      <label class="docs-snackbar-option"><input type="checkbox" data-testid="new-line-option" /> Action on a new line</label>
+    </p>
+    <p>
+      Last result: <output data-testid="last">none</output>
+    </p>
+    <m3e-snackbar-host data-testid="host"></m3e-snackbar-host>
+  </section>
+
+  <section aria-labelledby="react-heading">
+    <h2 id="react-heading">React</h2>
+    <p>
+      <code>useSnackbarHostState()</code> and <code>&lt;SnackbarHost hostState actionOnNewLine snackbar&gt;</code> render the same DOM as the element; <code>&lt;Snackbar&gt;</code> draws one snackbar from <code>snackbarData</code> or from its children, <code>action</code> and <code>dismissAction</code>.
+    </p>
+    <SnackbarPlayground client:only="react" />
+  </section>
+</Base>
+
+<script>
+  import '@kyralabs/m3exp-web/elements';
+  import type { M3eSnackbarHost } from '@kyralabs/m3exp-web/elements';
+
+  const host = document.querySelector<M3eSnackbarHost>('m3e-snackbar-host[data-testid="host"]')!;
+  const last = document.querySelector('[data-testid="last"]')!;
+  let count = 0;
+  // The ScaffoldSamples snackbars: simple, with an action (coroutines), indefinite with dismiss.
+  const shows: Record<string, () => Parameters<M3eSnackbarHost['showSnackbar']>[0]> = {
+    simple: () => `Snackbar # ${String(++count)}`,
+    action: () => ({ message: `Snackbar # ${String(++count)}`, actionLabel: `Action on ${String(count)}` }),
+    indefinite: () => ({
+      message: `Snackbar # ${String(++count)}`,
+      actionLabel: 'Action',
+      withDismissAction: true,
+      duration: 'indefinite',
+    }),
+  };
+  for (const button of document.querySelectorAll<HTMLButtonElement>('[data-show]')) {
+    button.addEventListener('click', () => {
+      const visuals = shows[button.dataset['show'] ?? 'simple']!();
+      void host.showSnackbar(visuals).then((result) => {
+        last.textContent = result;
+      });
+    });
+  }
+  document.querySelector('[data-testid="focus-snackbar"]')!.addEventListener('click', () => {
+    host.focus();
+  });
+  document
+    .querySelector<HTMLInputElement>('[data-testid="new-line-option"]')!
+    .addEventListener('change', (e) => {
+      host.actionOnNewLine = (e.target as HTMLInputElement).checked;
+    });
+</script>

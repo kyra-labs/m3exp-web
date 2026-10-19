@@ -561,6 +561,31 @@ out; Escape, the scrim, the close button and browser close requests emit a cance
 `dialog-layout.js` entry (`DialogLayout`) is shared with m3e-react's `<AlertDialog>`,
 `<BasicAlertDialog>` and `<FullScreenDialog>`, which render the same DOM.
 
+## Snackbar
+
+```html
+<m3e-snackbar-host id="snackbars"></m3e-snackbar-host>
+<script type="module">
+  const result = await snackbars.showSnackbar({ message: 'Message archived', actionLabel: 'Undo' });
+  if (result === 'action-performed') undoArchive();
+  snackbars.showSnackbar('Saved'); // 4s, no action
+</script>
+```
+
+`<m3e-snackbar-host>` renders a `.m3e-snackbar-host` inside itself: a polite live region
+(`role="status"`) fixed to the bottom center of the window (raise it above a FAB with
+`--m3e-comp-snackbar-host-bottom-offset`) that shows one snackbar at a time (Compose
+`SnackbarHost`). `showSnackbar(message | { message, actionLabel, withDismissAction, duration,
+signal })` queues one and resolves with `'action-performed'` or `'dismissed'`; `duration` is
+`short` (4s, the default without an action), `long` (10s) or `indefinite` (the default with an
+action). The timer pauses while the snackbar is hovered or focused, Escape in it dismisses it, and
+`focus()` moves focus to its action (bind it to a shortcut of your app). The dismiss button
+(`withDismissAction`, named by `dismiss-label`, default "Dismiss") has the plain tooltip Compose
+builds in. `action-on-new-line` puts the action under the text. `hostState` is the queue (a
+`SnackbarHostState`, which can also be shared or driven from code); the `snackbar-layout.js` entry
+(`SnackbarHostState`, `SnackbarHostController`) is shared with m3e-react's `<SnackbarHost>`, which
+renders the same DOM.
+
 ## Ripple for plain HTML
 
 m3e-css draws hover, focus and pressed overlays without JS; the press ripple needs a little.

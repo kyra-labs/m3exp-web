@@ -43,6 +43,8 @@ export * from './tooltip-popup/index.js';
 export * from './tooltip/index.js';
 export * from './dialog-layout/index.js';
 export * from './dialog/index.js';
+export * from './snackbar-layout/index.js';
+export * from './snackbar-host/index.js';
 export * from './pane-scaffold-layout/index.js';
 export * from './list-detail-layout/index.js';
 export * from './supporting-pane-layout/index.js';

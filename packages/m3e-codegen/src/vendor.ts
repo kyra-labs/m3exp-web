@@ -64,6 +64,10 @@ export const MATERIAL3_SOURCES = [
   'AlertDialog.kt',
   // The modal scrim's fade (DefaultEffects), which the dialog's scrim follows (owner decision M9 #9).
   'ModalBottomSheet.kt',
+  // Snackbar layout, host queue / durations / motion, and Scaffold's snackbar placement (M9 §32).
+  'Snackbar.kt',
+  'SnackbarHost.kt',
+  'Scaffold.kt',
 ] as const;
 
 /** Material3 samples the generator reads (values the Compose catalog renders, e.g. icon rotation). */
@@ -87,6 +91,7 @@ export const MATERIAL3_SAMPLE_SOURCES = [
   'TooltipSamples.kt',
   'BadgeSamples.kt',
   'AlertDialogSamples.kt',
+  'ScaffoldSamples.kt',
 ] as const;
 
 /** Android `actual`s the generator reads (DropdownMenu's popup margins, AndroidMenu.android.kt). */

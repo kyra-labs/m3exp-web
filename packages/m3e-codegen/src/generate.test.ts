@@ -2283,6 +2283,62 @@ describe('badge values (M9)', () => {
   });
 });
 
+describe('snackbar values (M9)', () => {
+  const css = output.get('components/snackbar-defaults.css')!;
+  const decl = declarations(css);
+  const t = (name: string) => decl.get(`--m3e-comp-snackbar-${name}`);
+  const tokens = declarations(output.get('components/snackbar.css')!);
+
+  it('SnackbarTokens: inverse surface, inverse primary action, extra-small corners, 48 / 68dp', () => {
+    expect(tokens.get('--m3e-comp-snackbar-container-color')).toBe(
+      'var(--m3e-sys-color-inverse-surface)',
+    );
+    expect(tokens.get('--m3e-comp-snackbar-action-label-text-color')).toBe(
+      'var(--m3e-sys-color-inverse-primary)',
+    );
+    expect(tokens.get('--m3e-comp-snackbar-container-shape')).toBe(
+      'var(--m3e-sys-shape-corner-extra-small)',
+    );
+    expect(tokens.get('--m3e-comp-snackbar-single-line-container-height')).toBe('48px');
+    expect(tokens.get('--m3e-comp-snackbar-two-lines-container-height')).toBe('68px');
+  });
+
+  it('the flag-on layout (owner decision M9 #19): 600dp, 16dp start, 14dp text padding, 8dp end', () => {
+    expect(inputs.material3Sources['ComposeMaterial3Flags.kt']).toMatch(
+      /public var isSnackbarStylingFixEnabled: Boolean = false/,
+    );
+    expect(t('container-max-width')).toBe('600px');
+    expect(t('padding-start')).toBe('16px');
+    expect(t('text-padding-vertical')).toBe('14px');
+    expect(t('text-end-spacing')).toBe('8px');
+    expect(t('new-line-actions-padding-end')).toBe('8px');
+    expect(t('new-line-actions-padding-bottom')).toBe('4px');
+    expect(t('margin')).toBe('12px');
+    // 14 + one body-medium line + 14 = SingleLineContainerHeight; two lines = TwoLinesContainerHeight.
+    const line = Number(
+      /BodyMediumLineHeight: [\w.]+\n\s*get\(\) = ([\d.]+)\.sp/.exec(
+        source('TypeScaleTokens.kt'),
+      )?.[1],
+    );
+    expect(14 + line + 14).toBe(48);
+    expect(14 + 2 * line + 14).toBe(68);
+  });
+
+  it('durations 4 / 10s, scale 0.8 on fast spatial, alpha 0 on fast effects, FAB spacing 16dp', () => {
+    expect(t('duration-short')).toBe('4000ms');
+    expect(t('duration-long')).toBe('10000ms');
+    expect(t('closed-scale')).toBe('0.8');
+    expect(t('closed-opacity')).toBe('0');
+    expect(t('scale-stiffness')).toBe('var(--m3e-sys-motion-spring-fast-spatial-stiffness)');
+    expect(t('opacity-stiffness')).toBe('var(--m3e-sys-motion-spring-fast-effects-stiffness)');
+    expect(t('host-fab-spacing')).toBe('16px');
+    expect(t('host-bottom-offset')).toBe('0px');
+    expect(output.get('PARITY.md')).toMatch(
+      /material3\/Scaffold\.kt@\w+ L\d+ \| `--m3e-comp-snackbar-host-bottom-offset`/,
+    );
+  });
+});
+
 describe('dialog values (M9)', () => {
   const decl = declarations(output.get('components/dialog-defaults.css')!);
   const t = (name: string) => decl.get(`--m3e-comp-dialog-${name}`);
