@@ -75,6 +75,9 @@ export const MATERIAL3_SOURCES = [
   'BottomSheet.kt',
   'BottomSheetScaffold.kt',
   'Scrim.kt',
+  // Pull to refresh (M9 §38): Modifier.pullToRefresh (the drag multiplier, tension, threshold),
+  // PullToRefreshState, PullToRefreshDefaults (indicator box, arrow, LoadingIndicator variant).
+  'pulltorefresh/PullToRefresh.kt',
 ] as const;
 
 /** Material3 samples the generator reads (values the Compose catalog renders, e.g. icon rotation). */
@@ -100,6 +103,7 @@ export const MATERIAL3_SAMPLE_SOURCES = [
   'AlertDialogSamples.kt',
   'ScaffoldSamples.kt',
   'BottomSheetSamples.kt',
+  'PullToRefreshSamples.kt',
 ] as const;
 
 /** Android `actual`s the generator reads (DropdownMenu's popup margins, AndroidMenu.android.kt). */
@@ -201,9 +205,13 @@ export const ANIMATION_CORE_PATH =
 export const ANIMATION_CORE_SOURCES = ['SpringSimulation.kt', 'SpringEstimation.kt'] as const;
 /** Easing constants (FastOutSlowInEasing…), vendored apart so the spring harness stays minimal. */
 export const ANIMATION_CORE_EASING_SOURCES = ['Easing.kt'] as const;
-/** `animate*AsState` defaults: `spring()` and the `Spring` constants it defaults to. */
+/**
+ * `animate*AsState` defaults: `spring()` and the `Spring` constants it defaults to; `Animatable`'s
+ * `defaultSpringSpec` (PullToRefreshState's `animateTo` without a spec).
+ */
 export const ANIMATION_CORE_SPEC_SOURCES = [
   'AnimateAsState.kt',
+  'Animatable.kt',
   'AnimationSpec.kt',
   'VectorizedAnimationSpec.kt',
 ] as const;
