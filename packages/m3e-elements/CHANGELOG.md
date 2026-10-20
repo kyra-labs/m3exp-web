@@ -1,5 +1,89 @@
 # @kyralabs/m3e-elements
 
+## 1.8.0
+
+### Minor Changes
+
+- 324ebea: Date pickers (COMPONENT_SPEC §27, M10): Compose's `DatePicker` (calendar with month paging and
+  the year grid, switchable to the date input), `DateRangePicker` (a scrolling month list with the
+  range band, switchable to start / end inputs) and `DatePickerDialog`, plus m3.material.io's
+  docked date picker. m3e-tokens generates the date picker's Compose values, state layers, docked
+  values and motion (`date-picker-defaults.css`); m3e-css adds `date-picker.css`; m3e-motion ports
+  the calendar model, `DatePickerState` / `DateRangePickerState`, the input's pattern, parser and
+  validator and `drawRangeBackground` (checked against a JVM run of the vendored Kotlin);
+  m3e-elements adds `<m3e-date-picker>`, `<m3e-date-range-picker>`, `<m3e-docked-date-picker>`,
+  their layout entries and the lazily loaded `date-field` entry; m3e-react adds `DatePicker`,
+  `DateRangePicker`, `DockedDatePicker` and `DatePickerDialog`.
+- a87d12d: Time pickers (COMPONENT_SPEC §28, M10): Compose's dial `TimePicker` (baseline and vibrant,
+  vertical and horizontal), `TimeInput` (baseline, vibrant, uncontained with the side column) and
+  the expressive `TimeScroll` wheels, with the updated AM/PM toggle buttons. m3e-tokens generates
+  the vibrant, side column, scroll field, dialog and motion values (`time-picker-defaults.css`);
+  m3e-css adds `time-picker.css` (dial, fields, wheels and the `.m3e-time-picker-dialog` surface);
+  m3e-motion ports `TimePickerState` / `AnalogTimePickerState`, `CircularLayout`'s placement,
+  `TimeInputTransformation` and `ScrollField`'s paging (checked against a JVM run of the vendored
+  Kotlin); m3e-elements adds `<m3e-time-picker>`, `<m3e-time-input>`, `<m3e-time-scroll>` and the
+  shared `time-picker-layout` entry; m3e-react adds `TimePicker`, `TimeInput`, `TimeScroll`,
+  `TimePickerModeToggle`, `TimePickerDialog` and `VibrantTimePickerDialog`.
+- 41ec979: API review fixes (M11, D16: additive; every old name keeps working, is `@deprecated` and goes in
+  2.0). m3e-elements: the inner inputs' native `input` / `change` no longer reach the host of
+  `<m3e-time-input>`, `<m3e-docked-date-picker>` and the date pickers' input mode, nor the input's
+  native `select` the host of `<m3e-search>`, so host listeners see only the element's `CustomEvent`;
+  every element with events exports an `M3e<Name>EventMap` with typed `addEventListener` /
+  `removeEventListener` (type-only) and its detail types (`OpenChangeDetail`, `ExpandedChangeDetail`,
+  `ValueDetail`, …); `<m3e-button-group>` fires `selection-change` and takes
+  `disallow-empty-selection` (`change`, `selection-required` deprecated), `<m3e-list selection-mode>`
+  (`selection` deprecated), carousel items fire a bubbling `action` (`item-click` deprecated),
+  `<m3e-slider variant orientation>` (`centered`, `vertical` deprecated), `<m3e-side-sheet
+  back-button>` (the `back` attribute deprecated), `<m3e-bottom-sheet open>` with `open-change`,
+  the time pickers' `selection-change` detail gains `value`; `SelectableDates`, `YearRange`,
+  `DatePickerDisplayMode` and `SideSheetVariantOption` are exported; the helpers shared with
+  m3e-react are tagged `@internal`. m3e-css: two-rows top app bars read the public
+  `--m3e-comp-top-app-bar-container-collapsed-height` / `-expanded-height`. m3e-react: `FabMenu
+  isOpen`, `isExpanded` on `FloatingToolbar`, `SearchBar` and `ExtendedFab`,
+  `scrollBehavior="exit-always"` on the toolbars, `DatePicker` / `DateRangePicker showHeadline` (the
+  old names warn once in development), `onDisplayModeChange(next)` / `onModeToggle(next)` on the
+  time pickers, and type exports for the prop types it used without exporting (`SliderSize`,
+  `SheetValue`, `BadgeValue`, `RoundedPolygon`, `IconButtonStyle`, …); the D4 `*Props` types are
+  `@deprecated` and `fabClassName({ size: 'small' })` warns like `<Fab size="small">`.
+
+### Patch Changes
+
+- 93ab234: Accessibility audit fixes (M11 hardening; no API change). The date pickers' fields, the chip
+  sets' input chips and the lists get ids that are unique across bundles: the element entries and
+  m3e-react (which bundles the same layouts) shared counters starting at 1, so an element and a
+  React docked date picker on one page both made `id="m3e-date-field-1"` and the second label
+  focused the first field. The modal date picker's month arrows each get their own 48dp slot, as
+  Compose's `IconButton`s in `MonthsNavigation` do (they overlapped, leaving "previous month"
+  40 × 48), and today's day and the current year keep a full 48dp target inside their outline. The
+  baseline filter chip's check slot no longer animates its width under `prefers-reduced-motion`
+  (`--m3e-comp-selectable-chip-icon-shrink-duration` is 0ms there; the fade stays). In forced
+  colors an enabled slider's inactive track is a CanvasText outline instead of GrayText, which now
+  means disabled only. A bottom sheet's overflowing, focusable content is a `role="group"` named
+  like its sheet, in both layers.
+- 08b128b: Bundle and d.ts build (M11 hardening; no API or behavior change). m3e-elements emits its
+  declarations with one `tsc` pass and bundles the `.d.ts` files per entry, so its build no longer
+  needs a 4 GB heap (it fits 512 MB) and every public type path and exported type stays the same.
+  m3e-react bundles the m3e-elements code it uses from source, so m3e-motion and m3e-shapes are
+  imported once instead of also being inlined a second time (m3e-react (all) −1.9 kB, dist
+  778 → 540 KB). Element classes declare `static properties` in a pure form, so bundlers drop
+  element classes a page imports without registering them; module-level constants in m3e-motion
+  (`app-bar-scroll`, `menu-position`) and m3e-shapes (`TwoPi`) no longer leave code behind in every
+  import.
+- 0c1ac46: Package READMEs (M11 docs; no code change). m3e-react lists every component and hook, grouped by
+  COMPONENT_SPEC section, with the D4 deprecations and the props renamed in 1.8, and its usage
+  example now imports `material-symbols.css` (without it, icons render as their names). m3e-elements
+  documents `<m3e-bottom-sheet>` (`open`, `value`, `value-change`, `open-change`) and the top app bar
+  (`attachTopAppBarScroll` and the public `--m3e-comp-top-app-bar-container-{collapsed,expanded}-height`
+  properties). m3e-css lists every component file with its class, which ones need JavaScript, and its
+  deprecated classes.
+- e829f59: Source register, category (a) (M11): values that the pinned sources already settle, now cited
+  instead of marked `TODO(verify)`. The navigation drawer divider uses `outline-variant`, matching
+  Compose's `DividerTokens.Color` and the m3.material.io token DB, which deprecates the drawer's own
+  divider token for the standalone divider token (SOURCES #33). The docked date picker's year
+  arrows are labelled "Previous year" / "Next year", the wording in m3.material.io Date pickers ›
+  Accessibility (SOURCES #89). Citations only, with no value change, for #50, #57, #63, #64, #69,
+  #76 and #77.
+
 ## 1.7.0
 
 ### Minor Changes

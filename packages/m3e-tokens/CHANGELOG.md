@@ -1,5 +1,52 @@
 # @kyralabs/m3e-tokens
 
+## 1.8.0
+
+### Minor Changes
+
+- 324ebea: Date pickers (COMPONENT_SPEC §27, M10): Compose's `DatePicker` (calendar with month paging and
+  the year grid, switchable to the date input), `DateRangePicker` (a scrolling month list with the
+  range band, switchable to start / end inputs) and `DatePickerDialog`, plus m3.material.io's
+  docked date picker. m3e-tokens generates the date picker's Compose values, state layers, docked
+  values and motion (`date-picker-defaults.css`); m3e-css adds `date-picker.css`; m3e-motion ports
+  the calendar model, `DatePickerState` / `DateRangePickerState`, the input's pattern, parser and
+  validator and `drawRangeBackground` (checked against a JVM run of the vendored Kotlin);
+  m3e-elements adds `<m3e-date-picker>`, `<m3e-date-range-picker>`, `<m3e-docked-date-picker>`,
+  their layout entries and the lazily loaded `date-field` entry; m3e-react adds `DatePicker`,
+  `DateRangePicker`, `DockedDatePicker` and `DatePickerDialog`.
+- a87d12d: Time pickers (COMPONENT_SPEC §28, M10): Compose's dial `TimePicker` (baseline and vibrant,
+  vertical and horizontal), `TimeInput` (baseline, vibrant, uncontained with the side column) and
+  the expressive `TimeScroll` wheels, with the updated AM/PM toggle buttons. m3e-tokens generates
+  the vibrant, side column, scroll field, dialog and motion values (`time-picker-defaults.css`);
+  m3e-css adds `time-picker.css` (dial, fields, wheels and the `.m3e-time-picker-dialog` surface);
+  m3e-motion ports `TimePickerState` / `AnalogTimePickerState`, `CircularLayout`'s placement,
+  `TimeInputTransformation` and `ScrollField`'s paging (checked against a JVM run of the vendored
+  Kotlin); m3e-elements adds `<m3e-time-picker>`, `<m3e-time-input>`, `<m3e-time-scroll>` and the
+  shared `time-picker-layout` entry; m3e-react adds `TimePicker`, `TimeInput`, `TimeScroll`,
+  `TimePickerModeToggle`, `TimePickerDialog` and `VibrantTimePickerDialog`.
+
+### Patch Changes
+
+- 93ab234: Accessibility audit fixes (M11 hardening; no API change). The date pickers' fields, the chip
+  sets' input chips and the lists get ids that are unique across bundles: the element entries and
+  m3e-react (which bundles the same layouts) shared counters starting at 1, so an element and a
+  React docked date picker on one page both made `id="m3e-date-field-1"` and the second label
+  focused the first field. The modal date picker's month arrows each get their own 48dp slot, as
+  Compose's `IconButton`s in `MonthsNavigation` do (they overlapped, leaving "previous month"
+  40 × 48), and today's day and the current year keep a full 48dp target inside their outline. The
+  baseline filter chip's check slot no longer animates its width under `prefers-reduced-motion`
+  (`--m3e-comp-selectable-chip-icon-shrink-duration` is 0ms there; the fade stays). In forced
+  colors an enabled slider's inactive track is a CanvasText outline instead of GrayText, which now
+  means disabled only. A bottom sheet's overflowing, focusable content is a `role="group"` named
+  like its sheet, in both layers.
+- e829f59: Source register, category (a) (M11): values that the pinned sources already settle, now cited
+  instead of marked `TODO(verify)`. The navigation drawer divider uses `outline-variant`, matching
+  Compose's `DividerTokens.Color` and the m3.material.io token DB, which deprecates the drawer's own
+  divider token for the standalone divider token (SOURCES #33). The docked date picker's year
+  arrows are labelled "Previous year" / "Next year", the wording in m3.material.io Date pickers ›
+  Accessibility (SOURCES #89). Citations only, with no value change, for #50, #57, #63, #64, #69,
+  #76 and #77.
+
 ## 1.7.0
 
 ### Minor Changes
