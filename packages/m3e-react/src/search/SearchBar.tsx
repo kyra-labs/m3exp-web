@@ -20,6 +20,7 @@ import {
 import { useObjectRef } from 'react-aria';
 import { Icon } from '../icon/Icon.js';
 import { cx } from '../utils/cx.js';
+import { warnDeprecatedProp } from '../utils/deprecated.js';
 
 /**
  * The expanded view (Compose: which Expanded*SearchBar the state is shown with):
@@ -136,6 +137,11 @@ export interface SearchBarProps extends Omit<
    */
   onSelect?: (value: string, label: string) => unknown;
   /** Controlled expanded state (SearchBarState.targetValue). */
+  isExpanded?: boolean;
+  /**
+   * Controlled expanded state.
+   * @deprecated Since 1.8: use `isExpanded`. Removed in 2.0.
+   */
   expanded?: boolean;
   /** Uncontrolled initial state. Default `false`. */
   defaultExpanded?: boolean;
@@ -177,7 +183,9 @@ export const SearchBar = /* @__PURE__ */ forwardRef(function SearchBar(
     onChange,
     onSearch,
     onSelect,
-    expanded: expandedProp,
+    isExpanded,
+    // eslint-disable-next-line @typescript-eslint/no-deprecated -- the 1.x alias (D16)
+    expanded: legacyExpanded,
     defaultExpanded = false,
     onExpandedChange,
     placeholder,
@@ -191,6 +199,10 @@ export const SearchBar = /* @__PURE__ */ forwardRef(function SearchBar(
     className,
     ...rest
   } = props;
+  if (legacyExpanded !== undefined) {
+    warnDeprecatedProp('SearchBar expanded', 'SearchBar isExpanded');
+  }
+  const expandedProp = isExpanded ?? legacyExpanded;
   const ref = useObjectRef(forwardedRef);
   const inputId = useId();
   const resultsId = useId();

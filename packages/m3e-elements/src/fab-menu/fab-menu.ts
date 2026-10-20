@@ -7,6 +7,7 @@ import {
 import { M3eElement } from '../base/M3eElement.js';
 import { attachRipple } from '../base/ripple.js';
 import { renderIcon } from '../icon/icon.js';
+import type { OpenChangeDetail } from '../base/events.js';
 
 let nextId = 0;
 const uid = () => `m3e-fab-menu-${String(++nextId)}`;
@@ -73,6 +74,41 @@ export class M3eFabMenuItem extends M3eElement {
   protected override update(): void {
     this.closest<M3eFabMenu>('m3e-fab-menu')?.requestUpdate();
   }
+}
+
+/** `action` detail of a `<m3e-fab-menu-item>` (it bubbles through its `<m3e-fab-menu>`). */
+export interface FabMenuActionDetail {
+  value: string | null;
+}
+
+/** Events of `<m3e-fab-menu-item>` (M1): typed `addEventListener` / `removeEventListener`. */
+export interface M3eFabMenuItemEventMap extends HTMLElementEventMap {
+  /** Activated (it bubbles to the FAB menu). */
+  action: CustomEvent<FabMenuActionDetail>;
+}
+
+// Typed listeners merged into the class: type-only, no runtime code.
+export interface M3eFabMenuItem {
+  addEventListener<K extends keyof M3eFabMenuItemEventMap>(
+    type: K,
+    listener: (this: M3eFabMenuItem, ev: M3eFabMenuItemEventMap[K]) => unknown,
+    options?: boolean | AddEventListenerOptions,
+  ): void;
+  addEventListener(
+    type: string,
+    listener: EventListenerOrEventListenerObject,
+    options?: boolean | AddEventListenerOptions,
+  ): void;
+  removeEventListener<K extends keyof M3eFabMenuItemEventMap>(
+    type: K,
+    listener: (this: M3eFabMenuItem, ev: M3eFabMenuItemEventMap[K]) => unknown,
+    options?: boolean | EventListenerOptions,
+  ): void;
+  removeEventListener(
+    type: string,
+    listener: EventListenerOrEventListenerObject,
+    options?: boolean | EventListenerOptions,
+  ): void;
 }
 
 interface Parts {
@@ -444,6 +480,38 @@ export class M3eFabMenu extends M3eElement {
     const active = this.ownerDocument.activeElement;
     this.#setOpen(false, root.contains(active));
   }
+}
+
+/** Events of `<m3e-fab-menu>` (M1): typed `addEventListener` / `removeEventListener`. */
+export interface M3eFabMenuEventMap extends HTMLElementEventMap {
+  /** The user opened or closed it (after the change). */
+  'open-change': CustomEvent<OpenChangeDetail>;
+  /** An item was activated (from the `<m3e-fab-menu-item>`, bubbling). */
+  action: CustomEvent<FabMenuActionDetail>;
+}
+
+// Typed listeners merged into the class: type-only, no runtime code.
+export interface M3eFabMenu {
+  addEventListener<K extends keyof M3eFabMenuEventMap>(
+    type: K,
+    listener: (this: M3eFabMenu, ev: M3eFabMenuEventMap[K]) => unknown,
+    options?: boolean | AddEventListenerOptions,
+  ): void;
+  addEventListener(
+    type: string,
+    listener: EventListenerOrEventListenerObject,
+    options?: boolean | AddEventListenerOptions,
+  ): void;
+  removeEventListener<K extends keyof M3eFabMenuEventMap>(
+    type: K,
+    listener: (this: M3eFabMenu, ev: M3eFabMenuEventMap[K]) => unknown,
+    options?: boolean | EventListenerOptions,
+  ): void;
+  removeEventListener(
+    type: string,
+    listener: EventListenerOrEventListenerObject,
+    options?: boolean | EventListenerOptions,
+  ): void;
 }
 
 /** The item's width with no spring styles (its m3e-css layout). */

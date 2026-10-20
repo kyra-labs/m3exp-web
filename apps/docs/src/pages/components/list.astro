@@ -59,28 +59,28 @@ import Base from '../../layouts/Base.astro';
   <section aria-labelledby="element-heading">
     <h2 id="element-heading">Interactive (element)</h2>
     <p>
-      <code>&lt;m3e-list label selection="single | multiple | none"&gt;</code> wraps <code>.m3e-list-item</code>s (<code>data-value</code> keys them) into a <code>role="listbox"</code> of options: one tab stop, Down / Right next and Up / Left previous (wrapping), Home / End, typeahead; click, Space or Enter toggles an option (<code>selection-change</code>), or
-      activates it with <code>selection="none"</code> (<code>action</code>). A checkbox, radio button or switch in a slot is the option's indicator: the option is the control, so the indicator is made <code>inert</code> and follows <code>aria-selected</code>.
+      <code>&lt;m3e-list label selection-mode="single | multiple | none" disallow-empty-selection&gt;</code> wraps <code>.m3e-list-item</code>s (<code>data-value</code> keys them) into a <code>role="listbox"</code> of options: one tab stop, Down / Right next and Up / Left previous (wrapping), Home / End, typeahead; click, Space or Enter toggles an option (<code>selection-change</code>), or
+      activates it with <code>selection-mode="none"</code> (<code>action</code>). <code>selection</code> is the deprecated name of <code>selection-mode</code> (since 1.8, removed in 2.0). A checkbox, radio button or switch in a slot is the option's indicator: the option is the control, so the indicator is made <code>inert</code> and follows <code>aria-selected</code>.
     </p>
     <div class="docs-list-grid">
-      <m3e-list label="Single selection" selection="single" data-testid="element-single">
+      <m3e-list label="Single selection" selection-mode="single" data-testid="element-single">
         <StaticListItem tag="div" value="1" control="radio" trailing="icon:favorite" headline="Item 1" supporting="Additional info" />
         <StaticListItem tag="div" value="2" control="radio" trailing="icon:favorite" headline="Item 2" supporting="Additional info" selected />
         <StaticListItem tag="div" value="3" control="radio" trailing="icon:favorite" headline="Item 3" supporting="Additional info" />
         <StaticListItem tag="div" value="4" control="radio" trailing="icon:favorite" headline="Item 4" supporting="Disabled" disabled />
       </m3e-list>
-      <m3e-list label="Multiple selection" selection="multiple" data-testid="element-multiple">
+      <m3e-list label="Multiple selection" selection-mode="multiple" data-testid="element-multiple">
         <StaticListItem tag="div" value="1" control="checkbox" trailing="icon:favorite" headline="Item 1" supporting="Additional info" selected />
         <StaticListItem tag="div" value="2" control="checkbox" trailing="icon:favorite" headline="Item 2" supporting="Additional info" />
         <StaticListItem tag="div" value="3" control="checkbox" trailing="icon:favorite" headline="Item 3" supporting="Additional info" selected />
       </m3e-list>
-      <m3e-list class="docs-list-surface-container" label="Segmented single selection" selection="single" data-testid="element-segmented">
+      <m3e-list class="docs-list-surface-container" label="Segmented single selection" selection-mode="single" data-testid="element-segmented">
         <StaticListItem tag="div" segmented value="1" control="radio" headline="Item 1" supporting="Additional info" />
         <StaticListItem tag="div" segmented value="2" control="radio" headline="Item 2" supporting="Additional info" selected />
         <StaticListItem tag="div" segmented value="3" control="radio" headline="Item 3" supporting="Additional info" />
         <StaticListItem tag="div" segmented value="4" control="radio" headline="Item 4" supporting="Dragged (style only)" dragged />
       </m3e-list>
-      <m3e-list class="docs-list-surface-container" label="Settings" selection="multiple" data-testid="element-switches">
+      <m3e-list class="docs-list-surface-container" label="Settings" selection-mode="multiple" data-testid="element-switches">
         <StaticListItem tag="div" segmented value="wifi" leading="wifi" control="switch" headline="Wi-Fi" selected />
         <StaticListItem tag="div" segmented value="bluetooth" leading="bluetooth" control="switch" headline="Bluetooth" />
         <StaticListItem tag="div" segmented value="notifications" leading="notifications" control="switch" headline="Notifications" supporting="Trailing switch" selected />

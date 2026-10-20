@@ -10,4 +10,9 @@ export { TimeInputLayout, type TimeInputLayoutOptions } from './input.js';
 export { TimeScrollLayout, type TimeScrollLayoutOptions } from './scroll.js';
 export { type TimePickerBaseOptions, is24HourLocale, localNumber, localeOf } from './shared.js';
 export { TIME_PICKER_STRINGS, type TimePickerStrings } from './strings.js';
-export { M3eTimePickerElement, type TimePickerChangeDetail } from './element.js';
+export {
+  M3eTimePickerElement,
+  type TimePickerChangeDetail,
+  type M3eTimePickerElementEventMap,
+  type TimePickerSelectionChangeDetail,
+} from './element.js';

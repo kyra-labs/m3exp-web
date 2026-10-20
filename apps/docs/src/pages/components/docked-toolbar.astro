@@ -133,8 +133,9 @@ const rows = Array.from({ length: 30 }, (_, i) => `Row ${String(i + 1)}`);
   <section aria-labelledby="react-heading">
     <h2 id="react-heading">React</h2>
     <p>
-      <code>&lt;DockedToolbar arrangement scrollBehavior="exitAlways" scrollTarget&gt;</code> over a
-      scrolling region, with the arrangement switchable.
+      <code>&lt;DockedToolbar arrangement scrollBehavior="exit-always" scrollTarget&gt;</code> over a
+      scrolling region, with the arrangement switchable. <code>scrollBehavior="exitAlways"</code> is
+      the deprecated spelling (since 1.8, removed in 2.0; it warns once in development).
     </p>
     <DockedToolbarPlayground client:only="react" kind="docked" />
   </section>

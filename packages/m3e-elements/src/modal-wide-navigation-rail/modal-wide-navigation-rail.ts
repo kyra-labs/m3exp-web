@@ -1,4 +1,7 @@
-import { M3eWideRailBase } from '../wide-navigation-rail/wide-navigation-rail.js';
+import {
+  M3eWideRailBase,
+  type M3eWideRailBaseEventMap,
+} from '../wide-navigation-rail/wide-navigation-rail.js';
 
 const MODAL = 'm3e-modal-wide-navigation-rail';
 
@@ -58,4 +61,37 @@ export class M3eModalWideNavigationRail extends M3eWideRailBase {
     if (root.parentNode !== this) this.append(root);
     this.syncLayout(root, this.dialogLabel ? { dialogLabel: this.dialogLabel } : {});
   }
+}
+
+/** Events of `<m3e-modal-wide-navigation-rail>` (M1). */
+export type M3eModalWideNavigationRailEventMap = M3eWideRailBaseEventMap;
+
+// Typed listeners merged into the class: type-only, no runtime code.
+export interface M3eModalWideNavigationRail {
+  addEventListener<K extends keyof M3eModalWideNavigationRailEventMap>(
+    type: K,
+    listener: (
+      this: M3eModalWideNavigationRail,
+      ev: M3eModalWideNavigationRailEventMap[K],
+    ) => unknown,
+    options?: boolean | AddEventListenerOptions,
+  ): void;
+  addEventListener(
+    type: string,
+    listener: EventListenerOrEventListenerObject,
+    options?: boolean | AddEventListenerOptions,
+  ): void;
+  removeEventListener<K extends keyof M3eModalWideNavigationRailEventMap>(
+    type: K,
+    listener: (
+      this: M3eModalWideNavigationRail,
+      ev: M3eModalWideNavigationRailEventMap[K],
+    ) => unknown,
+    options?: boolean | EventListenerOptions,
+  ): void;
+  removeEventListener(
+    type: string,
+    listener: EventListenerOrEventListenerObject,
+    options?: boolean | EventListenerOptions,
+  ): void;
 }

@@ -1,4 +1,7 @@
-import { M3eDatePickerElement } from '../date-picker-layout/element.js';
+import {
+  M3eDatePickerElement,
+  type M3eDatePickerElementEventMap,
+} from '../date-picker-layout/element.js';
 import { parseIsoDate, toIsoDate } from '../date-picker-layout/locale.js';
 import type {
   DateRangePickerLayout,
@@ -54,4 +57,34 @@ export class M3eDateRangePicker extends M3eDatePickerElement<
           new DateRangePickerLayout(root, options),
     );
   }
+}
+
+/** Events of `<m3e-date-range-picker>` (M1): typed `addEventListener` / `removeEventListener`. */
+export interface M3eDateRangePickerEventMap extends M3eDatePickerElementEventMap {
+  /** The user changed the range. */
+  change: CustomEvent<DateRangePickerChangeDetail>;
+}
+
+// Typed listeners merged into the class: type-only, no runtime code.
+export interface M3eDateRangePicker {
+  addEventListener<K extends keyof M3eDateRangePickerEventMap>(
+    type: K,
+    listener: (this: M3eDateRangePicker, ev: M3eDateRangePickerEventMap[K]) => unknown,
+    options?: boolean | AddEventListenerOptions,
+  ): void;
+  addEventListener(
+    type: string,
+    listener: EventListenerOrEventListenerObject,
+    options?: boolean | AddEventListenerOptions,
+  ): void;
+  removeEventListener<K extends keyof M3eDateRangePickerEventMap>(
+    type: K,
+    listener: (this: M3eDateRangePicker, ev: M3eDateRangePickerEventMap[K]) => unknown,
+    options?: boolean | EventListenerOptions,
+  ): void;
+  removeEventListener(
+    type: string,
+    listener: EventListenerOrEventListenerObject,
+    options?: boolean | EventListenerOptions,
+  ): void;
 }

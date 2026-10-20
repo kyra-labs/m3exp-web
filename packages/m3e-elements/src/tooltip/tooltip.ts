@@ -4,6 +4,7 @@ import {
   TooltipController,
   tooltipRepeatsName,
 } from '../tooltip-popup/tooltip-popup.js';
+import type { OpenChangeDetail } from '../base/events.js';
 
 let nextId = 0;
 const uid = () => `m3e-tooltip-${String(++nextId)}`;
@@ -293,4 +294,38 @@ export class M3eTooltip extends M3eElement {
     if (ids.length > 0) anchor.setAttribute('aria-describedby', ids.join(' '));
     else anchor.removeAttribute('aria-describedby');
   }
+}
+
+/** Events of `<m3e-tooltip>` (M1): typed `addEventListener` / `removeEventListener`. */
+export interface M3eTooltipEventMap extends HTMLElementEventMap {
+  /** Shown or hidden (after the change). */
+  'open-change': CustomEvent<OpenChangeDetail>;
+  /**
+   * The rich tooltip's action button was pressed; cancelable (`preventDefault()` keeps it shown).
+   */
+  action: CustomEvent<null>;
+}
+
+// Typed listeners merged into the class: type-only, no runtime code.
+export interface M3eTooltip {
+  addEventListener<K extends keyof M3eTooltipEventMap>(
+    type: K,
+    listener: (this: M3eTooltip, ev: M3eTooltipEventMap[K]) => unknown,
+    options?: boolean | AddEventListenerOptions,
+  ): void;
+  addEventListener(
+    type: string,
+    listener: EventListenerOrEventListenerObject,
+    options?: boolean | AddEventListenerOptions,
+  ): void;
+  removeEventListener<K extends keyof M3eTooltipEventMap>(
+    type: K,
+    listener: (this: M3eTooltip, ev: M3eTooltipEventMap[K]) => unknown,
+    options?: boolean | EventListenerOptions,
+  ): void;
+  removeEventListener(
+    type: string,
+    listener: EventListenerOrEventListenerObject,
+    options?: boolean | EventListenerOptions,
+  ): void;
 }

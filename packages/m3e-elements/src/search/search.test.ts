@@ -242,3 +242,24 @@ describe('<m3e-search>', () => {
     expect(root.style.getPropertyValue('--_m3e-search-surface-x')).toBe('10px');
   });
 });
+
+describe('<m3e-search>: M11 API', () => {
+  it("the input's native select (text selected) stops inside: a host select listener sees only results", async () => {
+    const host = await mount();
+    const { input } = parts(host);
+    const seen: unknown[] = [];
+    host.addEventListener('select', (e: Event) => {
+      seen.push(e instanceof CustomEvent ? e.detail : 'native select');
+    });
+    input.value = 'Result';
+    input.dispatchEvent(new Event('select', { bubbles: true }));
+    expect(seen).toEqual([]);
+    input.focus();
+    host.expand();
+    await flush();
+    key(input, 'ArrowDown');
+    key(input, 'Enter');
+    await flush();
+    expect(seen).toEqual([{ value: 'v0', label: 'Result 0' }]);
+  });
+});

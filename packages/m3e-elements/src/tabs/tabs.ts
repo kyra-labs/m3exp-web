@@ -2,6 +2,7 @@ import { M3eElement } from '../base/M3eElement.js';
 import { badgeContent, nameWithBadge, renderBadgedBox } from '../base/badge.js';
 import { attachRipple } from '../base/ripple.js';
 import { TabsLayout } from '../tabs-layout/tabs-layout.js';
+import type { SelectionChangeDetail } from '../base/events.js';
 
 const BLOCK = 'm3e-tabs';
 const TAB = 'm3e-tab';
@@ -295,4 +296,34 @@ export class M3eTabs extends M3eElement {
     if (value === undefined || el.getAttribute('aria-selected') === 'true') return;
     if (this.emit('selection-change', { value }, { cancelable: true })) this.selected = value;
   };
+}
+
+/** Events of `<m3e-tabs>` (M1): typed `addEventListener` / `removeEventListener`. */
+export interface M3eTabsEventMap extends HTMLElementEventMap {
+  /** A tab was picked; cancelable: `preventDefault()` keeps the selection. */
+  'selection-change': CustomEvent<SelectionChangeDetail>;
+}
+
+// Typed listeners merged into the class: type-only, no runtime code.
+export interface M3eTabs {
+  addEventListener<K extends keyof M3eTabsEventMap>(
+    type: K,
+    listener: (this: M3eTabs, ev: M3eTabsEventMap[K]) => unknown,
+    options?: boolean | AddEventListenerOptions,
+  ): void;
+  addEventListener(
+    type: string,
+    listener: EventListenerOrEventListenerObject,
+    options?: boolean | AddEventListenerOptions,
+  ): void;
+  removeEventListener<K extends keyof M3eTabsEventMap>(
+    type: K,
+    listener: (this: M3eTabs, ev: M3eTabsEventMap[K]) => unknown,
+    options?: boolean | EventListenerOptions,
+  ): void;
+  removeEventListener(
+    type: string,
+    listener: EventListenerOrEventListenerObject,
+    options?: boolean | EventListenerOptions,
+  ): void;
 }

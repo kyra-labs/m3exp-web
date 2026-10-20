@@ -130,8 +130,9 @@ const VERTICAL: StaticSlider[] = [
   <section aria-labelledby="element-heading">
     <h2 id="element-heading">Element</h2>
     <p>
-      <code>&lt;m3e-slider label min max step value range start-value end-value centered vertical
-      size icon disabled name&gt;</code> (<code>@kyralabs/m3e-elements/slider.js</code>): pointer
+      <code>&lt;m3e-slider label min max step value range start-value end-value variant="standard | centered"
+      orientation="horizontal | vertical" size icon disabled name&gt;</code> (the booleans <code>centered</code> and
+      <code>vertical</code> are deprecated since 1.8, removed in 2.0) (<code>@kyralabs/m3e-elements/slider.js</code>): pointer
       drag and presses on the track (a range slider moves the closer handle), the keyboard (arrows by
       one step or 1 % of the range, Shift + arrow and Page Up / Page Down by a page, Home / End), and
       <code>input</code> / <code>change</code> events with <code>detail.value</code> (a range: <code>detail.start</code>, <code>detail.end</code>).
@@ -151,7 +152,7 @@ const VERTICAL: StaticSlider[] = [
       </div>
       <div class="docs-slider-row">
         <span class="docs-slider-row__label">Centered</span>
-        <m3e-slider label="Balance" centered min="-50" max="50" value="10"></m3e-slider>
+        <m3e-slider label="Balance" variant="centered" min="-50" max="50" value="10"></m3e-slider>
       </div>
       <div class="docs-slider-row">
         <span class="docs-slider-row__label">Medium with icon</span>
@@ -159,8 +160,8 @@ const VERTICAL: StaticSlider[] = [
       </div>
     </div>
     <div class="docs-slider-verticals" data-testid="element-vertical">
-      <m3e-slider label="Brightness" vertical max="100" step="10" value="30"></m3e-slider>
-      <m3e-slider label="Warmth" vertical centered size="s" min="-50" max="50" value="20"></m3e-slider>
+      <m3e-slider label="Brightness" orientation="vertical" max="100" step="10" value="30"></m3e-slider>
+      <m3e-slider label="Warmth" orientation="vertical" variant="centered" size="s" min="-50" max="50" value="20"></m3e-slider>
     </div>
   </section>
 

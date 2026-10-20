@@ -73,10 +73,10 @@ describe('<DockedToolbar>', () => {
     expect(document.activeElement).toBe(buttons[0]);
   });
 
-  it('exitAlways hides with the scroll (offset written on the root)', async () => {
+  it('exit-always hides with the scroll (offset written on the root)', async () => {
     const target = scroller();
     const container = await renderReact(
-      <DockedToolbar aria-label="t" scrollBehavior="exitAlways" scrollTarget={{ current: target }}>
+      <DockedToolbar aria-label="t" scrollBehavior="exit-always" scrollTarget={{ current: target }}>
         <Icon name="add" />
       </DockedToolbar>,
     );
@@ -179,5 +179,38 @@ describe('<DockedToolbar> ⇔ <m3e-docked-toolbar> DOM parity', () => {
     const host = await renderElement(html);
     const fromElement = canonical(host.querySelector('.m3e-docked-toolbar')!);
     expect(fromElement).toBe(fromReact);
+  });
+});
+
+describe('M11 API (D16 aliases)', () => {
+  it("scrollBehavior='exitAlways' still works and warns once in development", async () => {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => undefined);
+    const container = await renderReact(
+      <>
+        <DockedToolbar aria-label="a" scrollBehavior="exitAlways">
+          <Icon name="add" />
+        </DockedToolbar>
+        <DockedToolbar aria-label="b" scrollBehavior="exitAlways">
+          <Icon name="add" />
+        </DockedToolbar>
+      </>,
+    );
+    for (const root of container.querySelectorAll('.m3e-docked-toolbar')) {
+      expect(root.getAttribute('data-scroll-behavior')).toBe('exit-always');
+    }
+    const messages = warn.mock.calls.map((c) => String(c[0]));
+    expect(messages).toEqual([
+      '[m3exp-web] <DockedToolbar scrollBehavior="exitAlways"> is deprecated since 1.8 and will be removed in 2.0. Use <DockedToolbar scrollBehavior="exit-always">.',
+    ]);
+  });
+
+  it("the deprecated BottomAppBar accepts 'exit-always' too", async () => {
+    vi.spyOn(console, 'warn').mockImplementation(() => undefined);
+    const container = await renderReact(
+      <BottomAppBar aria-label="t" actions={<Icon name="check" />} scrollBehavior="exit-always" />,
+    );
+    expect(
+      container.querySelector('.m3e-bottom-app-bar')!.getAttribute('data-scroll-behavior'),
+    ).toBe('exit-always');
   });
 });

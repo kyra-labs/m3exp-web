@@ -117,7 +117,7 @@ describe('<m3e-chip-set>', () => {
     );
     const events: ChipSetRemoveDetail[] = [];
     el.addEventListener('remove', (e) => {
-      events.push((e as CustomEvent<ChipSetRemoveDetail>).detail);
+      events.push(e.detail);
     });
     const chips = () => [...el.setElement!.querySelectorAll<HTMLElement>('.m3e-input-chip')];
     const [a, b] = chips();

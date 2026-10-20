@@ -80,7 +80,7 @@ describe('<FloatingToolbar>', () => {
       const [expanded, setExpanded] = useState(true);
       set = setExpanded;
       return (
-        <FloatingToolbar aria-label="t" expanded={expanded} leading={<Icon name="check" />}>
+        <FloatingToolbar aria-label="t" isExpanded={expanded} leading={<Icon name="check" />}>
           <Icon name="format_bold" />
         </FloatingToolbar>
       );
@@ -174,5 +174,51 @@ describe('<FloatingToolbar> ⇔ <m3e-floating-toolbar> DOM parity', () => {
     const host = await renderElement(html);
     const fromElement = canonical(host.querySelector('.m3e-floating-toolbar')!);
     expect(fromElement).toBe(fromReact);
+  });
+});
+
+describe('M11 API (D16 aliases)', () => {
+  it('<FloatingToolbar expanded> still works, warns once in development; isExpanded wins', async () => {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => undefined);
+    const container = await renderReact(
+      <>
+        {/* eslint-disable-next-line @typescript-eslint/no-deprecated -- the 1.x alias */}
+        <FloatingToolbar aria-label="a" expanded={false} leading={<Icon name="check" />}>
+          <Icon name="format_bold" />
+        </FloatingToolbar>
+        {/* eslint-disable-next-line @typescript-eslint/no-deprecated -- the 1.x alias */}
+        <FloatingToolbar aria-label="b" expanded={false} isExpanded leading={<Icon name="check" />}>
+          <Icon name="format_bold" />
+        </FloatingToolbar>
+      </>,
+    );
+    const [a, b] = container.querySelectorAll('.m3e-floating-toolbar');
+    expect(a!.classList.contains('m3e-floating-toolbar--collapsed')).toBe(true);
+    expect(b!.classList.contains('m3e-floating-toolbar--collapsed')).toBe(false);
+    const messages = warn.mock.calls.map((c) => String(c[0]));
+    expect(messages).toEqual([
+      '[m3exp-web] <FloatingToolbar expanded> is deprecated since 1.8 and will be removed in 2.0. Use <FloatingToolbar isExpanded>.',
+    ]);
+  });
+
+  it("scrollBehavior: 'exit-always'; the deprecated 'exitAlways' still works and warns once", async () => {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => undefined);
+    const container = await renderReact(
+      <>
+        <FloatingToolbar aria-label="a" scrollBehavior="exit-always">
+          <Icon name="format_bold" />
+        </FloatingToolbar>
+        <FloatingToolbar aria-label="b" scrollBehavior="exitAlways">
+          <Icon name="format_bold" />
+        </FloatingToolbar>
+      </>,
+    );
+    for (const root of container.querySelectorAll('.m3e-floating-toolbar')) {
+      expect(root.getAttribute('data-scroll-behavior')).toBe('exit-always');
+    }
+    const messages = warn.mock.calls.map((c) => String(c[0]));
+    expect(messages).toEqual([
+      '[m3exp-web] <FloatingToolbar scrollBehavior="exitAlways"> is deprecated since 1.8 and will be removed in 2.0. Use <FloatingToolbar scrollBehavior="exit-always">.',
+    ]);
   });
 });

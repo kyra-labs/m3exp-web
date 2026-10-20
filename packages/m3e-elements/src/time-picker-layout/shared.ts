@@ -26,7 +26,10 @@ export interface TimePickerBaseOptions {
   onSelectionChange?: (selection: TimePickerSelection) => void;
 }
 
-/** The locale of `el`: the closest `lang`, else the document's, else the browser's. */
+/**
+ * The locale of `el`: the closest `lang`, else the document's, else the browser's.
+ * @internal Shared with m3e-react; not part of the public API.
+ */
 export function localeOf(el: Element): string {
   const lang = el.closest('[lang]')?.getAttribute('lang');
   if (lang) return lang;
@@ -36,6 +39,7 @@ export function localeOf(el: Element): string {
 /**
  * Whether `locale` uses a 24-hour clock: Intl's hour cycle (h23 / h24), Compose's
  * `is24HourFormat` system setting on the web (owner decision M10 T5).
+ * @internal Shared with m3e-react; not part of the public API.
  */
 export function is24HourLocale(locale: string): boolean {
   try {
@@ -48,7 +52,10 @@ export function is24HourLocale(locale: string): boolean {
 
 const formats = /* @__PURE__ */ new Map<string, Intl.NumberFormat>();
 
-/** `Int.toLocalString(minDigits)` (CalendarLocale.jvmAndAndroid.kt): locale digits, no grouping. */
+/**
+ * `Int.toLocalString(minDigits)` (CalendarLocale.jvmAndAndroid.kt): locale digits, no grouping.
+ * @internal Shared with m3e-react; not part of the public API.
+ */
 export function localNumber(value: number, locale: string, minDigits = 1): string {
   const key = `${locale}|${String(minDigits)}`;
   let format = formats.get(key);

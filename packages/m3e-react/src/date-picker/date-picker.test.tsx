@@ -180,3 +180,29 @@ describe('<DatePickerDialog>', () => {
     ).toEqual(['Cancel', 'OK']);
   });
 });
+
+describe('M11 API (D16 aliases)', () => {
+  it('showHeadline={false} hides the headline; the deprecated headline still works and warns once', async () => {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => undefined);
+    const shown = (root: Element) => root.querySelector('.m3e-date-picker__headline') !== null;
+    const a = await renderReactIn(<DatePicker showHeadline={false} />);
+    expect(shown(a)).toBe(false);
+    expect(warn).not.toHaveBeenCalled();
+    const b = await renderReactIn(
+      <>
+        {/* eslint-disable-next-line @typescript-eslint/no-deprecated -- the 1.x alias */}
+        <DatePicker headline={false} />
+        {/* eslint-disable-next-line @typescript-eslint/no-deprecated -- the 1.x alias */}
+        <DatePicker headline={false} showHeadline />
+      </>,
+    );
+    const [old, both] = b.querySelectorAll('.m3e-date-picker');
+    expect(shown(old!)).toBe(false);
+    expect(shown(both!)).toBe(true);
+    const messages = warn.mock.calls.map((c) => String(c[0]));
+    expect(messages).toEqual([
+      '[m3exp-web] <DatePicker headline> is deprecated since 1.8 and will be removed in 2.0. Use <DatePicker showHeadline>.',
+    ]);
+    warn.mockRestore();
+  });
+});

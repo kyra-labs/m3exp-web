@@ -1,5 +1,6 @@
 import { M3eElement } from '../base/M3eElement.js';
 import { SearchLayout } from '../search-layout/search-layout.js';
+import type { ExpandedChangeDetail } from '../base/events.js';
 
 const BLOCK = 'm3e-search';
 const VARIANTS: readonly string[] = ['full-screen-contained', 'docked', 'docked-with-gap'];
@@ -78,7 +79,8 @@ export class M3eSearchResult extends M3eElement {
  * - Events: `expanded-change` (`detail: { expanded }`); `search` (`detail: { value }`, Enter
  *   without an active result; cancelable: `preventDefault()` keeps the view expanded); `select`
  *   (`detail: { value, label }`, a result activated; cancelable: by default the input takes the
- *   label and the view collapses, as the Compose samples do). The native `input` event bubbles.
+ *   label and the view collapses, as the Compose samples do; the input's native `select` does not
+ *   reach the host). The native `input` event bubbles.
  * - `expand()` / `collapse()`.
  */
 export class M3eSearch extends M3eElement {
@@ -194,7 +196,13 @@ export class M3eSearch extends M3eElement {
       this.#field,
       this.#results,
     ) as HTMLDivElement;
-    return create(doc, 'div', BLOCK, { role: 'search' }, this.#view) as HTMLDivElement;
+    const root = create(doc, 'div', BLOCK, { role: 'search' }, this.#view) as HTMLDivElement;
+    // The input's native `select` (text selected; it bubbles) stops at the root: the host's
+    // `select` is only this element's CustomEvent with `detail`. The root lives as long as the host.
+    root.addEventListener('select', (e) => {
+      e.stopPropagation();
+    });
+    return root;
   }
 
   protected override update(changed: ReadonlySet<string>): void {
@@ -323,4 +331,50 @@ export class M3eSearch extends M3eElement {
       this.#results.replaceChildren(...rows);
     }
   }
+}
+
+/** `search` detail of `<m3e-search>`: the query. */
+export interface SearchDetail {
+  value: string;
+}
+
+/** `select` detail of `<m3e-search>`: the activated result. */
+export interface SearchSelectDetail {
+  /** The result's `value`, else its label. */
+  value: string;
+  label: string;
+}
+
+/** Events of `<m3e-search>` (M1): typed `addEventListener` / `removeEventListener`. */
+export interface M3eSearchEventMap extends HTMLElementEventMap {
+  /** Expanded or collapsed. */
+  'expanded-change': CustomEvent<ExpandedChangeDetail>;
+  /** Enter without an active result; cancelable (`preventDefault()` keeps the view expanded). */
+  search: CustomEvent<SearchDetail>;
+  /** A result was activated; cancelable. The input's native `select` never reaches the host. */
+  select: CustomEvent<SearchSelectDetail>;
+}
+
+// Typed listeners merged into the class: type-only, no runtime code.
+export interface M3eSearch {
+  addEventListener<K extends keyof M3eSearchEventMap>(
+    type: K,
+    listener: (this: M3eSearch, ev: M3eSearchEventMap[K]) => unknown,
+    options?: boolean | AddEventListenerOptions,
+  ): void;
+  addEventListener(
+    type: string,
+    listener: EventListenerOrEventListenerObject,
+    options?: boolean | AddEventListenerOptions,
+  ): void;
+  removeEventListener<K extends keyof M3eSearchEventMap>(
+    type: K,
+    listener: (this: M3eSearch, ev: M3eSearchEventMap[K]) => unknown,
+    options?: boolean | EventListenerOptions,
+  ): void;
+  removeEventListener(
+    type: string,
+    listener: EventListenerOrEventListenerObject,
+    options?: boolean | EventListenerOptions,
+  ): void;
 }

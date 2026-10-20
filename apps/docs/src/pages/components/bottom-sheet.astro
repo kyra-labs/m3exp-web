@@ -24,7 +24,7 @@ const items = (n: number) =>
   <section aria-labelledby="modal-heading">
     <h2 id="modal-heading">Modal bottom sheet (element)</h2>
     <p>
-      <code>&lt;m3e-bottom-sheet variant="modal"&gt;</code>: <code>show()</code> opens it partially expanded (<code>skip-partially-expanded</code>: expanded); the child nodes are the content. The page is inert while it is open, Tab stays inside and focus returns to the opener when it hides. The first one is Compose's <code>ModalBottomSheetSample</code>.
+      <code>&lt;m3e-bottom-sheet variant="modal"&gt;</code>: <code>show()</code> (or setting <code>open</code>) opens it partially expanded (<code>skip-partially-expanded</code>: expanded); the child nodes are the content. <code>open</code> reflects whether <code>value</code> is not <code>hidden</code>; <code>value-change</code> (<code>&#123; value &#125;</code>) and then, when the sheet shows or hides, <code>open-change</code> (<code>&#123; open &#125;</code>) are cancelable when the sheet asks. The page is inert while it is open, Tab stays inside and focus returns to the opener when it hides. The first one is Compose's <code>ModalBottomSheetSample</code>.
     </p>
     <div class="docs-button-row">
       <button type="button" class="m3e-button m3e-button--filled" data-sheet-open="modal" data-testid="open-modal">Show bottom sheet</button>

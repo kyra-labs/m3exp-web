@@ -64,7 +64,10 @@ const AXIS_VARS = [
   ['opticalSize', '--m3e-comp-icon-optical-size'],
 ] as const;
 
-/** Writes the `.m3e-icon` contract onto `span` (the same DOM m3e-react's `<Icon>` renders). */
+/**
+ * Writes the `.m3e-icon` contract onto `span` (the same DOM m3e-react's `<Icon>` renders).
+ * @internal Shared with m3e-react; not part of the public API.
+ */
 export function renderIcon(span: HTMLElement, icon: IconContract): void {
   span.className = 'm3e-icon';
   span.toggleAttribute('data-fill', icon.fill);

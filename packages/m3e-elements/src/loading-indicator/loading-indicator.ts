@@ -133,7 +133,10 @@ export interface LoadingIndicatorContract {
   label?: string | null | undefined;
 }
 
-/** Writes the `.m3e-loading-indicator` contract (the same DOM m3e-react renders). */
+/**
+ * Writes the `.m3e-loading-indicator` contract (the same DOM m3e-react renders).
+ * @internal Shared with m3e-react; not part of the public API.
+ */
 export function renderLoadingIndicator(
   root: HTMLElement,
   svg: SVGSVGElement,

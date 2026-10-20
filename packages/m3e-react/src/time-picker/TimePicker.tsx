@@ -175,7 +175,8 @@ export interface TimeInputProps extends TimePickerBaseProps {
    * button (to the scroll picker), which calls `onModeToggle`.
    */
   uncontained?: boolean;
-  onModeToggle?: () => void;
+  /** The side column's mode toggle was pressed; `next` is the mode it asks for (`'scroll'`). */
+  onModeToggle?: (next: TimePickerDisplayMode) => void;
 }
 
 /**
@@ -191,7 +192,7 @@ export const TimeInput = /* @__PURE__ */ forwardRef(function TimeInput(
   const extra: Partial<TimeInputLayoutOptions> = {
     vibrant: Boolean(props.vibrant),
     uncontained: Boolean(props.uncontained),
-    onModeToggle: () => modeToggle.current?.(),
+    onModeToggle: () => modeToggle.current?.('scroll'),
   };
   const ref = useTimeLayout(
     props,
@@ -205,7 +206,8 @@ export const TimeInput = /* @__PURE__ */ forwardRef(function TimeInput(
 export interface TimeScrollProps extends TimePickerBaseProps {
   /** Compose's TimeScroll with a toggle (see TimeInputProps.uncontained; to the text input). */
   uncontained?: boolean;
-  onModeToggle?: () => void;
+  /** The side column's mode toggle was pressed; `next` is the mode it asks for (`'input'`). */
+  onModeToggle?: (next: TimePickerDisplayMode) => void;
 }
 
 /**
@@ -220,7 +222,7 @@ export const TimeScroll = /* @__PURE__ */ forwardRef(function TimeScroll(
   modeToggle.current = props.onModeToggle;
   const extra: Partial<TimeScrollLayoutOptions> = {
     uncontained: Boolean(props.uncontained),
-    onModeToggle: () => modeToggle.current?.(),
+    onModeToggle: () => modeToggle.current?.('input'),
   };
   const ref = useTimeLayout(
     props,
@@ -242,7 +244,8 @@ export interface TimePickerModeToggleProps {
    * (DisplayModeToggle).
    */
   scroll?: boolean;
-  onDisplayModeChange: () => void;
+  /** Pressed: `next` is the mode to show (picker ↔ input, or input ↔ scroll with `scroll`). */
+  onDisplayModeChange: (next: TimePickerDisplayMode) => void;
   labels?: Partial<TimePickerStrings>;
 }
 
@@ -266,7 +269,20 @@ export function TimePickerModeToggle({
   const icon = toKeyboard ? 'keyboard' : scroll ? 'swipe_vertical' : 'schedule';
   return (
     <TooltipTrigger position="above">
-      <IconButton aria-label={label} onPress={onDisplayModeChange}>
+      <IconButton
+        aria-label={label}
+        onPress={() => {
+          onDisplayModeChange(
+            scroll
+              ? displayMode === 'scroll'
+                ? 'input'
+                : 'scroll'
+              : displayMode === 'picker'
+                ? 'input'
+                : 'picker',
+          );
+        }}
+      >
         <Icon name={icon} />
       </IconButton>
       <PlainTooltip>{label}</PlainTooltip>

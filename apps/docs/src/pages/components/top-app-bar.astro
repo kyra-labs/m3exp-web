@@ -49,7 +49,8 @@ const twoRows: TwoRowsBar[] = [
     subtitle: 'Expanded subtitle',
     collapsedTitle: 'Collapsed title',
     collapsedSubtitle: 'Collapsed subtitle',
-    style: '--_m3e-top-app-bar-collapsed-height: 64px; --_m3e-top-app-bar-expanded-height: 156px',
+    style:
+      '--m3e-comp-top-app-bar-container-collapsed-height: 64px; --m3e-comp-top-app-bar-container-expanded-height: 156px',
   },
 ];
 
@@ -193,7 +194,12 @@ const collapsing = [
       Expanded (no scroll behavior). The top row holds the collapsed title, shown as the bar
       collapses; the expanded title sits in the second row, its last baseline 24dp (medium) or 28dp
       (large) above the bottom, moved up when it does not fit. Two-rows bars take custom heights and
-      per-row titles (here Compose's <code>CustomTwoRowsTopAppBar</code>: 64 / 156dp).
+      per-row titles (here Compose's <code>CustomTwoRowsTopAppBar</code>: 64 / 156dp, set with
+      <code>--m3e-comp-top-app-bar-container-collapsed-height</code> and
+      <code>--m3e-comp-top-app-bar-container-expanded-height</code>; React:
+      <code>collapsedHeight</code> / <code>expandedHeight</code>). Setting the private
+      <code>--_m3e-top-app-bar-collapsed-height</code> / <code>-expanded-height</code> yourself still
+      works but is deprecated since 1.8.
     </p>
     <div class="docs-app-bars" data-testid="flexible">
       {

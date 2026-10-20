@@ -52,7 +52,7 @@ export default function FabPlayground() {
             size={size}
             icon={<Icon name="add" />}
             label="Create"
-            expanded={expanded}
+            isExpanded={expanded}
             data-size={size}
           />
         ))}
@@ -77,7 +77,7 @@ export default function FabPlayground() {
           label="Compose"
           className="docs-fab-anchor"
           color="tertiary-container"
-          expanded={scrollExpanded}
+          isExpanded={scrollExpanded}
           data-testid="scroll-fab"
         />
       </div>

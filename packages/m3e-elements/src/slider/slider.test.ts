@@ -246,3 +246,36 @@ describe('slider-layout', () => {
     expect(sliderPointerFraction(rect, 50, 0, false, false)).toBe(0);
   });
 });
+
+describe('<m3e-slider>: M11 API', () => {
+  afterEach(() => {
+    document.body.replaceChildren();
+  });
+
+  it('variant and orientation; the deprecated centered / vertical still work; the new names win', async () => {
+    const el = await mount(
+      '<m3e-slider label="L" variant="centered" orientation="vertical" min="-50" max="50"></m3e-slider>',
+    );
+    expect(el.sliderElement!.className).toBe(
+      'm3e-slider m3e-slider--centered m3e-slider--vertical',
+    );
+    expect(el.inputs[0]!.getAttribute('aria-orientation')).toBe('vertical');
+    const old = await mount('<m3e-slider label="L" centered vertical></m3e-slider>');
+    expect(old.sliderElement!.className).toBe(
+      'm3e-slider m3e-slider--centered m3e-slider--vertical',
+    );
+    old.variant = 'standard';
+    old.orientation = 'horizontal';
+    await flush();
+    expect(old.sliderElement!.className).toBe('m3e-slider');
+    expect(old.inputs[0]!.getAttribute('aria-orientation')).toBe('horizontal');
+  });
+
+  it('typed input / change listeners (M1)', async () => {
+    const el = await mount('<m3e-slider label="L" max="10" step="1" value="5"></m3e-slider>');
+    const values: unknown[] = [];
+    el.addEventListener('input', (e) => values.push(e.detail));
+    key(el.inputs[0]!, 'ArrowRight');
+    expect(values).toEqual([{ value: 6 }]);
+  });
+});

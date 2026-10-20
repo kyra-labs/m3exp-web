@@ -12,6 +12,7 @@ import {
 } from 'react';
 import { useObjectRef } from 'react-aria';
 import { cx } from '../utils/cx.js';
+import { warnDeprecatedProp } from '../utils/deprecated.js';
 
 /**
  * How the items are spaced (Compose FlexibleBottomAppBar `horizontalArrangement`):
@@ -24,8 +25,12 @@ import { cx } from '../utils/cx.js';
 export type DockedToolbarArrangement = 'spread' | 'center' | 'space-around' | 'space-evenly';
 /** `standard` (surface container) or `vibrant` (primary container, the Compose sample). */
 export type DockedToolbarColorStyle = 'standard' | 'vibrant';
-/** `exitAlways` (BottomAppBarDefaults.exitAlwaysScrollBehavior): hides on scroll down, returns on scroll up. */
-export type DockedToolbarScrollBehavior = 'exitAlways';
+/**
+ * `exit-always` (BottomAppBarDefaults.exitAlwaysScrollBehavior): hides on scroll down, returns on
+ * scroll up. `'exitAlways'` is the deprecated spelling (since 1.8, removed in 2.0; it warns once in
+ * development): use `'exit-always'`, as `<m3e-docked-toolbar scroll-behavior>` and TopAppBar do.
+ */
+export type DockedToolbarScrollBehavior = 'exit-always' | 'exitAlways';
 
 export interface DockedToolbarClassOptions {
   arrangement?: DockedToolbarArrangement | undefined;
@@ -62,7 +67,8 @@ export function useDockedToolbarLayout(
   });
   useLayoutEffect(() => {
     layoutRef.current?.setScroll({
-      behavior: scrollBehavior === 'exitAlways' ? 'exit-always' : null,
+      behavior:
+        scrollBehavior === 'exit-always' || scrollBehavior === 'exitAlways' ? 'exit-always' : null,
       target: scrollTarget?.current ?? window,
     });
   }, [scrollBehavior, scrollTarget]);
@@ -82,7 +88,7 @@ export interface DockedToolbarProps extends Omit<HTMLAttributes<HTMLDivElement>,
   arrangement?: DockedToolbarArrangement;
   /** Default `standard`. */
   colorStyle?: DockedToolbarColorStyle;
-  /** Default: none (static). */
+  /** Default: none (static). `'exitAlways'` is deprecated: use `'exit-always'`. */
   scrollBehavior?: DockedToolbarScrollBehavior;
   /** The scrolling element the toolbar is docked under. Default: the document. */
   scrollTarget?: RefObject<HTMLElement | null>;
@@ -109,6 +115,12 @@ export const DockedToolbar = /* @__PURE__ */ forwardRef(function DockedToolbar(
     className,
     ...rest
   } = props;
+  if (scrollBehavior === 'exitAlways') {
+    warnDeprecatedProp(
+      'DockedToolbar scrollBehavior="exitAlways"',
+      'DockedToolbar scrollBehavior="exit-always"',
+    );
+  }
   const ref = useObjectRef(forwardedRef);
   useDockedToolbarLayout(ref, scrollBehavior, scrollTarget);
   return (

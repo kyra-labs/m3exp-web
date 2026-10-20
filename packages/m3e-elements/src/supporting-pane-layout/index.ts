@@ -1,4 +1,7 @@
-import { M3ePaneScaffoldElement } from '../pane-scaffold-layout/pane-scaffold-element.js';
+import {
+  M3ePaneScaffoldElement,
+  type M3ePaneScaffoldElementEventMap,
+} from '../pane-scaffold-layout/pane-scaffold-element.js';
 
 /**
  * `<m3e-supporting-pane-layout>` (COMPONENT_SPEC §16a; Compose SupportingPaneScaffold with
@@ -26,6 +29,33 @@ export class M3eSupportingPaneLayout extends M3ePaneScaffoldElement {
   declare extraLabel: string | null | undefined;
 
   protected readonly variant = 'supporting-pane';
+}
+
+/** Events of `<m3e-supporting-pane-layout>` (M1). */
+export type M3eSupportingPaneLayoutEventMap = M3ePaneScaffoldElementEventMap;
+
+// Typed listeners merged into the class: type-only, no runtime code.
+export interface M3eSupportingPaneLayout {
+  addEventListener<K extends keyof M3eSupportingPaneLayoutEventMap>(
+    type: K,
+    listener: (this: M3eSupportingPaneLayout, ev: M3eSupportingPaneLayoutEventMap[K]) => unknown,
+    options?: boolean | AddEventListenerOptions,
+  ): void;
+  addEventListener(
+    type: string,
+    listener: EventListenerOrEventListenerObject,
+    options?: boolean | AddEventListenerOptions,
+  ): void;
+  removeEventListener<K extends keyof M3eSupportingPaneLayoutEventMap>(
+    type: K,
+    listener: (this: M3eSupportingPaneLayout, ev: M3eSupportingPaneLayoutEventMap[K]) => unknown,
+    options?: boolean | EventListenerOptions,
+  ): void;
+  removeEventListener(
+    type: string,
+    listener: EventListenerOrEventListenerObject,
+    options?: boolean | EventListenerOptions,
+  ): void;
 }
 
 M3eSupportingPaneLayout.define('m3e-supporting-pane-layout');

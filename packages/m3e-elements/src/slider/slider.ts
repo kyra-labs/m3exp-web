@@ -52,6 +52,7 @@ interface SliderParts {
  * track parts, the ticks, the inset icon's two copies, then one thumb per value (a range's first
  * is `--start`), each with its native `<input type="range">`, handle and value indicator.
  * m3e-react's `<Slider>` / `<RangeSlider>` render the same DOM.
+ * @internal Shared with m3e-react; not part of the public API.
  */
 export function renderSliderTrack(track: HTMLElement, parts: SliderParts): HTMLInputElement[] {
   const doc = track.ownerDocument;
@@ -115,8 +116,9 @@ export type SliderValueDetail = { value: number } | { start: number; end: number
  *
  * Attributes: `min` (0), `max` (1), `step` (absent or 0: continuous), `value`; `range` with
  * `start-value` / `end-value` (the thumbs are labelled `start-label` / `end-label`, default
- * "Range start" / "Range end" as Compose); `centered`,
- * `vertical` (set its block-size), `size` (xs, s, m, l, xl), `icon` (an inset Material Symbols icon,
+ * "Range start" / "Range end" as Compose); `variant` (`standard` | `centered`), `orientation`
+ * (`horizontal` | `vertical`; set a vertical slider's block-size), the deprecated booleans
+ * `centered` and `vertical` (since 1.8, removed in 2.0; `variant` / `orientation` win), `size` (xs, s, m, l, xl), `icon` (an inset Material Symbols icon,
  * standard M / L / XL), `disabled`, `label` (the accessible name), `name`.
  */
 export class M3eSlider extends M3eElement {
@@ -129,6 +131,8 @@ export class M3eSlider extends M3eElement {
     range: { type: Boolean },
     startValue: { type: Number },
     endValue: { type: Number },
+    variant: {},
+    orientation: {},
     centered: { type: Boolean },
     vertical: { type: Boolean },
     disabled: { type: Boolean },
@@ -147,7 +151,19 @@ export class M3eSlider extends M3eElement {
   declare range: boolean | undefined;
   declare startValue: number | null | undefined;
   declare endValue: number | null | undefined;
+  /** `standard` (default) | `centered` (React's `variant`). */
+  declare variant: 'standard' | 'centered' | null | undefined;
+  /** `horizontal` (default) | `vertical` (set its block-size). */
+  declare orientation: 'horizontal' | 'vertical' | null | undefined;
+  /**
+   * A centered slider.
+   * @deprecated Since 1.8: use `variant="centered"`. Removed in 2.0.
+   */
   declare centered: boolean | undefined;
+  /**
+   * A vertical slider.
+   * @deprecated Since 1.8: use `orientation="vertical"`. Removed in 2.0.
+   */
   declare vertical: boolean | undefined;
   declare disabled: boolean | undefined;
   declare size: string | null | undefined;
@@ -195,6 +211,17 @@ export class M3eSlider extends M3eElement {
     this.#drag = undefined;
   }
 
+  // The new attributes win; `centered` / `vertical` are the deprecated 1.x aliases (D16).
+  #centered(): boolean {
+    // eslint-disable-next-line @typescript-eslint/no-deprecated
+    return this.variant ? this.variant === 'centered' : Boolean(this.centered);
+  }
+
+  #vertical(): boolean {
+    // eslint-disable-next-line @typescript-eslint/no-deprecated
+    return this.orientation ? this.orientation === 'vertical' : Boolean(this.vertical);
+  }
+
   #scale(): SliderScale {
     const min = this.min ?? 0;
     const max = this.max ?? 1;
@@ -237,8 +264,8 @@ export class M3eSlider extends M3eElement {
     root.className = sliderClassName({
       size: (this.size ?? undefined) as SliderSize | undefined,
       range: this.range,
-      centered: this.centered,
-      vertical: this.vertical,
+      centered: this.#centered(),
+      vertical: this.#vertical(),
     });
     root.id = this.#id;
     setAttr(root, 'role', 'group');
@@ -286,7 +313,7 @@ export class M3eSlider extends M3eElement {
       setAttr(input, 'step', step);
       setAttr(input, 'value', String(value));
       input.value = String(value);
-      setAttr(input, 'aria-orientation', this.vertical ? 'vertical' : 'horizontal');
+      setAttr(input, 'aria-orientation', this.#vertical() ? 'vertical' : 'horizontal');
       setAttr(input, 'aria-valuetext', text);
       setAttr(input, 'name', this.name ?? null);
       input.disabled = disabled;
@@ -350,7 +377,7 @@ export class M3eSlider extends M3eElement {
         track.getBoundingClientRect(),
         e.clientX,
         e.clientY,
-        this.vertical ?? false,
+        this.#vertical(),
         this.#rtl(),
       );
       const target = sliderValueAt(fraction, scale.min, scale.max);
@@ -371,7 +398,7 @@ export class M3eSlider extends M3eElement {
         track.getBoundingClientRect(),
         e.clientX,
         e.clientY,
-        this.vertical ?? false,
+        this.#vertical(),
         this.#rtl(),
       );
       if (this.#set(drag.index, sliderValueAt(fraction, scale.min, scale.max))) {
@@ -392,7 +419,7 @@ export class M3eSlider extends M3eElement {
       const index = this.#indexOf(e.target);
       if (index < 0 || this.disabled) return;
       const action = sliderKeyAction(e.key, {
-        vertical: this.vertical ?? false,
+        vertical: this.#vertical(),
         rtl: this.#rtl(),
         shiftKey: e.shiftKey,
       });
@@ -436,4 +463,37 @@ export class M3eSlider extends M3eElement {
     const thumb = this.#inputs[index]?.parentElement;
     if (thumb) setAttr(thumb, 'data-dragging', on ? '' : null);
   }
+}
+
+/** Events of `<m3e-slider>` (M1): typed `addEventListener` / `removeEventListener`. */
+// Native `input` is an InputEvent; the slider's is a CustomEvent (the inputs' native ones stop inside).
+export interface M3eSliderEventMap extends Omit<HTMLElementEventMap, 'input'> {
+  /** While the value changes (the inputs' native `input` stops at the slider). */
+  input: CustomEvent<SliderValueDetail>;
+  /** When a drag, press or key ends (Compose onValueChangeFinished). */
+  change: CustomEvent<SliderValueDetail>;
+}
+
+// Typed listeners merged into the class: type-only, no runtime code.
+export interface M3eSlider {
+  addEventListener<K extends keyof M3eSliderEventMap>(
+    type: K,
+    listener: (this: M3eSlider, ev: M3eSliderEventMap[K]) => unknown,
+    options?: boolean | AddEventListenerOptions,
+  ): void;
+  addEventListener(
+    type: string,
+    listener: EventListenerOrEventListenerObject,
+    options?: boolean | AddEventListenerOptions,
+  ): void;
+  removeEventListener<K extends keyof M3eSliderEventMap>(
+    type: K,
+    listener: (this: M3eSlider, ev: M3eSliderEventMap[K]) => unknown,
+    options?: boolean | EventListenerOptions,
+  ): void;
+  removeEventListener(
+    type: string,
+    listener: EventListenerOrEventListenerObject,
+    options?: boolean | EventListenerOptions,
+  ): void;
 }

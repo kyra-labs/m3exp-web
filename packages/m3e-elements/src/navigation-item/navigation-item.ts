@@ -1,4 +1,5 @@
 import { M3eElement } from '../base/M3eElement.js';
+import type { SelectionChangeDetail } from '../base/events.js';
 
 /**
  * `<m3e-navigation-item value="home" icon="home" href="/">Home</m3e-navigation-item>` — data for
@@ -223,4 +224,34 @@ export abstract class M3eNavigationContainer extends M3eElement {
     if (value === undefined) return;
     if (this.emit('selection-change', { value }, { cancelable: true })) this.selected = value;
   };
+}
+
+/** Events of the navigation containers (M1): typed `addEventListener` / `removeEventListener`. */
+export interface M3eNavigationContainerEventMap extends HTMLElementEventMap {
+  /** A destination was picked; cancelable: `preventDefault()` keeps the selection. */
+  'selection-change': CustomEvent<SelectionChangeDetail>;
+}
+
+// Typed listeners merged into the class: type-only, no runtime code.
+export interface M3eNavigationContainer {
+  addEventListener<K extends keyof M3eNavigationContainerEventMap>(
+    type: K,
+    listener: (this: M3eNavigationContainer, ev: M3eNavigationContainerEventMap[K]) => unknown,
+    options?: boolean | AddEventListenerOptions,
+  ): void;
+  addEventListener(
+    type: string,
+    listener: EventListenerOrEventListenerObject,
+    options?: boolean | AddEventListenerOptions,
+  ): void;
+  removeEventListener<K extends keyof M3eNavigationContainerEventMap>(
+    type: K,
+    listener: (this: M3eNavigationContainer, ev: M3eNavigationContainerEventMap[K]) => unknown,
+    options?: boolean | EventListenerOptions,
+  ): void;
+  removeEventListener(
+    type: string,
+    listener: EventListenerOrEventListenerObject,
+    options?: boolean | EventListenerOptions,
+  ): void;
 }

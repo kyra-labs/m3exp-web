@@ -16,6 +16,7 @@ export interface LinearProgressContract extends ProgressIndicatorOptions {
   label?: string | null | undefined;
 }
 
+/** @internal Shared with m3e-react; not part of the public API. */
 export const linearProgressClass = (c: Pick<LinearProgressContract, 'shape' | 'thickness'>) =>
   [B, c.shape === 'wavy' && `${B}--wavy`, c.thickness === 'thick' && `${B}--thick`]
     .filter(Boolean)
@@ -25,6 +26,7 @@ export const linearProgressClass = (c: Pick<LinearProgressContract, 'shape' | 't
  * The parts inside the root, in drawing order (the same DOM m3e-react renders): flat determinate
  * `track, indicator, stop`; flat indeterminate `track, indicator, track, indicator, track`; wavy an
  * SVG with `__wave-track`, one `__wave-indicator` per line and (determinate) the `__wave-stop`.
+ * @internal Shared with m3e-react; not part of the public API.
  */
 export const linearProgressParts = (
   c: Pick<LinearProgressContract, 'shape' | 'value'>,
@@ -35,7 +37,10 @@ export const linearProgressParts = (
       ? ['track', 'indicator', 'track', 'indicator', 'track']
       : ['track', 'indicator', 'stop'];
 
-/** Writes the `.m3e-linear-progress` contract into `root` (reusing matching children). */
+/**
+ * Writes the `.m3e-linear-progress` contract into `root` (reusing matching children).
+ * @internal Shared with m3e-react; not part of the public API.
+ */
 export function renderLinearProgress(root: HTMLElement, c: LinearProgressContract): void {
   renderProgressRoot(root, linearProgressClass(c), c.value, c.label);
   const parts = linearProgressParts(c);

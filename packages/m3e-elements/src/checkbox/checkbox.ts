@@ -5,7 +5,10 @@ const BLOCK = 'm3e-checkbox';
 
 const SVG_NS = 'http://www.w3.org/2000/svg';
 
-/** Each check segment's path: a straight line as long as the 48dp target (checkbox.css). */
+/**
+ * Each check segment's path: a straight line as long as the 48dp target (checkbox.css).
+ * @internal Shared with m3e-react; not part of the public API.
+ */
 export const CHECKBOX_SEGMENT_PATH = 'M0 0H48';
 
 /** A checkbox presses (and ripples) on Space only: Enter does not toggle it. */
@@ -30,6 +33,7 @@ const setAttr = (el: Element, name: string, value: string | null): void => {
  * Builds the `.m3e-checkbox` contract (m3e-css checkbox.css) inside `root` (a `<label>`):
  * the native input, the box with its mark, the state layer circle and, for a non-empty `text`,
  * the label. Returns the input. m3e-react's `<Checkbox>` renders the same DOM.
+ * @internal Shared with m3e-react; not part of the public API.
  */
 export function renderCheckbox(root: HTMLLabelElement, text: string): HTMLInputElement {
   const doc = root.ownerDocument;
@@ -61,7 +65,10 @@ export function renderCheckbox(root: HTMLLabelElement, text: string): HTMLInputE
   return input;
 }
 
-/** The state a checkbox shows: indeterminate wins over checked (`ToggleableState`). */
+/**
+ * The state a checkbox shows: indeterminate wins over checked (`ToggleableState`).
+ * @internal Shared with m3e-react; not part of the public API.
+ */
 export const checkboxState = (checked: boolean, indeterminate: boolean): CheckboxState =>
   indeterminate ? 'indeterminate' : checked ? 'checked' : 'unchecked';
 

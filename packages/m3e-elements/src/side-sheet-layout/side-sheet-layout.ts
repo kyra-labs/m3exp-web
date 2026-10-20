@@ -4,6 +4,12 @@ import { readSpringTokens } from '../base/scroll.js';
 
 export type SideSheetVariant = 'standard' | 'modal';
 
+/**
+ * Every value `variant` takes (`<m3e-side-sheet variant>`, m3e-react's `<SideSheet variant>`):
+ * the rendered variants plus `adaptive` (modal below the medium window size class, standard from it).
+ */
+export type SideSheetVariantOption = SideSheetVariant | 'adaptive';
+
 export interface SideSheetLayoutOptions {
   /** The initial state (rendered without animating). */
   open?: boolean;

@@ -17,6 +17,7 @@ import { useFabButton } from '../fab/Fab.js';
 import { Icon } from '../icon/Icon.js';
 import { type SpringSpec, ValueSpring, readSpringVars } from '../motion/shape-spring.js';
 import { cx } from '../utils/cx.js';
+import { warnDeprecatedProp } from '../utils/deprecated.js';
 import { isDev } from '../utils/dev.js';
 
 /** The FAB the menu opens from (ToggleFloatingActionButtonDefaults.containerSize / …Medium / …Large). */
@@ -73,6 +74,11 @@ export interface FabMenuProps extends Omit<
   /** 2–6 related actions (m3.material.io FAB menu › Guidelines). */
   items: readonly FabMenuItem[];
   /** Controlled open state (Compose `expanded`). */
+  isOpen?: boolean;
+  /**
+   * Controlled open state.
+   * @deprecated Since 1.8: use `isOpen`. Removed in 2.0.
+   */
   open?: boolean;
   defaultOpen?: boolean;
   onOpenChange?: (open: boolean) => void;
@@ -344,7 +350,9 @@ export const FabMenu = /* @__PURE__ */ forwardRef(function FabMenu(
 ) {
   const {
     items,
-    open,
+    isOpen,
+    // eslint-disable-next-line @typescript-eslint/no-deprecated -- the 1.x alias (D16)
+    open: legacyOpen,
     defaultOpen,
     onOpenChange,
     icon = 'add',
@@ -360,6 +368,8 @@ export const FabMenu = /* @__PURE__ */ forwardRef(function FabMenu(
   if (items.length < 2 || items.length > 6) {
     warnOnce('count', '<FabMenu> should have 2–6 items (m3.material.io FAB menu guidelines).');
   }
+  if (legacyOpen !== undefined) warnDeprecatedProp('FabMenu open', 'FabMenu isOpen');
+  const open = isOpen ?? legacyOpen;
   const state = useOverlayTriggerState({
     ...(open === undefined ? {} : { isOpen: open }),
     ...(defaultOpen === undefined ? {} : { defaultOpen }),

@@ -201,6 +201,7 @@ const FALLBACK_MILLIS: Readonly<Record<'short' | 'long', number>> = { short: 400
  * SnackbarDuration.toMillis: `--m3e-comp-snackbar-duration-short` / `-long` (4000 / 10000ms) or
  * Infinity for `indefinite`, then `recommended` (containsIcons, containsText, containsControls =
  * has an action, as Compose asks it).
+ * @internal Shared with m3e-react; not part of the public API.
  */
 export function snackbarDurationMillis(
   data: SnackbarData,
@@ -221,7 +222,10 @@ export function snackbarDurationMillis(
   });
 }
 
-/** Compose `Strings.SnackbarDismiss` (material3 res strings.xml `m3c_snackbar_dismiss`). */
+/**
+ * Compose `Strings.SnackbarDismiss` (material3 res strings.xml `m3c_snackbar_dismiss`).
+ * @internal Shared with m3e-react; not part of the public API.
+ */
 export const SNACKBAR_DISMISS_LABEL = 'Dismiss';
 
 const FOCUSABLE = 'button:not(:disabled), a[href], [tabindex]:not([tabindex="-1"])';

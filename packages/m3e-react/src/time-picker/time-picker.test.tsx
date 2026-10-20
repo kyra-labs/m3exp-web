@@ -108,6 +108,17 @@ describe('<TimeInput> / <TimeScroll>', () => {
     expect(toggle.getAttribute('aria-label')).toBe('Switch to text input mode');
     toggle.click();
     expect(onModeToggle).toHaveBeenCalledOnce();
+    // M13: the mode it asks for.
+    expect(onModeToggle).toHaveBeenCalledWith('input');
+  });
+
+  it('TimeInput onModeToggle receives the next mode (scroll)', async () => {
+    const onModeToggle = vi.fn();
+    const container = await renderReact(
+      <TimeInput uncontained is24Hour onModeToggle={onModeToggle} />,
+    );
+    container.querySelector<HTMLButtonElement>('.m3e-time-picker__side button')!.click();
+    expect(onModeToggle).toHaveBeenCalledWith('scroll');
   });
 
   it('onSelectionChange when a field is focused', async () => {
@@ -166,5 +177,37 @@ describe('<TimePickerDialog> / <VibrantTimePickerDialog>', () => {
     const surface = container.querySelector('.m3e-time-picker-dialog')!;
     expect(surface.className).toBe('m3e-time-picker-dialog m3e-time-picker-dialog--vibrant');
     expect(surface.querySelector('.m3e-time-picker-dialog__title')).toBeNull();
+  });
+});
+
+describe('<TimePickerModeToggle> (M11 API, M13)', () => {
+  it('onDisplayModeChange receives the next mode', async () => {
+    const calls: string[] = [];
+    const container = await renderReact(
+      <>
+        <TimePickerModeToggle displayMode="picker" onDisplayModeChange={(m) => calls.push(m)} />
+        <TimePickerModeToggle displayMode="input" onDisplayModeChange={(m) => calls.push(m)} />
+        <TimePickerModeToggle
+          scroll
+          displayMode="input"
+          onDisplayModeChange={(m) => calls.push(m)}
+        />
+        <TimePickerModeToggle
+          scroll
+          displayMode="scroll"
+          onDisplayModeChange={(m) => calls.push(m)}
+        />
+      </>,
+    );
+    for (const button of container.querySelectorAll<HTMLButtonElement>('button.m3e-icon-button')) {
+      await act(async () => {
+        const init = { bubbles: true, button: 0, pointerId: 1, pointerType: 'mouse' };
+        button.dispatchEvent(new PointerEvent('pointerdown', init));
+        button.dispatchEvent(new PointerEvent('pointerup', init));
+        button.click();
+        await Promise.resolve();
+      });
+    }
+    expect(calls).toEqual(['input', 'picker', 'scroll', 'input']);
   });
 });

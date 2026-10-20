@@ -1,9 +1,14 @@
-import { M3eNavigationContainer, M3eNavigationItem } from '../navigation-item/navigation-item.js';
+import {
+  M3eNavigationContainer,
+  M3eNavigationItem,
+  type M3eNavigationContainerEventMap,
+} from '../navigation-item/navigation-item.js';
 import {
   NavigationDrawerLayout,
   type NavigationDrawerVariant,
 } from '../navigation-drawer-layout/navigation-drawer-layout.js';
 import { createDrawerItemElement, fillDrawerItemElement } from './drawer-item.js';
+import type { OpenChangeDetail } from '../base/events.js';
 
 const DRAWER = 'm3e-navigation-drawer';
 const VARIANTS: readonly NavigationDrawerVariant[] = ['permanent', 'dismissible', 'modal'];
@@ -179,4 +184,34 @@ export class M3eNavigationDrawer extends M3eNavigationContainer {
   ): void {
     fillDrawerItemElement(doc, item, el, selected);
   }
+}
+
+/** Events of `<m3e-navigation-drawer>` (M1): typed `addEventListener` / `removeEventListener`. */
+export interface M3eNavigationDrawerEventMap extends M3eNavigationContainerEventMap {
+  /** Opened or closed; cancelable when the drawer asks (scrim, Escape, a drag). */
+  'open-change': CustomEvent<OpenChangeDetail>;
+}
+
+// Typed listeners merged into the class: type-only, no runtime code.
+export interface M3eNavigationDrawer {
+  addEventListener<K extends keyof M3eNavigationDrawerEventMap>(
+    type: K,
+    listener: (this: M3eNavigationDrawer, ev: M3eNavigationDrawerEventMap[K]) => unknown,
+    options?: boolean | AddEventListenerOptions,
+  ): void;
+  addEventListener(
+    type: string,
+    listener: EventListenerOrEventListenerObject,
+    options?: boolean | AddEventListenerOptions,
+  ): void;
+  removeEventListener<K extends keyof M3eNavigationDrawerEventMap>(
+    type: K,
+    listener: (this: M3eNavigationDrawer, ev: M3eNavigationDrawerEventMap[K]) => unknown,
+    options?: boolean | EventListenerOptions,
+  ): void;
+  removeEventListener(
+    type: string,
+    listener: EventListenerOrEventListenerObject,
+    options?: boolean | EventListenerOptions,
+  ): void;
 }

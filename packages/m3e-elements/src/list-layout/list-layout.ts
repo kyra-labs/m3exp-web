@@ -28,7 +28,10 @@ export interface ListItemShape {
   readonly baseline?: boolean | undefined;
 }
 
-/** `.m3e-list-item` and its modifiers. */
+/**
+ * `.m3e-list-item` and its modifiers.
+ * @internal Shared with m3e-react; not part of the public API.
+ */
 export function listItemClassName({
   segmented,
   interactive,
@@ -59,6 +62,7 @@ const SEGMENT = 'M0 0H48';
  * The indicator markup (m3e-css checkbox.css / radio-button.css / switch.css) without the input's
  * state: the JS layers set `checked` and `disabled`, and make the root `inert` (the option is the
  * control; Compose's samples pass onClick = null).
+ * @internal Shared with m3e-react; not part of the public API.
  */
 export function listControlTree(control: ListItemControl): ListControlNode {
   const hidden = { 'aria-hidden': 'true' };
@@ -120,7 +124,10 @@ export function listControlTree(control: ListItemControl): ListControlNode {
 
 const SVG = 'http://www.w3.org/2000/svg';
 
-/** Builds an indicator (`listControlTree`) as DOM, its root `inert`. */
+/**
+ * Builds an indicator (`listControlTree`) as DOM, its root `inert`.
+ * @internal Shared with m3e-react; not part of the public API.
+ */
 export function createListControl(doc: Document, control: ListItemControl): HTMLElement {
   const build = ([tag, attrs, children]: ListControlNode, svg: boolean): Element => {
     const inSvg = svg || tag === 'svg';
@@ -134,21 +141,33 @@ export function createListControl(doc: Document, control: ListItemControl): HTML
   return root;
 }
 
-/** React Aria's option id: `<listbox id>-option-<key without whitespace>`. */
+/**
+ * React Aria's option id: `<listbox id>-option-<key without whitespace>`.
+ * @internal Shared with m3e-react; not part of the public API.
+ */
 export const listOptionId = (listId: string, key: string): string =>
   `${listId}-option-${key.replace(/\s*/g, '')}`;
 
-/** The id list of the parts that exist (undefined when none). */
+/**
+ * The id list of the parts that exist (undefined when none).
+ * @internal Shared with m3e-react; not part of the public API.
+ */
 export function listIdRefs(...ids: (string | null | undefined)[]): string | undefined {
   const list = ids.filter((id): id is string => typeof id === 'string' && id.length > 0);
   return list.length > 0 ? list.join(' ') : undefined;
 }
 
-/** An item's key: `data-value`, else its headline (as React Aria keys an item by its text). */
+/**
+ * An item's key: `data-value`, else its headline (as React Aria keys an item by its text).
+ * @internal Shared with m3e-react; not part of the public API.
+ */
 export const listItemValue = (item: Element): string =>
   item.getAttribute('data-value') ?? listItemText(item);
 
-/** The text typeahead matches: the headline (React Aria's textValue). */
+/**
+ * The text typeahead matches: the headline (React Aria's textValue).
+ * @internal Shared with m3e-react; not part of the public API.
+ */
 export const listItemText = (item: Element): string =>
   (
     item.querySelector(`:scope > .${BLOCK}__content > .${BLOCK}__headline`)?.textContent ?? ''

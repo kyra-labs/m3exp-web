@@ -122,8 +122,10 @@ const colors = [
   <section aria-labelledby="react-heading">
     <h2 id="react-heading">React</h2>
     <p>
-      <code>&lt;Fab&gt;</code> and <code>&lt;ExtendedFab&gt;</code>. Toggle twice quickly: the width
-      spring reverses from its current speed. In the list, the extended FAB collapses as you scroll down
+      <code>&lt;Fab&gt;</code> and <code>&lt;ExtendedFab label icon size color isExpanded&gt;</code>
+      (<code>expanded</code> is the deprecated name of <code>isExpanded</code>, since 1.8, removed in
+      2.0; it warns once in development). Toggle twice quickly: the width spring reverses from its
+      current speed. In the list, the extended FAB collapses as you scroll down
       and expands when you scroll up (<code>useExtendedFabScroll</code>).
     </p>
     <FabPlayground client:only="react" />
@@ -134,7 +136,7 @@ const colors = [
     <p class="docs-deprecated" role="note">
       Deprecated (DECISIONS D4): m3.material.io no longer recommends the small FAB. It ships until 2.0
       for migration and gets no new features; use the baseline FAB. <code>&lt;Fab size="small"&gt;</code>{' '}
-      warns once in development.
+      and <code>fabClassName(&#123; size: 'small' &#125;)</code> warn once in development.
     </p>
     <div class="docs-button-row" data-testid="small">
       <button type="button" class="m3e-fab m3e-fab--size-small" aria-label="Create (small)">

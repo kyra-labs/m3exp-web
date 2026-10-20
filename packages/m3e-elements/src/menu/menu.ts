@@ -2,6 +2,7 @@ import { M3eElement } from '../base/M3eElement.js';
 import { attachRipple } from '../base/ripple.js';
 import { TypeSelect } from '../base/type-select.js';
 import { type MenuAnchorPosition, MenuPopup } from '../menu-popup/menu-popup.js';
+import type { OpenChangeDetail } from '../base/events.js';
 
 /** Where focus goes when a menu opens: an item, or the menu itself (pointer opens). */
 export type MenuFocusStrategy = 'first' | 'last' | null;
@@ -58,6 +59,44 @@ export class M3eMenuItem extends M3eElement {
   protected override update(): void {
     this.closest<M3eMenu>('m3e-menu')?.requestUpdate();
   }
+}
+
+/** `action` detail of a `<m3e-menu-item>` (it bubbles through its `<m3e-menu>`). */
+export interface MenuActionDetail {
+  /** The item's `value`, else its label. */
+  value: string;
+  /** A checkbox or radio item's state after the activation; null for a plain item. */
+  checked: boolean | null;
+}
+
+/** Events of `<m3e-menu-item>` (M1): typed `addEventListener` / `removeEventListener`. */
+export interface M3eMenuItemEventMap extends HTMLElementEventMap {
+  /** Activated (it bubbles to the menu). */
+  action: CustomEvent<MenuActionDetail>;
+}
+
+// Typed listeners merged into the class: type-only, no runtime code.
+export interface M3eMenuItem {
+  addEventListener<K extends keyof M3eMenuItemEventMap>(
+    type: K,
+    listener: (this: M3eMenuItem, ev: M3eMenuItemEventMap[K]) => unknown,
+    options?: boolean | AddEventListenerOptions,
+  ): void;
+  addEventListener(
+    type: string,
+    listener: EventListenerOrEventListenerObject,
+    options?: boolean | AddEventListenerOptions,
+  ): void;
+  removeEventListener<K extends keyof M3eMenuItemEventMap>(
+    type: K,
+    listener: (this: M3eMenuItem, ev: M3eMenuItemEventMap[K]) => unknown,
+    options?: boolean | EventListenerOptions,
+  ): void;
+  removeEventListener(
+    type: string,
+    listener: EventListenerOrEventListenerObject,
+    options?: boolean | EventListenerOptions,
+  ): void;
 }
 
 /**
@@ -659,6 +698,38 @@ export class M3eMenu extends M3eElement {
       this.#focus(items[found]);
     }
   }
+}
+
+/** Events of `<m3e-menu>` (M1): typed `addEventListener` / `removeEventListener`. */
+export interface M3eMenuEventMap extends HTMLElementEventMap {
+  /** Opened or closed (after the change). */
+  'open-change': CustomEvent<OpenChangeDetail>;
+  /** An item was activated (from the `<m3e-menu-item>`, bubbling). */
+  action: CustomEvent<MenuActionDetail>;
+}
+
+// Typed listeners merged into the class: type-only, no runtime code.
+export interface M3eMenu {
+  addEventListener<K extends keyof M3eMenuEventMap>(
+    type: K,
+    listener: (this: M3eMenu, ev: M3eMenuEventMap[K]) => unknown,
+    options?: boolean | AddEventListenerOptions,
+  ): void;
+  addEventListener(
+    type: string,
+    listener: EventListenerOrEventListenerObject,
+    options?: boolean | AddEventListenerOptions,
+  ): void;
+  removeEventListener<K extends keyof M3eMenuEventMap>(
+    type: K,
+    listener: (this: M3eMenu, ev: M3eMenuEventMap[K]) => unknown,
+    options?: boolean | EventListenerOptions,
+  ): void;
+  removeEventListener(
+    type: string,
+    listener: EventListenerOrEventListenerObject,
+    options?: boolean | EventListenerOptions,
+  ): void;
 }
 
 const labelText = (item: M3eMenuItem) => item.textContent.trim();

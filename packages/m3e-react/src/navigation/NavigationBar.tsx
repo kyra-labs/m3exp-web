@@ -8,6 +8,7 @@ import {
 } from './NavigationItem.js';
 import type { NavigationNativeProps } from './ShortNavigationBar.js';
 
+/** @deprecated D4: use {@link ShortNavigationBarProps} (`<ShortNavigationBar>`). Removed in 2.0. */
 export interface NavigationBarProps extends NavigationNativeProps, NavigationSelectionProps {}
 
 /**
@@ -23,6 +24,7 @@ export const NavigationBar = /* @__PURE__ */ forwardRef(function NavigationBar(
     onSelectionChange,
     className,
     ...rest
+    // eslint-disable-next-line @typescript-eslint/no-deprecated -- D4: the legacy component's own props
   }: NavigationBarProps,
   ref: ForwardedRef<HTMLElement>,
 ) {

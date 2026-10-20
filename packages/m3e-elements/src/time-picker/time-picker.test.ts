@@ -306,3 +306,53 @@ describe('<m3e-time-scroll>', () => {
     expect(host.hour).toBe(13);
   });
 });
+
+describe('time pickers: M11 API', () => {
+  it("the inputs' native input / change stop inside: a host change listener sees only the CustomEvent", async () => {
+    const { host, root } = await mount(
+      '<m3e-time-input hour="9" minute="0" hour-cycle="24"></m3e-time-input>',
+      'm3e-time-input',
+    );
+    const seen: unknown[] = [];
+    host.addEventListener('change', (e: Event) => {
+      seen.push(e instanceof CustomEvent ? e.detail : `native ${e.type}`);
+    });
+    host.addEventListener('input', (e: Event) => {
+      seen.push(`native ${e.type}`);
+    });
+    const hour = root.querySelector('input')!;
+    hour.focus();
+    hour.setSelectionRange(0, 2);
+    hour.dispatchEvent(new InputEvent('beforeinput', { bubbles: true }));
+    hour.value = '1';
+    hour.setSelectionRange(1, 1);
+    hour.dispatchEvent(new InputEvent('input', { bubbles: true, composed: true }));
+    hour.dispatchEvent(new Event('change', { bubbles: true, composed: true }));
+    // The layout's own listeners still ran.
+    expect(host.hour).toBe(1);
+    expect(seen).toEqual([{ hour: 1, minute: 0 }]);
+  });
+
+  it('selection-change carries `value` (M2) and the deprecated `selection`', async () => {
+    const { host, root } = await mount(
+      '<m3e-time-picker hour="9" minute="30" hour-cycle="12"></m3e-time-picker>',
+      'm3e-time-picker',
+    );
+    const details: unknown[] = [];
+    host.addEventListener('selection-change', (e) => details.push(e.detail));
+    root.querySelectorAll<HTMLElement>('.m3e-time-picker__selector')[1]!.click();
+    expect(details).toEqual([{ value: 'minute', selection: 'minute' }]);
+    expect(host.selection).toBe('minute');
+  });
+
+  it('mode-toggle is typed on <m3e-time-input> (M1 event map)', async () => {
+    const { host, root } = await mount(
+      '<m3e-time-input hour="9" minute="0" uncontained></m3e-time-input>',
+      'm3e-time-input',
+    );
+    const details: (null | undefined)[] = [];
+    host.addEventListener('mode-toggle', (e) => details.push(e.detail));
+    root.querySelector<HTMLButtonElement>('.m3e-time-picker__side .m3e-icon-button')!.click();
+    expect(details).toEqual([null]);
+  });
+});

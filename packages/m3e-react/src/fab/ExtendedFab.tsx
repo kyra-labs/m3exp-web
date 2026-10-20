@@ -9,6 +9,7 @@ import {
 import { mergeProps, useObjectRef } from 'react-aria';
 import { ValueSpring, readSpring } from '../motion/shape-spring.js';
 import { cx, defined } from '../utils/cx.js';
+import { warnDeprecatedProp } from '../utils/deprecated.js';
 import { type FabColor, type FabNativeProps, type FabPressProps, useFabButton } from './Fab.js';
 
 /** Extended FAB sizes (Compose Small/Medium/LargeExtendedFloatingActionButton): 56, 80, 96dp. */
@@ -46,6 +47,11 @@ export interface ExtendedFabProps extends FabNativeProps, FabPressProps {
   /**
    * Default true. `false` collapses to the icon (a FAB-sized square) with an interruptible width
    * spring; ignored without an icon. See {@link useExtendedFabScroll} for scroll-driven collapse.
+   */
+  isExpanded?: boolean;
+  /**
+   * Default true; `false` collapses to the icon.
+   * @deprecated Since 1.8: use `isExpanded`. Removed in 2.0.
    */
   expanded?: boolean;
   className?: string;
@@ -121,7 +127,7 @@ function useExpandSpring(
 
 /**
  * Extended FAB (COMPONENT_SPEC §5; Compose `Small`/`Medium`/`LargeExtendedFloatingActionButton`):
- * React Aria behavior on the m3e-css `.m3e-extended-fab` classes. `expanded={false}` collapses it
+ * React Aria behavior on the m3e-css `.m3e-extended-fab` classes. `isExpanded={false}` collapses it
  * to the icon with an interruptible width spring; the label stays the accessible name.
  */
 export const ExtendedFab = /* @__PURE__ */ forwardRef(function ExtendedFab(
@@ -133,7 +139,9 @@ export const ExtendedFab = /* @__PURE__ */ forwardRef(function ExtendedFab(
     icon,
     size,
     color,
-    expanded = true,
+    isExpanded,
+    // eslint-disable-next-line @typescript-eslint/no-deprecated -- the 1.x alias (D16)
+    expanded: legacyExpanded,
     className,
     type,
     onPress,
@@ -141,6 +149,10 @@ export const ExtendedFab = /* @__PURE__ */ forwardRef(function ExtendedFab(
     onPressEnd,
     ...rest
   } = props;
+  if (legacyExpanded !== undefined) {
+    warnDeprecatedProp('ExtendedFab expanded', 'ExtendedFab isExpanded');
+  }
+  const expanded = isExpanded ?? legacyExpanded ?? true;
   const ref = useObjectRef(forwardedRef);
   const labelRef = useRef<HTMLSpanElement>(null);
   const collapsed = !expanded && icon != null;

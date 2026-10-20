@@ -2,6 +2,7 @@ export {
   IconButton,
   IconToggleButton,
   iconButtonClassName,
+  type IconButtonStyle,
   type IconButtonProps,
   type IconButtonShape,
   type IconButtonSize,

@@ -1,6 +1,14 @@
 import { M3eMenu, M3eMenuGroup, M3eMenuItem } from './menu.js';
 
-export { M3eMenu, M3eMenuGroup, M3eMenuItem, type MenuFocusStrategy } from './menu.js';
+export {
+  M3eMenu,
+  M3eMenuGroup,
+  M3eMenuItem,
+  type MenuFocusStrategy,
+  type M3eMenuEventMap,
+  type M3eMenuItemEventMap,
+  type MenuActionDetail,
+} from './menu.js';
 
 M3eMenuItem.define('m3e-menu-item');
 M3eMenuGroup.define('m3e-menu-group');

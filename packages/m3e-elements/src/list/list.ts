@@ -26,7 +26,7 @@ export interface ListActionDetail {
 }
 
 /**
- * `<m3e-list label="Pets" selection="single">…items…</m3e-list>`: an interactive list
+ * `<m3e-list label="Pets" selection-mode="single">…items…</m3e-list>`: an interactive list
  * (COMPONENT_SPEC §20; owner decisions M8 #13 and #15). Renders the m3e-css `.m3e-list` contract
  * inside itself (the host is `display: contents`) and moves its children, `.m3e-list-item`s in the
  * m3e-css markup (`data-value` keys them; `aria-selected="true"` / `aria-disabled="true"` set the
@@ -35,26 +35,33 @@ export interface ListActionDetail {
  *
  * - a `role="listbox"` of options with one tab stop, arrow keys that wrap (Down / Right next,
  *   Up / Left previous), Home / End and typeahead;
- * - selection (`selection="single" | "multiple"`): click, Space or Enter toggles an option, a
+ * - selection (`selection-mode="single" | "multiple"`): click, Space or Enter toggles an option, a
  *   checkbox, radio button or switch inside it shows the state; `selection-change`
  *   (`detail: { values, value }`, cancelable: `preventDefault()` keeps the selection);
- * - `selection="none"` (the default): actionable options (Compose's clickable ListItem); click or
+ * - `selection-mode="none"` (the default): actionable options (Compose's clickable ListItem); click or
  *   Enter emits `action` (`detail: { value }`).
  *
  * Static lists need no element: `<ul class="m3e-list">` of `<li class="m3e-list-item">`.
  *
- * Attributes: `label` (the listbox's accessible name), `selection`,
- * `disallow-empty-selection`. Property `selectedValues` (string[]).
+ * Attributes: `label` (the listbox's accessible name), `selection-mode` (`selection` is its
+ * deprecated name, since 1.8; removed in 2.0), `disallow-empty-selection`. Property `selectedValues` (string[]).
  */
 export class M3eList extends M3eElement {
   static override properties = {
     ...M3eElement.properties,
     label: {},
+    selectionMode: {},
     selection: { default: 'none' },
     disallowEmptySelection: { type: Boolean },
   };
 
   declare label: string | null | undefined;
+  /** `none` (default) | `single` | `multiple` (React's `selectionMode`). */
+  declare selectionMode: ListSelectionMode | null | undefined;
+  /**
+   * The selection mode.
+   * @deprecated Since 1.8: use `selectionMode` (`selection-mode`). Removed in 2.0.
+   */
   declare selection: ListSelectionMode;
   declare disallowEmptySelection: boolean | undefined;
 
@@ -106,7 +113,12 @@ export class M3eList extends M3eElement {
     if (moved.length > 0) root.append(...moved);
     setAttr(root, 'aria-label', this.label ?? null);
     this.#layout ??= new ListLayout(root, {
-      selection: () => (MODES.has(this.selection) ? this.selection : 'none'),
+      selection: () => {
+        // The new name wins; the deprecated `selection` is the 1.x alias (D16).
+        // eslint-disable-next-line @typescript-eslint/no-deprecated
+        const mode = this.selectionMode ?? this.selection;
+        return MODES.has(mode) ? mode : 'none';
+      },
       disallowEmptySelection: () => this.disallowEmptySelection === true,
       onSelectionChange: (values, value) => {
         const detail: ListSelectionChangeDetail = { values, value };
@@ -120,4 +132,36 @@ export class M3eList extends M3eElement {
     });
     this.#layout.update();
   }
+}
+
+/** Events of `<m3e-list>` (M1): typed `addEventListener` / `removeEventListener`. */
+export interface M3eListEventMap extends HTMLElementEventMap {
+  /** The selection changes; cancelable. */
+  'selection-change': CustomEvent<ListSelectionChangeDetail>;
+  /** An option was activated (`selection-mode="none"`). */
+  action: CustomEvent<ListActionDetail>;
+}
+
+// Typed listeners merged into the class: type-only, no runtime code.
+export interface M3eList {
+  addEventListener<K extends keyof M3eListEventMap>(
+    type: K,
+    listener: (this: M3eList, ev: M3eListEventMap[K]) => unknown,
+    options?: boolean | AddEventListenerOptions,
+  ): void;
+  addEventListener(
+    type: string,
+    listener: EventListenerOrEventListenerObject,
+    options?: boolean | AddEventListenerOptions,
+  ): void;
+  removeEventListener<K extends keyof M3eListEventMap>(
+    type: K,
+    listener: (this: M3eList, ev: M3eListEventMap[K]) => unknown,
+    options?: boolean | EventListenerOptions,
+  ): void;
+  removeEventListener(
+    type: string,
+    listener: EventListenerOrEventListenerObject,
+    options?: boolean | EventListenerOptions,
+  ): void;
 }

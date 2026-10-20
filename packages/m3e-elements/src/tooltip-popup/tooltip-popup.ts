@@ -17,6 +17,7 @@ const px = (v: number) => `${String(Math.round(v * 100) / 100)}px`;
  * The anchor's bounds as Compose measures them: its Material components lay out at the minimum
  * interactive size (minimumInteractiveComponentSize), which m3e-css draws as an absolutely
  * positioned `::after` touch target around a smaller visual box, so that target counts.
+ * @internal Shared with m3e-react; not part of the public API.
  */
 export function anchorBounds(anchor: Element): TooltipRect {
   const box = anchor.getBoundingClientRect();
@@ -109,7 +110,10 @@ function nameText(node: Node): string {
   return [...node.childNodes].map(nameText).join('');
 }
 
-/** The anchor's accessible name: aria-labelledby, aria-label, else its (visible) text. */
+/**
+ * The anchor's accessible name: aria-labelledby, aria-label, else its (visible) text.
+ * @internal Shared with m3e-react; not part of the public API.
+ */
 export function accessibleName(el: Element): string {
   const root = el.getRootNode() as Document | ShadowRoot;
   const ids = el.getAttribute('aria-labelledby')?.split(/\s+/).filter(Boolean) ?? [];
@@ -126,6 +130,7 @@ const normalizeName = (text: string) => text.replace(/\s+/g, ' ').trim().toLower
  * Whether a tooltip's text repeats its anchor's accessible name (an icon button whose label is the
  * tooltip text, as in every Compose sample). Owner decision M9 #2: then the anchor does not point
  * `aria-describedby` at it and it is `aria-hidden`, so screen readers do not read it twice.
+ * @internal Shared with m3e-react; not part of the public API.
  */
 export function tooltipRepeatsName(anchor: Element, tooltip: Element): boolean {
   // The tooltip's own aria-hidden (set by this rule) does not count.
@@ -146,6 +151,7 @@ const RANK: Readonly<Record<TooltipShowPriority, number>> = {
  * Compose defers to the platform (ViewConfiguration.longPressTimeoutMillis); the web has no such
  * setting, so this is React Aria useLongPress's default threshold (react-aria 3.53.1).
  * TODO(verify): SOURCES.md register #71.
+ * @internal Shared with m3e-react; not part of the public API.
  */
 export const LONG_PRESS_TIMEOUT_MS = 500;
 

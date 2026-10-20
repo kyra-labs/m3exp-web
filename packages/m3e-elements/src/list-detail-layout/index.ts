@@ -1,4 +1,7 @@
-import { M3ePaneScaffoldElement } from '../pane-scaffold-layout/pane-scaffold-element.js';
+import {
+  M3ePaneScaffoldElement,
+  type M3ePaneScaffoldElementEventMap,
+} from '../pane-scaffold-layout/pane-scaffold-element.js';
 
 /**
  * `<m3e-list-detail-layout>` (COMPONENT_SPEC §16a; Compose ListDetailPaneScaffold with
@@ -35,6 +38,33 @@ export class M3eListDetailLayout extends M3ePaneScaffoldElement {
   declare extraLabel: string | null | undefined;
 
   protected readonly variant = 'list-detail';
+}
+
+/** Events of `<m3e-list-detail-layout>` (M1). */
+export type M3eListDetailLayoutEventMap = M3ePaneScaffoldElementEventMap;
+
+// Typed listeners merged into the class: type-only, no runtime code.
+export interface M3eListDetailLayout {
+  addEventListener<K extends keyof M3eListDetailLayoutEventMap>(
+    type: K,
+    listener: (this: M3eListDetailLayout, ev: M3eListDetailLayoutEventMap[K]) => unknown,
+    options?: boolean | AddEventListenerOptions,
+  ): void;
+  addEventListener(
+    type: string,
+    listener: EventListenerOrEventListenerObject,
+    options?: boolean | AddEventListenerOptions,
+  ): void;
+  removeEventListener<K extends keyof M3eListDetailLayoutEventMap>(
+    type: K,
+    listener: (this: M3eListDetailLayout, ev: M3eListDetailLayoutEventMap[K]) => unknown,
+    options?: boolean | EventListenerOptions,
+  ): void;
+  removeEventListener(
+    type: string,
+    listener: EventListenerOrEventListenerObject,
+    options?: boolean | EventListenerOptions,
+  ): void;
 }
 
 M3eListDetailLayout.define('m3e-list-detail-layout');

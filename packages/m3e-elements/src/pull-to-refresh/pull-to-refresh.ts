@@ -227,3 +227,33 @@ export class M3ePullToRefresh extends M3eElement {
     }
   }
 }
+
+/** Events of `<m3e-pull-to-refresh>` (M1): typed `addEventListener` / `removeEventListener`. */
+export interface M3ePullToRefreshEventMap extends HTMLElementEventMap {
+  /** The user pulled past the threshold. */
+  refresh: CustomEvent<null>;
+}
+
+// Typed listeners merged into the class: type-only, no runtime code.
+export interface M3ePullToRefresh {
+  addEventListener<K extends keyof M3ePullToRefreshEventMap>(
+    type: K,
+    listener: (this: M3ePullToRefresh, ev: M3ePullToRefreshEventMap[K]) => unknown,
+    options?: boolean | AddEventListenerOptions,
+  ): void;
+  addEventListener(
+    type: string,
+    listener: EventListenerOrEventListenerObject,
+    options?: boolean | AddEventListenerOptions,
+  ): void;
+  removeEventListener<K extends keyof M3ePullToRefreshEventMap>(
+    type: K,
+    listener: (this: M3ePullToRefresh, ev: M3ePullToRefreshEventMap[K]) => unknown,
+    options?: boolean | EventListenerOptions,
+  ): void;
+  removeEventListener(
+    type: string,
+    listener: EventListenerOrEventListenerObject,
+    options?: boolean | EventListenerOptions,
+  ): void;
+}

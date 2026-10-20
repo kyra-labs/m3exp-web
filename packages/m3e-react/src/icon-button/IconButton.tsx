@@ -19,7 +19,8 @@ export type IconButtonSize = 'xs' | 's' | 'm' | 'l' | 'xl';
 export type IconButtonWidth = 'narrow' | 'default' | 'wide';
 export type IconButtonShape = 'round' | 'square';
 
-interface IconButtonStyle {
+/** The style options of an icon button (`iconButtonClassName`, and the IconButton props). */
+export interface IconButtonStyle {
   /** Color configuration. Default `standard` (inherits the surrounding content color). */
   variant?: IconButtonVariant | undefined;
   /** Token colors for standard/outlined instead of the inherited color (Compose "vibrant"). */

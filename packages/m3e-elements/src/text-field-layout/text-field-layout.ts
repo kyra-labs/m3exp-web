@@ -10,7 +10,10 @@ export type TextFieldVariant = 'filled' | 'outlined';
  */
 export type TextFieldLabelPosition = 'inside' | 'cutout' | 'above';
 
-/** m3.material.io Text fields › Accessibility: the counter reads "Character count, 5/20". */
+/**
+ * m3.material.io Text fields › Accessibility: the counter reads "Character count, 5/20".
+ * @internal Shared with m3e-react; not part of the public API.
+ */
 export const TEXT_FIELD_COUNTER_LABEL = 'Character count';
 
 /** What decides the root's classes. */
@@ -20,7 +23,10 @@ export interface TextFieldShape {
   readonly multiline?: boolean | undefined;
 }
 
-/** `.m3e-text-field` and its modifiers (filled, the default, adds none). */
+/**
+ * `.m3e-text-field` and its modifiers (filled, the default, adds none).
+ * @internal Shared with m3e-react; not part of the public API.
+ */
 export function textFieldClassName({ variant, labelPosition, multiline }: TextFieldShape): string {
   const classes = ['m3e-text-field'];
   if (variant === 'outlined') classes.push('m3e-text-field--outlined');
@@ -29,17 +35,26 @@ export function textFieldClassName({ variant, labelPosition, multiline }: TextFi
   return classes.join(' ');
 }
 
-/** The visible counter: characters used / the limit (m3.material.io). */
+/**
+ * The visible counter: characters used / the limit (m3.material.io).
+ * @internal Shared with m3e-react; not part of the public API.
+ */
 export const textFieldCounterText = (length: number, maxLength: number): string =>
   `${String(length)}/${String(maxLength)}`;
 
-/** An `aria-describedby` value from the ids that exist (undefined when none). */
+/**
+ * An `aria-describedby` value from the ids that exist (undefined when none).
+ * @internal Shared with m3e-react; not part of the public API.
+ */
 export function textFieldDescribedBy(...ids: (string | null | undefined)[]): string | undefined {
   const list = ids.filter((id): id is string => typeof id === 'string' && id.length > 0);
   return list.length > 0 ? list.join(' ') : undefined;
 }
 
-/** Whether the engine grows a textarea from CSS (`field-sizing: content`). */
+/**
+ * Whether the engine grows a textarea from CSS (`field-sizing: content`).
+ * @internal Shared with m3e-react; not part of the public API.
+ */
 export const textFieldSizesFromCss = (): boolean =>
   typeof CSS !== 'undefined' && typeof CSS.supports === 'function'
     ? CSS.supports('field-sizing', 'content')
@@ -49,6 +64,7 @@ export const textFieldSizesFromCss = (): boolean =>
  * Grows a multi-line text field's textarea to its content where CSS cannot
  * (TextFieldLineLimits.MultiLine: the field grows with its lines). A no-op where `field-sizing`
  * works or for an `<input>`.
+ * @internal Shared with m3e-react; not part of the public API.
  */
 export function growTextFieldInput(input: HTMLInputElement | HTMLTextAreaElement): void {
   if (input.localName !== 'textarea' || textFieldSizesFromCss()) return;

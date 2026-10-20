@@ -3,6 +3,7 @@ import {
   SIDE_SHEET_CLOSE_LABEL,
   SIDE_SHEET_LABEL,
   SideSheetLayout,
+  type SideSheetVariantOption,
 } from '@kyralabs/m3e-elements/side-sheet-layout.js';
 import { isWidthAtLeastBreakpoint } from '@kyralabs/m3e-motion';
 import {
@@ -22,8 +23,6 @@ import { useWindowSizeClass } from '../window-size-class/useWindowSizeClass.js';
 
 const SHEET = 'm3e-side-sheet';
 
-export type SideSheetVariant = 'standard' | 'modal' | 'adaptive';
-
 export interface SideSheetProps extends Omit<
   HTMLAttributes<HTMLElement>,
   'children' | 'title' | 'aria-label'
@@ -33,7 +32,7 @@ export interface SideSheetProps extends Omit<
    * `modal` (a `<dialog>` at the window's end edge over a scrim) or `adaptive` (modal below the
    * medium window size class, 600dp, standard from it; owner decision M9 #17).
    */
-  variant?: SideSheetVariant;
+  variant?: SideSheetVariantOption;
   /** Shown (controlled). */
   isOpen?: boolean;
   /** Initially shown (uncontrolled). */

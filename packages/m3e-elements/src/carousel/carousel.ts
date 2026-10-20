@@ -49,10 +49,15 @@ const requestParentUpdate = (el: Element) => {
   if (parent instanceof M3eCarousel) parent.requestUpdate();
 };
 
+/** `action` (and the deprecated `item-click`) detail: the activated item's index. */
+export interface CarouselActionDetail {
+  index: number;
+}
+
 /**
  * `<m3e-carousel-item>…</m3e-carousel-item>` — one item of a `<m3e-carousel>`: its child nodes
- * move into the rendered item's mask. `href` makes the item a link, `action` a button (the
- * carousel emits `item-click`); both draw the state layer and ripple (owner decision M9 #25).
+ * move into the rendered item's mask. `href` makes the item a link, `action` a button (activating
+ * it dispatches `action`, `detail: { index }`, from the item; it bubbles); both draw the state layer and ripple (owner decision M9 #25).
  * `label` replaces the default name ("2 of 5").
  */
 export class M3eCarouselItem extends M3eElement {
@@ -90,6 +95,36 @@ export class M3eCarouselItem extends M3eElement {
   }
 }
 
+/** Events of `<m3e-carousel-item>` (M1): typed `addEventListener` / `removeEventListener`. */
+export interface M3eCarouselItemEventMap extends HTMLElementEventMap {
+  /** An `action` item was activated (it bubbles to the carousel). */
+  action: CustomEvent<CarouselActionDetail>;
+}
+
+// Typed listeners merged into the class: type-only, no runtime code.
+export interface M3eCarouselItem {
+  addEventListener<K extends keyof M3eCarouselItemEventMap>(
+    type: K,
+    listener: (this: M3eCarouselItem, ev: M3eCarouselItemEventMap[K]) => unknown,
+    options?: boolean | AddEventListenerOptions,
+  ): void;
+  addEventListener(
+    type: string,
+    listener: EventListenerOrEventListenerObject,
+    options?: boolean | AddEventListenerOptions,
+  ): void;
+  removeEventListener<K extends keyof M3eCarouselItemEventMap>(
+    type: K,
+    listener: (this: M3eCarouselItem, ev: M3eCarouselItemEventMap[K]) => unknown,
+    options?: boolean | EventListenerOptions,
+  ): void;
+  removeEventListener(
+    type: string,
+    listener: EventListenerOrEventListenerObject,
+    options?: boolean | EventListenerOptions,
+  ): void;
+}
+
 interface Rendered {
   item: HTMLDivElement;
   mask: HTMLElement;
@@ -115,8 +150,9 @@ interface Rendered {
  *   it. `item-spacing`, `content-padding` (px; default CarouselDefaults' 0dp).
  * - `label`: the carousel's accessible name (APG carousel: `role="region"`,
  *   `aria-roledescription="carousel"`); items are `role="group"` slides named "n of N".
- * - `scrollToItem(index)`, `currentItem`. Event `item-click` (`detail: { index }`) from `action`
- *   items.
+ * - `scrollToItem(index)`, `currentItem`. Event `action` (`detail: { index }`), dispatched by an
+ *   `action` item and bubbling through the carousel; `item-click` (same detail, on the carousel)
+ *   is deprecated since 1.8 and removed in 2.0.
  */
 export class M3eCarousel extends M3eElement {
   static override properties = {
@@ -254,7 +290,12 @@ export class M3eCarousel extends M3eElement {
       if (kind === 'button') {
         mask.addEventListener('click', () => {
           const i = this.#indexOf(mask);
-          if (i >= 0) this.emit('item-click', { index: i });
+          if (i < 0) return;
+          const detail: CarouselActionDetail = { index: i };
+          source.dispatchEvent(
+            new CustomEvent('action', { bubbles: true, composed: true, detail }),
+          );
+          this.emit('item-click', { ...detail });
         });
       }
       r.mask = mask;
@@ -285,4 +326,36 @@ export class M3eCarousel extends M3eElement {
     if (!viewport) return -1;
     return [...viewport.children].findIndex((item) => item.contains(mask));
   }
+}
+
+/** Events of `<m3e-carousel>` (M1): typed `addEventListener` / `removeEventListener`. */
+export interface M3eCarouselEventMap extends HTMLElementEventMap {
+  /** An `action` item was activated (from the `<m3e-carousel-item>`, bubbling). */
+  action: CustomEvent<CarouselActionDetail>;
+  /** @deprecated Since 1.8: listen to `action`. Removed in 2.0. */
+  'item-click': CustomEvent<CarouselActionDetail>;
+}
+
+// Typed listeners merged into the class: type-only, no runtime code.
+export interface M3eCarousel {
+  addEventListener<K extends keyof M3eCarouselEventMap>(
+    type: K,
+    listener: (this: M3eCarousel, ev: M3eCarouselEventMap[K]) => unknown,
+    options?: boolean | AddEventListenerOptions,
+  ): void;
+  addEventListener(
+    type: string,
+    listener: EventListenerOrEventListenerObject,
+    options?: boolean | AddEventListenerOptions,
+  ): void;
+  removeEventListener<K extends keyof M3eCarouselEventMap>(
+    type: K,
+    listener: (this: M3eCarousel, ev: M3eCarouselEventMap[K]) => unknown,
+    options?: boolean | EventListenerOptions,
+  ): void;
+  removeEventListener(
+    type: string,
+    listener: EventListenerOrEventListenerObject,
+    options?: boolean | EventListenerOptions,
+  ): void;
 }

@@ -5,5 +5,6 @@ export {
   SideSheetLayout,
   type SideSheetLayoutOptions,
   type SideSheetVariant,
+  type SideSheetVariantOption,
 } from './side-sheet-layout.js';
 export { SIDE_SHEET_BACK_LABEL, SIDE_SHEET_CLOSE_LABEL, SIDE_SHEET_LABEL } from './strings.js';
