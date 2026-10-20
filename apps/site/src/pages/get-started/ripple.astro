@@ -1,0 +1,83 @@
+---
+import CodeBlock from '../../components/CodeBlock.astro';
+import Guide from '../../layouts/Guide.astro';
+import '@kyralabs/m3e-css/assist-chip.css';
+import '@kyralabs/m3e-css/fab.css';
+---
+
+<Guide
+  title="Ripple for plain HTML"
+  description="m3e-css draws the hover, focus and pressed states without JavaScript. The press ripple that spreads from the pointer needs one small import."
+>
+  <h2 id="import">One import</h2>
+  <CodeBlock code={`import '@kyralabs/m3e-elements/ripple.js';`} lang="js" label="ripple import" />
+  <p>
+    It adds the ripple to every plain-HTML button, icon button, chip (assist, filter, input,
+    suggestion), FAB, extended FAB, FAB menu item, <code>.m3e-state-layer</code>, interactive card,
+    interactive list item, navigation item, navigation drawer item, tab, checkbox, radio button and
+    switch in the document, including ones added later. One set of delegated pointer and keyboard
+    listeners on <code>document</code> does it all.
+  </p>
+  <p>This page loads it; press these:</p>
+  <div class="site-ripple-demo">
+    <button type="button" class="m3e-button m3e-button--filled m3e-button--size-m">Filled</button>
+    <button type="button" class="m3e-button m3e-button--tonal m3e-button--size-m">Tonal</button>
+    <button type="button" class="m3e-icon-button m3e-icon-button--outlined" aria-label="Favorite">
+      <span class="m3e-icon" aria-hidden="true">favorite</span>
+    </button>
+    <button type="button" class="m3e-assist-chip">
+      <span class="m3e-icon" aria-hidden="true">event</span>
+      <span class="m3e-assist-chip__label">Add to calendar</span>
+    </button>
+    <button type="button" class="m3e-fab" aria-label="Create">
+      <span class="m3e-icon" aria-hidden="true">edit</span>
+    </button>
+    <article class="m3e-card m3e-card--elevated m3e-card--interactive site-ripple-demo__card">
+      <h3><a class="m3e-card__action" href="#how">Interactive card</a></h3>
+      <p>The whole card is the link's hit area.</p>
+    </article>
+  </div>
+
+  <h2 id="how">How it behaves</h2>
+  <ul>
+    <li>
+      The first press on a host sets <code>data-ripple</code>, which stays; each press toggles
+      <code>data-pressed</code> and writes <code>--_m3e-ripple-x</code>, <code>-y</code> and
+      <code>-radius</code>, which m3e-css animates.
+    </li>
+    <li>
+      Enter and Space press from the center. Links press on Enter only; checkboxes, filter chips,
+      radio buttons and switches on Space only, since that is the key that toggles them.
+    </li>
+    <li>
+      Hosts with a <code>data-ripple</code> it did not set are skipped: m3e-react components and
+      custom elements draw their own. Disabled hosts are skipped too.
+    </li>
+    <li>
+      Reduced motion and forced colors are handled by m3e-css: the ripple follows the motion
+      tokens, and forced colors hide the overlay.
+    </li>
+  </ul>
+
+  <h2 id="scope">Scope it or stop it</h2>
+  <p>
+    <code>attachAutoRipple(root, signal)</code> from the package root does the same for one
+    subtree, a shadow root or the document, without attaching to the document by itself. Aborting
+    the signal removes the attributes and variables it wrote. The package root also registers every
+    element, so use it where you load the elements anyway.
+  </p>
+  <CodeBlock
+    lang="ts"
+    label="attachAutoRipple example"
+    code={`import { attachAutoRipple } from '@kyralabs/m3e-elements';
+
+const controller = new AbortController();
+attachAutoRipple(document.querySelector('#toolbar')!, controller.signal);
+// later
+controller.abort();`}
+  />
+  <p>
+    React components and the custom elements already include their ripple; the import is only for
+    markup you write with m3e-css classes.
+  </p>
+</Guide>

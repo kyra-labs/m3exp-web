@@ -1,0 +1,54 @@
+---
+import Guide from '../../layouts/Guide.astro';
+import { VERSION } from '../../data/site';
+---
+
+<Guide
+  title="Versioning"
+  description="Every @kyralabs package follows semantic versioning from 1.0.0 and shares one version number (DECISIONS D16)."
+>
+  <p>
+    The current version is <strong>{VERSION}</strong>. All <code>@kyralabs/*</code> packages
+    release together with the same version, so <code>@kyralabs/m3exp-web@{VERSION}</code> pairs
+    with <code>@kyralabs/m3e-tokens@{VERSION}</code>, <code>@kyralabs/m3e-react@{VERSION}</code>
+    and the rest.
+  </p>
+
+  <h2 id="within-1x">What changes within 1.x</h2>
+  <ul>
+    <li>
+      <strong>Minor releases</strong> add components, tokens, package entries and options.
+    </li>
+    <li>
+      <strong>Patch releases</strong> fix bugs and fidelity: behavior or pixels moving closer to
+      the pinned Jetpack Compose source or m3.material.io. A fix that adds API is a minor release.
+    </li>
+    <li>
+      <strong>A source pin bump</strong> (a newer Compose Material3) is a minor release if no
+      token name disappears; otherwise it waits for 2.0.
+    </li>
+  </ul>
+
+  <h2 id="breaking">What waits for 2.0</h2>
+  <p>Anything that breaks a consumer:</p>
+  <ul>
+    <li>
+      removing or renaming an export, package entry, CSS class, part or modifier, custom property,
+      attribute or event;
+    </li>
+    <li>changing a component's DOM contract;</li>
+    <li>raising a peer-dependency floor (React is 18.3+ or 19).</li>
+  </ul>
+  <p>
+    A renamed API keeps its old name until 2.0. The old name is marked <code>@deprecated</code>,
+    and in React it warns once in development. The deprecated Material 3 components (DECISIONS D4)
+    are also removed in 2.0.
+  </p>
+
+  <h2 id="depend">Depending on it</h2>
+  <p>
+    A caret range such as <code>^{VERSION}</code> takes every compatible release. Keep all
+    <code>@kyralabs/*</code> packages on the same version: they are released and tested together.
+    Each package's <code>CHANGELOG.md</code> lists what changed.
+  </p>
+</Guide>

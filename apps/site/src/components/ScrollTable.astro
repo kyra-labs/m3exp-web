@@ -1,0 +1,14 @@
+---
+// A table that scrolls sideways on narrow screens. The scroll container is a named, focusable
+// region so keyboard users can scroll it (WCAG 2.1.1; axe scrollable-region-focusable).
+interface Props {
+  /** What the table lists, e.g. "createTheme options". */
+  label: string;
+}
+
+const { label } = Astro.props;
+---
+
+<div class="site-table" role="region" aria-label={label} tabindex="0">
+  <slot />
+</div>

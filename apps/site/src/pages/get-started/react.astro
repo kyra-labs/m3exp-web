@@ -1,0 +1,128 @@
+---
+import CodeBlock from '../../components/CodeBlock.astro';
+import Guide from '../../layouts/Guide.astro';
+
+const main = `import '@kyralabs/m3exp-web/css/index.css';
+import '@kyralabs/m3e-tokens/material-symbols.css';
+import { StrictMode } from 'react';
+import { createRoot } from 'react-dom/client';
+import App from './App.tsx';
+
+createRoot(document.getElementById('root')!).render(
+  <StrictMode>
+    <App />
+  </StrictMode>,
+);`;
+
+const app = `import { useState } from 'react';
+import { Button, Card, Icon, IconButton, LoadingIndicator } from '@kyralabs/m3exp-web/react';
+
+export default function App() {
+  const [saving, setSaving] = useState(false);
+  const [liked, setLiked] = useState(false);
+  return (
+    <Card variant="outlined" style={{ padding: 'var(--m3e-sys-space-300)' }}>
+      <h1>Hello, Expressive</h1>
+      <Button
+        variant="filled"
+        size="m"
+        icon={<Icon name="save" />}
+        onPress={() => setSaving((s) => !s)}
+      >
+        {saving ? 'Saving…' : 'Save'}
+      </Button>
+      <IconButton aria-label="Like" isSelected={liked} onChange={setLiked}>
+        <Icon name="favorite" />
+      </IconButton>
+      {saving && <LoadingIndicator aria-label="Saving" />}
+    </Card>
+  );
+}`;
+---
+
+<Guide
+  title="React with Vite"
+  description="Set up a React app with Vite, load the styles once, and use the components: React Aria for behavior and accessibility, Motion for springs."
+>
+  <h2 id="create">Create the app</h2>
+  <p>
+    Any React 18.3+ or 19 setup works. With Vite's React template (TypeScript or not):
+  </p>
+  <CodeBlock
+    lang="sh"
+    label="create commands"
+    code={`npm create vite@latest my-app -- --template react-ts
+cd my-app
+npm install
+npm install @kyralabs/m3exp-web @kyralabs/m3e-tokens`}
+  />
+  <p>
+    Delete the template's <code>src/index.css</code> and <code>src/App.css</code> and their
+    imports: they restyle the body and every button, which the Material theme already does.
+  </p>
+
+  <h2 id="styles">Load the styles</h2>
+  <p>
+    Import the stylesheet and the icon font once, in <code>src/main.tsx</code>. They set the
+    fonts, the tokens, the baseline light and dark theme and the classes every component renders.
+  </p>
+  <CodeBlock code={main} lang="tsx" label="main.tsx" />
+
+  <h2 id="components">Use components</h2>
+  <p>
+    Import components from <code>@kyralabs/m3exp-web/react</code> (or
+    <code>@kyralabs/m3e-react</code> if you install it directly). Props follow React Aria:
+    <code>onPress</code> instead of <code>onClick</code>, <code>is…</code> for states such as
+    <code>isSelected</code> and <code>isDisabled</code>. Icon-only controls need an
+    <code>aria-label</code>.
+  </p>
+  <CodeBlock code={app} lang="tsx" label="App.tsx" />
+  <CodeBlock code="npm run dev" lang="sh" label="dev command" />
+  <p>
+    Each component is tree-shaken on its own, so the app pays only for what it imports. Size
+    budgets guard this in the library's CI: <code>{'{ Button }'}</code> alone stays within 16 kB,
+    min and brotli, React excluded.
+  </p>
+
+  <h2 id="production">Before you ship</h2>
+  <h3 id="icons">Ship only your icons</h3>
+  <p>
+    <code>material-symbols.css</code> loads the whole Material Symbols font, several megabytes.
+    Subset it to the icons you use, including the ones components draw themselves (such as the date
+    picker's arrows), and import the generated CSS instead:
+  </p>
+  <CodeBlock
+    lang="sh"
+    label="subset commands"
+    code={`npm install --save-dev @kyralabs/m3e-icons
+npx m3e-icons subset --names save,favorite --out src/icons/icons.woff2 --css src/icons/icons.css`}
+  />
+  <CodeBlock
+    lang="tsx"
+    label="main.tsx icon import"
+    code={`import '@kyralabs/m3exp-web/css/index.css';
+import './icons/icons.css'; // instead of material-symbols.css`}
+  />
+  <p>
+    <a href="/get-started/fonts-and-icons/">Fonts and icons</a> covers the other font profiles and
+    the subset options.
+  </p>
+  <h3 id="css-size">Load less CSS</h3>
+  <p>
+    <code>css/index.css</code> holds every component. To load only the components you use, import
+    the token stylesheets and one m3e-css file per component, as shown in the
+    <a href="/get-started/#css">overview</a>; install <code>@kyralabs/m3e-css</code> directly for
+    that.
+  </p>
+  <h3 id="theme">Your brand color</h3>
+  <p>
+    Generate a theme from a seed color at build time with the <code>m3e-theme</code> CLI or at
+    runtime with <code>createTheme</code>; see <a href="/get-started/theming/">theming</a>.
+  </p>
+  <h3 id="ssr">Client-side only</h3>
+  <p>
+    The components render in the browser only (DECISIONS D6): Vite single-page apps need nothing
+    special. For Next.js and other server-rendering frameworks, see
+    <a href="/get-started/ssr/">server rendering</a>.
+  </p>
+</Guide>

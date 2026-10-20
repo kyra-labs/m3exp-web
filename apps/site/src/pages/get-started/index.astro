@@ -1,0 +1,146 @@
+---
+import CodeBlock from '../../components/CodeBlock.astro';
+import ScrollTable from '../../components/ScrollTable.astro';
+import Guide from '../../layouts/Guide.astro';
+import { INSTALL } from '../../data/site';
+
+const layers = [
+  {
+    layer: 'CSS classes',
+    pkg: '@kyralabs/m3e-css',
+    when: 'Static components: buttons, cards, lists, chips, text fields, app bars. No JavaScript.',
+  },
+  {
+    layer: 'Custom elements',
+    pkg: '@kyralabs/m3e-elements',
+    when: 'Behavior without a framework: menus, dialogs, sheets, pickers, springs and shape morphs. Zero dependencies, one entry per element.',
+  },
+  {
+    layer: 'React',
+    pkg: '@kyralabs/m3e-react',
+    when: 'React apps: React Aria for behavior and accessibility, Motion for springs.',
+  },
+  {
+    layer: 'Tokens',
+    pkg: '@kyralabs/m3e-tokens',
+    when: 'Always: the CSS custom properties every layer reads, the fonts, Material Symbols and seed themes.',
+  },
+];
+---
+
+<Guide
+  title="Get started"
+  description="Install one package, load one stylesheet, then use whichever layer fits your stack: CSS classes, custom elements or React."
+>
+  <h2 id="install">Install</h2>
+  <p>
+    The umbrella package <code>@kyralabs/m3exp-web</code> re-exports every layer. Add
+    <code>@kyralabs/m3e-tokens</code> as well so your package manager lets you import its icon
+    stylesheets by path (pnpm only resolves direct dependencies).
+  </p>
+  <CodeBlock code={INSTALL} lang="sh" label="install command" />
+
+  <h2 id="layers">Pick a layer</h2>
+  <p>
+    The three component layers render the same DOM with the same classes, so they share one theme
+    and mix on one page: a static card from CSS classes, a menu element inside it, a React date
+    picker next to it.
+  </p>
+  <ScrollTable label="Layers">
+    <table>
+      <thead>
+        <tr><th scope="col">Layer</th><th scope="col">Package</th><th scope="col">Use it for</th></tr>
+      </thead>
+      <tbody>
+        {
+          layers.map((l) => (
+            <tr>
+              <th scope="row">{l.layer}</th>
+              <td><code>{l.pkg}</code></td>
+              <td>{l.when}</td>
+            </tr>
+          ))
+        }
+      </tbody>
+    </table>
+  </ScrollTable>
+
+  <h2 id="css">Load the CSS</h2>
+  <p>
+    One import gives you the fonts, the tokens, the baseline theme and every component class. Icons
+    are a separate stylesheet because the Material Symbols font is large.
+  </p>
+  <CodeBlock
+    lang="css"
+    label="CSS imports"
+    code={`@import '@kyralabs/m3exp-web/css/index.css'; /* fonts, tokens, baseline theme, every class */
+@import '@kyralabs/m3e-tokens/material-symbols.css'; /* icons */`}
+  />
+  <p>
+    To ship less CSS, import the token stylesheets and only the components a page shows; each
+    component file also works on its own:
+  </p>
+  <CodeBlock
+    lang="css"
+    label="per-component CSS imports"
+    code={`@import '@kyralabs/m3e-tokens/fonts.css';
+@import '@kyralabs/m3e-tokens/tokens.css';
+@import '@kyralabs/m3e-tokens/theme.css';
+@import '@kyralabs/m3e-css/icon.css';
+@import '@kyralabs/m3e-css/button.css';
+@import '@kyralabs/m3e-css/card.css';`}
+  />
+
+  <h2 id="first-component">Your first component</h2>
+  <p>The same button in each layer:</p>
+  <CodeBlock
+    lang="html"
+    label="CSS class example"
+    code={`<!-- CSS classes: no JavaScript -->
+<button type="button" class="m3e-button m3e-button--filled m3e-button--size-m">
+  <span class="m3e-icon" aria-hidden="true">save</span>
+  Save
+</button>`}
+  />
+  <CodeBlock
+    lang="tsx"
+    label="React example"
+    code={`import { Button, Icon } from '@kyralabs/m3exp-web/react';
+
+<Button variant="filled" size="m" icon={<Icon name="save" />} onPress={save}>
+  Save
+</Button>`}
+  />
+  <p>
+    The button has no custom element: CSS draws it completely, and React adds the press morph on a
+    spring. Components whose behavior CSS cannot provide, such as menus, have an element:
+  </p>
+  <CodeBlock
+    lang="html"
+    label="custom element example"
+    code={`<button id="more" type="button" class="m3e-icon-button" aria-label="More options">
+  <span class="m3e-icon" aria-hidden="true">more_vert</span>
+</button>
+<m3e-menu anchor="more">
+  <m3e-menu-item value="edit" icon="edit">Edit</m3e-menu-item>
+  <m3e-menu-item value="share" icon="share">Share</m3e-menu-item>
+</m3e-menu>
+
+<script type="module">
+  import '@kyralabs/m3exp-web/elements'; // registers every element
+</script>`}
+  />
+  <p>
+    <code>@kyralabs/m3exp-web/elements</code> registers every element. To load only the ones a page
+    uses, install <code>@kyralabs/m3e-elements</code> and import its per-element entries, such as
+    <code>@kyralabs/m3e-elements/menu.js</code>; the <a href="/get-started/astro/">Astro guide</a>
+    shows how.
+  </p>
+
+  <h2 id="next">Next steps</h2>
+  <ul>
+    <li>Set up a project: <a href="/get-started/react/">React with Vite</a>, <a href="/get-started/astro/">Astro</a> or <a href="/get-started/html/">plain HTML</a>.</li>
+    <li>Choose a font profile and ship only the icons you use: <a href="/get-started/fonts-and-icons/">fonts and icons</a>.</li>
+    <li>Generate a theme from your brand color: <a href="/get-started/theming/">theming</a>.</li>
+  </ul>
+</Guide>
