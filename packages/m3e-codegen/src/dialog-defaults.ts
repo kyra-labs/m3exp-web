@@ -321,7 +321,7 @@ function materialWebRows(
     'DIALOG_DEFAULT_OPEN_ANIMATION.dialog',
     'animations.js',
     slideLine,
-    'open: the slide and the container growth (TODO(verify) SOURCES register #72: no androidx or m3.material.io dialog motion; owner decision M9 #9)',
+    'open: the slide and the container growth (owner decision M9 #9, D19 (11), SOURCES register #72: androidx and m3.material.io give no dialog motion values)',
   );
   // D20 (6): the open easing is androidx's emphasized easing (the sys token), not Material Web's
   // EASING.EMPHASIZED "approximated with unknown accuracy" (animation.js).
@@ -527,7 +527,7 @@ function materialWebRows(
     ':host max-width / max-height',
     '_dialog.scss',
     lineAt(scss, margin, 2),
-    'TODO(verify) SOURCES register #73: the dialog keeps this far from each window edge (Compose: the platform dialog window insets, usePlatformDefaultWidth)',
+    'D19 (12) (SOURCES register #73): the dialog keeps this far from each window edge (Compose: the platform dialog window insets, usePlatformDefaultWidth)',
   );
   return out;
 }
@@ -567,7 +567,7 @@ function fullScreenRows(): DialogDefault[] {
     ...(note === undefined ? {} : { note }),
   });
   const conflict =
-    'TODO(verify) SOURCES register #74: the Specs color legend starts with "Surface container high"; the token DB says surface (owner decision M9 #11: the DB)';
+    'owner decision M9 #11, D19 (13) (SOURCES register #74): the token DB’s surface; the Specs color legend starts with "Surface container high"';
   return [
     color('container-color', 'md.comp.full-screen-dialog.container.color', 'surface', conflict),
     {
@@ -633,7 +633,7 @@ function fullScreenRows(): DialogDefault[] {
       'Padding between elements',
       8,
       FULL_SCREEN_PAGE,
-      'TODO(verify) SOURCES register #74: the header’s inline padding and the gaps between the close button, the headline and the action (the Specs table names no other header measurement)',
+      'D19 (13) (SOURCES register #74): the header’s inline padding and the gaps between the close button, the headline and the action (the Specs table names no other header measurement)',
     ),
   ];
 }

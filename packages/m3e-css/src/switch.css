@@ -49,7 +49,7 @@
  *   .IconSize (16dp), in iconColor, centred in the handle; Compose's Icons.Filled → FILL 1.
  * - Label: m3.material.io asks for an inline label (Switch › Guidelines); Compose has none, so
  *   the expressive ListItem's spacing before trailing content and its label style (body large),
- *   in the content color (m3.material.io: on surface). TODO(verify): SOURCES register #67.
+ *   in the content color (m3.material.io: on surface). Owner's pick: D19 (7), SOURCES register #67.
  */
 @import '@kyralabs/m3e-tokens/components/switch.css';
 @import '@kyralabs/m3e-tokens/components/switch-defaults.css';
@@ -228,7 +228,7 @@
   /*
    * --- Inline label (the expressive ListItem's label before trailing content) ---------------
    * Over the input: the text takes its own pointer events (a native label click toggles).
-   * TODO(verify): spacing and style (SOURCES register #67; m3.material.io gives neither).
+   * Spacing and style: the ListItem's (m3.material.io gives neither; D19 (7), SOURCES register #67).
    */
   .m3e-switch__label {
     position: relative;

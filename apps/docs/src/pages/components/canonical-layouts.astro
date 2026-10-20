@@ -325,8 +325,9 @@ const feed = ['Mountains', 'Coast', 'Forest', 'Desert', 'City', 'Lakes', 'Island
     <p>
       <code>.m3e-layout &gt; .m3e-feed</code> (React <code>&lt;FeedLayout&gt;</code>): one column below
       600px, then as many columns as fit, with 16 / 24dp margins (m3.material.io).{' '}
-      <code>.m3e-feed__item--wide</code> spans two columns. Compose has no feed scaffold; the gap and
-      the column width are project defaults until m3.material.io states them.
+      <code>.m3e-feed__item--wide</code> spans two columns. Compose has no feed scaffold; the items
+      are 8dp apart (m3.material.io Cards › Specs, "Padding between cards 8dp max") and the
+      columns at least 240dp wide (a project default: m3.material.io gives no column widths).
     </p>
     <div class="docs-layout-scroll">
       <div class="docs-layout-frame docs-layout-frame--feed" data-testid="feed-frame" style="inline-size: 1000px">

@@ -46,7 +46,9 @@ Primitives:
 - `surface.css`: `.m3e-surface`, tonal surface containers, elevation and shapes.
 - `icon.css`: `.m3e-icon`, a Material Symbols ligature (load a Material Symbols stylesheet too).
 - `state-layer.css`: `.m3e-state-layer`, the hover, focus, pressed and dragged overlays.
-- `focus-ring.css`: `.m3e-focus-ring`, the keyboard focus ring (`--inward` draws inside).
+- `focus-ring.css`: `.m3e-focus-ring`, the keyboard focus ring (`--inward` draws inside); it grows
+  and shrinks on the fast springs, and a component with its own `transition` lists
+  `var(--_m3e-focus-ring-transition, outline-width, outline-offset)` first.
 
 Components:
 

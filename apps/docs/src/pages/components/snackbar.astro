@@ -19,6 +19,14 @@ const long =
   <p>
     A snackbar host (Compose's <code>SnackbarHost</code> and <code>SnackbarHostState</code>) shows one snackbar at a time from a first-in, first-out queue: the current one scales and fades in on the fast springs while the previous one fades out. Without an action a snackbar leaves after 4 seconds (<code>short</code>; <code>long</code> is 10 seconds); with an action it stays until it is addressed (<code>indefinite</code>), as m3.material.io asks. The timer pauses while the pointer is over the snackbar or focus is in it, and Escape in it dismisses it. The host is a polite live region (<code>role="status"</code>); focus never moves to a snackbar on its own, so give keyboard users a shortcut that calls <code>focus()</code>.
   </p>
+  <p>
+    Timing and WCAG 2.2.1 (Timing Adjustable): pausing on hover and focus is the web stand-in for
+    Android's "Time to take action" setting, which Compose reads and the web does not have. It does
+    not make a timed snackbar accessible on its own. m3.material.io asks web apps to either show
+    the same information inline, near the control that triggered it (a "Save" button that becomes
+    "Saved"), or to give the snackbar an action so it stays until addressed. Apps that keep a user
+    timeout preference can scale the durations with <code>recommendedTimeout</code>.
+  </p>
 
   <section aria-labelledby="specimens-heading">
     <h2 id="specimens-heading">Snackbars (CSS)</h2>

@@ -173,14 +173,18 @@
     cursor: pointer;
     user-select: none;
     -webkit-tap-highlight-color: transparent;
-    transition: color var(--m3e-comp-tabs-content-color-out-duration)
-      var(--m3e-comp-tabs-content-color-out-easing);
+    transition:
+      var(--_m3e-focus-ring-transition, outline-width, outline-offset),
+      color var(--m3e-comp-tabs-content-color-out-duration)
+        var(--m3e-comp-tabs-content-color-out-easing);
   }
 
   .m3e-tab[aria-selected='true'] {
     color: var(--_m3e-tabs-content);
-    transition: color var(--m3e-comp-tabs-content-color-in-duration)
-      var(--m3e-comp-tabs-content-color-in-easing);
+    transition:
+      var(--_m3e-focus-ring-transition, outline-width, outline-offset),
+      color var(--m3e-comp-tabs-content-color-in-duration)
+        var(--m3e-comp-tabs-content-color-in-easing);
   }
 
   .m3e-tab[aria-disabled='true'] {

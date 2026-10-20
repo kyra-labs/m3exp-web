@@ -244,7 +244,8 @@ test('keyboard: one tab stop per chip set, arrows move and wrap, Space toggles a
   await filter.locator('input').focus();
   await page.keyboard.press('Shift+Tab');
   await page.keyboard.press('Tab');
-  expect(await style(filter, 'outline-style')).toBe('solid');
+  // The ring grows from a zero-width outline (D19 (3)): wait for its 3dp width.
+  await expect.poll(() => style(filter, 'outline-width')).toBe('3px');
   await expect(page).toHaveScreenshot('chips-filter-focused.png', {
     clip: clip(await box(filter)),
   });
@@ -252,7 +253,7 @@ test('keyboard: one tab stop per chip set, arrows move and wrap, Space toggles a
   await row.focus();
   await page.keyboard.press('ArrowRight');
   await page.keyboard.press('ArrowLeft');
-  expect(await style(row, 'outline-style')).toBe('solid');
+  await expect.poll(() => style(row, 'outline-width')).toBe('3px');
   await expect(page).toHaveScreenshot('chips-input-focused.png', { clip: clip(await box(row)) });
 });
 

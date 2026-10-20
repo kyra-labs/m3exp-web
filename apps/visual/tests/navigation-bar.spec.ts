@@ -113,7 +113,8 @@ test('hover and focus show on the indicator pill, from anywhere on the item', as
   await page.getByTestId('v-home').focus();
   await page.keyboard.press('Tab');
   await expect(item).toBeFocused();
-  expect(await state.evaluate((el) => getComputedStyle(el).outlineStyle)).toBe('solid');
+  // The ring grows from a zero-width outline (D19 (3)): wait for its 3dp width.
+  await expect.poll(() => state.evaluate((el) => getComputedStyle(el).outlineWidth)).toBe('3px');
   const frame = await box(page.getByTestId('short-vertical'));
   await expect(page).toHaveScreenshot('navigation-bar-focused.png', {
     clip: { x: frame.x - 8, y: frame.y - 8, width: frame.width + 16, height: frame.height + 16 },

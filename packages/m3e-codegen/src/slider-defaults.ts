@@ -398,7 +398,7 @@ function sizeRows(): SliderDefault[] {
         `${base}.active.handle.height`,
         dsdb(`${base}.active.handle.height`),
         size === 'medium'
-          ? 'TODO(verify) SOURCES register #68: the token DB says 44dp, the Specs › Measurements table 52dp (owner decision M8 #16: the DB)'
+          ? 'owner decision M8 #16, D19 (8) (SOURCES register #68): the token DB’s 44dp; the Specs › Measurements table and redline say 52dp'
           : undefined,
       ),
       dsdbRow(

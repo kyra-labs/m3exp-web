@@ -180,7 +180,11 @@ export interface PullToRefreshArrowGeometry {
   readonly arrowRotation: number;
 }
 
-/** The arrow for a distanceFraction at `density` px per dp (1 on the web). */
+/**
+ * The arrow for a distanceFraction at `density` px per dp (1 on the web: a CSS px is a dp).
+ * `arrowRotation` keeps Compose's unit mix (`endAngle - strokeWidth.toPx()`, degrees minus px,
+ * L885), so the web's head sits 2.5° behind the arc's end (owner decision D19 (23), SOURCES #86).
+ */
 export function pullToRefreshArrowGeometry(
   progress: number,
   density = 1,

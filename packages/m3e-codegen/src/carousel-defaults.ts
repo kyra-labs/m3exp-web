@@ -67,7 +67,7 @@ const RULES: readonly LiteralRule[] = [
     member: 'ItemSpacing',
     file: CAROUSEL,
     pattern: /public val ItemSpacing: Dp = (\d+)\.dp/d,
-    note: 'SOURCES register #82: the samples and m3.material.io Specs use 8dp (owner’s call)',
+    note: 'Compose’s default (D19 (19), SOURCES register #82): the samples and m3.material.io Specs use 8dp, as the docs do',
   },
   {
     kind: 'dp',
@@ -76,7 +76,7 @@ const RULES: readonly LiteralRule[] = [
     member: 'ContentPadding',
     file: CAROUSEL,
     pattern: /public val ContentPadding: PaddingValues = PaddingValues\((\d+)\.dp\)/d,
-    note: 'before the first item (the strategy shifts the keylines into it); SOURCES register #82: the samples and m3.material.io Specs use 16dp (owner’s call)',
+    note: 'before the first item (the strategy shifts the keylines into it); Compose’s default (D19 (19), SOURCES register #82): the samples and m3.material.io Specs use 16dp, as the docs do',
   },
   {
     kind: 'dp',
@@ -240,7 +240,7 @@ function m3Rows(): CarouselDefault[] {
       member: 'Full-screen › Padding between elements',
       raw: 'Padding between elements = 16dp',
       cite: PAGE,
-      note: 'owner decision M9 #22: CSS-only layout (no Compose API); leading / trailing and top / bottom padding 0dp; TODO(verify) SOURCES register #83',
+      note: 'owner decision M9 #22: CSS-only layout (no Compose API); leading / trailing and top / bottom padding 0dp; no corner radius (the Specs list none; the redline draws the item edge to edge): D19 (20), SOURCES register #83',
     },
   ];
 }

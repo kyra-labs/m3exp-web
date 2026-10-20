@@ -97,6 +97,7 @@
 
     padding-block: 0;
     transition:
+      var(--_m3e-focus-ring-transition, outline-width, outline-offset),
       --_m3e-split-button-inner var(--m3e-comp-split-button-shape-duration)
         var(--m3e-comp-split-button-shape-easing),
       background-color var(--m3e-sys-motion-spring-fast-effects-duration)
@@ -261,7 +262,7 @@
 
   /* m3e-elements / m3e-react spring the corners and the icon (inline -now values). */
   .m3e-split-button > :is(.m3e-split-button__leading, .m3e-split-button__trailing)[data-spring] {
-    transition-property: background-color, color, box-shadow;
+    transition-property: outline-width, outline-offset, background-color, color, box-shadow;
   }
 
   .m3e-split-button > .m3e-split-button__trailing[data-spring] > .m3e-icon {

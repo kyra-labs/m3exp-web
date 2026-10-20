@@ -17,7 +17,8 @@ const richText =
     <code>&lt;m3e-tooltip&gt;</code> element (m3e-elements) and <code>&lt;TooltipTrigger&gt;</code> (m3e-react)
     share one controller: hovering the anchor with a mouse shows the tooltip at once, and it stays while the anchor or the
     tooltip is hovered and hides 1.5 s after the pointer leaves both;
-    a touch long press shows it until the press ends (at least 1.5 s), keyboard focus shows it
+    a touch long press held for 400 ms (Android's default long-press timeout, which Compose reads)
+    shows it until the press ends (at least 1.5 s), keyboard focus shows it
     until focus leaves, and Escape or a click outside hides it. Only one tooltip shows at a time. It
     is placed by Compose's <code>TooltipPositionProviderImpl</code> (above the anchor by default,
     flipped below at the window top, 4dp away) and scales in from 0.8 on the fast spatial spring

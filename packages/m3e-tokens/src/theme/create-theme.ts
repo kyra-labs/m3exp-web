@@ -103,8 +103,10 @@ const normalizeHex = (hex: string): string => hexFromArgb(argbFromHex(hex));
  * `TonalPalette.fromInt(color)` (the color's own hue and chroma); the variant still maps the
  * roles to tones. Keys are the `DynamicScheme` palette names (`dynamiccolor/dynamic_scheme.d.ts`
  * L63–L68, MCU 0.4.0). The same mapping as Angular Material's `theme-color` schematic
- * (`TonalPalette.fromHct` per custom color); Theme Builder's own is `TODO(verify)` (SOURCES.md
- * register #62).
+ * (`TonalPalette.fromHct` per custom color). Theme Builder's own mapping is not public; this
+ * one is the owner's pick (SOURCES.md register #62, DECISIONS D19 (4)). Theme Builder enables
+ * fidelity by default (m3.material.io Color › Advanced, "match color"), so `variant: 'fidelity'`
+ * is the Theme Builder–like option.
  *
  * `neutralVariant` has no effect with spec 2025 (tonalSpot, neutral, vibrant, expressive): that
  * spec draws on-surface-variant, outline and outline-variant from the neutral palette with a
