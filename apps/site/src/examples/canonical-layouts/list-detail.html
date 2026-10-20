@@ -1,0 +1,47 @@
+<div style="inline-size: 100%; block-size: var(--m3e-sys-window-height-medium); overflow: hidden">
+  <m3e-list-detail-layout id="inbox-layout" list-label="Inbox" detail-label="Message">
+    <m3e-list slot="list" label="Inbox">
+      <div class="m3e-list-item" data-value="brunch">
+        <span class="m3e-list-item__content">
+          <span class="m3e-list-item__headline">Ali Connors</span>
+          <span class="m3e-list-item__supporting">Brunch this weekend?</span>
+        </span>
+      </div>
+      <div class="m3e-list-item" data-value="bbq">
+        <span class="m3e-list-item__content">
+          <span class="m3e-list-item__headline">Sandra Adams</span>
+          <span class="m3e-list-item__supporting">Summer BBQ</span>
+        </span>
+      </div>
+      <div class="m3e-list-item" data-value="trip">
+        <span class="m3e-list-item__content">
+          <span class="m3e-list-item__headline">Trevor Hansen</span>
+          <span class="m3e-list-item__supporting">Trip photos</span>
+        </span>
+      </div>
+    </m3e-list>
+    <div slot="detail" style="padding: var(--m3e-sys-space-200)">
+      <button
+        type="button"
+        class="m3e-icon-button m3e-icon-button--standard"
+        aria-label="Back"
+        data-pane-navigate="back"
+      >
+        <span class="m3e-icon" aria-hidden="true">arrow_back</span>
+      </button>
+      <p id="message">Select a message.</p>
+    </div>
+  </m3e-list-detail-layout>
+</div>
+<script>
+  const layout = document.getElementById('inbox-layout');
+  const MESSAGES = {
+    brunch: 'Ali Connors: Brunch this weekend?',
+    bbq: 'Sandra Adams: Summer BBQ',
+    trip: 'Trevor Hansen: Trip photos',
+  };
+  layout.querySelector('m3e-list').addEventListener('action', (event) => {
+    document.getElementById('message').textContent = MESSAGES[event.detail.value];
+    layout.navigateTo('detail', event.detail.value);
+  });
+</script>

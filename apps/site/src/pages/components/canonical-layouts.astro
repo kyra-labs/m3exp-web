@@ -1,0 +1,16 @@
+---
+import '@kyralabs/m3e-css/card.css';
+import '@kyralabs/m3e-css/layout.css';
+import '@kyralabs/m3e-css/list.css';
+import '@kyralabs/m3e-css/vertical-drag-handle.css';
+import ComponentPage from '../../layouts/ComponentPage.astro';
+---
+
+<ComponentPage
+  slug="canonical-layouts"
+  examples={[
+    { name: 'list-detail', title: 'List-detail', description: 'One pane below 840px of the layout\'s own width (the list, then the detail after a selection, with Back), list and detail side by side from 840px. The breakpoints follow the container, not the window.' },
+    { name: 'supporting-pane', title: 'Supporting pane', description: 'The main pane alone below 840px; the supporting pane beside it from 840px, or under it when the layout is at least 900px tall.' },
+    { name: 'feed', title: 'Feed', description: 'A grid that is one column below 600px of its own width, then as many columns as fit.' },
+  ]}
+/>

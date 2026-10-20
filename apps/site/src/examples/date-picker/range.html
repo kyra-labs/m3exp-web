@@ -1,0 +1,16 @@
+<button type="button" id="open-range" class="m3e-button m3e-button--tonal">Pick dates</button>
+<p>Trip: <output id="range-value">… – …</output></p>
+<m3e-dialog id="range-dialog" variant="full-screen" label="Select dates">
+  <m3e-date-range-picker displayed-month="2025-08"></m3e-date-range-picker>
+  <button type="button" class="m3e-button m3e-button--text" slot="actions">Save</button>
+</m3e-dialog>
+<script>
+  const dialog = document.getElementById('range-dialog');
+  const picker = dialog.querySelector('m3e-date-range-picker');
+  document.getElementById('open-range').addEventListener('click', () => dialog.show());
+  dialog.querySelector('[slot="actions"]').addEventListener('click', () => {
+    document.getElementById('range-value').textContent =
+      `${picker.start ?? '…'} – ${picker.end ?? '…'}`;
+    dialog.close();
+  });
+</script>

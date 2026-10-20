@@ -1,0 +1,27 @@
+<button type="button" id="open-date" class="m3e-button m3e-button--tonal">Pick a date</button>
+<p>Date: <output id="date-value">2025-08-17</output></p>
+<m3e-dialog id="date-dialog" variant="custom" label="Select date">
+  <div class="m3e-date-picker-dialog">
+    <div class="m3e-date-picker-dialog__content">
+      <m3e-date-picker value="2025-08-17" displayed-month="2025-08"></m3e-date-picker>
+    </div>
+    <div class="m3e-date-picker-dialog__actions">
+      <button type="button" class="m3e-button m3e-button--text" data-action="cancel">Cancel</button>
+      <button type="button" class="m3e-button m3e-button--text" data-action="ok">OK</button>
+    </div>
+  </div>
+</m3e-dialog>
+<script>
+  const dialog = document.getElementById('date-dialog');
+  const picker = dialog.querySelector('m3e-date-picker');
+  const output = document.getElementById('date-value');
+  document.getElementById('open-date').addEventListener('click', () => {
+    picker.value = output.textContent;
+    dialog.show();
+  });
+  dialog.addEventListener('click', (event) => {
+    const action = event.target.closest('[data-action]')?.dataset.action;
+    if (action === 'ok') output.textContent = picker.value ?? 'none';
+    if (action) dialog.close();
+  });
+</script>

@@ -1,7 +1,2 @@
 # Component pages not written yet (scripts/check-components.js). The component-page PRs remove
 # lines as they add pages; the last one empties this file.
-date-picker
-time-picker
-canonical-layouts
-pull-to-refresh
-primitives
