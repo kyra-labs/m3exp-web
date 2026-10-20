@@ -54,7 +54,7 @@ type Menu = 'month' | 'year' | null;
 /**
  * Behavior of a `.m3e-docked-date-picker` (COMPONENT_SPEC §27; m3.material.io's docked date picker,
  * owner decision M10 D1; Compose has none), shared by `<m3e-docked-date-picker>` and m3e-react's
- * `<DockedDatePicker>`: a date field (Compose's validator, free entry per owner decision M10 D5)
+ * `<DockedDatePicker>`: a date field (Compose's validator and transformations)
  * whose calendar drops down below it from its calendar button, the only way in (m3.material.io:
  * typing a date never needs the calendar). The calendar's navigation row has the month and the
  * year, each between its arrows and with a menu that replaces the calendar; Shift + M / Shift + Y

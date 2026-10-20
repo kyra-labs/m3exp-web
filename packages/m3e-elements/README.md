@@ -718,8 +718,8 @@ rendered); the input mode's `date-field` entry loads the first time it shows. Da
 `selectableDates` (`{ isSelectableDate(utcMillis), isSelectableYear(year) }`) and `labels`.
 Events: `change` (`detail: { value }`, range `{ start, end }`), `display-mode-change`,
 `displayed-month-change`. The first day of the week, names, digits and the input's pattern come
-from `Intl` for the nearest `lang`; the input takes free text (`8-14-2025`, `8/4/2025`) and
-formats it on Enter or blur. Show the range picker in `<m3e-dialog variant="full-screen">` and
+from `Intl` for the nearest `lang`; the input takes the pattern's digits and shows the delimiters
+as they come (Compose's transformations). Show the range picker in `<m3e-dialog variant="full-screen">` and
 the picker in `<m3e-dialog variant="custom">` around a `.m3e-date-picker-dialog` surface.
 
 ## Ripple for plain HTML

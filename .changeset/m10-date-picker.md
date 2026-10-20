@@ -16,5 +16,4 @@ the calendar model, `DatePickerState` / `DateRangePickerState`, the input's patt
 validator and `drawRangeBackground` (checked against a JVM run of the vendored Kotlin);
 m3e-elements adds `<m3e-date-picker>`, `<m3e-date-range-picker>`, `<m3e-docked-date-picker>`,
 their layout entries and the lazily loaded `date-field` entry; m3e-react adds `DatePicker`,
-`DateRangePicker`, `DockedDatePicker` and `DatePickerDialog`. The date input takes free text
-(no mask) and formats it on Enter or blur.
+`DateRangePicker`, `DockedDatePicker` and `DatePickerDialog`.
