@@ -2,7 +2,7 @@
 // viewport, so a page only loads React and the components it shows. Client-side rendering only
 // (DECISIONS D6): createRoot replaces the static fallback, nothing is hydrated.
 import { windowBreakpoints } from '@kyralabs/m3e-tokens';
-import { type ComponentType, createElement } from 'react';
+import { type ComponentType, createElement, startTransition } from 'react';
 import { createRoot } from 'react-dom/client';
 
 interface IslandModule {
@@ -21,7 +21,11 @@ async function mount(el: HTMLElement): Promise<void> {
   const { default: Component } = await load();
   const props = el.dataset.props ? (JSON.parse(el.dataset.props) as object) : {};
   el.dataset.mounted = '';
-  createRoot(el).render(createElement(Component, props as Record<string, unknown>));
+  const root = createRoot(el);
+  // A transition renders in time slices, so mounting never blocks input for long.
+  startTransition(() => {
+    root.render(createElement(Component, props as Record<string, unknown>));
+  });
 }
 
 let observer: IntersectionObserver | null = null;

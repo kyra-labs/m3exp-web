@@ -44,14 +44,12 @@ for (const path of PAGES) {
     test('renders every icon from the subset font', async ({ page }) => {
       await page.goto(path);
       await settle(page);
-      // An unresolved ligature renders its name as text: much wider than tall.
+      // An unresolved ligature renders its name as text, wider than the icon's fixed box
+      // (.m3e-icon clips it with overflow: hidden, so compare the content width).
       const unresolved = await page.evaluate(() =>
         [...document.querySelectorAll<HTMLElement>('.m3e-icon')]
           .filter((el) => el.offsetParent !== null && el.textContent.trim().length > 1)
-          .filter((el) => {
-            const box = el.getBoundingClientRect();
-            return box.width > box.height * 1.5;
-          })
+          .filter((el) => el.scrollWidth > el.clientWidth * 1.5)
           .map((el) => el.textContent.trim()),
       );
       expect(unresolved).toEqual([]);

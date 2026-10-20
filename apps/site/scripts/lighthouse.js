@@ -27,6 +27,9 @@ const SAMPLE = [
   '/foundations/motion/',
   '/changelog/',
 ].filter((path) => existsSync(join(SITE, 'dist', path, 'index.html')));
+// `node scripts/lighthouse.js / /get-started/` measures only the given pages.
+const ONLY = process.argv.slice(2);
+const PAGES = ONLY.length > 0 ? ONLY : SAMPLE;
 
 const server = spawn(process.execPath, [join(SITE, 'scripts/serve.js'), String(PORT)], {
   stdio: 'ignore',
@@ -43,7 +46,7 @@ const rows = [];
 let failed = false;
 mkdirSync(OUT, { recursive: true });
 try {
-  for (const path of SAMPLE) {
+  for (const path of PAGES) {
     const runs = [];
     for (let i = 0; i < RUNS; i++) {
       const result = await lighthouse(`http://localhost:${String(PORT)}${path}`, {

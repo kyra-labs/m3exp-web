@@ -5,7 +5,7 @@ import { createReadStream, existsSync, statSync } from 'node:fs';
 import { createServer } from 'node:http';
 import { dirname, extname, join, normalize } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { createBrotliCompress, createGzip } from 'node:zlib';
+import { constants, createBrotliCompress, createGzip } from 'node:zlib';
 
 const DIST = join(dirname(dirname(fileURLToPath(import.meta.url))), 'dist');
 const PORT = Number(process.argv[2] ?? 4323);
@@ -21,6 +21,7 @@ const TYPES = {
   '.wasm': 'application/wasm',
   '.pf_meta': 'application/octet-stream',
 };
+const BROTLI_QUALITY = 5;
 const COMPRESSIBLE = new Set(['.html', '.css', '.js', '.json', '.svg', '.xml', '.txt']);
 
 function resolve(pathname) {
@@ -44,7 +45,10 @@ createServer((req, res) => {
   let body = createReadStream(path);
   if (COMPRESSIBLE.has(ext) && /\bbr\b/.test(accept)) {
     headers['Content-Encoding'] = 'br';
-    body = body.pipe(createBrotliCompress());
+    // Quality 5, as CDNs compress on the fly; Node's default (11) takes ~0.5 s per page.
+    body = body.pipe(
+      createBrotliCompress({ params: { [constants.BROTLI_PARAM_QUALITY]: BROTLI_QUALITY } }),
+    );
   } else if (COMPRESSIBLE.has(ext) && /\bgzip\b/.test(accept)) {
     headers['Content-Encoding'] = 'gzip';
     body = body.pipe(createGzip());

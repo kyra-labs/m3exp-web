@@ -1,7 +1,6 @@
 /* Home page (pages/index.astro) and its hero demo (islands/Hero.tsx). Tokens only (CLAUDE.md). */
 @import '@kyralabs/m3e-css/button-group.css';
 @import '@kyralabs/m3e-css/fab.css';
-@import '@kyralabs/m3e-css/fab-menu.css';
 @import '@kyralabs/m3e-css/linear-progress.css';
 @import '@kyralabs/m3e-css/loading-indicator.css';
 @import '@kyralabs/m3e-css/slider.css';
@@ -71,11 +70,6 @@
   gap: var(--m3e-sys-space-200);
   align-items: center;
   justify-content: space-between;
-}
-
-.site-hero-demo__fab {
-  display: flex;
-  justify-content: flex-end;
 }
 
 .site-pillars,

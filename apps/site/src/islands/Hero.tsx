@@ -6,7 +6,7 @@ import {
   ButtonGroup,
   ButtonGroupItem,
   Card,
-  FabMenu,
+  Fab,
   Icon,
   IconButton,
   LinearProgress,
@@ -142,27 +142,26 @@ export default function Hero() {
           </Button>
         </div>
         <LinearProgress shape="wavy" value={progress} aria-label="Wavy progress example" />
-        <ButtonGroup
-          aria-label="Progress"
-          size="s"
-          buttonVariant="outlined"
-          onAction={(key) => {
-            setProgress((p) => Math.min(1, Math.max(0, p + (key === 'more' ? 0.2 : -0.2))));
-          }}
-        >
-          <ButtonGroupItem id="less" icon="remove" aria-label="Less progress" />
-          <ButtonGroupItem id="more" icon="add" aria-label="More progress" />
-        </ButtonGroup>
-        <div className="site-hero-demo__fab">
-          <FabMenu
-            aria-label="Share"
-            icon={<Icon name="share" />}
-            items={[
-              { key: 'mail', icon: <Icon name="mail" />, label: 'Email' },
-              { key: 'link', icon: <Icon name="link" />, label: 'Copy link' },
-              { key: 'chat', icon: <Icon name="chat" />, label: 'Message' },
-            ]}
-          />
+        <div className="site-hero-demo__row">
+          <IconButton
+            variant="outlined"
+            aria-label="Less progress"
+            onPress={() => {
+              setProgress((p) => Math.max(0, p - 0.2));
+            }}
+          >
+            <Icon name="remove" />
+          </IconButton>
+          <IconButton
+            variant="outlined"
+            aria-label="More progress"
+            onPress={() => {
+              setProgress((p) => Math.min(1, p + 0.2));
+            }}
+          >
+            <Icon name="add" />
+          </IconButton>
+          <Fab aria-label="Share" icon={<Icon name="share" />} />
         </div>
       </Card>
     </div>
