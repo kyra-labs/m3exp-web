@@ -37,6 +37,12 @@ export const FOUNDATIONS: NavLink[] = [
   { href: '/foundations/layout/', label: 'Layout', icon: 'dashboard' },
 ];
 
+/** Release notes: the merged changelog and the 2.0 migration guide. */
+export const RELEASES: NavLink[] = [
+  { href: '/changelog/', label: 'Changelog', icon: 'history' },
+  { href: '/migration/', label: 'Migrating to 2.0', icon: 'upgrade' },
+];
+
 /** Component pages not written yet (scripts/pending-components.txt). */
 export const PENDING = new Set(
   pendingList
@@ -60,6 +66,7 @@ export const NAV: NavSection[] = [
         .map((c) => ({ href: `/components/${c.slug}/`, label: c.title })),
     ],
   },
+  { label: 'Releases', links: RELEASES },
 ];
 
 /** True when `href` is the current page or one of its children (section highlighting). */

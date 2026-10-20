@@ -1,0 +1,24 @@
+---
+import Site from '../../layouts/Site.astro';
+import { REPO_URL } from '../../data/site';
+import { adaptRepoMarkdown } from '../../lib/repo-markdown';
+import * as plan from '../../../../../docs/2.0-removal-plan.md';
+
+// The repository's 2.0 removal plan, rendered as is (src/lib/repo-markdown.ts adapts the HTML).
+const FILE_URL = `${REPO_URL}/blob/main/docs/2.0-removal-plan.md`;
+const html = adaptRepoMarkdown(await plan.compiledContent(), FILE_URL);
+---
+
+<Site
+  title="Migrating to 2.0"
+  description="What @kyralabs 2.0 removes, what replaces it and how to move: deprecated components, renamed props and attributes, and the other breaking changes 2.0 may bring."
+>
+  <h1>Migrating to 2.0</h1>
+  <p class="site-lead">
+    Nothing breaks in 1.x (DECISIONS D16): every name 2.0 removes still works, marked
+    <code>@deprecated</code>, and React warns once in development. Move to the replacements below
+    at your own pace. This page is the repository's
+    <a href={FILE_URL}>2.0 removal plan</a>, rendered from the same file.
+  </p>
+  <div class="site-repo-markdown" set:html={html} />
+</Site>

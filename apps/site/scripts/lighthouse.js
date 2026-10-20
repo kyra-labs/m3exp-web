@@ -26,6 +26,7 @@ const SAMPLE = [
   '/foundations/color/',
   '/foundations/motion/',
   '/changelog/',
+  '/migration/',
 ].filter((path) => existsSync(join(SITE, 'dist', path, 'index.html')));
 // `node scripts/lighthouse.js / /get-started/` measures only the given pages.
 const ONLY = process.argv.slice(2);

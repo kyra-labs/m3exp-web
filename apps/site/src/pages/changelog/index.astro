@@ -1,0 +1,46 @@
+---
+import ChangelogRelease from '../../components/ChangelogRelease.astro';
+import Site from '../../layouts/Site.astro';
+import { RELEASES, releaseId } from '../../lib/releases';
+
+// The latest releases in full; every release also has its own page (keeps this one light).
+const LATEST = 3;
+---
+
+<Site
+  title="Changelog"
+  description="Every release of the @kyralabs packages, newest first, from their changelogs: what each change did and which packages it touched."
+>
+  <h1>Changelog</h1>
+  <p class="site-lead">
+    The <code>@kyralabs</code> packages are released together under one version. Each change below
+    appears once, with the packages whose changelog lists it. Breaking changes wait for 2.0: see
+    <a href="/migration/">Migrating to 2.0</a>.
+  </p>
+  <nav aria-label="Releases" class="site-changelog-index" data-pagefind-ignore>
+    <ul>
+      {
+        RELEASES.map((r) => (
+          <li>
+            <a href={`/changelog/${releaseId(r.version)}/`}>{r.version}</a>
+          </li>
+        ))
+      }
+    </ul>
+  </nav>
+  {
+    RELEASES.slice(0, LATEST).map((release) => (
+      <ChangelogRelease release={release} href={`/changelog/${releaseId(release.version)}/`} />
+    ))
+  }
+  <p>
+    Older releases: {
+      RELEASES.slice(LATEST).map((r, i) => (
+        <>
+          {i > 0 && ', '}
+          <a href={`/changelog/${releaseId(r.version)}/`}>{r.version}</a>
+        </>
+      ))
+    }.
+  </p>
+</Site>

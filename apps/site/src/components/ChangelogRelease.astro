@@ -1,0 +1,47 @@
+---
+// One release of the merged changelog (lib/releases.ts): its changes by kind, each with the
+// packages that list it and its changeset commit.
+import type { Release } from '../lib/changelog';
+import { block } from '../lib/markdown';
+
+interface Props {
+  release: Release;
+  /** Heading level of the version (2 on the changelog, 1 on a release's own page). */
+  level?: 1 | 2;
+  /** Link the version heading to the release's own page. */
+  href?: string | undefined;
+}
+
+const { release, level = 2, href } = Astro.props;
+const KINDS = ['Major', 'Minor', 'Patch'] as const;
+const TITLE = { Major: 'Major changes', Minor: 'Minor changes', Patch: 'Patch changes' };
+const Heading = `h${String(level)}` as 'h2';
+const Sub = `h${String(level + 1)}` as 'h3';
+const id = `v${release.version.replace(/\./g, '-')}`;
+---
+
+<section class="site-changelog-release" aria-labelledby={id}>
+  <Heading id={id}>{href ? <a href={href}>{release.version}</a> : release.version}</Heading>
+  {
+    KINDS.filter((kind) => release.changes.some((c) => c.kind === kind)).map((kind) => (
+      <>
+        <Sub>{TITLE[kind]}</Sub>
+        <ul class="site-changelog-changes">
+          {release.changes
+            .filter((c) => c.kind === kind)
+            .map((change) => (
+              <li class="site-changelog-change">
+                <Fragment set:html={block(change.text)} />
+                <p class="site-changelog-change__meta">
+                  {change.packages.map((p) => (
+                    <span class="site-changelog-change__package">{p}</span>
+                  ))}
+                  {change.hash && <code class="site-changelog-change__hash">{change.hash}</code>}
+                </p>
+              </li>
+            ))}
+        </ul>
+      </>
+    ))
+  }
+</section>
