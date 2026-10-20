@@ -191,7 +191,8 @@ function staticProperties(cls, classes) {
         if (!ts.isPropertyAssignment(o)) continue;
         // `attribute: false as const` is `false`.
         let value = o.initializer;
-        while (ts.isAsExpression(value) || ts.isSatisfiesExpression(value)) value = value.expression;
+        while (ts.isAsExpression(value) || ts.isSatisfiesExpression(value))
+          value = value.expression;
         opts[o.name.getText()] = value.getText();
       }
     }
@@ -217,7 +218,9 @@ function staticProperties(cls, classes) {
   }
   for (const p of props) {
     if (p.attribute !== null && !/^[a-z][a-z0-9-]*$/.test(p.attribute)) {
-      throw new Error(`${cls.name?.getText() ?? '?'}.${p.property}: unreadable attribute ${p.attribute}`);
+      throw new Error(
+        `${cls.name?.getText() ?? '?'}.${p.property}: unreadable attribute ${p.attribute}`,
+      );
     }
   }
   // A subclass may redeclare a property; keep the last.
