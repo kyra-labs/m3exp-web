@@ -1,5 +1,15 @@
 # @kyralabs/m3e-icons
 
+## 1.8.0
+
+### Patch Changes
+
+- Updated dependencies [324ebea]
+- Updated dependencies [a87d12d]
+- Updated dependencies [93ab234]
+- Updated dependencies [e829f59]
+  - @kyralabs/m3e-tokens@1.8.0
+
 ## 1.7.0
 
 ### Patch Changes

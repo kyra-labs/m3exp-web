@@ -1,5 +1,42 @@
 # @kyralabs/m3e-motion
 
+## 1.8.0
+
+### Minor Changes
+
+- 324ebea: Date pickers (COMPONENT_SPEC §27, M10): Compose's `DatePicker` (calendar with month paging and
+  the year grid, switchable to the date input), `DateRangePicker` (a scrolling month list with the
+  range band, switchable to start / end inputs) and `DatePickerDialog`, plus m3.material.io's
+  docked date picker. m3e-tokens generates the date picker's Compose values, state layers, docked
+  values and motion (`date-picker-defaults.css`); m3e-css adds `date-picker.css`; m3e-motion ports
+  the calendar model, `DatePickerState` / `DateRangePickerState`, the input's pattern, parser and
+  validator and `drawRangeBackground` (checked against a JVM run of the vendored Kotlin);
+  m3e-elements adds `<m3e-date-picker>`, `<m3e-date-range-picker>`, `<m3e-docked-date-picker>`,
+  their layout entries and the lazily loaded `date-field` entry; m3e-react adds `DatePicker`,
+  `DateRangePicker`, `DockedDatePicker` and `DatePickerDialog`.
+- a87d12d: Time pickers (COMPONENT_SPEC §28, M10): Compose's dial `TimePicker` (baseline and vibrant,
+  vertical and horizontal), `TimeInput` (baseline, vibrant, uncontained with the side column) and
+  the expressive `TimeScroll` wheels, with the updated AM/PM toggle buttons. m3e-tokens generates
+  the vibrant, side column, scroll field, dialog and motion values (`time-picker-defaults.css`);
+  m3e-css adds `time-picker.css` (dial, fields, wheels and the `.m3e-time-picker-dialog` surface);
+  m3e-motion ports `TimePickerState` / `AnalogTimePickerState`, `CircularLayout`'s placement,
+  `TimeInputTransformation` and `ScrollField`'s paging (checked against a JVM run of the vendored
+  Kotlin); m3e-elements adds `<m3e-time-picker>`, `<m3e-time-input>`, `<m3e-time-scroll>` and the
+  shared `time-picker-layout` entry; m3e-react adds `TimePicker`, `TimeInput`, `TimeScroll`,
+  `TimePickerModeToggle`, `TimePickerDialog` and `VibrantTimePickerDialog`.
+
+### Patch Changes
+
+- 08b128b: Bundle and d.ts build (M11 hardening; no API or behavior change). m3e-elements emits its
+  declarations with one `tsc` pass and bundles the `.d.ts` files per entry, so its build no longer
+  needs a 4 GB heap (it fits 512 MB) and every public type path and exported type stays the same.
+  m3e-react bundles the m3e-elements code it uses from source, so m3e-motion and m3e-shapes are
+  imported once instead of also being inlined a second time (m3e-react (all) −1.9 kB, dist
+  778 → 540 KB). Element classes declare `static properties` in a pure form, so bundlers drop
+  element classes a page imports without registering them; module-level constants in m3e-motion
+  (`app-bar-scroll`, `menu-position`) and m3e-shapes (`TwoPi`) no longer leave code behind in every
+  import.
+
 ## 1.7.0
 
 ### Minor Changes
