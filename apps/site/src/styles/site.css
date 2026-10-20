@@ -611,8 +611,9 @@ m3e-tabs:not(:defined) > m3e-tab-panel::before {
   line-height: var(--m3e-sys-typescale-body-medium-line-height);
 }
 
-/* Linear progress and sliders fill the demo row. */
-.site-example__preview :is(.m3e-linear-progress, m3e-linear-progress, .m3e-slider) {
+/* Linear progress, sliders and lists fill the demo row. */
+.site-example__preview :is(.m3e-linear-progress, m3e-linear-progress, .m3e-slider),
+.site-example__preview > :is(.m3e-list, m3e-list) {
   flex: 1 1 100%;
 }
 

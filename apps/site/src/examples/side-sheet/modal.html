@@ -1,0 +1,15 @@
+<button type="button" class="m3e-button m3e-button--tonal" id="open-filters">Filters</button>
+<m3e-side-sheet id="filters" variant="modal" headline="Filters" divider>
+  <m3e-checkbox checked>Free shipping</m3e-checkbox>
+  <m3e-checkbox>In stock</m3e-checkbox>
+  <button type="button" class="m3e-button m3e-button--filled" slot="actions">Apply</button>
+  <button type="button" class="m3e-button m3e-button--outlined" slot="actions">Cancel</button>
+</m3e-side-sheet>
+
+<script type="module">
+  const sheet = document.getElementById('filters');
+  document.getElementById('open-filters').addEventListener('click', () => sheet.show());
+  sheet
+    .querySelectorAll('[slot="actions"]')
+    .forEach((b) => b.addEventListener('click', () => sheet.close()));
+</script>

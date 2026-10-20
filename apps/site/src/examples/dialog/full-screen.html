@@ -1,0 +1,11 @@
+<button type="button" class="m3e-button m3e-button--outlined" id="open-event">New event</button>
+<m3e-dialog id="event" variant="full-screen" headline="New event">
+  <m3e-text-field label="Title"></m3e-text-field>
+  <button type="button" class="m3e-button m3e-button--text" slot="actions">Save</button>
+</m3e-dialog>
+
+<script type="module">
+  const dialog = document.getElementById('event');
+  document.getElementById('open-event').addEventListener('click', () => dialog.show());
+  dialog.querySelector('[slot="actions"]').addEventListener('click', () => dialog.close());
+</script>

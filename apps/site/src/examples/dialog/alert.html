@@ -1,0 +1,14 @@
+<button type="button" class="m3e-button m3e-button--tonal" id="open-discard">Discard draft</button>
+<m3e-dialog id="discard" headline="Discard draft?" icon="delete">
+  This permanently deletes the draft.
+  <button type="button" class="m3e-button m3e-button--text" slot="actions">Cancel</button>
+  <button type="button" class="m3e-button m3e-button--text" slot="actions">Discard</button>
+</m3e-dialog>
+
+<script type="module">
+  const dialog = document.getElementById('discard');
+  document.getElementById('open-discard').addEventListener('click', () => dialog.show());
+  dialog
+    .querySelectorAll('[slot="actions"]')
+    .forEach((b) => b.addEventListener('click', () => dialog.close()));
+</script>

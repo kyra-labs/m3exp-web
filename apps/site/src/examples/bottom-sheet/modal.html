@@ -1,0 +1,25 @@
+<button type="button" class="m3e-button m3e-button--tonal" id="open-share">Share</button>
+<m3e-bottom-sheet id="share" variant="modal" label="Share">
+  <m3e-list label="Share to">
+    <div class="m3e-list-item" data-value="mail">
+      <span class="m3e-list-item__leading"
+        ><span class="m3e-icon" aria-hidden="true">mail</span></span
+      >
+      <span class="m3e-list-item__content"><span class="m3e-list-item__headline">Email</span></span>
+    </div>
+    <div class="m3e-list-item" data-value="link">
+      <span class="m3e-list-item__leading"
+        ><span class="m3e-icon" aria-hidden="true">link</span></span
+      >
+      <span class="m3e-list-item__content"
+        ><span class="m3e-list-item__headline">Copy link</span></span
+      >
+    </div>
+  </m3e-list>
+</m3e-bottom-sheet>
+
+<script type="module">
+  const sheet = document.getElementById('share');
+  document.getElementById('open-share').addEventListener('click', () => sheet.show());
+  sheet.addEventListener('action', () => sheet.hide());
+</script>

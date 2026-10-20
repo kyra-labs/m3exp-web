@@ -1,0 +1,15 @@
+<div style="display: flex; inline-size: 100%; block-size: var(--m3e-sys-window-height-medium)">
+  <div style="flex: 1; min-inline-size: 0; padding: var(--m3e-sys-space-200)">
+    <button type="button" class="m3e-button m3e-button--outlined" id="toggle-details">
+      Toggle details
+    </button>
+  </div>
+  <m3e-side-sheet id="details" headline="Details" divider open>
+    <p>The content beside a standard sheet narrows while it is open.</p>
+  </m3e-side-sheet>
+</div>
+
+<script type="module">
+  const sheet = document.getElementById('details');
+  document.getElementById('toggle-details').addEventListener('click', () => sheet.toggle());
+</script>
