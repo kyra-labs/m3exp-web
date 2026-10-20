@@ -161,6 +161,9 @@ test.describe('baselines', () => {
     await settle(page);
     await expect(dialog).toHaveScreenshot('dialog.png', corners);
     await page.keyboard.press('Escape');
+    // Let the first dialog finish closing (its fade keeps 200ms under reduced motion): a scrim
+    // still fading out would show through the vibrant dialog's rounded corners.
+    await expect(dialog).toBeHidden();
     await page.getByTestId('open-dialog-vibrant').click();
     const vibrant = page.getByTestId('dialog-vibrant').locator('.m3e-time-picker-dialog');
     await expect(vibrant).toBeVisible();
