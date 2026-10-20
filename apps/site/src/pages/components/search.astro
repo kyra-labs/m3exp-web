@@ -1,0 +1,13 @@
+---
+import '@kyralabs/m3e-css/search.css';
+import '@kyralabs/m3e-css/top-app-bar.css';
+import ComponentPage from '../../layouts/ComponentPage.astro';
+---
+
+<ComponentPage
+  slug="search"
+  examples={[
+    { name: 'variants', title: 'Variants', description: 'Focus a bar to expand it: full screen, full screen contained, docked and docked with a gap. The suggestions are a listbox the arrow keys move through while focus stays in the input; Escape or the back button collapses the view.' },
+    { name: 'app-bar', title: 'In a top app bar', description: 'An app bar with a search bar between the navigation icon and the actions, entering again on any scroll up.' },
+  ]}
+/>

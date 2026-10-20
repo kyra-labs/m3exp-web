@@ -1,0 +1,14 @@
+---
+import '@kyralabs/m3e-css/bottom-app-bar.css';
+import '@kyralabs/m3e-css/docked-toolbar.css';
+import '@kyralabs/m3e-css/fab.css';
+import ComponentPage from '../../layouts/ComponentPage.astro';
+---
+
+<ComponentPage
+  slug="docked-toolbar"
+  examples={[
+    { name: 'arrangements', title: 'Arrangements', description: 'Spread (the default), center (shown vibrant), space-around and space-evenly. Dock the toolbar yourself at the bottom of the screen or of a container.' },
+    { name: 'legacy-bottom-app-bar', title: 'Bottom app bar (deprecated)', description: '**Deprecated (D4):** `BottomAppBar` ships until 2.0. Use a docked toolbar, with a FAB or a floating toolbar for the main action.' },
+  ]}
+/>

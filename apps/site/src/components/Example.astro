@@ -31,6 +31,8 @@ if (react === undefined || markup === undefined) {
   throw new Error(`Example ${slug}/${name} needs both a .tsx and an .html file`);
 }
 const usesElements = /<m3e-/.test(markup);
+// Without JavaScript the preview shows plain m3e-css markup as is, without the example's scripts.
+const fallback = markup.replace(/<script[\s\S]*?<\/script>\s*/g, '');
 const id = `example-${name}`;
 ---
 
@@ -42,7 +44,7 @@ const id = `example-${name}`;
       usesElements ? (
         <p class="site-example__note">The live demo runs with JavaScript. Its code is below.</p>
       ) : (
-        <Fragment set:html={markup} />
+        <Fragment set:html={fallback} />
       )
     }
   </Island>
