@@ -6,6 +6,8 @@
     "AnchoredDraggableStateTest.kt": "d55314148a53e57168914a6db6a877556042031245940a6847ed965e4a467f60",
     "AnchoredDraggable.kt": "cbf351b34fc245dfcb661e5cfbb598be3eaff9b9951a8006b158b304f9da6805",
     "SnapFlingBehavior.kt": "ee856d5ddc681d7eb80f53dd5bb0f8512398360d1c9aba4d206685e848bb5434",
+    "LazyListState.kt": "a8b264eccd7f3d7683bf279b45a5183de13aef93b5ea0015ec44ee95caa62514",
+    "LazyLayoutScrollScope.kt": "af7c58e8dbc7ab60e8141b4c0bbea1e063a4ab70275e6dabee39e052b5fe16df",
     "Pager.kt": "3ce0e6feacad12f78020a225882e29f799151b7ddaf7d16d775ce8bffb52971d",
     "PagerState.kt": "de75a98b6e13043f2bea1df1f2e8b0ee4f06b5682f2d090068204d997df02492"
   },
@@ -13,6 +15,8 @@
     "AnchoredDraggableStateTest.kt": "androidDeviceTest/kotlin/androidx/compose/foundation/anchoredDraggable/AnchoredDraggableStateTest.kt",
     "AnchoredDraggable.kt": "commonMain/kotlin/androidx/compose/foundation/gestures/AnchoredDraggable.kt",
     "SnapFlingBehavior.kt": "commonMain/kotlin/androidx/compose/foundation/gestures/snapping/SnapFlingBehavior.kt",
+    "LazyListState.kt": "commonMain/kotlin/androidx/compose/foundation/lazy/LazyListState.kt",
+    "LazyLayoutScrollScope.kt": "commonMain/kotlin/androidx/compose/foundation/lazy/layout/LazyLayoutScrollScope.kt",
     "Pager.kt": "commonMain/kotlin/androidx/compose/foundation/pager/Pager.kt",
     "PagerState.kt": "commonMain/kotlin/androidx/compose/foundation/pager/PagerState.kt"
   }

@@ -24,6 +24,8 @@ import {
   MATERIAL3_TEST_PATH,
   MATERIAL3_TEST_SOURCES,
   MATERIAL3_CAROUSEL_PATH,
+  MATERIAL3_DATE_PATH,
+  MATERIAL3_DATE_SOURCES,
   MATERIAL3_CAROUSEL_SOURCES,
   UI_RES_PATH,
   UI_RES_SOURCES,
@@ -228,6 +230,13 @@ async function main(command: string | undefined, flags: readonly string[]): Prom
       MATERIAL3_TEST_PATH,
       shapesVendor('androidx-material3-tests'),
       MATERIAL3_TEST_SOURCES,
+    );
+    await fetchVendor(
+      repo,
+      commit,
+      MATERIAL3_DATE_PATH,
+      shapesVendor('androidx-material3-date'),
+      MATERIAL3_DATE_SOURCES,
     );
     await fetchVendor(
       repo,

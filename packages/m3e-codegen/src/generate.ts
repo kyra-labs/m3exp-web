@@ -70,6 +70,7 @@ import {
 } from './pull-to-refresh-defaults.js';
 import { extractSegmentedButtonDefaults } from './segmented-button-defaults.js';
 import { TIME_PICKER_REDUCED_MOTION, extractTimePickerDefaults } from './time-picker-defaults.js';
+import { DATE_PICKER_REDUCED_MOTION, extractDatePickerDefaults } from './date-picker-defaults.js';
 import { extractCheckboxDefaults } from './checkbox-defaults.js';
 import { extractRadioButtonDefaults } from './radio-button-defaults.js';
 import { checkSliderXSmallAgainstCompose, extractSliderDefaults } from './slider-defaults.js';
@@ -1393,6 +1394,15 @@ export function generate({
     extractTimePickerDefaults(material3Sources, commit),
   );
 
+  // Date picker (M10 §27): DatePicker.kt / DateRangePicker.kt / DateInput.kt's private sizes and
+  // colors, the mode switch / year grid / month motion, the dialog, and the docked picker and the
+  // state layers from m3.material.io (see date-picker-defaults.ts).
+  setLiterals(
+    'date-picker-defaults',
+    'DatePickerDefaults',
+    extractDatePickerDefaults(material3Sources, commit),
+  );
+
   // Segmented button (deprecated, D4): SegmentedButtonDefaults colors, padding, spacing and motion,
   // ButtonDefaults' minimum size, the z-index factor and the Surface's ripple (see
   // segmented-button-defaults.ts).
@@ -1662,159 +1672,174 @@ export function generate({
                                             [],
                                             `${MATERIAL3_DIR}/{SegmentedButton,Button,Surface}.kt + ${MATERIAL3_SAMPLES_DIR}/SegmentedButtonSamples.kt`,
                                           )
-                                        : name === 'time-picker-defaults'
+                                        : name === 'date-picker-defaults'
                                           ? cssFile(
-                                              'Time picker values that are not in TimePickerTokens / TimeInputTokens, or that pick one of them (isUpdatedTimepickerToggleEnabled on, owner decisions M10 T1–T9; lines: PARITY.md).',
+                                              'Date picker values that are not in DatePickerModalTokens, or that pick one of them, and the docked picker and state layers from m3.material.io (owner decisions M10 D1–D17; lines: PARITY.md).',
                                               c.tokens,
                                               [
                                                 '@media (prefers-reduced-motion: reduce) {',
                                                 '  :root {',
-                                                ...TIME_PICKER_REDUCED_MOTION.map(
+                                                ...DATE_PICKER_REDUCED_MOTION.map(
                                                   (l) => `    ${l}`,
                                                 ),
                                                 '  }',
                                                 '}',
                                               ],
-                                              `${MATERIAL3_DIR}/{TimePicker,TimePickerDialog,ScrollField,ComposeMaterial3Flags}.kt + compose/foundation/foundation/src/commonMain/kotlin/androidx/compose/foundation/pager/{Pager,PagerState}.kt + ${ANIMATION_CORE_DIR}/{AnimationSpec,VectorizedAnimationSpec}.kt`,
+                                              `${MATERIAL3_DIR}/{DatePicker,DateRangePicker,DateInput,DateRangeInput,DatePickerDialog}.kt + ${MATERIAL3_DIR.replace('commonMain', 'androidMain')}/DatePickerDialog.android.kt + compose/foundation/foundation/src/commonMain/kotlin/androidx/compose/foundation/lazy/{LazyListState,layout/LazyLayoutScrollScope}.kt + ${ANIMATION_CORE_DIR}/{SuspendAnimation,AnimationSpec,VectorizedAnimationSpec}.kt + m3.material.io TOKEN_TABLE.01c5310367774eb8`,
                                             )
-                                          : name === 'pull-to-refresh-defaults'
+                                          : name === 'time-picker-defaults'
                                             ? cssFile(
-                                                'Pull-to-refresh values (no PullToRefreshTokens.kt, no m3.material.io page): PullToRefreshDefaults, the indicator’s private sizes and alpha, its springs (owner decisions M9 #27, #28; lines: PARITY.md).',
+                                                'Time picker values that are not in TimePickerTokens / TimeInputTokens, or that pick one of them (isUpdatedTimepickerToggleEnabled on, owner decisions M10 T1–T9; lines: PARITY.md).',
                                                 c.tokens,
                                                 [
                                                   '@media (prefers-reduced-motion: reduce) {',
                                                   '  :root {',
-                                                  ...PULL_TO_REFRESH_REDUCED_MOTION.map(
+                                                  ...TIME_PICKER_REDUCED_MOTION.map(
                                                     (l) => `    ${l}`,
                                                   ),
                                                   '  }',
                                                   '}',
                                                 ],
-                                                `${MATERIAL3_DIR}/{pulltorefresh/PullToRefresh,LoadingIndicator}.kt + ${MATERIAL3_SAMPLES_DIR}/PullToRefreshSamples.kt + ${ANIMATION_CORE_DIR}/{Animatable,AnimationSpec,VectorizedAnimationSpec}.kt`,
+                                                `${MATERIAL3_DIR}/{TimePicker,TimePickerDialog,ScrollField,ComposeMaterial3Flags}.kt + compose/foundation/foundation/src/commonMain/kotlin/androidx/compose/foundation/pager/{Pager,PagerState}.kt + ${ANIMATION_CORE_DIR}/{AnimationSpec,VectorizedAnimationSpec}.kt`,
                                               )
-                                            : name === 'carousel-defaults'
+                                            : name === 'pull-to-refresh-defaults'
                                               ? cssFile(
-                                                  'Carousel values (no CarouselTokens.kt): CarouselDefaults, the samples’ item mask, CarouselState’s scroll spring and the m3.material.io state layer and full-screen layout (owner decisions M9 #22–#26; lines: PARITY.md).',
+                                                  'Pull-to-refresh values (no PullToRefreshTokens.kt, no m3.material.io page): PullToRefreshDefaults, the indicator’s private sizes and alpha, its springs (owner decisions M9 #27, #28; lines: PARITY.md).',
                                                   c.tokens,
                                                   [
                                                     '@media (prefers-reduced-motion: reduce) {',
                                                     '  :root {',
-                                                    ...CAROUSEL_REDUCED_MOTION.map(
+                                                    ...PULL_TO_REFRESH_REDUCED_MOTION.map(
                                                       (l) => `    ${l}`,
                                                     ),
                                                     '  }',
                                                     '}',
                                                   ],
-                                                  `${MATERIAL3_DIR}/carousel/{Carousel,CarouselState}.kt + ${MATERIAL3_SAMPLES_DIR}/CarouselSamples.kt + ${ANIMATION_CORE_DIR}/{AnimationSpec,VectorizedAnimationSpec}.kt + m3.material.io TOKEN_TABLE.43a124d2adc8a2ef + Carousel › Specs`,
+                                                  `${MATERIAL3_DIR}/{pulltorefresh/PullToRefresh,LoadingIndicator}.kt + ${MATERIAL3_SAMPLES_DIR}/PullToRefreshSamples.kt + ${ANIMATION_CORE_DIR}/{Animatable,AnimationSpec,VectorizedAnimationSpec}.kt`,
                                                 )
-                                              : name === 'side-sheet-defaults'
+                                              : name === 'carousel-defaults'
                                                 ? cssFile(
-                                                    'Side sheet values from m3.material.io (D8: no Compose side sheet), with the navigation drawer’s springs and scrim (owner decision M9 #16; lines: PARITY.md).',
+                                                    'Carousel values (no CarouselTokens.kt): CarouselDefaults, the samples’ item mask, CarouselState’s scroll spring and the m3.material.io state layer and full-screen layout (owner decisions M9 #22–#26; lines: PARITY.md).',
                                                     c.tokens,
                                                     [
                                                       '@media (prefers-reduced-motion: reduce) {',
                                                       '  :root {',
-                                                      ...SIDE_SHEET_REDUCED_MOTION.map(
+                                                      ...CAROUSEL_REDUCED_MOTION.map(
                                                         (l) => `    ${l}`,
                                                       ),
                                                       '  }',
                                                       '}',
                                                     ],
-                                                    `${MATERIAL3_DIR}/{NavigationDrawer,AlertDialog}.kt + m3.material.io TOKEN_TABLE.06c2c925cf96adca + Side sheets › Specs`,
+                                                    `${MATERIAL3_DIR}/carousel/{Carousel,CarouselState}.kt + ${MATERIAL3_SAMPLES_DIR}/CarouselSamples.kt + ${ANIMATION_CORE_DIR}/{AnimationSpec,VectorizedAnimationSpec}.kt + m3.material.io TOKEN_TABLE.43a124d2adc8a2ef + Carousel › Specs`,
                                                   )
-                                                : name === 'snackbar-defaults'
+                                                : name === 'side-sheet-defaults'
                                                   ? cssFile(
-                                                      'Compose Snackbar / SnackbarHost values that are not in SnackbarTokens, or that pick one of them (isSnackbarStylingFixEnabled on, owner decision M9 #19), and the Scaffold placement (lines: PARITY.md).',
+                                                      'Side sheet values from m3.material.io (D8: no Compose side sheet), with the navigation drawer’s springs and scrim (owner decision M9 #16; lines: PARITY.md).',
                                                       c.tokens,
-                                                      [],
-                                                      `${MATERIAL3_DIR}/{Snackbar,SnackbarHost,Scaffold,ComposeMaterial3Flags}.kt + ${MATERIAL3_SAMPLES_DIR}/ScaffoldSamples.kt`,
+                                                      [
+                                                        '@media (prefers-reduced-motion: reduce) {',
+                                                        '  :root {',
+                                                        ...SIDE_SHEET_REDUCED_MOTION.map(
+                                                          (l) => `    ${l}`,
+                                                        ),
+                                                        '  }',
+                                                        '}',
+                                                      ],
+                                                      `${MATERIAL3_DIR}/{NavigationDrawer,AlertDialog}.kt + m3.material.io TOKEN_TABLE.06c2c925cf96adca + Side sheets › Specs`,
                                                     )
-                                                  : name === 'dialog-defaults'
+                                                  : name === 'snackbar-defaults'
                                                     ? cssFile(
-                                                        'Compose AlertDialog / BasicAlertDialog values that are not in DialogTokens, or that pick one of them, the modal scrim fade, Material Web’s dialog motion and the m3.material.io full-screen dialog (lines: PARITY.md).',
+                                                        'Compose Snackbar / SnackbarHost values that are not in SnackbarTokens, or that pick one of them (isSnackbarStylingFixEnabled on, owner decision M9 #19), and the Scaffold placement (lines: PARITY.md).',
                                                         c.tokens,
                                                         [],
-                                                        `${MATERIAL3_DIR}/{AlertDialog,Button,ModalBottomSheet}.kt + ${MATERIAL3_SAMPLES_DIR}/AlertDialogSamples.kt + @material/web@${materialWebVersion} dialog/internal/{animations.js,_dialog.scss} + m3.material.io TOKEN_TABLE.0b1e39a67d5bafdc`,
+                                                        `${MATERIAL3_DIR}/{Snackbar,SnackbarHost,Scaffold,ComposeMaterial3Flags}.kt + ${MATERIAL3_SAMPLES_DIR}/ScaffoldSamples.kt`,
                                                       )
-                                                    : name === 'badge-defaults'
+                                                    : name === 'dialog-defaults'
                                                       ? cssFile(
-                                                          'Compose Badge / BadgedBox values that are not in BadgeTokens, or that pick one of them (lines: PARITY.md).',
+                                                          'Compose AlertDialog / BasicAlertDialog values that are not in DialogTokens, or that pick one of them, the modal scrim fade, Material Web’s dialog motion and the m3.material.io full-screen dialog (lines: PARITY.md).',
                                                           c.tokens,
                                                           [],
-                                                          `${MATERIAL3_DIR}/{Badge,ColorScheme}.kt + ${MATERIAL3_SAMPLES_DIR}/BadgeSamples.kt`,
+                                                          `${MATERIAL3_DIR}/{AlertDialog,Button,ModalBottomSheet}.kt + ${MATERIAL3_SAMPLES_DIR}/AlertDialogSamples.kt + @material/web@${materialWebVersion} dialog/internal/{animations.js,_dialog.scss} + m3.material.io TOKEN_TABLE.0b1e39a67d5bafdc`,
                                                         )
-                                                      : name === 'tooltip-defaults'
+                                                      : name === 'badge-defaults'
                                                         ? cssFile(
-                                                            'Compose PlainTooltip / RichTooltip / TooltipBox values that are not in Plain/RichTooltipTokens, or that pick one of them (lines: PARITY.md).',
+                                                            'Compose Badge / BadgedBox values that are not in BadgeTokens, or that pick one of them (lines: PARITY.md).',
                                                             c.tokens,
                                                             [],
-                                                            `${MATERIAL3_DIR}/{Tooltip,internal/BasicTooltip}.kt + ${MATERIAL3_SAMPLES_DIR}/TooltipSamples.kt`,
+                                                            `${MATERIAL3_DIR}/{Badge,ColorScheme}.kt + ${MATERIAL3_SAMPLES_DIR}/BadgeSamples.kt`,
                                                           )
-                                                        : name === 'list-defaults'
+                                                        : name === 'tooltip-defaults'
                                                           ? cssFile(
-                                                              'Compose ListItem / SegmentedListItem values that are not in ListTokens, or that pick one of them, and the legacy ListItem (lines: PARITY.md).',
+                                                              'Compose PlainTooltip / RichTooltip / TooltipBox values that are not in Plain/RichTooltipTokens, or that pick one of them (lines: PARITY.md).',
                                                               c.tokens,
                                                               [],
-                                                              `${MATERIAL3_DIR}/{ListItem,ListItemDefaults,Checkbox,RadioButton,Switch}.kt + ${MATERIAL3_SAMPLES_DIR}/ListSamples.kt`,
+                                                              `${MATERIAL3_DIR}/{Tooltip,internal/BasicTooltip}.kt + ${MATERIAL3_SAMPLES_DIR}/TooltipSamples.kt`,
                                                             )
-                                                          : name === 'text-field-defaults'
+                                                          : name === 'list-defaults'
                                                             ? cssFile(
-                                                                'Compose TextField / OutlinedTextField values that are not in Filled/OutlinedTextFieldTokens, or that pick one of them (lines: PARITY.md).',
+                                                                'Compose ListItem / SegmentedListItem values that are not in ListTokens, or that pick one of them, and the legacy ListItem (lines: PARITY.md).',
                                                                 c.tokens,
                                                                 [],
-                                                                `${MATERIAL3_DIR}/{TextField,OutlinedTextField,TextFieldDefaults,internal/TextFieldImpl,MaterialTheme,InteractiveComponentSize,internal/Strings}.kt + ${MATERIAL3_SAMPLES_DIR}/TextFieldSamples.kt`,
+                                                                `${MATERIAL3_DIR}/{ListItem,ListItemDefaults,Checkbox,RadioButton,Switch}.kt + ${MATERIAL3_SAMPLES_DIR}/ListSamples.kt`,
                                                               )
-                                                            : name === 'switch-defaults'
+                                                            : name === 'text-field-defaults'
                                                               ? cssFile(
-                                                                  'Compose Switch values that are not in SwitchTokens, or that pick one of them, and the inline label from the expressive ListItem (lines: PARITY.md).',
+                                                                  'Compose TextField / OutlinedTextField values that are not in Filled/OutlinedTextFieldTokens, or that pick one of them (lines: PARITY.md).',
                                                                   c.tokens,
                                                                   [],
-                                                                  `${MATERIAL3_DIR}/{Switch,ListItem}.kt + ${MATERIAL3_SAMPLES_DIR}/SwitchSamples.kt`,
+                                                                  `${MATERIAL3_DIR}/{TextField,OutlinedTextField,TextFieldDefaults,internal/TextFieldImpl,MaterialTheme,InteractiveComponentSize,internal/Strings}.kt + ${MATERIAL3_SAMPLES_DIR}/TextFieldSamples.kt`,
                                                                 )
-                                                              : name === 'radio-button-defaults'
+                                                              : name === 'switch-defaults'
                                                                 ? cssFile(
-                                                                    'Compose RadioButton values that are not in RadioButtonTokens, or that pick one of them (lines: PARITY.md).',
+                                                                    'Compose Switch values that are not in SwitchTokens, or that pick one of them, and the inline label from the expressive ListItem (lines: PARITY.md).',
                                                                     c.tokens,
                                                                     [],
-                                                                    `${MATERIAL3_DIR}/RadioButton.kt + ${MATERIAL3_SAMPLES_DIR}/RadioButtonSamples.kt`,
+                                                                    `${MATERIAL3_DIR}/{Switch,ListItem}.kt + ${MATERIAL3_SAMPLES_DIR}/SwitchSamples.kt`,
                                                                   )
-                                                                : name === 'checkbox-defaults'
+                                                                : name === 'radio-button-defaults'
                                                                   ? cssFile(
-                                                                      'Compose Checkbox / TriStateCheckbox values that are not in CheckboxTokens, or that pick one of them (isCheckboxStylingFixEnabled off; lines: PARITY.md), and the m3.material.io unchecked state layer colors.',
+                                                                      'Compose RadioButton values that are not in RadioButtonTokens, or that pick one of them (lines: PARITY.md).',
                                                                       c.tokens,
                                                                       [],
-                                                                      `${MATERIAL3_DIR}/{Checkbox,ComposeMaterial3Flags}.kt + ${MATERIAL3_SAMPLES_DIR}/CheckboxSamples.kt + m3.material.io TOKEN_TABLE.31f16b44fe03b0c0`,
+                                                                      `${MATERIAL3_DIR}/RadioButton.kt + ${MATERIAL3_SAMPLES_DIR}/RadioButtonSamples.kt`,
                                                                     )
-                                                                  : name === 'tabs-defaults'
+                                                                  : name === 'checkbox-defaults'
                                                                     ? cssFile(
-                                                                        'Compose tab row / tab values that are not in Primary/SecondaryNavigationTabTokens (lines: PARITY.md).',
+                                                                        'Compose Checkbox / TriStateCheckbox values that are not in CheckboxTokens, or that pick one of them (isCheckboxStylingFixEnabled off; lines: PARITY.md), and the m3.material.io unchecked state layer colors.',
                                                                         c.tokens,
                                                                         [],
-                                                                        `${MATERIAL3_DIR}/{TabRow,Tab}.kt + ${MATERIAL3_SAMPLES_DIR}/TabSamples.kt`,
+                                                                        `${MATERIAL3_DIR}/{Checkbox,ComposeMaterial3Flags}.kt + ${MATERIAL3_SAMPLES_DIR}/CheckboxSamples.kt + m3.material.io TOKEN_TABLE.31f16b44fe03b0c0`,
                                                                       )
-                                                                    : name ===
-                                                                        'progress-indicator-defaults'
+                                                                    : name === 'tabs-defaults'
                                                                       ? cssFile(
-                                                                          'Compose progress indicator values that are not in *ProgressIndicatorTokens, and the indeterminate keyframes of the flat indicators (lines: PARITY.md).',
+                                                                          'Compose tab row / tab values that are not in Primary/SecondaryNavigationTabTokens (lines: PARITY.md).',
                                                                           c.tokens,
-                                                                          [
-                                                                            '@media (prefers-reduced-motion: reduce) {',
-                                                                            '  :root {',
-                                                                            ...PROGRESS_INDICATOR_REDUCED_MOTION.map(
-                                                                              (l) => `    ${l}`,
-                                                                            ),
-                                                                            '  }',
-                                                                            '}',
-                                                                            ...progressIndicatorKeyframes(
-                                                                              progressIndicator.timing,
-                                                                            ),
-                                                                          ],
-                                                                          `${MATERIAL3_DIR}/{ProgressIndicator,WavyProgressIndicator,internal/LinearWavyProgressModifiers,internal/CircularWavyProgressModifiers}.kt + ${MATERIAL3_SAMPLES_DIR}/ProgressIndicatorSamples.kt + m3.material.io token DB md.comp.progress-indicator`,
+                                                                          [],
+                                                                          `${MATERIAL3_DIR}/{TabRow,Tab}.kt + ${MATERIAL3_SAMPLES_DIR}/TabSamples.kt`,
                                                                         )
-                                                                      : cssFile(
-                                                                          `Component tokens: ${c.object}.`,
-                                                                          c.tokens,
-                                                                        ),
+                                                                      : name ===
+                                                                          'progress-indicator-defaults'
+                                                                        ? cssFile(
+                                                                            'Compose progress indicator values that are not in *ProgressIndicatorTokens, and the indeterminate keyframes of the flat indicators (lines: PARITY.md).',
+                                                                            c.tokens,
+                                                                            [
+                                                                              '@media (prefers-reduced-motion: reduce) {',
+                                                                              '  :root {',
+                                                                              ...PROGRESS_INDICATOR_REDUCED_MOTION.map(
+                                                                                (l) => `    ${l}`,
+                                                                              ),
+                                                                              '  }',
+                                                                              '}',
+                                                                              ...progressIndicatorKeyframes(
+                                                                                progressIndicator.timing,
+                                                                              ),
+                                                                            ],
+                                                                            `${MATERIAL3_DIR}/{ProgressIndicator,WavyProgressIndicator,internal/LinearWavyProgressModifiers,internal/CircularWavyProgressModifiers}.kt + ${MATERIAL3_SAMPLES_DIR}/ProgressIndicatorSamples.kt + m3.material.io token DB md.comp.progress-indicator`,
+                                                                          )
+                                                                        : cssFile(
+                                                                            `Component tokens: ${c.object}.`,
+                                                                            c.tokens,
+                                                                          ),
     );
   }
   out.set(

@@ -670,6 +670,68 @@
     "limit": "12 KB"
   },
   {
+    "name": "m3e-elements: <m3e-date-picker> entry (renders the host; the date-picker-layout entry is imported on first render and measured on its own)",
+    "path": "packages/m3e-elements/dist/date-picker/index.js",
+    "ignore": ["@kyralabs/m3e-elements"],
+    "limit": "8 KB"
+  },
+  {
+    "name": "m3e-elements: date-picker-layout entry (DatePickerLayout: the header, calendar, paging and year grid with m3e-motion's DatePicker port, SpringAnimatable; the date-field entry for the input mode is imported on first use and measured on its own; used by m3e-react's <DatePicker>. 10 KB: a layout entry, not an element entry, like the time-picker-layout entry (12 KB), M10)",
+    "path": "packages/m3e-elements/dist/date-picker-layout/index.js",
+    "limit": "10 KB",
+    "ignore": ["@kyralabs/m3e-elements"]
+  },
+  {
+    "name": "m3e-elements: date-field entry (DateField: the outlined date text field with m3e-motion's DateInputValidator / transformation port; imported lazily by the date picker layouts for the input mode)",
+    "path": "packages/m3e-elements/dist/date-field/index.js",
+    "ignore": ["@kyralabs/m3e-elements"],
+    "limit": "8 KB"
+  },
+  {
+    "name": "m3e-elements: date picker + date-picker-layout + date-field (what a page with an element date picker loads in all, input mode included)",
+    "path": [
+      "packages/m3e-elements/dist/date-picker/index.js",
+      "packages/m3e-elements/dist/date-picker-layout/index.js",
+      "packages/m3e-elements/dist/date-field/index.js"
+    ],
+    "ignore": ["@kyralabs/m3e-elements"],
+    "limit": "14 KB"
+  },
+  {
+    "name": "m3e-elements: <m3e-date-range-picker> entry (renders the host; the date-range-picker-layout entry is imported on first render)",
+    "path": "packages/m3e-elements/dist/date-range-picker/index.js",
+    "ignore": ["@kyralabs/m3e-elements"],
+    "limit": "8 KB"
+  },
+  {
+    "name": "m3e-elements: date-range-picker-layout entry (DateRangePickerLayout: the month list and range band; the date-field entry for the input mode is imported on first use; used by m3e-react's <DateRangePicker>)",
+    "path": "packages/m3e-elements/dist/date-range-picker-layout/index.js",
+    "limit": "8 KB",
+    "ignore": ["@kyralabs/m3e-elements"]
+  },
+  {
+    "name": "m3e-elements: date range picker + date-range-picker-layout + date-field (what a page with an element date range picker loads in all, input mode included)",
+    "path": [
+      "packages/m3e-elements/dist/date-range-picker/index.js",
+      "packages/m3e-elements/dist/date-range-picker-layout/index.js",
+      "packages/m3e-elements/dist/date-field/index.js"
+    ],
+    "ignore": ["@kyralabs/m3e-elements"],
+    "limit": "14 KB"
+  },
+  {
+    "name": "m3e-elements: <m3e-docked-date-picker> entry (renders the host; the docked-date-picker-layout entry is imported on first render)",
+    "path": "packages/m3e-elements/dist/docked-date-picker/index.js",
+    "ignore": ["@kyralabs/m3e-elements"],
+    "limit": "8 KB"
+  },
+  {
+    "name": "m3e-elements: docked-date-picker-layout entry (DockedDatePickerLayout: the field, the drop-down calendar, the month / year menus; used by m3e-react's <DockedDatePicker>)",
+    "path": "packages/m3e-elements/dist/docked-date-picker-layout/index.js",
+    "limit": "8 KB",
+    "ignore": ["@kyralabs/m3e-elements"]
+  },
+  {
     "name": "m3e-elements: tabs-layout entry (TabsLayout, used by m3e-react <Tabs>)",
     "path": "packages/m3e-elements/dist/tabs-layout/index.js",
     "limit": "6 KB"
@@ -939,6 +1001,13 @@
     "limit": "30 KB"
   },
   {
+    "name": "m3e-react: { DatePicker, DateRangePicker, DockedDatePicker, DatePickerDialog } only (the m3e-elements date picker layouts, the date field, BasicAlertDialog; m3e-react is one bundle, so the date field comes inline)",
+    "path": "packages/m3e-react/dist/index.js",
+    "import": "{ DatePicker, DateRangePicker, DockedDatePicker, DatePickerDialog }",
+    "ignore": ["react", "react-dom"],
+    "limit": "30 KB"
+  },
+  {
     "name": "m3e-react: { FilterChip } only (incl. react-aria useCheckbox press/focus + react-stately toggle state, Icon, motion shape spring)",
     "path": "packages/m3e-react/dist/index.js",
     "import": "{ FilterChip }",
@@ -970,10 +1039,10 @@
     "limit": "1 KB"
   },
   {
-    "name": "m3exp-web (root): { Icon } (the root entry registers every custom element by design, with <m3e-menu>, <m3e-split-button>, <m3e-button-group>, the toolbars, the progress indicators, <m3e-search>, the navigation bar / rails, <m3e-navigation-drawer>, <m3e-navigation-suite>, the window size class observer, <m3e-tabs>, <m3e-checkbox>, <m3e-chip-set>, <m3e-slider>, <m3e-text-field>, <m3e-list>, <m3e-tooltip>, <m3e-dialog>, <m3e-snackbar-host>, <m3e-bottom-sheet>, <m3e-side-sheet>, <m3e-carousel>, <m3e-pull-to-refresh>, the time pickers and the canonical layouts (~60.0 kB with their lazily imported pane-motion / pane-expansion entries); a leaked React component adds ~10 kB of react-aria. Raised 53 → 54 kB for <m3e-chip-set>, 54 → 56 kB for <m3e-slider> and m3e-motion's slider math, 56 → 57 kB for <m3e-text-field>, 57 → 58 kB for <m3e-list> and its list-layout (M8), 58 → 61 kB for <m3e-tooltip> and its tooltip-popup controller (M9), 61 → 62 kB for <m3e-dialog> and its dialog-layout (M9), 62 → 64 kB for <m3e-snackbar-host> and its snackbar-layout (M9), 64 → 70 kB for <m3e-bottom-sheet>, its bottom-sheet-layout and m3e-motion's anchored draggable / SheetState (M9), 70 → 72 kB for <m3e-side-sheet> and its side-sheet-layout (M9), 72 → 78 kB for <m3e-carousel> and its carousel-layout with m3e-motion's keyline port (M9), 78 → 80 kB for <m3e-pull-to-refresh> and its pull-to-refresh-layout with m3e-motion's pull / arrow port (M9), 80 → 81 kB for the badges built into the navigation items and tabs (M9 B2), 81 → 88 kB for <m3e-time-picker>, <m3e-time-input> and <m3e-time-scroll> with their time-picker-layout and m3e-motion's TimePicker.kt port (M10). Raise with m3e-elements (all); D17)",
+    "name": "m3exp-web (root): { Icon } (the root entry registers every custom element by design, with <m3e-menu>, <m3e-split-button>, <m3e-button-group>, the toolbars, the progress indicators, <m3e-search>, the navigation bar / rails, <m3e-navigation-drawer>, <m3e-navigation-suite>, the window size class observer, <m3e-tabs>, <m3e-checkbox>, <m3e-chip-set>, <m3e-slider>, <m3e-text-field>, <m3e-list>, <m3e-tooltip>, <m3e-dialog>, <m3e-snackbar-host>, <m3e-bottom-sheet>, <m3e-side-sheet>, <m3e-carousel>, <m3e-pull-to-refresh>, the time pickers, the date pickers and the canonical layouts (~60.0 kB with their lazily imported pane-motion / pane-expansion entries); a leaked React component adds ~10 kB of react-aria. Raised 53 → 54 kB for <m3e-chip-set>, 54 → 56 kB for <m3e-slider> and m3e-motion's slider math, 56 → 57 kB for <m3e-text-field>, 57 → 58 kB for <m3e-list> and its list-layout (M8), 58 → 61 kB for <m3e-tooltip> and its tooltip-popup controller (M9), 61 → 62 kB for <m3e-dialog> and its dialog-layout (M9), 62 → 64 kB for <m3e-snackbar-host> and its snackbar-layout (M9), 64 → 70 kB for <m3e-bottom-sheet>, its bottom-sheet-layout and m3e-motion's anchored draggable / SheetState (M9), 70 → 72 kB for <m3e-side-sheet> and its side-sheet-layout (M9), 72 → 78 kB for <m3e-carousel> and its carousel-layout with m3e-motion's keyline port (M9), 78 → 80 kB for <m3e-pull-to-refresh> and its pull-to-refresh-layout with m3e-motion's pull / arrow port (M9), 80 → 81 kB for the badges built into the navigation items and tabs (M9 B2), 81 → 88 kB for <m3e-time-picker>, <m3e-time-input> and <m3e-time-scroll> with their time-picker-layout and m3e-motion's TimePicker.kt port (M10), 88 → 102 kB for <m3e-date-picker>, <m3e-date-range-picker> and <m3e-docked-date-picker> with their layouts, the date-field entry and m3e-motion's DatePicker port (M10, D18). Raise with m3e-elements (all); D17)",
     "path": "packages/m3exp-web/dist/index.js",
     "import": "{ Icon }",
     "ignore": ["react", "react-dom"],
-    "limit": "88 KB"
+    "limit": "102 KB"
   }
 ]

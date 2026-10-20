@@ -2670,6 +2670,81 @@ describe('time picker values (M10 §28)', () => {
   });
 });
 
+describe('date picker values (M10 §27)', () => {
+  const css = output.get('components/date-picker-defaults.css')!;
+  const decl = declarations(css.slice(0, css.indexOf('@media')));
+  const t = (name: string) => decl.get(`--m3e-comp-date-picker-${name}`);
+
+  it('layout: 48dp cells, 56dp navigation row, 12dp sides, six rows, three year columns, header paddings', () => {
+    expect(t('cell-size')).toBe('48px');
+    expect(t('month-year-height')).toBe('56px');
+    expect(t('horizontal-padding')).toBe('12px');
+    expect(t('calendar-rows')).toBe('6');
+    expect(t('years-in-row')).toBe('3');
+    expect(t('years-vertical-padding')).toBe('16px');
+    expect([t('title-padding-start'), t('title-padding-end'), t('title-padding-top')]).toEqual([
+      '24px',
+      '12px',
+      '16px',
+    ]);
+    expect([
+      t('headline-padding-start'),
+      t('headline-padding-end'),
+      t('headline-padding-bottom'),
+    ]).toEqual(['24px', '12px', '12px']);
+    expect([t('range-title-padding-start'), t('range-header-height-offset')]).toEqual([
+      '64px',
+      '60px',
+    ]);
+    expect([t('input-padding-start'), t('input-padding-top'), t('input-padding-bottom')]).toEqual([
+      '24px',
+      '10px',
+      '16px',
+    ]);
+    expect([
+      t('dialog-actions-padding-bottom'),
+      t('dialog-actions-padding-end'),
+      t('dialog-actions-gap'),
+    ]).toEqual(['8px', '6px', '8px']);
+  });
+
+  it('colors: navigation on-surface-variant, current year = today, divider, no dialog shadow (owner decision M10 D13)', () => {
+    expect(t('navigation-color')).toBe('var(--m3e-sys-color-on-surface-variant)');
+    expect(t('current-year-color')).toBe('var(--m3e-sys-color-primary)');
+    expect(t('divider-color')).toBe('var(--m3e-sys-color-outline-variant)');
+    expect(t('dialog-container-shadow')).toBe('var(--m3e-sys-elevation-level0-shadow)');
+  });
+
+  it('motion: DefaultSpatial mode switch, DefaultEffects year grid from 0.6, spring() month pages; reduced motion jumps', () => {
+    expect(t('mode-spatial-duration')).toBe(
+      'var(--m3e-sys-motion-spring-default-spatial-duration)',
+    );
+    expect(t('mode-fade-out-duration')).toBe('var(--m3e-sys-motion-spring-fast-effects-duration)');
+    expect(t('year-grid-duration')).toBe('var(--m3e-sys-motion-spring-default-effects-duration)');
+    expect(t('year-grid-initial-alpha')).toBe('0.6');
+    expect(t('month-page-stiffness')).toBe('1500');
+    expect(t('month-page-damping-ratio')).toBe('1');
+    expect(t('input-focus-delay')).toBe('var(--m3e-sys-motion-duration-medium2)');
+    const reduced = css.slice(css.indexOf('@media'));
+    for (const name of ['mode-spatial', 'year-grid', 'month-page', 'month-snap']) {
+      expect(reduced).toContain(`--m3e-comp-date-picker-${name}-duration: 0ms;`);
+    }
+  });
+
+  it('m3.material.io: docked (owner decision M10 D1) and state layers (D17)', () => {
+    expect([t('docked-container-width'), t('docked-container-height')]).toEqual(['360px', '456px']);
+    expect(t('docked-container-shape')).toBe('var(--m3e-sys-shape-corner-large)');
+    expect(t('docked-outside-month-opacity')).toBe('0.38');
+    expect(t('docked-menu-item-selected-container-color')).toBe(
+      'var(--m3e-sys-color-surface-variant)',
+    );
+    expect(t('date-in-range-state-layer-color')).toBe('var(--m3e-sys-color-on-primary-container)');
+    expect(output.get('PARITY.md')).toMatch(
+      /DatePicker\.kt@19991f2c0858aadfcb442ce02b2c8e4743c96898 L2618 \| `--m3e-comp-date-picker-cell-size`/,
+    );
+  });
+});
+
 describe('segmented button values (M9, deprecated D4)', () => {
   const css = output.get('components/segmented-button-defaults.css')!;
   const decl = declarations(css);

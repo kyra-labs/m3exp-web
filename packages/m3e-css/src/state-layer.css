@@ -55,6 +55,10 @@
     .m3e-time-picker__period-item,
     .m3e-time-picker__label,
     .m3e-time-scroll__item,
+    .m3e-date-picker__day,
+    .m3e-date-picker__year,
+    .m3e-date-picker__menu-button,
+    .m3e-date-picker__menu-item,
     .m3e-checkbox__state,
     .m3e-radio-button__state,
     .m3e-switch__state
@@ -88,6 +92,10 @@
     .m3e-time-picker__period-item,
     .m3e-time-picker__label,
     .m3e-time-scroll__item,
+    .m3e-date-picker__day,
+    .m3e-date-picker__year,
+    .m3e-date-picker__menu-button,
+    .m3e-date-picker__menu-item,
     .m3e-checkbox__state,
     .m3e-radio-button__state,
     .m3e-switch__state
@@ -191,7 +199,11 @@
         .m3e-time-picker__selector,
         .m3e-time-picker__period-item,
         .m3e-time-picker__label,
-        .m3e-time-scroll__item
+        .m3e-time-scroll__item,
+        .m3e-date-picker__day,
+        .m3e-date-picker__year,
+        .m3e-date-picker__menu-button,
+        .m3e-date-picker__menu-item
       ):hover::before {
       --_m3e-state-layer-opacity: var(--m3e-sys-state-hover-state-layer-opacity);
     }
@@ -220,7 +232,11 @@
       .m3e-time-picker__selector,
       .m3e-time-picker__period-item,
       .m3e-time-picker__label,
-      .m3e-time-scroll__item
+      .m3e-time-scroll__item,
+      .m3e-date-picker__day,
+      .m3e-date-picker__year,
+      .m3e-date-picker__menu-button,
+      .m3e-date-picker__menu-item
     ):focus-visible::before {
     --_m3e-state-layer-opacity: var(--m3e-sys-state-focus-state-layer-opacity);
   }
@@ -248,7 +264,11 @@
       .m3e-time-picker__selector,
       .m3e-time-picker__period-item,
       .m3e-time-picker__label,
-      .m3e-time-scroll__item
+      .m3e-time-scroll__item,
+      .m3e-date-picker__day,
+      .m3e-date-picker__year,
+      .m3e-date-picker__menu-button,
+      .m3e-date-picker__menu-item
     )[data-dragged]::before {
     --_m3e-state-layer-opacity: var(--m3e-sys-state-dragged-state-layer-opacity);
   }
@@ -276,7 +296,11 @@
       .m3e-time-picker__selector,
       .m3e-time-picker__period-item,
       .m3e-time-picker__label,
-      .m3e-time-scroll__item
+      .m3e-time-scroll__item,
+      .m3e-date-picker__day,
+      .m3e-date-picker__year,
+      .m3e-date-picker__menu-button,
+      .m3e-date-picker__menu-item
     ):active::before,
   :where(
       .m3e-state-layer,
@@ -303,6 +327,10 @@
       .m3e-time-picker__period-item,
       .m3e-time-picker__label,
       .m3e-time-scroll__item,
+      .m3e-date-picker__day,
+      .m3e-date-picker__year,
+      .m3e-date-picker__menu-button,
+      .m3e-date-picker__menu-item,
       .m3e-checkbox__state,
       .m3e-radio-button__state,
       .m3e-switch__state
@@ -333,7 +361,11 @@
       .m3e-time-picker__selector,
       .m3e-time-picker__period-item,
       .m3e-time-picker__label,
-      .m3e-time-scroll__item
+      .m3e-time-scroll__item,
+      .m3e-date-picker__day,
+      .m3e-date-picker__year,
+      .m3e-date-picker__menu-button,
+      .m3e-date-picker__menu-item
     ):is(:disabled, [aria-disabled='true'])::before {
     display: none;
   }
@@ -416,6 +448,10 @@
       .m3e-time-picker__period-item,
       .m3e-time-picker__label,
       .m3e-time-scroll__item,
+      .m3e-date-picker__day,
+      .m3e-date-picker__year,
+      .m3e-date-picker__menu-button,
+      .m3e-date-picker__menu-item,
       .m3e-checkbox__state,
       .m3e-radio-button__state,
       .m3e-switch__state
@@ -471,6 +507,10 @@
       .m3e-time-picker__period-item,
       .m3e-time-picker__label,
       .m3e-time-scroll__item,
+      .m3e-date-picker__day,
+      .m3e-date-picker__year,
+      .m3e-date-picker__menu-button,
+      .m3e-date-picker__menu-item,
       .m3e-checkbox__state,
       .m3e-radio-button__state,
       .m3e-switch__state

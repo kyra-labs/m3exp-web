@@ -59,4 +59,5 @@
 @import './pull-to-refresh.css'; /* re-imports circular-progress.css and loading-indicator.css */
 @import './segmented-button.css'; /* @deprecated (D4) */
 @import './time-picker.css';
+@import './date-picker.css';
 @import './layout.css'; /* canonical layouts; imports vertical-drag-handle.css */
