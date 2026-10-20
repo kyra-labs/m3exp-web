@@ -353,9 +353,15 @@ test.describe('springs (frames driven by the Playwright clock)', () => {
       '[data-testid="react-fab-toolbar"] .m3e-fab',
       50,
     );
-    const widths = frames.map((f) => f.fab);
+    const traced = frames.map((f) => f.fab);
+    // FloatingToolbarLayout starts the spring at the click's performance.now(): when the paused
+    // clock has not moved between the click and the first traced frame, that frame samples
+    // elapsed 0, the start value (56dp). The spring is under way by the next frame either way.
+    const start = traced.findIndex((w) => w > 56);
+    expect(start, 'the FAB starts growing within two frames').toBeGreaterThanOrEqual(0);
+    expect(start).toBeLessThanOrEqual(1);
+    const widths = traced.slice(start);
     expect(new Set(widths.slice(0, 15).map(Math.round)).size).toBeGreaterThanOrEqual(5);
-    expect(widths[0]!).toBeGreaterThan(56);
     expect(widths[0]!).toBeLessThan(80);
     // Expressive fast spatial (ζ 0.6) overshoots past 80dp, then rests on it.
     expect(Math.max(...widths)).toBeGreaterThan(80.5);

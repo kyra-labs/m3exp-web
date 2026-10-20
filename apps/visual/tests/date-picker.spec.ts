@@ -63,6 +63,9 @@ test('has no axe violations', async ({ page }) => {
 test('has no axe violations with the year grid, the docked calendar and each dialog open', async ({
   page,
 }) => {
+  // Five full-page axe runs (the range picker's month list is a large tree): Firefox and WebKit
+  // can need more than the default 30s, as in search.spec.ts.
+  test.slow();
   const check = async (what: string) => {
     await settle(page);
     const results = await new AxeBuilder({ page }).withTags(AXE_TAGS).analyze();

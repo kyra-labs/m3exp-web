@@ -64,6 +64,16 @@
   accent-color: var(--m3e-sys-color-primary);
 }
 
+/*
+ * Inline code at line-height 1: with the body's 24px line height, the fallback monospace font's
+ * ascent / descent made each line holding <code> a pixel taller than the others, and headless
+ * Chromium re-measures that font during the first full-page capture, so page heights moved by one
+ * pixel per such line between screenshots (bottom-sheet.spec.ts and other full-page baselines).
+ */
+:where(:not(pre) > code, kbd, samp) {
+  line-height: 1;
+}
+
 .docs-code {
   padding: var(--m3e-sys-space-200);
   border-radius: var(--m3e-sys-shape-corner-medium);
