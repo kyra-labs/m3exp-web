@@ -29,13 +29,15 @@ const current = NAV.flatMap((s) => s.links)
           {section.label && <h2 class="m3e-navigation-drawer__headline">{section.label}</h2>}
           {section.links.map((link) => (
             <a
-              class="m3e-navigation-drawer-item"
+              class:list={['m3e-navigation-drawer-item', { 'site-drawer__sub': !link.icon }]}
               href={link.href}
               aria-current={link.href === current ? 'page' : undefined}
             >
-              <span class="m3e-icon m3e-navigation-drawer-item__icon" aria-hidden="true">
-                {link.icon}
-              </span>
+              {link.icon && (
+                <span class="m3e-icon m3e-navigation-drawer-item__icon" aria-hidden="true">
+                  {link.icon}
+                </span>
+              )}
               <span class="m3e-navigation-drawer-item__label">{link.label}</span>
             </a>
           ))}

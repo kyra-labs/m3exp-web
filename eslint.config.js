@@ -72,6 +72,11 @@ export default defineConfig(
     plugins: { m3e },
     rules: { 'm3e/no-literal-values': 'error' },
   },
+  // The site's examples of deprecated components (D4) use them on purpose.
+  {
+    files: ['apps/site/src/examples/segmented-button/**', 'apps/site/src/examples/*/legacy-*.tsx'],
+    rules: { '@typescript-eslint/no-deprecated': 'off' },
+  },
   // D7: m3e-elements has zero runtime dependencies. Only internal math packages may be imported
   // (they are bundled into the elements build, never listed as dependencies).
   {

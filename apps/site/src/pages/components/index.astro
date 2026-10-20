@@ -1,0 +1,49 @@
+---
+import galleryCss from '../../styles/gallery.css?url';
+import Site from '../../layouts/Site.astro';
+import { COMPONENTS, GROUPS } from '../../data/components';
+import { PENDING } from '../../data/nav';
+
+const previews = import.meta.glob<string>('../../examples/*/preview.html', {
+  query: '?raw',
+  import: 'default',
+  eager: true,
+});
+const groups = GROUPS.map((group) => ({
+  group,
+  items: COMPONENTS.filter((c) => c.group === group && !PENDING.has(c.slug)),
+})).filter((g) => g.items.length > 0);
+---
+
+<Site
+  title="Components"
+  description="Every Material 3 Expressive component in m3exp-web, with live previews: buttons, toolbars, navigation, pickers, sheets and more, as CSS classes, custom elements and React."
+  wide
+>
+  <Fragment slot="head">
+    <link rel="stylesheet" href={galleryCss} media="print" onload="this.media='all'" />
+    <noscript><link rel="stylesheet" href={galleryCss} /></noscript>
+  </Fragment>
+  <h1>Components</h1>
+  <p class="site-lead">Live demos, code and the full API of each component.</p>
+  {
+    groups.map(({ group, items }) => (
+      <section aria-labelledby={`group-${group}`}>
+        <h2 id={`group-${group}`}>{group}</h2>
+        <ul class="site-gallery">
+          {items.map((c) => (
+            <li class="m3e-card m3e-card--outlined m3e-card--interactive site-gallery__item">
+              <div class="site-gallery__preview" inert set:html={previews[`../../examples/${c.slug}/preview.html`] ?? ''} />
+              <h3 class="site-gallery__title">
+                <a class="m3e-card__action" href={`/components/${c.slug}/`}>
+                  {c.title}
+                </a>
+              </h3>
+              <p class="site-gallery__summary">{c.summary}</p>
+            </li>
+          ))}
+        </ul>
+      </section>
+    ))
+  }
+</Site>

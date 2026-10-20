@@ -1,9 +1,11 @@
 // The site's navigation, in drawer order. Each later PR adds its section (DECISIONS D27).
+import pendingList from '../../scripts/pending-components.txt?raw';
+import { COMPONENTS } from './components';
 export interface NavLink {
   href: string;
   label: string;
-  /** Material Symbols name. */
-  icon: string;
+  /** Material Symbols name; links without one are listed under the section's first link. */
+  icon?: string;
 }
 
 export interface NavSection {
@@ -25,11 +27,28 @@ export const GUIDES: NavLink[] = [
   { href: '/get-started/versioning/', label: 'Versioning', icon: 'commit' },
 ];
 
+/** Component pages not written yet (scripts/pending-components.txt). */
+export const PENDING = new Set(
+  pendingList
+    .split('\n')
+    .map((l) => l.replace(/#.*/, '').trim())
+    .filter(Boolean),
+);
+
 export const NAV: NavSection[] = [
   {
     links: [{ href: '/', label: 'Home', icon: 'home' }],
   },
   { label: 'Get started', links: GUIDES },
+  {
+    label: 'Components',
+    links: [
+      { href: '/components/', label: 'All components', icon: 'widgets' },
+      ...COMPONENTS.filter((c) => !PENDING.has(c.slug))
+        .sort((a, b) => a.title.localeCompare(b.title))
+        .map((c) => ({ href: `/components/${c.slug}/`, label: c.title })),
+    ],
+  },
 ];
 
 /** True when `href` is the current page or one of its children (section highlighting). */

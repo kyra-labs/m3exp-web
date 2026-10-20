@@ -1,0 +1,169 @@
+---
+// A component page (DECISIONS D27): purpose, live examples with React and HTML code, the API
+// generated from source (React props, element attributes and events, CSS contract and custom
+// properties), accessibility, known differences from Compose and Sources (D26). The page file
+// lists the examples and imports the m3e-css files they render.
+import '@kyralabs/m3e-css/tabs.css';
+import ApiCss from '../components/ApiCss.astro';
+import ApiElement from '../components/ApiElement.astro';
+import ApiReact from '../components/ApiReact.astro';
+import Example from '../components/Example.astro';
+import Site from './Site.astro';
+import { componentBySlug } from '../data/components';
+import { PLAYGROUND_URL } from '../data/site';
+import { API, deprecationText, specField } from '../lib/api';
+import { block, inline } from '../lib/markdown';
+
+interface ExampleMeta {
+  name: string;
+  title: string;
+  /** Inline Markdown. */
+  description?: string;
+}
+
+interface Props {
+  slug: string;
+  examples: ExampleMeta[];
+  /** One sentence for search engines; defaults to the spec's purpose. */
+  description?: string;
+}
+
+const { slug, examples, description } = Astro.props;
+const entry = componentBySlug(slug);
+if (!entry) throw new Error(`No component ${slug} in src/data/components.ts`);
+const spec = API.spec[entry.spec];
+const rawPurpose = specField(spec, 'Purpose');
+const purpose = rawPurpose ? rawPurpose.charAt(0).toUpperCase() + rawPurpose.slice(1) : undefined;
+const metaDescription = description ?? entry.summary;
+
+const components = entry.react.filter((n) => API.react[n]?.kind === 'component');
+const helpers = entry.react.filter((n) => API.react[n]?.kind !== 'component');
+// D4: the page banner when every React component on it is deprecated; partly deprecated pages
+// (a legacy bar next to its replacement) show the note on the deprecated API only.
+const pageDeprecation =
+  components.length > 0 && components.every((n) => API.react[n]?.deprecated !== null)
+    ? deprecationText(API.react[components[0] ?? '']?.deprecated ?? null)
+    : null;
+
+const a11y = [specField(spec, 'Keyboard/ARIA', 'Keyboard', 'ARIA'), specField(spec, 'Behavior')].filter(
+  (x): x is string => Boolean(x),
+);
+const fidelity = specField(spec, 'Fidelity');
+const specSources = specField(spec, 'Sources');
+const tokens = specField(spec, 'Tokens (verified, generated)', 'Tokens');
+const tokensProse = tokens
+  ?.split('\n')
+  .filter((l) => !/^\s*\|/.test(l))
+  .join('\n');
+---
+
+<Site title={entry.title} description={metaDescription} wide>
+  <article class="site-component" data-component={slug}>
+    <p class="site-component__group">{entry.group}</p>
+    <h1>{entry.title}</h1>
+    <p class="site-lead">{entry.summary}</p>
+    {
+      pageDeprecation !== null && (
+        <p class="site-note site-note--warning" role="note" data-deprecated>
+          <strong>Deprecated (DECISIONS D4).</strong> This component ships until 2.0 for migration
+          and gets no new features; React warns once in development.{' '}
+          <Fragment set:html={inline(pageDeprecation)} />
+        </p>
+      )
+    }
+    <ul class="site-component__facts">
+      <li>COMPONENT_SPEC §{entry.spec}</li>
+      <li>{[entry.css.length > 0 && 'CSS', entry.elements.length > 0 && 'custom elements', components.length > 0 && 'React'].filter(Boolean).join(' · ')}</li>
+      {
+        entry.playground && (
+          <li>
+            <a href={`${PLAYGROUND_URL}/components/${entry.playground}/`}>Open in the playground</a>
+          </li>
+        )
+      }
+    </ul>
+
+    <h2 id="examples">Examples</h2>
+    {examples.map((e) => <Example slug={slug} {...e} description={e.description ? inline(e.description) : undefined} />)}
+
+    {
+      purpose && (
+        <>
+          <h2 id="usage">Usage</h2>
+          <div set:html={block(purpose)} />
+        </>
+      )
+    }
+
+    <slot />
+
+    <h2 id="api">API</h2>
+    {
+      components.length > 0 && (
+        <>
+          <h3 class="site-api__layer" id="api-react">React</h3>
+          {components.map((name) => <ApiReact name={name} />)}
+          {helpers.map((name) => <ApiReact name={name} />)}
+        </>
+      )
+    }
+    {
+      entry.elements.length > 0 && (
+        <>
+          <h3 class="site-api__layer" id="api-elements">Custom elements</h3>
+          {entry.elements.map((tag) => <ApiElement tag={tag} />)}
+        </>
+      )
+    }
+    <h3 class="site-api__layer" id="api-css">CSS</h3>
+    {entry.css.map((file) => <ApiCss file={file} />)}
+
+    {
+      a11y.length > 0 && (
+        <>
+          <h2 id="accessibility">Accessibility</h2>
+          {a11y.map((text) => <div set:html={block(text)} />)}
+          <p>
+            Every interactive part has a target of at least 48 × 48 px, a visible focus ring for
+            keyboard focus only, and works under <code>forced-colors</code> and
+            <code>prefers-reduced-motion</code>.
+          </p>
+        </>
+      )
+    }
+
+    {
+      fidelity && (
+        <>
+          <h2 id="fidelity">Differences from Compose</h2>
+          <div set:html={block(fidelity)} />
+        </>
+      )
+    }
+
+    <h2 id="sources">Sources</h2>
+    <p>
+      Values come from androidx Compose Material3 1.5.0-beta01 at <code>19991f2c</code> and from
+      m3.material.io, as cited below from COMPONENT_SPEC §{entry.spec} and the m3e-css sources.
+    </p>
+    {specSources && <div set:html={block(specSources)} />}
+    {tokensProse && <div set:html={block(tokensProse)} />}
+    {
+      entry.css.map((file) => {
+        const sources = API.css[file]?.sources;
+        return sources ? (
+          <details class="site-sources">
+            <summary>
+              <code>{`${file}.css`}</code> sources
+            </summary>
+            <div set:html={block(sources.replace(/^Sources\s*/, ''))} />
+          </details>
+        ) : null;
+      })
+    }
+  </article>
+</Site>
+
+<script>
+  import '@kyralabs/m3e-elements/tabs.js';
+</script>

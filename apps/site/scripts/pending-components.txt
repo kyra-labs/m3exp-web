@@ -1,0 +1,30 @@
+# Component pages not written yet (scripts/check-components.js). The component-page PRs remove
+# lines as they add pages; the last one empties this file.
+card
+list
+carousel
+dialog
+bottom-sheet
+side-sheet
+divider
+top-app-bar
+floating-toolbar
+docked-toolbar
+search
+navigation-bar
+navigation-rail
+navigation-drawer
+navigation-suite
+tabs
+chips
+menu
+checkbox
+radio-button
+switch
+slider
+date-picker
+time-picker
+text-field
+canonical-layouts
+pull-to-refresh
+primitives

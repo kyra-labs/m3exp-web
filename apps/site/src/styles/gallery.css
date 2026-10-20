@@ -1,0 +1,9 @@
+/*
+ * The component gallery's previews: every component's m3e-css. Loaded without blocking the
+ * first paint (pages/components/index.astro); the previews stay hidden until it applies.
+ */
+@import '@kyralabs/m3e-css/index.css';
+
+.site-gallery__preview {
+  --_site-gallery-ready: visible;
+}

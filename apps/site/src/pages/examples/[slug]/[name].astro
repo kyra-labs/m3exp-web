@@ -1,0 +1,68 @@
+---
+// The HTML version of each component example, live: m3e-css markup plus the custom elements it
+// uses, with no framework. Linked from the example's HTML tab; left out of search and the
+// sitemap. tests/examples.spec.ts loads every one.
+import '@kyralabs/m3exp-web/css/index.css';
+import '../../../generated/icons/site-icons.css';
+import '../../../styles/site.css';
+import { COMPONENTS } from '../../../data/components';
+import themeInit from '../../../scripts/theme-init.js?raw';
+
+export function getStaticPaths() {
+  const files = import.meta.glob<string>('../../../examples/*/*.html', {
+    query: '?raw',
+    import: 'default',
+    eager: true,
+  });
+  // preview.html is the gallery card's markup, not an example.
+  return Object.entries(files)
+    .filter(([path]) => !path.endsWith('/preview.html'))
+    .map(([path, html]) => {
+    const [, slug = '', name = ''] = /examples\/([^/]+)\/([^/]+)\.html$/.exec(path) ?? [];
+    return { params: { slug, name }, props: { html } };
+  });
+}
+
+interface Props {
+  html: string;
+}
+
+const { slug, name } = Astro.params;
+const { html } = Astro.props;
+const entry = COMPONENTS.find((c) => c.slug === slug);
+const title = `${entry?.title ?? slug}: ${name.replace(/-/g, ' ')} (HTML)`;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="robots" content="noindex" />
+    <title>{title} · m3exp-web</title>
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <script is:inline set:html={themeInit} />
+  </head>
+  <body class="site-example-page">
+    <main>
+      <h1 class="site-example-page__title">{title}</h1>
+      <p>
+        <a href={`/components/${slug}/#example-${name}`}>Back to the {entry?.title ?? slug} page</a>
+      </p>
+      <div class="site-example__preview site-example-page__demo" set:html={html} />
+    </main>
+    <script>
+      import '@kyralabs/m3e-elements/ripple.js';
+      import { TAG_ENTRY, ELEMENT_ENTRIES } from '../../../generated/element-entries';
+
+      const entries = new Set(
+        [...document.querySelectorAll('*')]
+          .map((el) => TAG_ENTRY[el.localName])
+          .filter((e): e is string => e !== undefined),
+      );
+      await Promise.all([...entries].map((e) => ELEMENT_ENTRIES[e]?.()));
+      document.body.dataset['ready'] = '';
+    </script>
+  </body>
+</html>

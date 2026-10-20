@@ -1,0 +1,63 @@
+---
+// One example of a component page: a live React preview (an island, mounted near the viewport)
+// and its React and HTML code in tabs. The code shown is the file that runs:
+// src/examples/<slug>/<name>.tsx and .html. Without JavaScript the preview shows the HTML when it
+// is plain m3e-css markup, and both code samples stay readable.
+import CodeBlock from './CodeBlock.astro';
+import Island from './Island.astro';
+
+interface Props {
+  slug: string;
+  name: string;
+  title: string;
+  /** HTML (already rendered from Markdown). */
+  description?: string | undefined;
+}
+
+const { slug, name, title, description } = Astro.props;
+const tsx = import.meta.glob<string>('../examples/*/*.tsx', {
+  query: '?raw',
+  import: 'default',
+  eager: true,
+});
+const html = import.meta.glob<string>('../examples/*/*.html', {
+  query: '?raw',
+  import: 'default',
+  eager: true,
+});
+const react = tsx[`../examples/${slug}/${name}.tsx`];
+const markup = html[`../examples/${slug}/${name}.html`];
+if (react === undefined || markup === undefined) {
+  throw new Error(`Example ${slug}/${name} needs both a .tsx and an .html file`);
+}
+const usesElements = /<m3e-/.test(markup);
+const id = `example-${name}`;
+---
+
+<section class="site-example" aria-labelledby={id}>
+  <h3 id={id}>{title}</h3>
+  {description && <p class="site-example__description" set:html={description} />}
+  <Island name={`example:${slug}/${name}`} class="site-example__preview">
+    {
+      usesElements ? (
+        <p class="site-example__note">The live demo runs with JavaScript. Its code is below.</p>
+      ) : (
+        <Fragment set:html={markup} />
+      )
+    }
+  </Island>
+  <m3e-tabs class="site-example__code" label={`${title}: code`} variant="secondary" selected="react">
+    <m3e-tab value="react">React</m3e-tab>
+    <m3e-tab value="html">HTML</m3e-tab>
+    <m3e-tab-panel value="react" data-label="React">
+      <CodeBlock code={react} lang="tsx" label={`React code: ${title}`} />
+    </m3e-tab-panel>
+    <m3e-tab-panel value="html" data-label="HTML">
+      <CodeBlock code={markup} lang="html" label={`HTML code: ${title}`} />
+      <p class="site-example__run">
+        <a href={`/examples/${slug}/${name}/`}>Run the HTML version</a>
+        {usesElements ? ' (custom elements, no framework).' : ' (CSS classes only).'}
+      </p>
+    </m3e-tab-panel>
+  </m3e-tabs>
+</section>

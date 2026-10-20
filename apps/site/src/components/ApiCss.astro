@@ -1,0 +1,72 @@
+---
+// One m3e-css file: its DOM contract and notes from the file's header comment, and the
+// --m3e-comp-* custom properties it reads with their token defaults (scripts/api.js).
+import { API } from '../lib/api';
+import { block } from '../lib/markdown';
+import CodeBlock from './CodeBlock.astro';
+import ScrollTable from './ScrollTable.astro';
+
+interface Props {
+  file: string;
+}
+
+const { file } = Astro.props;
+const api = API.css[file];
+if (!api) throw new Error(`m3e-css has no ${file}.css`);
+
+// The header mixes prose with indented markup samples; split them.
+const parts: { kind: 'text' | 'code'; text: string }[] = [];
+for (const line of api.overview.split('\n')) {
+  const kind = /^ {2,}\S/.test(line) ? 'code' : 'text';
+  const last = parts.at(-1);
+  if (line.trim() === '' && last) last.text += '\n';
+  else if (last?.kind === kind) last.text += `\n${line}`;
+  else parts.push({ kind, text: line });
+}
+const dedent = (s: string) => {
+  const lines = s.replace(/\n+$/, '').split('\n');
+  const indent = Math.min(...lines.filter((l) => l.trim()).map((l) => /^ */.exec(l)?.[0].length ?? 0));
+  return lines.map((l) => l.slice(indent)).join('\n');
+};
+---
+
+<section class="site-api" aria-labelledby={`css-${file}`}>
+  <h3 id={`css-${file}`}><code>{`${file}.css`}</code></h3>
+  <CodeBlock code={`@import '@kyralabs/m3e-css/${file}.css';`} lang="css" label={`import for ${file}.css`} />
+  {
+    parts.map((p) =>
+      p.kind === 'code' ? (
+        <CodeBlock code={dedent(p.text)} lang="html" label={`${file}.css markup`} />
+      ) : (
+        <div class="site-api__description" set:html={block(p.text)} />
+      ),
+    )
+  }
+  {
+    api.customProperties.length > 0 && (
+      <details class="site-api__properties">
+        <summary>{api.customProperties.length} custom properties it reads</summary>
+        <ScrollTable label={`${file}.css custom properties`}>
+          <table>
+            <thead>
+              <tr>
+                <th scope="col">Custom property</th>
+                <th scope="col">Default</th>
+              </tr>
+            </thead>
+            <tbody>
+              {api.customProperties.map((p) => (
+                <tr>
+                  <th scope="row">
+                    <code>{p.name}</code>
+                  </th>
+                  <td>{p.default ? <code>{p.default}</code> : 'set by the component'}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </ScrollTable>
+      </details>
+    )
+  }
+</section>

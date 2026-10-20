@@ -228,6 +228,8 @@ jobs:
       - run: pnpm build
       - name: Site prose keeps its spaces next to inline tags (compressHTML)
         run: node tools/check-docs-whitespace.js apps/site/dist
+      - name: Every COMPONENT_SPEC component, React export, element and CSS file has a page
+        run: pnpm --filter @kyralabs/site check:components
       - name: Links and anchors resolve
         run: pnpm --filter @kyralabs/site check:links
       - name: axe, console errors, icons, 360px layout, no-JS rendering, keyboard
