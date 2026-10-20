@@ -59,10 +59,14 @@ export function renderMonth(month: HTMLElement, m: CalendarMonth, s: MonthState)
         const date = calendarDate(m.startUtcTimeMillis + number * MILLISECONDS_IN_24_HOURS);
         day.textContent = localNumber(date.dayOfMonth, s.locale);
         day.dataset['outside'] = '';
+        // Inactive (WCAG 1.4.3 exempts it from contrast) and not read: the grid has the month's.
+        setAttr(day, 'aria-disabled', 'true');
         setAttr(day, 'aria-hidden', 'true');
       }
       week.append(day);
     }
+    // A week without a day of the month (blank, or docked neighbours only) has no gridcell to read.
+    if (!week.querySelector('[data-date]')) setAttr(week, 'aria-hidden', 'true');
     rows.push(week);
   }
   month.replaceChildren(...rows);

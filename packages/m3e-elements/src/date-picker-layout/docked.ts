@@ -151,8 +151,9 @@ export class DockedDatePickerLayout {
 
     delegateRipple(this.#viewport, `.${ROOT}__day[data-date]`, signal);
     delegateRipple(this.#menu, `.${ROOT}__menu-item`, signal);
+    // A click on the field shows the calendar but leaves the focus there for typing.
     on(this.#field.input, 'click', () => {
-      this.toggle(true);
+      this.toggle(true, false, false);
     });
     on(this.#viewport, 'click', (e) => {
       const day = (e.target as Element).closest<HTMLElement>(`.${ROOT}__day[data-date]`);
@@ -245,17 +246,19 @@ export class DockedDatePickerLayout {
     const before = this.options;
     this.options = options;
     this.#resolve();
+    // The field's text changes only with the date (a re-render keeps what is being typed).
     if (options.yearRange !== before.yearRange || this.model.firstDayOfWeek !== this.#firstDay) {
       this.model = this.#newModel();
+      this.#field.setDate(this.model.selectedDateMillis);
     } else if (
       options.selectedDate !== undefined &&
       options.selectedDate !== this.model.selectedDateMillis
     ) {
       this.model.selectedDateMillis = options.selectedDate;
       if (options.selectedDate !== null) this.model.displayedMonthMillis = options.selectedDate;
+      this.#field.setDate(this.model.selectedDateMillis);
     }
     this.#field.update(this.#fieldOptions());
-    this.#field.setDate(this.model.selectedDateMillis);
     this.#shown = null;
     this.#render();
   }
@@ -264,14 +267,17 @@ export class DockedDatePickerLayout {
     this.#abort.abort();
   }
 
-  /** Opens (focusing the resting day) or closes the calendar (`refocus`: back to the field). */
-  toggle(open: boolean, refocus = false): void {
+  /**
+   * Opens (focusing the resting day unless `focusDay` is false) or closes the calendar
+   * (`refocus`: back to the field).
+   */
+  toggle(open: boolean, refocus = false, focusDay = true): void {
     if (open === !this.#popup.hidden) return;
     this.#popup.hidden = !open;
     if (!open) this.#open = null;
     this.#render();
-    if (open) this.#days.find((d) => d.tabIndex === 0)?.focus({ preventScroll: true });
-    else if (refocus) this.#field.input.focus();
+    if (open && focusDay) this.#days.find((d) => d.tabIndex === 0)?.focus({ preventScroll: true });
+    else if (!open && refocus) this.#field.input.focus();
   }
 
   #select(millis: number | null): void {

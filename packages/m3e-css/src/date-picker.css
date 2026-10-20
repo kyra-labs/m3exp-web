@@ -644,9 +644,13 @@
     padding-inline: var(--_m3e-date-picker-padding);
   }
 
+  /*
+   * A zero basis: the month list never sizes its container from its content (every month, laid
+   * out by height), so an unbounded container gets six rows and a bounded one the rest.
+   */
   .m3e-date-picker__scroller {
     position: relative;
-    flex: 1 1 auto;
+    flex: 1 1 0;
     min-block-size: calc(var(--_m3e-date-picker-cell) * var(--_m3e-date-picker-rows));
     overflow-y: auto;
     overscroll-behavior: contain;

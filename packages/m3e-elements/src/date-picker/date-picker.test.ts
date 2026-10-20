@@ -243,6 +243,29 @@ describe('<m3e-docked-date-picker>', () => {
   });
 });
 
+describe('<m3e-docked-date-picker> typing', () => {
+  it('a click on the field shows the calendar and keeps the focus for typing', async () => {
+    const { host, root } = await mount(
+      '<m3e-docked-date-picker lang="en-US"></m3e-docked-date-picker>',
+      'm3e-docked-date-picker',
+    );
+    const input = root.querySelector<HTMLInputElement>('.m3e-text-field__input')!;
+    input.focus();
+    input.click();
+    expect(root.querySelector<HTMLElement>('.m3e-date-picker--docked')!.hidden).toBe(false);
+    expect(document.activeElement).toBe(input);
+    const change = vi.fn();
+    host.addEventListener('change', (e) => void change((e as CustomEvent).detail));
+    type(input, '0814');
+    // A re-render (an attribute change) keeps the partial text.
+    host.setAttribute('label', 'Birthday');
+    await flush();
+    expect(input.value).toBe('08/14/');
+    type(input, '2025');
+    expect(change).toHaveBeenLastCalledWith({ value: '2025-08-14' });
+  });
+});
+
 describe('M3eDatePickerElement', () => {
   it('builds the layout once, after its entry loads', async () => {
     const { host } = await mount('<m3e-date-picker></m3e-date-picker>', 'm3e-date-picker');
