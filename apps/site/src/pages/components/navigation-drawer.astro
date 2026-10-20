@@ -1,0 +1,14 @@
+---
+import '@kyralabs/m3e-css/badge.css';
+import '@kyralabs/m3e-css/navigation-drawer.css';
+import ComponentPage from '../../layouts/ComponentPage.astro';
+---
+
+<ComponentPage
+  slug="navigation-drawer"
+  examples={[
+    { name: 'standard', title: 'Permanent', description: 'Always shown, in the layout, with headlines, a divider and a trailing badge.' },
+    { name: 'dismissible', title: 'Dismissible', description: 'In the layout, opened and closed by a button: the content beside it moves.' },
+    { name: 'modal', title: 'Modal', description: 'Opens over the page as a dialog above a scrim. Drag it, press Escape or select a destination to close it.' },
+  ]}
+/>
