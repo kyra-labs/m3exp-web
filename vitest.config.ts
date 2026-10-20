@@ -21,6 +21,7 @@ export default defineConfig({
             'packages/*/src/**/*.node.test.ts',
             'packages/*/src/**/*.test.ts',
             'tools/**/*.test.js',
+            'apps/site/src/**/*.test.ts',
           ],
           exclude: ['packages/m3e-elements/src/**/!(*.node).test.ts', 'packages/m3e-react/src/**'],
         },

@@ -1,0 +1,33 @@
+---
+// A highlighted, copyable code block. The copy button is an m3e-css icon button; without
+// JavaScript it is hidden and the code stays selectable.
+import { Code } from 'astro:components';
+import { codeTheme } from '../lib/highlight';
+
+interface Props {
+  code: string;
+  lang: 'sh' | 'html' | 'css' | 'js' | 'ts' | 'tsx' | 'jsx' | 'json' | 'astro' | 'text';
+  /** What the code is, for the copy button's name ("Copy install command"). */
+  label?: string;
+}
+
+const { code, lang, label = 'code' } = Astro.props;
+---
+
+<div class="site-code">
+  <Code code={code.trimEnd()} lang={lang} theme={codeTheme} />
+  <button
+    type="button"
+    class="m3e-icon-button m3e-icon-button--standard m3e-icon-button--size-xs site-code__copy site-js-only"
+    aria-label={`Copy ${label}`}
+    data-copy
+  >
+    <span class="m3e-icon" aria-hidden="true">content_copy</span>
+  </button>
+</div>
+
+<script>
+  import { attachCopyButtons } from '../scripts/copy';
+
+  attachCopyButtons();
+</script>

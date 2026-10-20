@@ -21,3 +21,9 @@ apps/docs/public/icons/
 
 # m3e-elements: declarations emitted by tsc before tsup bundles them
 packages/*/.dts/
+
+# apps/site: generated at build time (icon subset, API data) and test output
+apps/site/src/generated/
+apps/site/test-results/
+apps/site/playwright-report/
+apps/site/lighthouse/

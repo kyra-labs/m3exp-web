@@ -1,0 +1,73 @@
+---
+// The site shell (DECISIONS D27): a top app bar with search, a navigation drawer (permanent from
+// the large window size class, modal below) and the page. Everything is m3e-css markup, so the
+// page reads with JavaScript off; src/scripts/chrome.ts adds the drawer, search and theme menu.
+import '../styles/base.css';
+import '../styles/site.css';
+import NavDrawer from '../components/NavDrawer.astro';
+import TopBar from '../components/TopBar.astro';
+import { SITE_NAME, SITE_TAGLINE } from '../data/site';
+import themeInit from '../scripts/theme-init.js?raw';
+
+interface Props {
+  /** The page title, without the site name. */
+  title: string;
+  /** One or two sentences for search engines and link previews. */
+  description: string;
+  /** Lets the content use the full width (galleries, wide demos) instead of the reading width. */
+  wide?: boolean;
+  /** Left out of the Pagefind index (the 404 page). */
+  noindex?: boolean;
+}
+
+const { title, description, wide = false, noindex = false } = Astro.props;
+const pathname = Astro.url.pathname;
+const fullTitle = pathname === '/' ? `${SITE_NAME}: ${SITE_TAGLINE}` : `${title} · ${SITE_NAME}`;
+const canonical = new URL(pathname, Astro.site).href;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="light dark" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    {!noindex && <link rel="canonical" href={canonical} />}
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={SITE_NAME} />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    {noindex && <meta name="robots" content="noindex" />}
+    <script is:inline set:html={themeInit} />
+    <slot name="head" />
+  </head>
+  <body>
+    <a class="site-skip" href="#main">Skip to content</a>
+    <TopBar />
+    <div class="site-frame">
+      <NavDrawer pathname={pathname} />
+      <main id="main" class:list={['site-main', { 'site-main--wide': wide }]} tabindex="-1">
+        <div class="site-content" data-pagefind-body={noindex ? undefined : ''}>
+          <slot />
+        </div>
+        <footer class="site-footer">
+          <slot name="footer" />
+          <p>
+            Apache-2.0. Google Sans Flex (SIL Open Font License 1.1) and Material Symbols
+            (Apache-2.0) ship with their licenses. "Google", "Google Sans" and "Material Design" are
+            trademarks of Google LLC; m3exp-web is a Kyra Labs project, not affiliated with or
+            endorsed by Google.
+          </p>
+        </footer>
+      </main>
+    </div>
+    <script>
+      import '../scripts/chrome';
+    </script>
+  </body>
+</html>

@@ -1,0 +1,288 @@
+/*
+ * The site shell and page typography (DECISIONS D27). Tokens only (CLAUDE.md): every value is a
+ * var(--m3e-…) token or a private --_ property. Media queries write the window size class
+ * breakpoints in px (CSS variables cannot appear in conditions; m3e-tokens README):
+ * 600 medium, 840 expanded, 1200 large, 1600 extra-large.
+ */
+
+:root {
+  --_site-bar-height: var(--m3e-comp-app-bar-small-container-height);
+
+  /* Shiki's css-variables theme (lib/highlight.ts): syntax roles on the color scheme. */
+  --_shiki-foreground: var(--m3e-sys-color-on-surface);
+  --_shiki-background: var(--m3e-sys-color-surface-container);
+  --_shiki-token-constant: var(--m3e-sys-color-tertiary);
+  --_shiki-token-string: var(--m3e-sys-color-tertiary);
+  --_shiki-token-comment: var(--m3e-sys-color-on-surface-variant);
+  --_shiki-token-keyword: var(--m3e-sys-color-primary);
+  --_shiki-token-parameter: var(--m3e-sys-color-on-surface);
+  --_shiki-token-function: var(--m3e-sys-color-secondary);
+  --_shiki-token-string-expression: var(--m3e-sys-color-tertiary);
+  --_shiki-token-punctuation: var(--m3e-sys-color-on-surface-variant);
+  --_shiki-token-link: var(--m3e-sys-color-primary);
+
+  scroll-padding-block-start: calc(var(--_site-bar-height) + var(--m3e-sys-space-200));
+  background-color: var(--m3e-sys-color-surface);
+  color: var(--m3e-sys-color-on-surface);
+  font-family: var(--m3e-sys-typescale-body-large-font);
+  font-size: var(--m3e-sys-typescale-body-large-size);
+  font-weight: var(--m3e-sys-typescale-body-large-weight);
+  line-height: var(--m3e-sys-typescale-body-large-line-height);
+  letter-spacing: var(--m3e-sys-typescale-body-large-tracking);
+}
+
+body {
+  margin: 0;
+}
+
+/* Elements whose children are data until they upgrade (menu items, search results). */
+m3e-menu:not(:defined),
+m3e-search:not(:defined) {
+  display: none;
+}
+
+/* --- Skip link -------------------------------------------------------------------------------- */
+.site-skip {
+  position: fixed;
+  z-index: 3;
+  inset-block-start: var(--m3e-sys-space-100);
+  inset-inline-start: var(--m3e-sys-space-100);
+  padding: var(--m3e-sys-space-150) var(--m3e-sys-space-200);
+  border-radius: var(--m3e-sys-shape-corner-full);
+  background-color: var(--m3e-sys-color-inverse-surface);
+  color: var(--m3e-sys-color-inverse-on-surface);
+  font-family: var(--m3e-sys-typescale-label-large-font);
+  font-size: var(--m3e-sys-typescale-label-large-size);
+  font-weight: var(--m3e-sys-typescale-label-large-weight);
+  line-height: var(--m3e-sys-typescale-label-large-line-height);
+  translate: 0 calc(-1 * (100% + var(--m3e-sys-space-200)));
+}
+
+.site-skip:focus {
+  translate: none;
+}
+
+/* --- Top app bar ------------------------------------------------------------------------------ */
+.site-top-bar {
+  position: sticky;
+  z-index: 2;
+  inset-block-start: 0;
+}
+
+.site-brand {
+  grid-area: 1 / 2;
+  place-self: center start;
+  padding-inline: var(--m3e-sys-space-100);
+  color: var(--m3e-sys-color-on-surface);
+  font-family: var(--m3e-sys-typescale-title-large-font);
+  font-size: var(--m3e-sys-typescale-title-large-size);
+  font-weight: var(--m3e-sys-typescale-title-large-weight);
+  line-height: var(--m3e-sys-typescale-title-large-line-height);
+  text-decoration: none;
+}
+
+.site-js .site-brand,
+:root:not(.site-js) .site-js-only {
+  display: none;
+}
+
+/* --- Frame: drawer + page --------------------------------------------------------------------- */
+.site-frame {
+  display: flex;
+  flex-direction: column;
+}
+
+.site-main {
+  flex: 1 1 auto;
+  min-inline-size: 0;
+  padding-block: var(--m3e-sys-space-300) var(--m3e-sys-space-800);
+  padding-inline: var(--m3e-sys-space-200);
+  outline: none;
+}
+
+.site-content {
+  max-inline-size: var(--m3e-sys-window-width-expanded);
+  margin-inline: auto;
+}
+
+.site-main--wide .site-content {
+  max-inline-size: var(--m3e-sys-window-width-large);
+}
+
+/*
+ * Below the large class the drawer is modal (chrome.ts). Without JavaScript it stays in the flow,
+ * after the page, where the menu button's #site-nav link leads.
+ */
+.site-drawer {
+  order: 1;
+}
+
+:root:not(.site-js) .site-drawer > .m3e-navigation-drawer__sheet {
+  inline-size: auto;
+  padding-block-end: var(--m3e-sys-space-300);
+}
+
+.site-drawer__brand > a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.site-drawer__version {
+  margin-inline-start: var(--m3e-sys-space-100);
+  color: var(--m3e-sys-color-on-surface-variant);
+  font-family: var(--m3e-sys-typescale-label-medium-font);
+  font-size: var(--m3e-sys-typescale-label-medium-size);
+  font-weight: var(--m3e-sys-typescale-label-medium-weight);
+  line-height: var(--m3e-sys-typescale-label-medium-line-height);
+}
+
+@media (width >= 600px) {
+  .site-main {
+    padding-inline: var(--m3e-sys-space-300);
+  }
+}
+
+@media (width < 1200px) {
+  /* Scripted: hidden until chrome.ts makes it the modal drawer (no flash of the static one). */
+  .site-js .site-drawer:not(.m3e-navigation-drawer--modal) {
+    display: none;
+  }
+}
+
+@media (width >= 1200px) {
+  .site-frame {
+    flex-direction: row;
+  }
+
+  .site-drawer {
+    position: sticky;
+    inset-block-start: var(--_site-bar-height);
+    order: 0;
+    block-size: calc(100dvh - var(--_site-bar-height));
+  }
+
+  .site-menu-button {
+    display: none;
+  }
+
+  .site-main {
+    padding-inline: var(--m3e-sys-space-500);
+  }
+}
+
+/* --- Footer ----------------------------------------------------------------------------------- */
+.site-footer {
+  max-inline-size: var(--m3e-sys-window-width-expanded);
+  margin-block-start: var(--m3e-sys-space-800);
+  margin-inline: auto;
+  padding-block-start: var(--m3e-sys-space-300);
+  border-block-start: var(--m3e-comp-divider-thickness) solid var(--m3e-sys-color-outline-variant);
+  color: var(--m3e-sys-color-on-surface-variant);
+  font-family: var(--m3e-sys-typescale-body-small-font);
+  font-size: var(--m3e-sys-typescale-body-small-size);
+  font-weight: var(--m3e-sys-typescale-body-small-weight);
+  line-height: var(--m3e-sys-typescale-body-small-line-height);
+}
+
+.site-main--wide .site-footer {
+  max-inline-size: var(--m3e-sys-window-width-large);
+}
+
+/* --- Prose ------------------------------------------------------------------------------------ */
+.site-content :where(h1) {
+  margin-block: var(--m3e-sys-space-200) var(--m3e-sys-space-300);
+  font-family: var(--m3e-sys-typescale-display-small-font);
+  font-size: var(--m3e-sys-typescale-display-small-size);
+  font-weight: var(--m3e-sys-typescale-display-small-weight);
+  line-height: var(--m3e-sys-typescale-display-small-line-height);
+  letter-spacing: var(--m3e-sys-typescale-display-small-tracking);
+}
+
+.site-content :where(h2) {
+  margin-block: var(--m3e-sys-space-600) var(--m3e-sys-space-200);
+  font-family: var(--m3e-sys-typescale-headline-medium-font);
+  font-size: var(--m3e-sys-typescale-headline-medium-size);
+  font-weight: var(--m3e-sys-typescale-headline-medium-weight);
+  line-height: var(--m3e-sys-typescale-headline-medium-line-height);
+  letter-spacing: var(--m3e-sys-typescale-headline-medium-tracking);
+}
+
+.site-content :where(h3) {
+  margin-block: var(--m3e-sys-space-400) var(--m3e-sys-space-150);
+  font-family: var(--m3e-sys-typescale-title-large-font);
+  font-size: var(--m3e-sys-typescale-title-large-size);
+  font-weight: var(--m3e-sys-typescale-title-large-weight);
+  line-height: var(--m3e-sys-typescale-title-large-line-height);
+  letter-spacing: var(--m3e-sys-typescale-title-large-tracking);
+}
+
+.site-content :where(p, ul, ol, dl, table, pre, figure) {
+  margin-block: 0 var(--m3e-sys-space-200);
+}
+
+.site-content :where(li + li) {
+  margin-block-start: var(--m3e-sys-space-50);
+}
+
+/* Plain links only: component links (buttons, cards, drawer items) take m3e-css colors. */
+:where(.site-content, .site-footer) :where(a:not([class])) {
+  color: var(--m3e-sys-color-primary);
+  text-decoration-thickness: var(--m3e-comp-divider-thickness);
+  text-underline-offset: var(--m3e-sys-space-25);
+}
+
+.site-lead {
+  color: var(--m3e-sys-color-on-surface-variant);
+  font-family: var(--m3e-sys-typescale-title-large-font);
+  font-size: var(--m3e-sys-typescale-title-large-size);
+  font-weight: var(--m3e-sys-typescale-title-large-weight);
+  line-height: var(--m3e-sys-typescale-title-large-line-height);
+}
+
+/* --- Code ------------------------------------------------------------------------------------- */
+
+.site-content :where(code) {
+  font-size: var(--m3e-sys-typescale-body-medium-size);
+}
+
+.site-content :where(:not(pre) > code) {
+  padding-inline: var(--m3e-sys-space-50);
+  border-radius: var(--m3e-sys-shape-corner-extra-small);
+  background-color: var(--m3e-sys-color-surface-container-high);
+  overflow-wrap: anywhere;
+}
+
+.site-code {
+  display: flex;
+  gap: var(--m3e-sys-space-50);
+  align-items: flex-start;
+  margin-block: 0 var(--m3e-sys-space-200);
+  border-radius: var(--m3e-sys-shape-corner-large);
+  background-color: var(--m3e-sys-color-surface-container);
+}
+
+.site-code pre {
+  flex: 1 1 auto;
+  min-inline-size: 0;
+  margin: 0;
+  padding: var(--m3e-sys-space-200);
+  overflow-x: auto;
+  border-radius: inherit;
+  line-height: var(--m3e-sys-typescale-body-medium-line-height);
+}
+
+.site-code pre:focus-visible {
+  outline: var(--m3e-sys-state-focus-indicator-thickness) solid var(--m3e-sys-color-secondary);
+  outline-offset: var(--m3e-sys-state-focus-indicator-outer-offset);
+}
+
+.site-code__copy {
+  flex: none;
+  margin: var(--m3e-sys-space-100);
+}
+
+.site-sr-only:not(:focus, :active) {
+  position: absolute;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}

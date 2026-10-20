@@ -1,0 +1,28 @@
+---
+// A React island that mounts in the browser only (DECISIONS D6) when it nears the viewport
+// (scripts/islands.ts). The slot is the static, no-JavaScript rendering it replaces: m3e-css
+// markup of the same component at rest, or a note.
+interface Props {
+  /** File name in src/islands/, without `.tsx`. */
+  name: string;
+  /** JSON-serializable props for the island component. */
+  props?: Record<string, unknown>;
+  class?: string;
+}
+
+const { name, props, class: className } = Astro.props;
+---
+
+<div
+  class:list={['site-island', className]}
+  data-island={name}
+  data-props={props ? JSON.stringify(props) : undefined}
+>
+  <slot />
+</div>
+
+<script>
+  import { mountIslands } from '../scripts/islands';
+
+  mountIslands();
+</script>

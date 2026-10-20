@@ -13,6 +13,31 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  changes:
+    # Path filter (DECISIONS D27): a PR that only touches apps/site skips the visual suite, which
+    # tests the library on apps/docs; the `site` job checks it instead. Pushes to main run all.
+    runs-on: ubuntu-latest
+    outputs:
+      site-only: ${{ steps.diff.outputs.site-only }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - id: diff
+        name: Is this a site-only change?
+        run: |
+          if [ "${{ github.event_name }}" != "pull_request" ]; then
+            echo "site-only=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          changed=$(git diff --name-only "origin/${{ github.base_ref }}...HEAD")
+          echo "$changed"
+          if [ -n "$changed" ] && ! echo "$changed" | grep -qv '^apps/site/'; then
+            echo "site-only=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "site-only=false" >> "$GITHUB_OUTPUT"
+          fi
+
   lint:
     runs-on: ubuntu-latest
     steps:
@@ -84,6 +109,7 @@ jobs:
           path: |
             packages/*/dist
             apps/docs/dist
+            apps/site/dist
           retention-days: 7
 
   size:
@@ -106,6 +132,8 @@ jobs:
     # Keep the tag in sync with @playwright/test in apps/visual/package.json.
     # The suite (~65 min on one runner) runs in 6 shards; `visual` below is the one required check.
     name: visual shard ${{ matrix.shard }}/6
+    needs: changes
+    if: needs.changes.outputs.site-only != 'true'
     runs-on: ubuntu-latest
     container:
       image: mcr.microsoft.com/playwright:v1.64.0-noble
@@ -140,9 +168,51 @@ jobs:
 
   visual:
     # The required check: green only when every shard passed. It merges the shards' reports into
-    # one HTML report.
+    # one HTML report. On a site-only PR the shards are skipped and it passes (DECISIONS D27).
     if: always()
-    needs: visual-shard
+    needs: [changes, visual-shard]
+    runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/playwright:v1.64.0-noble
+      options: --user 1001
+    steps:
+      - name: Site-only change, visual suite skipped
+        if: needs.changes.outputs.site-only == 'true'
+        run: test "${{ needs.visual-shard.result }}" = "skipped"
+      - uses: actions/checkout@v7
+        if: needs.changes.outputs.site-only != 'true'
+      - uses: pnpm/action-setup@v6
+        if: needs.changes.outputs.site-only != 'true'
+      - uses: actions/setup-node@v7
+        if: needs.changes.outputs.site-only != 'true'
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+        if: needs.changes.outputs.site-only != 'true'
+      - uses: actions/download-artifact@v8
+        if: needs.changes.outputs.site-only != 'true'
+        with:
+          pattern: blob-report-*
+          path: all-blob-reports
+          merge-multiple: true
+      - name: Merge the shard reports
+        if: always() && needs.changes.outputs.site-only != 'true'
+        run: pnpm --filter @kyralabs/visual exec playwright merge-reports --reporter html ../../all-blob-reports
+      - uses: actions/upload-artifact@v7
+        if: always() && needs.changes.outputs.site-only != 'true'
+        with:
+          name: playwright-report
+          path: apps/visual/playwright-report
+          retention-days: 14
+      - name: Every shard passed
+        if: needs.changes.outputs.site-only != 'true'
+        run: test "${{ needs.visual-shard.result }}" = "success"
+
+  site:
+    # The official site (apps/site, DECISIONS D27) on every PR, since library changes can break
+    # its pages: build, glued words, links, then axe / console / icon / layout checks and
+    # Lighthouse (performance >= 90, accessibility and SEO 100) on the built pages.
     runs-on: ubuntu-latest
     container:
       image: mcr.microsoft.com/playwright:v1.64.0-noble
@@ -155,22 +225,24 @@ jobs:
           node-version-file: .nvmrc
           cache: pnpm
       - run: pnpm install --frozen-lockfile
-      - uses: actions/download-artifact@v8
-        with:
-          pattern: blob-report-*
-          path: all-blob-reports
-          merge-multiple: true
-      - name: Merge the shard reports
-        if: always()
-        run: pnpm --filter @kyralabs/visual exec playwright merge-reports --reporter html ../../all-blob-reports
+      - run: pnpm build
+      - name: Site prose keeps its spaces next to inline tags (compressHTML)
+        run: node tools/check-docs-whitespace.js apps/site/dist
+      - name: Links and anchors resolve
+        run: pnpm --filter @kyralabs/site check:links
+      - name: axe, console errors, icons, 360px layout, no-JS rendering, keyboard
+        run: pnpm --filter @kyralabs/site test:a11y
+      - name: Lighthouse (mobile; perf >= 90, a11y and SEO 100)
+        run: pnpm --filter @kyralabs/site lighthouse
       - uses: actions/upload-artifact@v7
         if: always()
         with:
-          name: playwright-report
-          path: apps/visual/playwright-report
+          name: site-reports
+          path: |
+            apps/site/playwright-report
+            apps/site/test-results
+            apps/site/lighthouse
           retention-days: 14
-      - name: Every shard passed
-        run: test "${{ needs.visual-shard.result }}" = "success"
 
   reference:
     # JVM reference fixtures (ROADMAP M3 DoD) regenerate byte-identically from the vendored,

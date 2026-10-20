@@ -1,0 +1,44 @@
+{
+  "name": "@kyralabs/site",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "pnpm icons && astro dev",
+    "build": "pnpm icons && astro build && pagefind --site dist --output-subdir pagefind",
+    "preview": "astro preview",
+    "typecheck": "astro check",
+    "icons": "node scripts/icons.js",
+    "check:links": "node scripts/check-links.js",
+    "test:a11y": "playwright test",
+    "lighthouse": "node scripts/lighthouse.js",
+    "serve": "node scripts/serve.js"
+  },
+  "dependencies": {
+    "@astrojs/react": "7.0.1",
+    "@kyralabs/m3e-css": "workspace:^",
+    "@kyralabs/m3e-elements": "workspace:^",
+    "@kyralabs/m3e-motion": "workspace:^",
+    "@kyralabs/m3e-shapes": "workspace:^",
+    "@kyralabs/m3e-tokens": "workspace:^",
+    "@kyralabs/m3exp-web": "workspace:^",
+    "astro": "7.3.8",
+    "react": "19.3.0",
+    "react-dom": "19.3.0"
+  },
+  "devDependencies": {
+    "@astrojs/check": "0.9.10",
+    "@astrojs/sitemap": "3.7.4",
+    "@axe-core/playwright": "4.13.0",
+    "@kyralabs/m3e-icons": "workspace:^",
+    "@playwright/test": "1.64.0",
+    "@types/node": "^24.19.2",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "chrome-launcher": "1.2.2",
+    "lighthouse": "13.5.0",
+    "pagefind": "1.5.2",
+    "shiki": "4.5.0",
+    "typescript": "6.0.3"
+  }
+}
