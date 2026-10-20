@@ -295,11 +295,12 @@ test('the state layer is the content color, checked or not; colors do not animat
       layer: getComputedStyle(root.querySelector('.m3e-switch__state')!, '::before')
         .backgroundColor,
       content: getComputedStyle(root).color,
-      track: getComputedStyle(root.querySelector('.m3e-switch__track')!).transitionDuration,
+      // The track carries the focus ring, whose width / offset animate (D19 (3)); colors must not.
+      track: getComputedStyle(root.querySelector('.m3e-switch__track')!).transitionProperty,
       handle: getComputedStyle(root.querySelector('.m3e-switch__handle')!).transitionProperty,
     }));
     expect(layer, id).toBe(content);
-    expect(transitions.track).toBe('0s');
+    expect(transitions.track).not.toMatch(/color|background|all/);
     expect(transitions.handle).not.toMatch(/color|background|all/);
   }
 });
