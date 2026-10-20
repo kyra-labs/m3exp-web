@@ -1,6 +1,13 @@
 import { Carousel, CarouselItem, Icon } from '@kyralabs/m3exp-web/react';
 
-const ICONS = ['photo_camera', 'palette', 'music_note', 'movie', 'menu_book'];
+const ITEMS = [
+  { icon: 'landscape', label: 'Mountains', color: 'primary' },
+  { icon: 'forest', label: 'Forest', color: 'secondary' },
+  { icon: 'beach_access', label: 'Beach', color: 'tertiary' },
+  { icon: 'sailing', label: 'Sailing', color: 'primary' },
+  { icon: 'hiking', label: 'Hiking', color: 'secondary' },
+  { icon: 'kayaking', label: 'Kayaking', color: 'tertiary' },
+];
 
 /** About 200px, from spacing tokens. */
 const TILE_HEIGHT =
@@ -9,22 +16,25 @@ const TILE_HEIGHT =
 export default function Hero() {
   return (
     <Carousel
-      aria-label="Collections"
-      layout="centered-hero"
+      aria-label="Featured trips"
+      layout="hero"
       itemSpacing={8}
       style={{ inlineSize: '100%' }}
     >
-      {ICONS.map((icon) => (
-        <CarouselItem key={icon} aria-label={icon.replace('_', ' ')}>
+      {ITEMS.map((item) => (
+        <CarouselItem key={item.label}>
           <div
             style={{
               display: 'grid',
               placeItems: 'center',
+              alignContent: 'center',
               blockSize: TILE_HEIGHT,
-              backgroundColor: 'var(--m3e-sys-color-surface-container-highest)',
+              backgroundColor: `var(--m3e-sys-color-${item.color}-container)`,
+              color: `var(--m3e-sys-color-on-${item.color}-container)`,
             }}
           >
-            <Icon name={icon} />
+            <Icon name={item.icon} />
+            <span>{item.label}</span>
           </div>
         </CarouselItem>
       ))}

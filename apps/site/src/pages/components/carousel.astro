@@ -7,6 +7,9 @@ import ComponentPage from '../../layouts/ComponentPage.astro';
   slug="carousel"
   examples={[
     { name: 'multi-browse', title: 'Multi-browse', description: 'Large, medium and small items sized from Compose\'s keylines; scroll it and the items grow and shrink, staying pinned together.' },
-    { name: 'hero', title: 'Centered hero', description: 'One large item centered between two small ones.' },
+    { name: 'uncontained', title: 'Uncontained', description: 'Items keep their width and the last visible one is cut off at the edge. It scrolls freely, without snapping.' },
+    { name: 'hero', title: 'Hero', description: 'One large item and a small one after it, start-aligned, one item per swipe. Without `itemWidth` the large item fills the width but for the small one.' },
+    { name: 'centered-hero', title: 'Centered hero', description: 'One large item centered between two small ones; the first and last items align with the edges instead.' },
+    { name: 'full-screen', title: 'Full screen', description: 'One item fills the carousel and the items scroll vertically, snapping to each (m3.material.io; Compose has no full-screen carousel). Give the carousel a height; ArrowUp and ArrowDown move between items.' },
   ]}
 />

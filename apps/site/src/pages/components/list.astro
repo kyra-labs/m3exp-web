@@ -1,5 +1,8 @@
 ---
 import '@kyralabs/m3e-css/list.css';
+import '@kyralabs/m3e-css/checkbox.css';
+import '@kyralabs/m3e-css/radio-button.css';
+import '@kyralabs/m3e-css/switch.css';
 import ComponentPage from '../../layouts/ComponentPage.astro';
 ---
 
@@ -7,7 +10,9 @@ import ComponentPage from '../../layouts/ComponentPage.astro';
   slug="list"
   examples={[
     { name: 'static', title: 'Static list', description: 'One to three lines with leading and trailing content. Static lists need no JavaScript.' },
-    { name: 'selectable', title: 'Single selection', description: 'An interactive list is a listbox with one tab stop: arrow keys move, Space or Enter selects.' },
+    { name: 'selectable', title: 'Single selection', description: 'An interactive list is a listbox with one tab stop: arrow keys move, Space or Enter selects. A radio button shows which option is selected.' },
+    { name: 'multiple', title: 'Multiple selection', description: 'Checkboxes as indicators, and a disabled option (`disabledKeys`, or `aria-disabled` on the element\'s option). The option is the control: its checkbox is inert and follows `aria-selected`.' },
+    { name: 'switches', title: 'Switches', description: 'A switch takes the trailing slot by default (`selectionControlPosition` moves it).' },
     { name: 'segmented', title: 'Segmented items', description: 'Items on their own surfaces, 2dp apart, with actions (`onAction`).' },
   ]}
 />
