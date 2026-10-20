@@ -1,0 +1,21 @@
+<div style="display: grid; gap: var(--m3e-sys-space-300); inline-size: 100%">
+  <m3e-text-field
+    variant="outlined"
+    label="Email"
+    type="email"
+    value="ada@example"
+    invalid
+    error-text="Enter a full address, like ada@example.com"
+    trailing-icon="error"
+  ></m3e-text-field>
+  <m3e-text-field
+    variant="filled"
+    label="Amount"
+    inputmode="decimal"
+    prefix-text="€"
+    suffix-text="EUR"
+    leading-icon="payments"
+  ></m3e-text-field>
+  <m3e-text-field variant="outlined" label="Bio" multiline maxlength="120"></m3e-text-field>
+  <m3e-text-field variant="filled" label="Account" value="ada-lovelace" disabled></m3e-text-field>
+</div>
