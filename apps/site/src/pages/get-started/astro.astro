@@ -1,0 +1,153 @@
+---
+import CodeBlock from '../../components/CodeBlock.astro';
+import Guide from '../../layouts/Guide.astro';
+import { REPO_URL } from '../../data/site';
+
+const layout = `---
+// src/layouts/Layout.astro
+import '@kyralabs/m3exp-web/css/index.css';
+import '@kyralabs/m3e-tokens/material-symbols.css';
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="light dark" />
+    <title>My app</title>
+  </head>
+  <body>
+    <slot />
+  </body>
+</html>`;
+
+const island = `// src/components/LikeButton.tsx
+import { useState } from 'react';
+import { Icon, IconButton } from '@kyralabs/m3exp-web/react';
+
+export default function LikeButton() {
+  const [liked, setLiked] = useState(false);
+  return (
+    <IconButton variant="tonal" aria-label="Like" isSelected={liked} onChange={setLiked}>
+      <Icon name="favorite" />
+    </IconButton>
+  );
+}`;
+
+const islandPage = `---
+// src/pages/index.astro
+import Layout from '../layouts/Layout.astro';
+import LikeButton from '../components/LikeButton.tsx';
+---
+
+<Layout>
+  <h1>Islands</h1>
+  <a class="m3e-button m3e-button--tonal m3e-button--size-m" href="/elements/">Elements page</a>
+  <LikeButton client:only="react" />
+</Layout>`;
+
+const elementsPage = `---
+// src/pages/elements.astro
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout>
+  <h1>No framework</h1>
+  <button id="more" type="button" class="m3e-icon-button" aria-label="More options">
+    <span class="m3e-icon" aria-hidden="true">more_vert</span>
+  </button>
+  <m3e-menu anchor="more">
+    <m3e-menu-item value="edit" icon="edit">Edit</m3e-menu-item>
+    <m3e-menu-item value="share" icon="share">Share</m3e-menu-item>
+  </m3e-menu>
+  <m3e-loading-indicator contained aria-label="Loading"></m3e-loading-indicator>
+</Layout>
+
+<script>
+  import '@kyralabs/m3e-elements/ripple.js';
+  import '@kyralabs/m3e-elements/menu.js';
+  import '@kyralabs/m3e-elements/loading-indicator.js';
+
+  document.querySelector('m3e-menu')?.addEventListener('action', (event) => {
+    console.log('picked', event.detail.value);
+  });
+</script>`;
+---
+
+<Guide
+  title="Astro"
+  description="Use the components in Astro two ways: React islands that mount in the browser, and zero-framework custom elements loaded by a page script."
+>
+  <h2 id="setup">Set up</h2>
+  <CodeBlock
+    lang="sh"
+    label="setup commands"
+    code={`npm create astro@latest my-site
+cd my-site
+npx astro add react            # only for React islands
+npm install @kyralabs/m3exp-web @kyralabs/m3e-tokens @kyralabs/m3e-elements`}
+  />
+  <p>
+    <code>@kyralabs/m3e-elements</code> is needed only for its per-element entries (one import per
+    element, below). The umbrella's <code>@kyralabs/m3exp-web/elements</code> registers all of them
+    at once.
+  </p>
+
+  <h2 id="layout">Load the styles in a layout</h2>
+  <p>
+    Import the CSS in the frontmatter of a layout every page uses. Astro bundles it and adds it to
+    each page.
+  </p>
+  <CodeBlock code={layout} lang="astro" label="Layout.astro" />
+  <p>
+    Markup with m3e-css classes, such as the link styled as a button below, can go straight into
+    any <code>.astro</code> template: it is plain HTML and CSS, so it renders at build time and
+    needs no JavaScript.
+  </p>
+
+  <h2 id="islands">React islands</h2>
+  <p>
+    Write a React component and mount it with <code>client:only="react"</code>. The components
+    render in the browser only (DECISIONS D6), so do not use <code>client:load</code>,
+    <code>client:idle</code> or <code>client:visible</code>: those render the component on the
+    server first.
+  </p>
+  <CodeBlock code={island} lang="tsx" label="LikeButton.tsx" />
+  <CodeBlock code={islandPage} lang="astro" label="index.astro" />
+  <p>
+    A <code>client:only</code> island leaves its spot empty until its script runs. To show
+    something meanwhile, or to readers without JavaScript, give it static m3e-css markup in its
+    fallback slot: <code>{'<div slot="fallback">…</div>'}</code>.
+  </p>
+
+  <h2 id="elements">Custom elements, no framework</h2>
+  <p>
+    Import each element's entry in a page <code>{'<script>'}</code>: Astro bundles it, and the page
+    loads only the elements it uses. Element events are typed, so
+    <code>event.detail</code> needs no cast.
+  </p>
+  <CodeBlock code={elementsPage} lang="astro" label="elements.astro" />
+  <p>
+    Elements render their markup in the browser when their entry loads. Until then their children
+    are data (the menu items above stay hidden), and the page's static parts are already there.
+    <code>ripple.js</code> adds the press ripple to every plain-HTML button, chip, card and list
+    item on the page; see <a href="/get-started/ripple/">ripple for plain HTML</a>.
+  </p>
+
+  <h2 id="size">Keep pages light</h2>
+  <ul>
+    <li>
+      Import only the components a page shows: the token stylesheets plus one
+      <code>@kyralabs/m3e-css/&lt;component&gt;.css</code> each (install
+      <code>@kyralabs/m3e-css</code>), as in the <a href="/get-started/#css">overview</a>.
+    </li>
+    <li>
+      Subset the icon font with <code>m3e-icons</code>; see
+      <a href="/get-started/fonts-and-icons/#subset">fonts and icons</a>.
+    </li>
+  </ul>
+  <p>
+    This site is an Astro site built this way; its source is <code>apps/site</code> in the
+    <a href={REPO_URL}>repository</a>.
+  </p>
+</Guide>

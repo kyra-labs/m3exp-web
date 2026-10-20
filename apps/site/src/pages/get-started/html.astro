@@ -1,0 +1,110 @@
+---
+import CodeBlock from '../../components/CodeBlock.astro';
+import Guide from '../../layouts/Guide.astro';
+import { VERSION } from '../../data/site';
+
+const cdn = 'https://unpkg.com';
+const page = `<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="light dark" />
+    <title>My page</title>
+    <!-- Fonts, tokens, theme and component classes: bundled once, see below -->
+    <link rel="stylesheet" href="./m3e/m3e.css" />
+    <!-- Icons -->
+    <link rel="stylesheet" href="${cdn}/@kyralabs/m3e-tokens@${VERSION}/material-symbols.css" />
+    <!-- One module per element -->
+    <script type="module" src="${cdn}/@kyralabs/m3e-elements@${VERSION}/ripple.js"></script>
+    <script type="module" src="${cdn}/@kyralabs/m3e-elements@${VERSION}/menu.js"></script>
+    <script type="module" src="${cdn}/@kyralabs/m3e-elements@${VERSION}/loading-indicator.js"></script>
+  </head>
+  <body>
+    <button type="button" class="m3e-button m3e-button--filled m3e-button--size-m">
+      <span class="m3e-icon" aria-hidden="true">save</span>
+      Save
+    </button>
+    <button id="more" type="button" class="m3e-icon-button" aria-label="More options">
+      <span class="m3e-icon" aria-hidden="true">more_vert</span>
+    </button>
+    <m3e-menu anchor="more">
+      <m3e-menu-item value="edit" icon="edit">Edit</m3e-menu-item>
+      <m3e-menu-item value="share" icon="share">Share</m3e-menu-item>
+    </m3e-menu>
+    <m3e-loading-indicator contained aria-label="Loading"></m3e-loading-indicator>
+  </body>
+</html>`;
+---
+
+<Guide
+  title="Plain HTML and CDN"
+  description="Use the custom elements and CSS classes on a page with no framework and no bundler, loading the scripts from a CDN."
+>
+  <h2 id="elements">Elements from a CDN</h2>
+  <p>
+    Each custom element is one ES module with no dependencies outside the package, so a
+    <code>{'<script type="module">'}</code> tag can load it straight from a CDN. unpkg follows the
+    package's export map, so the URLs match the import paths; pin a version:
+  </p>
+  <CodeBlock
+    lang="html"
+    label="element script tag"
+    code={`<script type="module" src="${cdn}/@kyralabs/m3e-elements@${VERSION}/menu.js"></script>`}
+  />
+  <p>
+    On CDNs that serve files by path, such as jsDelivr, use the file the export points to:
+    <code>{`https://cdn.jsdelivr.net/npm/@kyralabs/m3e-elements@${VERSION}/dist/menu/index.js`}</code>.
+    Module scripts run after the document is parsed; elements render when their module loads.
+  </p>
+
+  <h2 id="css">The stylesheets</h2>
+  <p>The token stylesheets are self-contained and load from a CDN too:</p>
+  <CodeBlock
+    lang="html"
+    label="token stylesheet links"
+    code={`<link rel="stylesheet" href="${cdn}/@kyralabs/m3e-tokens@${VERSION}/fonts.css" />
+<link rel="stylesheet" href="${cdn}/@kyralabs/m3e-tokens@${VERSION}/tokens.css" />
+<link rel="stylesheet" href="${cdn}/@kyralabs/m3e-tokens@${VERSION}/theme.css" />
+<link rel="stylesheet" href="${cdn}/@kyralabs/m3e-tokens@${VERSION}/material-symbols.css" />`}
+  />
+  <div class="site-note site-note--warning" role="note">
+    <p>
+      <strong>The component stylesheets do not load from a CDN yet.</strong> The m3e-css files import
+      their component tokens by package name (<code>@import "@kyralabs/m3e-tokens/…"</code>), which
+      only a bundler resolves; a browser looks for those files next to the stylesheet and finds
+      nothing, so components render unstyled. A self-contained bundle is tracked in
+      <a href="https://github.com/kyra-labs/m3exp-web/issues/106">issue #106</a>.
+    </p>
+  </div>
+  <p>
+    Until then, bundle the CSS once and host the result with your page. One esbuild command
+    resolves the imports and copies the font files:
+  </p>
+  <CodeBlock
+    lang="sh"
+    label="CSS bundle commands"
+    code={`npm install @kyralabs/m3exp-web esbuild
+npx esbuild --bundle node_modules/@kyralabs/m3exp-web/dist/css/index.css \\
+  --outfile=m3e/m3e.css --loader:.woff2=file --minify`}
+  />
+  <p>
+    <code>m3e/m3e.css</code> then holds the fonts, the tokens, the baseline theme and every
+    component class, and the font files sit beside it. To bundle fewer components, point esbuild at
+    a file of your own that imports the token stylesheets and the
+    <code>@kyralabs/m3e-css/&lt;component&gt;.css</code> files you use.
+  </p>
+
+  <h2 id="page">A complete page</h2>
+  <CodeBlock code={page} lang="html" label="HTML page" />
+  <p>
+    The button needs no script: m3e-css draws it, and <code>ripple.js</code> adds the press
+    ripple. The menu and the loading indicator are elements. The page reads its color scheme from
+    the system; add <code>data-theme="dark"</code> or <code>data-theme="light"</code> to
+    <code>{'<html>'}</code> to force one (<a href="/get-started/theming/">theming</a>).
+  </p>
+  <p>
+    For production, ship only the icons you use: <code>material-symbols.css</code> loads a font of
+    several megabytes. See <a href="/get-started/fonts-and-icons/#subset">fonts and icons</a>.
+  </p>
+</Guide>

@@ -1,0 +1,96 @@
+---
+import CodeBlock from '../../components/CodeBlock.astro';
+import ScrollTable from '../../components/ScrollTable.astro';
+import Guide from '../../layouts/Guide.astro';
+---
+
+<Guide
+  title="Server rendering"
+  description="Version 1 renders components in the browser only (DECISIONS D6). Static markup works anywhere; the elements and the React components need a client-only spot."
+>
+  <h2 id="what">What runs where</h2>
+  <ScrollTable label="What runs where">
+    <table>
+      <thead>
+        <tr><th scope="col">Layer</th><th scope="col">On the server</th><th scope="col">In the browser</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <th scope="row">CSS classes</th>
+          <td>Render anywhere: they are plain HTML and CSS.</td>
+          <td>Complete without JavaScript; <code>ripple.js</code> adds the press ripple.</td>
+        </tr>
+        <tr>
+          <th scope="row">Custom elements</th>
+          <td>
+            Importing an entry is safe: registration is skipped where there is no
+            <code>window</code>. The tag is output as written.
+          </td>
+          <td>The element renders its markup when its entry loads.</td>
+        </tr>
+        <tr>
+          <th scope="row">React</th>
+          <td>Not supported: no server rendering or React Server Components.</td>
+          <td>Mount the components on the client.</td>
+        </tr>
+      </tbody>
+    </table>
+  </ScrollTable>
+  <p>
+    The React components carry no <code>'use client'</code> directive. Nothing here is meant to be
+    rendered on the server, so mount them from a module of your own that only runs in the browser.
+  </p>
+
+  <h2 id="astro">Astro</h2>
+  <p>
+    Mount React components with <code>client:only="react"</code>. The other client directives
+    render on the server first. See the <a href="/get-started/astro/">Astro guide</a>.
+  </p>
+
+  <h2 id="next">Next.js (App Router)</h2>
+  <p>
+    Wrap the components in your own client component, and load that component without server
+    rendering:
+  </p>
+  <CodeBlock
+    lang="tsx"
+    label="Next.js client wrapper"
+    code={`// app/toolbar-client.tsx
+'use client';
+
+import dynamic from 'next/dynamic';
+
+export const Toolbar = dynamic(() => import('./toolbar'), { ssr: false });`}
+  />
+  <CodeBlock
+    lang="tsx"
+    label="Next.js toolbar module"
+    code={`// app/toolbar.tsx: only ever loaded in the browser
+import { FloatingToolbar, Icon, IconButton } from '@kyralabs/m3exp-web/react';
+
+export default function Toolbar() {
+  return (
+    <FloatingToolbar aria-label="Formatting">
+      <IconButton aria-label="Bold"><Icon name="format_bold" /></IconButton>
+      <IconButton aria-label="Italic"><Icon name="format_italic" /></IconButton>
+    </FloatingToolbar>
+  );
+}`}
+  />
+  <p>
+    Import the CSS once in the root layout (<code>app/layout.tsx</code>):
+    <code>import '@kyralabs/m3exp-web/css/index.css';</code>. Pages can still server-render the
+    m3e-css markup around the client-only parts.
+  </p>
+
+  <h2 id="other">Other frameworks</h2>
+  <p>
+    The same rule applies everywhere: server-render the static markup if you like, and create the
+    elements and React components only in the browser (a client-only route, a lazy import after
+    mount, or the framework's equivalent of <code>ssr: false</code>).
+  </p>
+  <p>
+    Server rendering may come in a later version; until then, D6 keeps the components free of
+    server-specific code.
+  </p>
+</Guide>

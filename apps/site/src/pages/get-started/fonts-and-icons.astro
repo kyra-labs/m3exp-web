@@ -1,0 +1,153 @@
+---
+import CodeBlock from '../../components/CodeBlock.astro';
+import ScrollTable from '../../components/ScrollTable.astro';
+import Guide from '../../layouts/Guide.astro';
+
+const profiles = [
+  { entry: 'fonts.css', axes: 'wght, opsz (default)', latin: '138.8 KiB', all: '328.5 KiB' },
+  { entry: 'fonts-rond.css', axes: 'wght, opsz, ROND', latin: '205.2 KiB', all: '468.1 KiB' },
+  { entry: 'fonts-full.css', axes: 'wght, opsz, ROND, wdth, slnt', latin: '1020.8 KiB', all: '2026.8 KiB' },
+];
+const demo = ['home', 'favorite', 'settings', 'star'];
+---
+
+<Guide
+  title="Fonts and icons"
+  description="Google Sans Flex, the variable typeface of M3 Expressive, ships with the tokens in three profiles; icons are Material Symbols ligatures you can subset to the glyphs you use."
+>
+  <h2 id="font">Google Sans Flex</h2>
+  <p>
+    The type scale is set in Google Sans Flex, self-hosted from <code>@kyralabs/m3e-tokens</code>
+    (DECISIONS D1, D11). Pick one profile: each registers the same
+    <code>"Google Sans Flex"</code> family, so they replace each other instead of adding up.
+    Browsers download only the chunks a page's text needs.
+  </p>
+  <ScrollTable label="Font profiles">
+    <table>
+      <thead>
+        <tr>
+          <th scope="col">Entry</th><th scope="col">Variable axes</th><th scope="col">Latin chunk</th><th scope="col">All chunks</th>
+        </tr>
+      </thead>
+      <tbody>
+        {
+          profiles.map((p) => (
+            <tr>
+              <th scope="row"><code>{p.entry}</code></th>
+              <td>{p.axes}</td>
+              <td>{p.latin}</td>
+              <td>{p.all}</td>
+            </tr>
+          ))
+        }
+      </tbody>
+    </table>
+  </ScrollTable>
+  <p>
+    <code>@kyralabs/m3exp-web/css/index.css</code> includes <code>fonts.css</code>. The type scale
+    uses weight only (emphasized styles are heavier) and drives optical size from the font size
+    with <code>font-optical-sizing: auto</code>; axes a profile drops stay at their defaults, so
+    every profile renders the type scale identically.
+  </p>
+  <h3 id="other-profiles">Use another profile</h3>
+  <p>
+    Import the profile with the token and theme stylesheets and the component classes, in place of
+    <code>css/index.css</code>:
+  </p>
+  <CodeBlock
+    lang="css"
+    label="roundness profile imports"
+    code={`@import '@kyralabs/m3e-tokens/fonts-rond.css'; /* instead of fonts.css */
+@import '@kyralabs/m3e-tokens/tokens.css';
+@import '@kyralabs/m3e-tokens/theme.css';
+@import '@kyralabs/m3e-css/index.css';`}
+  />
+  <p>
+    Roundness (<code>ROND</code>, 0 to 100) has no CSS property of its own; set it with
+    <code>font-variation-settings</code>. That property replaces any value it inherits instead of
+    merging with it, so repeat the other axes you set in the same declaration. No Material source
+    gives roundness values for the type scale, so the tokens never set it.
+  </p>
+  <CodeBlock
+    lang="css"
+    label="roundness example"
+    code={`.playful {
+  font-variation-settings: 'ROND' 100;
+}`}
+  />
+  <p>
+    The fonts ship with their licenses beside them in <code>@kyralabs/m3e-tokens/fonts/</code>:
+    Google Sans Flex under the SIL Open Font License 1.1, Material Symbols under Apache 2.0.
+    "Google Sans" is a trademark of Google LLC.
+  </p>
+
+  <h2 id="icons">Material Symbols</h2>
+  <p>
+    Icons are Material Symbols ligatures (DECISIONS D5): the icon's name, set in the icon font.
+    The default style is Rounded (D12); Outlined and Sharp ship as their own stylesheets. Load one:
+  </p>
+  <CodeBlock
+    lang="css"
+    label="icon stylesheet imports"
+    code={`@import '@kyralabs/m3e-tokens/material-symbols.css'; /* Rounded */
+/* or material-symbols-outlined.css, material-symbols-sharp.css */`}
+  />
+  <p>Every layer renders the same <code>.m3e-icon</code> span:</p>
+  <CodeBlock
+    lang="html"
+    label="icon markup"
+    code={`<span class="m3e-icon" aria-hidden="true">favorite</span>
+<span class="m3e-icon" aria-hidden="true" data-fill>favorite</span>
+
+<m3e-icon name="favorite" fill weight="500"></m3e-icon>`}
+  />
+  <CodeBlock
+    lang="tsx"
+    label="React icon"
+    code={`import { Icon } from '@kyralabs/m3exp-web/react';
+
+<Icon name="favorite" fill weight={500} grade={-25} opticalSize={20} />
+<Icon name="info" label="Information" /> {/* role="img" with a name */}`}
+  />
+  <p>
+    Icons are decorative by default (<code>aria-hidden</code>); give an icon that stands alone a
+    label, or name the control around it. Selected states fill their icon
+    (<code>FILL</code> 1). The axes come from tokens and can be set per icon with
+    <code>--m3e-comp-icon-fill</code>, <code>--m3e-comp-icon-weight</code>,
+    <code>--m3e-comp-icon-grade</code>, <code>--m3e-comp-icon-optical-size</code>, and the size
+    with <code>--m3e-comp-icon-size</code>.
+  </p>
+  <figure class="site-icon-demo">
+    <div class="site-icon-demo__row">
+      {demo.map((name) => <span class="m3e-icon" aria-hidden="true">{name}</span>)}
+    </div>
+    <div class="site-icon-demo__row">
+      {demo.map((name) => <span class="m3e-icon" aria-hidden="true" data-fill>{name}</span>)}
+    </div>
+    <div class="site-icon-demo__row site-icon-demo__row--bold">
+      {demo.map((name) => <span class="m3e-icon" aria-hidden="true">{name}</span>)}
+    </div>
+    <figcaption>Rounded icons: default, filled, and weight 700.</figcaption>
+  </figure>
+
+  <h3 id="subset">Ship only your icons</h3>
+  <p>
+    The full variable fonts weigh several megabytes (Rounded: about 5 MB). The
+    <code>m3e-icons</code> CLI subsets one to the names you list and writes a drop-in
+    <code>@font-face</code> stylesheet that points <code>.m3e-icon</code> at it:
+  </p>
+  <CodeBlock
+    lang="sh"
+    label="subset commands"
+    code={`npm install --save-dev @kyralabs/m3e-icons
+npx m3e-icons subset --names home,search,menu --out public/icons.woff2 --css public/icons.css`}
+  />
+  <p>
+    Load <code>icons.css</code> instead of <code>material-symbols.css</code>. Include the icons
+    components draw on their own, such as the date picker's arrows or the search bar's back button.
+    Options: <code>--names-file</code>, <code>--style rounded|outlined|sharp</code>, and
+    <code>--fill</code>, <code>--wght</code>, <code>--grad</code>, <code>--opsz</code> to pin an
+    axis or narrow its range for a smaller file. Build scripts can call the exported
+    <code>subsetIcons()</code> instead.
+  </p>
+</Guide>

@@ -1,0 +1,177 @@
+---
+import CodeBlock from '../../components/CodeBlock.astro';
+import ScrollTable from '../../components/ScrollTable.astro';
+import Guide from '../../layouts/Guide.astro';
+
+const options = [
+  { name: 'seed', type: '#rgb or #rrggbb', text: 'The source color. Required.' },
+  {
+    name: 'variant',
+    type: "'tonalSpot' (default), 'expressive', 'vibrant', 'neutral', 'monochrome', 'fidelity', 'content', 'rainbow', 'fruitSalad'",
+    text: "Material Color Utilities' dynamic scheme: how far roles move from the seed's hue and chroma.",
+  },
+  {
+    name: 'mode',
+    type: "'system' (default), 'light', 'dark'",
+    text: 'system writes both schemes and follows prefers-color-scheme; data-theme overrides it.',
+  },
+  { name: 'contrast', type: "-1 to 1, or 'standard' (0), 'medium', 'high'", text: 'Contrast level. Spec 2025 treats negative values as 0.' },
+  { name: 'specVersion', type: "'2025' (default), '2021'", text: 'The color spec (DECISIONS D3); 2025 adds the dim roles.' },
+  { name: 'motionScheme', type: "'expressive' (default), 'standard'", text: 'Points the spring tokens at one motion scheme.' },
+  { name: 'coreColors', type: 'secondary, tertiary, neutral, neutralVariant, error', text: 'Replace a derived palette with one built from your color.' },
+  { name: 'overrides', type: '{ light?: {...}, dark?: {...} }', text: "Per-mode role overrides, e.g. { light: { primary: '#6750a4' } }." },
+  { name: 'selector', type: 'string', text: 'A single compound selector to scope the theme to. Default :root.' },
+];
+---
+
+<Guide
+  title="Theming"
+  description="Every component reads color, type, shape and motion from CSS custom properties. Generate a full light and dark color scheme from one seed color, at build time or at runtime."
+>
+  <h2 id="baseline">The baseline theme</h2>
+  <p>
+    <code>css/index.css</code> (or <code>@kyralabs/m3e-tokens/theme.css</code>) sets Material's
+    baseline purple scheme, the colors of Compose's <code>expressiveLightColorScheme()</code> and
+    <code>darkColorScheme()</code>. It is light, dark when the system prefers dark, and forced
+    with <code>data-theme</code> on the root element:
+  </p>
+  <CodeBlock
+    lang="html"
+    label="data-theme example"
+    code={`<html lang="en" data-theme="dark">  <!-- or "light"; leave it off to follow the system -->`}
+  />
+  <p>
+    Add <code>{'<meta name="color-scheme" content="light dark">'}</code> so form controls and
+    scrollbars follow the scheme too. To let readers switch, set the attribute from a script and
+    remember the choice; run that script in the <code>{'<head>'}</code> so the page never paints in
+    the wrong scheme first:
+  </p>
+  <CodeBlock
+    lang="js"
+    label="theme switch script"
+    code={`// In an inline <script> in <head>:
+const saved = localStorage.getItem('theme'); // 'light' | 'dark' | null (system)
+if (saved) document.documentElement.dataset.theme = saved;
+
+// From your theme switch:
+function setTheme(mode) {
+  if (mode === 'system') delete document.documentElement.dataset.theme;
+  else document.documentElement.dataset.theme = mode;
+  localStorage.setItem('theme', mode);
+}`}
+  />
+
+  <h2 id="seed">A theme from a seed color</h2>
+  <p>
+    <code>createTheme</code> builds every color role from one seed with Material Color Utilities
+    0.4.0 and returns the CSS. Its rules are unlayered, so loading them after the library's CSS
+    overrides the baseline theme:
+  </p>
+  <CodeBlock
+    lang="ts"
+    label="createTheme example"
+    code={`import { createTheme } from '@kyralabs/m3exp-web/theme';
+
+const { cssText, tokens } = createTheme({ seed: '#6750A4', variant: 'expressive' });
+
+const style = document.createElement('style');
+style.textContent = cssText;
+document.head.append(style);
+
+tokens.light?.primary; // the resolved roles, e.g. for a canvas or an email template`}
+  />
+  <p>
+    The home page's <a href="/">theme demo</a> runs exactly this: pick a hue and a variant and the
+    whole site re-themes.
+  </p>
+  <ScrollTable label="createTheme options">
+    <table>
+      <caption class="site-sr-only">createTheme options</caption>
+      <thead>
+        <tr><th scope="col">Option</th><th scope="col">Values</th><th scope="col">What it does</th></tr>
+      </thead>
+      <tbody>
+        {
+          options.map((o) => (
+            <tr>
+              <th scope="row"><code>{o.name}</code></th>
+              <td>{o.type}</td>
+              <td>{o.text}</td>
+            </tr>
+          ))
+        }
+      </tbody>
+    </table>
+  </ScrollTable>
+
+  <h3 id="cli">At build time</h3>
+  <p>
+    The <code>m3e-theme</code> command from <code>@kyralabs/m3e-tokens</code> writes the same CSS,
+    so no color code ships to the browser:
+  </p>
+  <CodeBlock
+    lang="sh"
+    label="m3e-theme command"
+    code={`npx m3e-theme --seed "#6750A4" --variant expressive > theme.css
+npx m3e-theme --seed "#6750A4" --mode dark --contrast medium --out theme-dark.css`}
+  />
+  <p>
+    Flags: <code>--variant</code>, <code>--mode</code>, <code>--contrast</code>,
+    <code>--spec</code>, <code>--motion</code>, <code>--selector</code>, <code>--out</code>, and the
+    core colors <code>--secondary</code>, <code>--tertiary</code>, <code>--neutral</code>,
+    <code>--neutral-variant</code>, <code>--error</code>. Load the file after the library's CSS.
+  </p>
+
+  <h3 id="core-colors">Core colors</h3>
+  <p>
+    Like Material Theme Builder, you can give your own colors for the other palettes. Each keeps
+    the given color's hue and chroma; the variant still maps roles to tones. A red primary on grey
+    surfaces:
+  </p>
+  <CodeBlock
+    lang="ts"
+    label="core colors example"
+    code={`createTheme({
+  seed: '#d84848',
+  variant: 'fidelity',
+  coreColors: { neutral: '#808080', neutralVariant: '#808080' },
+});`}
+  />
+  <p>
+    With spec 2025 (the <code>tonalSpot</code>, <code>neutral</code>, <code>vibrant</code> and
+    <code>expressive</code> variants) the outline and surface-variant roles come from the neutral
+    palette, so <code>neutralVariant</code> has no effect there. <code>variant: 'fidelity'</code>
+    keeps the seed closest to how you gave it, like Theme Builder.
+  </p>
+
+  <h3 id="scoped">Scoped themes</h3>
+  <p>
+    <code>selector</code> applies a theme to part of a page. Its dark rules key off
+    <code>data-theme</code> on the same element:
+  </p>
+  <CodeBlock
+    lang="ts"
+    label="scoped theme example"
+    code={`const { cssText } = createTheme({ seed: '#00696d', selector: '.promo' });
+// .promo { … } and .promo[data-theme="dark"] { … }, plus the system dark rule`}
+  />
+
+  <h2 id="tokens">Beyond color</h2>
+  <p>
+    Type, shape, motion, elevation and spacing are tokens too:
+    <code>--m3e-sys-typescale-*</code>, <code>--m3e-sys-shape-*</code>,
+    <code>--m3e-sys-motion-*</code>, <code>--m3e-sys-elevation-*</code>,
+    <code>--m3e-sys-space-*</code>, and per component <code>--m3e-comp-&lt;component&gt;-*</code>.
+    Override any of them in your own CSS; read them in yours instead of hard-coding values:
+  </p>
+  <CodeBlock
+    lang="css"
+    label="token usage example"
+    code={`.headline {
+  color: var(--m3e-sys-color-on-surface);
+  font-family: var(--m3e-sys-typescale-headline-medium-font);
+  font-size: var(--m3e-sys-typescale-headline-medium-size);
+  line-height: var(--m3e-sys-typescale-headline-medium-line-height);
+}`}
+  />
+</Guide>
