@@ -1,3 +1,4 @@
+/// <reference types="astro/client" />
 // Mounts React islands (Island.astro) when they come within a medium window height of the
 // viewport, so a page only loads React and the components it shows. Client-side rendering only
 // (DECISIONS D6): createRoot replaces the static fallback, nothing is hydrated.
