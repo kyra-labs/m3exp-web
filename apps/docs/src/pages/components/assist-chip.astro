@@ -1,4 +1,5 @@
 ---
+import Sources from '../../components/Sources.astro';
 import AssistChipPlayground from '../../islands/AssistChipPlayground.tsx';
 import Base from '../../layouts/Base.astro';
 
@@ -68,4 +69,16 @@ const chipClass = (variant: (typeof variants)[number]) =>
     <p><code>&lt;AssistChip&gt;</code> with React Aria press handling and a ripple.</p>
     <AssistChipPlayground client:only="react" />
   </section>
+
+  <Sources>
+    <p>
+      androidx Compose Material3 1.5.0-beta01 (<code>19991f2c</code>):{' '}
+      <code>AssistChipTokens.kt</code> and the <code>AssistChipDefaults</code> literals Compose
+      renders in <code>Chip.kt</code> (8dp content padding L1962; 8dp spacing L2918 through{' '}
+      <code>DefaultHorizontalArrangement</code> L4306), generated into{' '}
+      <code>components/assist-chip-defaults.css</code> (lines in <code>PARITY.md</code>); elevation
+      changes on the <code>ElevationDefaults</code> tweens (<code>internal/Elevation.kt</code>{' '}
+      L107–113). SOURCES register #35.
+    </p>
+  </Sources>
 </Base>

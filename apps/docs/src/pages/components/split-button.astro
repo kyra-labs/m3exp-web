@@ -1,4 +1,5 @@
 ---
+import Sources from '../../components/Sources.astro';
 import SplitButtonPlayground from '../../islands/SplitButtonPlayground.tsx';
 import Base from '../../layouts/Base.astro';
 
@@ -159,6 +160,27 @@ const classes = (variant: string, size: string) =>
     </p>
     <SplitButtonPlayground client:only="react" />
   </section>
+
+  <Sources>
+    <p>
+      androidx Compose Material3 1.5.0-beta01 (<code>19991f2c</code>):{' '}
+      <code>SplitButton&#123;XSmall,Small,Medium,Large,XLarge&#125;Tokens.kt</code> as read by{' '}
+      <code>SplitButton.kt</code> (<code>SplitButtonDefaults.Spacing</code> L212, the 48dp minimum
+      widths L397 / L418, <code>TrailingButtonStateLayerAlpha</code> L421,{' '}
+      <code>TrailingCheckedShape</code> L427, the shapes per size L510–584, the inner-corner morph
+      on default effects L697, L777, L889), <code>HorizontalCenterOptically.kt</code>{' '}
+      (<code>CenterOpticallyCoefficient</code> 0.11, L93), <code>internal/AnimatedShape.kt</code>{' '}
+      (L140–151) and <code>SplitButtonSamples.kt</code> (the trailing icon's 180° turn, L116, on{' '}
+      <code>animateFloatAsState</code>'s default spring: animation-core{' '}
+      <code>AnimateAsState.kt</code>, <code>AnimationSpec.kt</code> L834–838,{' '}
+      <code>VectorizedAnimationSpec.kt</code> L801 / L839); values in{' '}
+      <code>components/split-button-defaults.css</code> (lines in <code>PARITY.md</code>).
+    </p>
+    <p>
+      m3.material.io Split button overview; Material Web 2.5.0 labs split button (a secondary
+      source). SOURCES register #22.
+    </p>
+  </Sources>
 </Base>
 
 <script>

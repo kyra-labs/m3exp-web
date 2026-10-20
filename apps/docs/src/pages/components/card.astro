@@ -1,4 +1,5 @@
 ---
+import Sources from '../../components/Sources.astro';
 import CardPlayground from '../../islands/CardPlayground.tsx';
 import Base from '../../layouts/Base.astro';
 
@@ -89,4 +90,18 @@ const variants = ['filled', 'elevated', 'outlined'] as const;
     <p><code>&lt;Card&gt;</code> with a <code>&lt;CardAction&gt;</code>.</p>
     <CardPlayground client:only="react" />
   </section>
+
+  <Sources>
+    <p>
+      androidx Compose Material3 1.5.0-beta01 (<code>19991f2c</code>):{' '}
+      <code>FilledCardTokens.kt</code>, <code>ElevatedCardTokens.kt</code> and{' '}
+      <code>OutlinedCardTokens.kt</code> as read by <code>CardDefaults</code> (<code>Card.kt</code>:
+      shape, colors, <code>outlinedCardElevation</code>, disabled colors at{' '}
+      <code>DisabledAlpha</code> 0.38 from <code>ColorScheme.kt</code> L1544); the content color{' '}
+      <code>contentColorFor(container)</code> (<code>ColorScheme.kt</code> L1108–1116); elevation
+      changes on the <code>ElevationDefaults</code> tweens (<code>internal/Elevation.kt</code>{' '}
+      L107–113, <code>FastOutSlowInEasing</code> from animation-core <code>Easing.kt</code> L50).
+      SOURCES register #36.
+    </p>
+  </Sources>
 </Base>

@@ -1,4 +1,5 @@
 ---
+import Sources from '../../components/Sources.astro';
 import SideSheetPlayground from '../../islands/SideSheetPlayground.tsx';
 import Base from '../../layouts/Base.astro';
 
@@ -109,6 +110,29 @@ const filterList = `<ul class="docs-side-sheet-options">${filters
     </p>
     <SideSheetPlayground client:only="react" />
   </section>
+
+  <Sources>
+    <p>
+      m3.material.io Side sheets, the only fidelity reference (DECISIONS D8; page{' '}
+      <code>040dabe3-ed0f-4759-824d-812224e78af3</code>: Overview, Specs tables, color legends and
+      redlines, Guidelines, Accessibility) and its token DB
+      (<code>TOKEN_TABLE.06c2c925cf96adca</code>, <code>md.comp.sheet.side</code>), generated into{' '}
+      <code>components/side-sheet-defaults.css</code> (lines in <code>PARITY.md</code>).
+    </p>
+    <p>
+      androidx Compose Material3 1.5.0-beta01 (<code>19991f2c</code>), for what m3.material.io
+      leaves open: <code>NavigationDrawer.kt</code> (the open and close springs L354–355 and the
+      scrim L388–393, mirrored to the end edge), <code>AlertDialog.kt</code> (the 8dp between
+      actions), <code>ScrimTokens.kt</code>, <code>DividerTokens.kt</code> (L24–25: the divider is
+      outline variant, as the standalone <code>md.comp.divider.color</code> and the standard sheet's
+      color legend) and <code>SmallIconButtonTokens.kt</code>.
+    </p>
+    <p>
+      SOURCES register #48 and #78–#81: the 256dp width (DECISIONS D19 (15)), the divider color (D19
+      (16)), the drawer motion (D19 (17)) and the header and actions geometry (D19 (18)); the focus
+      order, first stop the back button (D20 (8)).
+    </p>
+  </Sources>
 </Base>
 
 <script>

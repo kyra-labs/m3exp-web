@@ -1,5 +1,7 @@
 ---
 import NavItems, { type Item } from '../../components/NavItems.astro';
+import Sources from '../../components/Sources.astro';
+import StateEventsNote from '../../components/StateEventsNote.astro';
 import NavigationSuitePlayground from '../../islands/NavigationSuitePlayground.tsx';
 import Base from '../../layouts/Base.astro';
 
@@ -67,6 +69,9 @@ const items: Item[] = [
       Compose's show / hide spring.
     </p>
     <p>An item's <code>badge</code> is a Compose <code>Badge</code> on its icon in the bar and rail types (the scaffold's <code>NavigationItemIcon</code> wraps the icon in a <code>BadgedBox</code>): empty for the dot (Search), a number for a count (Mail; <code>999+</code> above 999). The drawer type shows it as the trailing badge text instead (<code>NavigationDrawerItem</code>'s <code>badge</code> slot; the dot shows nothing there).</p>
+    <StateEventsNote
+      events={['selection-change', 'navigation-suite-type-change', 'navigation-hidden-change']}
+    />
     <div class="docs-suite-frame" data-testid="element-frame">
       <m3e-navigation-suite label="Element example" selected="home" data-testid="element-suite">
         <m3e-navigation-item value="home" icon="home">Home</m3e-navigation-item>
@@ -180,8 +185,7 @@ const items: Item[] = [
     </div>
   </section>
 
-  <section aria-labelledby="sources-heading">
-    <h2 id="sources-heading">Sources</h2>
+  <Sources>
     <p>
       androidx Compose Material3 adaptive navigation suite at <code>19991f2c</code>:{' '}
       <code>NavigationSuiteScaffold.kt</code> (scaffold, layout, state, defaults, the{' '}
@@ -189,7 +193,7 @@ const items: Item[] = [
       window-core <code>WindowSizeClass.kt</code> (breakpoints). m3.material.io navigation guidance
       for the expanded rail at large widths.
     </p>
-  </section>
+  </Sources>
 </Base>
 
 <script>
@@ -210,8 +214,12 @@ const items: Item[] = [
   void customElements.whenDefined('m3e-navigation-suite').then(() => {
     queueMicrotask(showType);
   });
-  suite.addEventListener('navigation-suite-type-change', showType);
+  // State events bubble in 1.x (DECISIONS D25): only the suite's own.
+  suite.addEventListener('navigation-suite-type-change', (e) => {
+    if (e.target === suite) showType();
+  });
   suite.addEventListener('selection-change', (e) => {
+    if (e.target !== suite) return;
     selectedOut.value = (e as CustomEvent<{ value: string }>).detail.value;
   });
   toggle.addEventListener('click', () => {

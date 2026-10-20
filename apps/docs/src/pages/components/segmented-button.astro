@@ -1,5 +1,6 @@
 ---
 import DeprecationBanner from '../../components/DeprecationBanner.astro';
+import Sources from '../../components/Sources.astro';
 import SegmentedButtonPlayground from '../../islands/SegmentedButtonPlayground.tsx';
 import Base from '../../layouts/Base.astro';
 
@@ -146,6 +147,25 @@ const ROWS: Row[] = [
     </p>
     <SegmentedButtonPlayground client:only="react" />
   </section>
+
+  <Sources>
+    <p>
+      androidx Compose Material3 1.5.0-beta01 (<code>19991f2c</code>):{' '}
+      <code>OutlinedSegmentedButtonTokens.kt</code> as read by <code>SegmentedButton.kt</code>{' '}
+      (<code>defaultSegmentedButtonColors</code> L548–572, <code>ContentPadding</code> L617–623,{' '}
+      <code>CheckedZIndexFactor</code> L852, <code>IconSpacing</code> L853, the rows L327–380,{' '}
+      <code>itemShape</code> L597–611, the content L383–457, the icon motion L644–673; only the
+      hidden overloads L253–311 are <code>@Deprecated</code> upstream), <code>Surface.kt</code>{' '}
+      (L335–410, L470–564), <code>Button.kt</code> (<code>ButtonDefaults.MinWidth</code> /{' '}
+      <code>MinHeight</code>, L1053–1065) and <code>SegmentedButtonSamples.kt</code>; values in{' '}
+      <code>components/segmented-button-defaults.css</code> (lines in <code>PARITY.md</code>).
+    </p>
+    <p>
+      m3.material.io Segmented buttons (page <code>409b50be-403a-4846-932c-706a9b2137dd</code>: no
+      longer recommended since May 2025, use the connected button group). DECISIONS D4 (shipped
+      deprecated until 2.0) and D20 (10) (Enter does not select); SOURCES register #54.
+    </p>
+  </Sources>
 </Base>
 
 <script>

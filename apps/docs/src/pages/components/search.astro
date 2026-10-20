@@ -1,4 +1,6 @@
 ---
+import Sources from '../../components/Sources.astro';
+import StateEventsNote from '../../components/StateEventsNote.astro';
 import SearchPlayground from '../../islands/SearchPlayground.tsx';
 import Base from '../../layouts/Base.astro';
 
@@ -129,6 +131,7 @@ const views = [
       (<code>&#123; value &#125;</code>) and <code>select</code> (<code>&#123; value, label &#125;</code>),
       both cancelable; the input's native <code>select</code> (text selected) does not reach the host.
     </p>
+    <StateEventsNote events={['expanded-change']} />
     <div class="docs-search-views">
       {
         views.map((view) => (
@@ -244,8 +247,7 @@ const views = [
     <SearchPlayground client:only="react" />
   </section>
 
-  <section aria-labelledby="sources-heading">
-    <h2 id="sources-heading">Sources</h2>
+  <Sources>
     <p>
       androidx Compose Material3 1.5.0-beta01 (<code>19991f2c</code>): <code>SearchBar.kt</code>{' '}
       (<code>SearchBar</code>, <code>AppBarWithSearch</code>, the four <code>Expanded*SearchBar</code
@@ -258,7 +260,7 @@ const views = [
         >components/search-defaults.css</code
       >, and <code>SearchBarSamples.kt</code> for the configurations above.
     </p>
-  </section>
+  </Sources>
 </Base>
 
 <script>

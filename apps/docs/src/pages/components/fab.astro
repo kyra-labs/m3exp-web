@@ -1,5 +1,6 @@
 ---
 import DeprecationBanner from '../../components/DeprecationBanner.astro';
+import Sources from '../../components/Sources.astro';
 import FabPlayground from '../../islands/FabPlayground.tsx';
 import Base from '../../layouts/Base.astro';
 
@@ -149,13 +150,12 @@ const colors = [
     </div>
   </section>
 
-  <section aria-labelledby="sources-heading">
-    <h2 id="sources-heading">Sources</h2>
+  <Sources>
     <p>
       androidx Compose Material3 1.5.0-beta01 (<code>19991f2c</code>):{' '}
       <code>FloatingActionButton.kt</code>, <code>Fab*Tokens.kt</code>, <code>ExtendedFab*Tokens.kt</code>{' '}
       and the <code>FloatingActionButtonDefaults</code> values in <code>components/fab-defaults.css</code>;
       m3.material.io FAB and Extended FAB pages for the color styles and scroll behavior.
     </p>
-  </section>
+  </Sources>
 </Base>

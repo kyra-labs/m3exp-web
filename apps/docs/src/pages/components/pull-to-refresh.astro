@@ -1,4 +1,5 @@
 ---
+import Sources from '../../components/Sources.astro';
 import PullToRefreshPlayground from '../../islands/PullToRefreshPlayground.tsx';
 import Base from '../../layouts/Base.astro';
 
@@ -57,6 +58,26 @@ const appBar = (id: string) =>
     </p>
     <PullToRefreshPlayground client:only="react" />
   </section>
+
+  <Sources>
+    <p>
+      androidx Compose Material3 1.5.0-beta01 (<code>19991f2c</code>):{' '}
+      <code>pulltorefresh/PullToRefresh.kt</code> (<code>PullToRefreshDefaults</code> L449–502,{' '}
+      <code>IndicatorBox</code> L521–567, the arrow and spinner L582–616 and L788–922, the private
+      sizes L890–914, <code>PullToRefreshStateImpl</code> L765–771),{' '}
+      <code>PullToRefreshSamples.kt</code> (the "Trigger Refresh" button, L90–91),{' '}
+      <code>LoadingIndicator.kt</code>, <code>ProgressIndicator.kt</code> and animation-core{' '}
+      <code>Animatable.kt</code> (L122–123, L229), <code>AnimationSpec.kt</code> and{' '}
+      <code>VectorizedAnimationSpec.kt</code>. There is no <code>PullToRefreshTokens.kt</code> and
+      no m3.material.io page (L92), so the values Compose renders are generated into{' '}
+      <code>components/pull-to-refresh-defaults.css</code> (lines in <code>PARITY.md</code>); the
+      drag math is checked against a JVM run of the vendored code.
+    </p>
+    <p>
+      SOURCES register #55, #85 (the "Refresh" name, DECISIONS D19 (22)) and #86 (the arrow head at
+      density 1, D19 (23)).
+    </p>
+  </Sources>
 </Base>
 
 <script>

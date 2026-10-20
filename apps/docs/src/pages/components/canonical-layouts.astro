@@ -1,4 +1,6 @@
 ---
+import Sources from '../../components/Sources.astro';
+import StateEventsNote from '../../components/StateEventsNote.astro';
 import CanonicalLayoutsPlayground from '../../islands/CanonicalLayoutsPlayground.tsx';
 import FeedLayoutPlayground from '../../islands/FeedLayoutPlayground.tsx';
 import SupportingPanePlayground from '../../islands/SupportingPanePlayground.tsx';
@@ -144,6 +146,7 @@ const feed = ['Mountains', 'Coast', 'Forest', 'Desert', 'City', 'Lakes', 'Island
         </m3e-list-detail-layout>
       </div>
     </div>
+    <StateEventsNote events={['scaffold-value-change']} />
   </section>
 
   <section aria-labelledby="supporting-heading">
@@ -357,8 +360,7 @@ const feed = ['Mountains', 'Coast', 'Forest', 'Desert', 'City', 'Lakes', 'Island
     </div>
   </section>
 
-  <section aria-labelledby="sources-heading">
-    <h2 id="sources-heading">Sources</h2>
+  <Sources>
     <p>
       androidx Compose Material3 adaptive (1.4.0-alpha03) at <code>19991f2c</code>:{' '}
       <code>ThreePaneScaffold.kt</code>, <code>ThreePaneScaffoldValue.kt</code>,{' '}
@@ -368,7 +370,13 @@ const feed = ['Mountains', 'Coast', 'Forest', 'Desert', 'City', 'Lakes', 'Island
       <code>ThreePaneScaffoldSample.kt</code>; material3 <code>DragHandle.kt</code>. m3.material.io
       Breakpoints, Scaffold and Canonical examples (feed, pane counts, margins).
     </p>
-  </section>
+    <p>
+      Feed: 8dp between items, from Cards › Specs "Padding between cards 8dp max" (SOURCES register
+      #65, DECISIONS D19 (5)), and columns at least 240dp wide, a project default (#66, D19 (6));
+      Compose has no feed scaffold. Generated into{' '}
+      <code>components/pane-scaffold-defaults.css</code> (lines in <code>PARITY.md</code>).
+    </p>
+  </Sources>
 </Base>
 
 <script>
@@ -389,7 +397,8 @@ const feed = ['Mountains', 'Coast', 'Forest', 'Desert', 'City', 'Lakes', 'Island
   // The detail shows the item the history last navigated to; the list marks it while both panes
   // show (m3.material.io: a selected state only in two-pane layouts).
   let selected: string | undefined;
-  layout.addEventListener('scaffold-value-change', () => {
+  layout.addEventListener('scaffold-value-change', (e) => {
+    if (e.target !== layout) return; // state events bubble in 1.x (DECISIONS D25)
     const history = (layout as unknown as { navigator: { destinationHistory: { contentKey?: unknown }[] } })
       .navigator.destinationHistory;
     const key = [...history].reverse().find((d) => typeof d.contentKey === 'string')?.contentKey as

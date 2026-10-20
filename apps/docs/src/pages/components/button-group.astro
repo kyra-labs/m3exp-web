@@ -1,4 +1,6 @@
 ---
+import Sources from '../../components/Sources.astro';
+import StateEventsNote from '../../components/StateEventsNote.astro';
 import ButtonGroupPlayground from '../../islands/ButtonGroupPlayground.tsx';
 import Base from '../../layouts/Base.astro';
 
@@ -148,6 +150,7 @@ const shapes = ['round', 'square'] as const;
     <p>
       <code>&lt;m3e-button-group variant size shape button-variant selection-mode disallow-empty-selection overflow overflow-label label disabled&gt;</code> with <code>&lt;m3e-button-group-item value icon selected disabled label&gt;</code> children. Events: <code>selection-change</code> on the group (<code>&#123; value, selected, values &#125;</code>) and <code>action</code> on the item (<code>&#123; value &#125;</code>). Deprecated since 1.8 (removed in 2.0): the <code>selection-required</code> attribute (use <code>disallow-empty-selection</code>) and the group's <code>change</code> event (it still fires, with the same detail, after <code>selection-change</code>). Arrow keys, Home and End move focus. As in Compose (<code>ButtonGroupDefaults.OverflowIndicator</code>), the overflow button has a built-in plain tooltip: its name (<code>overflow-label</code>, default “More options”), shown above it on hover, keyboard focus or a long press; it repeats the name, so screen readers skip it.
     </p>
+    <StateEventsNote events={['selection-change']} />
     <div class="docs-button-group-demos" data-testid="elements">
       <m3e-button-group label="Playback" button-variant="tonal" data-testid="el-standard">
         <m3e-button-group-item value="previous" icon="skip_previous">Previous</m3e-button-group-item>
@@ -252,6 +255,27 @@ const shapes = ['round', 'square'] as const;
     </p>
     <ButtonGroupPlayground client:only="react" />
   </section>
+
+  <Sources>
+    <p>
+      androidx Compose Material3 1.5.0-beta01 (<code>19991f2c</code>): <code>ButtonGroup.kt</code>{' '}
+      (<code>ButtonGroupDefaults.ExpandedRatio</code> 0.15 L186, the spacing L189–193, the connected
+      shapes L195–275, the width spring on fast spatial L138, <code>ButtonGroupMeasurePolicy</code>{' '}
+      L554–812 with the overflow L673–716, the release wait L1036 / L1437, the overflow indicator
+      and its plain tooltip L306–311), <code>ButtonGroupSmallTokens.kt</code>,{' '}
+      <code>ConnectedButtonGroupSmallTokens.kt</code> (L34), <code>ToggleButton.kt</code> (L176) and{' '}
+      <code>ButtonGroupSamples.kt</code>; the "More options" string (androidMain{' '}
+      <code>res/values/strings.xml</code> L19); the values in{' '}
+      <code>components/button-group-defaults.css</code> (lines in <code>PARITY.md</code>).
+    </p>
+    <p>
+      m3.material.io Button groups (Specs, Guidelines, Accessibility) and its token DB
+      (<code>TOKEN_TABLE.082d7fd6e058b011</code>, <code>md.comp.button-group.*</code>) for the XS,
+      M, L and XL values Compose lacks (it spaces and shapes every size with the small tokens).
+      SOURCES register #21 and #63 (the XS connected inner corner is 8dp, not the Specs caption's
+      4dp).
+    </p>
+  </Sources>
 </Base>
 
 <script>
@@ -259,11 +283,12 @@ const shapes = ['round', 'square'] as const;
 
   const log = document.getElementById('el-log')!;
   const box = document.querySelector('[data-testid="elements"]')!;
-  box.addEventListener('selection-change', (e) => {
-    if (!(e instanceof CustomEvent)) return;
-    const { values } = (e as CustomEvent<{ values: string[] }>).detail;
-    log.textContent = `selection-change: ${values.join(', ') || 'none'}`;
-  });
+  for (const group of box.querySelectorAll('m3e-button-group')) {
+    group.addEventListener('selection-change', (e) => {
+      if (e.target !== group) return; // state events bubble in 1.x (DECISIONS D25)
+      log.textContent = `selection-change: ${e.detail.values.join(', ') || 'none'}`;
+    });
+  }
   box.addEventListener('action', (e) => {
     if (!(e instanceof CustomEvent)) return;
     log.textContent = `action: ${(e as CustomEvent<{ value: string }>).detail.value}`;
