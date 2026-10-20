@@ -149,6 +149,12 @@ npx m3e-theme --seed "#6750A4" --mode dark --contrast medium --out theme-dark.cs
     <code>selector</code> applies a theme to part of a page. Its dark rules key off
     <code>data-theme</code> on the same element:
   </p>
+  <p class="site-note">
+    Known issue (<a href="https://github.com/kyra-labs/m3exp-web/issues/120">#120</a>): inside a
+    scoped theme, components keep the page theme's colors, because their color tokens resolve at
+    <code>:root</code>. Elements that read the <code>--m3e-sys-color-*</code> roles directly
+    follow the scope.
+  </p>
   <CodeBlock
     lang="ts"
     label="scoped theme example"
