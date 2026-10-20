@@ -47,13 +47,13 @@ export interface ListActionDetail {
  * deprecated name, since 1.8; removed in 2.0), `disallow-empty-selection`. Property `selectedValues` (string[]).
  */
 export class M3eList extends M3eElement {
-  static override properties = {
+  static override properties = /* @__PURE__ */ (() => ({
     ...M3eElement.properties,
     label: {},
     selectionMode: {},
     selection: { default: 'none' },
     disallowEmptySelection: { type: Boolean },
-  };
+  }))();
 
   declare label: string | null | undefined;
   /** `none` (default) | `single` | `multiple` (React's `selectionMode`). */

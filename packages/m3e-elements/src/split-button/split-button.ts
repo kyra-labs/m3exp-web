@@ -69,7 +69,7 @@ interface Driven {
  * - Events: `press` (leading button activated, `detail: {}`); menu events bubble from the menu.
  */
 export class M3eSplitButton extends M3eElement {
-  static override properties = {
+  static override properties = /* @__PURE__ */ (() => ({
     ...M3eElement.properties,
     variant: {},
     size: {},
@@ -79,7 +79,7 @@ export class M3eSplitButton extends M3eElement {
     menuLabel: {},
     menu: {},
     disabled: { type: Boolean },
-  };
+  }))();
 
   declare variant: string | null | undefined;
   declare size: string | null | undefined;

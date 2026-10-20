@@ -11,10 +11,10 @@ import { TimeScrollLayout, type TimeScrollLayoutOptions } from '../time-picker-l
  * m3e-react).
  */
 export class M3eTimeScroll extends M3eTimePickerElement<TimeScrollLayout, TimeScrollLayoutOptions> {
-  static override properties = {
+  static override properties = /* @__PURE__ */ (() => ({
     ...M3eTimePickerElement.properties,
     uncontained: { type: Boolean, reflect: true },
-  };
+  }))();
 
   declare uncontained: boolean | undefined;
 

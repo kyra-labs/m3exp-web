@@ -83,14 +83,14 @@ function arrow(doc: Document): SVGElement {
  *   Refresh button, the keyboard path (owner decision M9 #28), calls. `distanceFraction`.
  */
 export class M3ePullToRefresh extends M3eElement {
-  static override properties = {
+  static override properties = /* @__PURE__ */ (() => ({
     ...M3eElement.properties,
     refreshing: { type: Boolean, reflect: true },
     disabled: { type: Boolean },
     indicator: {},
     threshold: { type: Number },
     indicatorLabel: {},
-  };
+  }))();
 
   declare refreshing: boolean | undefined;
   declare disabled: boolean | undefined;

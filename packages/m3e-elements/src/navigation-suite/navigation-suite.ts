@@ -71,14 +71,14 @@ function parseExpandedFrom(
  *   when the window size (or a property) changes the type.
  */
 export class M3eNavigationSuite extends M3eNavigationContainer {
-  static override properties = {
+  static override properties = /* @__PURE__ */ (() => ({
     ...M3eNavigationContainer.properties,
     layoutType: {},
     expandedFrom: {},
     expandedType: {},
     navigationHidden: { type: Boolean, reflect: true },
     primaryActionAlignment: {},
-  };
+  }))();
 
   declare layoutType: string | null | undefined;
   declare expandedFrom: string | null | undefined;

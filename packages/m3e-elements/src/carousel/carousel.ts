@@ -61,13 +61,13 @@ export interface CarouselActionDetail {
  * `label` replaces the default name ("2 of 5").
  */
 export class M3eCarouselItem extends M3eElement {
-  static override properties = {
+  static override properties = /* @__PURE__ */ (() => ({
     ...M3eElement.properties,
     href: {},
     target: {},
     action: { type: Boolean },
     label: {},
-  };
+  }))();
 
   declare href: string | null | undefined;
   declare target: string | null | undefined;
@@ -155,14 +155,14 @@ interface Rendered {
  *   is deprecated since 1.8 and removed in 2.0.
  */
 export class M3eCarousel extends M3eElement {
-  static override properties = {
+  static override properties = /* @__PURE__ */ (() => ({
     ...M3eElement.properties,
     layout: { reflect: true },
     itemWidth: { type: Number },
     itemSpacing: { type: Number },
     contentPadding: { type: Number },
     label: {},
-  };
+  }))();
 
   declare layout: string | null | undefined;
   declare itemWidth: number | null | undefined;

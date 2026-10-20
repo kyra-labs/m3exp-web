@@ -39,11 +39,11 @@ const loadExpansion = async (): Promise<AttachPaneExpansion> =>
  * the rest.
  */
 export abstract class M3ePaneScaffoldElement extends M3eElement {
-  static override properties = {
+  static override properties = /* @__PURE__ */ (() => ({
     ...M3eElement.properties,
     paneRule: {},
     dragHandle: { type: Boolean },
-  };
+  }))();
 
   declare paneRule: string | null | undefined;
   declare dragHandle: boolean | undefined;

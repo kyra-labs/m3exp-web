@@ -42,11 +42,11 @@ export interface ChipSetRemoveDetail {
  * Compose's ChipGroupSingleLineSample; default: chips wrap, ChipGroupReflowSample).
  */
 export class M3eChipSet extends M3eElement {
-  static override properties = {
+  static override properties = /* @__PURE__ */ (() => ({
     ...M3eElement.properties,
     label: {},
     singleLine: { type: Boolean },
-  };
+  }))();
 
   declare label: string | null | undefined;
   declare singleLine: boolean | undefined;

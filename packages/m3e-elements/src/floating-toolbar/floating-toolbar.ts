@@ -39,7 +39,7 @@ const EXIT_DIRECTIONS: readonly string[] = ['bottom', 'top', 'start', 'end'];
  *   or collapses it (the attribute follows).
  */
 export class M3eFloatingToolbar extends M3eElement {
-  static override properties = {
+  static override properties = /* @__PURE__ */ (() => ({
     ...M3eElement.properties,
     expanded: { type: Boolean, reflect: true },
     orientation: {},
@@ -49,7 +49,7 @@ export class M3eFloatingToolbar extends M3eElement {
     scrollBehavior: {},
     exitDirection: {},
     scrollTarget: {},
-  };
+  }))();
 
   declare expanded: boolean | undefined;
   declare orientation: string | null | undefined;

@@ -163,7 +163,7 @@ export function renderTextField(
  * `trailing-icon` (Material Symbols names), `prefix-text`, `suffix-text`, `counter-label`.
  */
 export class M3eTextField extends M3eElement {
-  static override properties = {
+  static override properties = /* @__PURE__ */ (() => ({
     ...M3eElement.properties,
     variant: {},
     label: {},
@@ -187,7 +187,7 @@ export class M3eTextField extends M3eElement {
     prefixText: {},
     suffixText: {},
     counterLabel: {},
-  };
+  }))();
 
   declare variant: string | null | undefined;
   declare label: string | null | undefined;

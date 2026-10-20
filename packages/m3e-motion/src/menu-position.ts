@@ -64,14 +64,12 @@ export interface MenuPositionResult {
 type Horizontal = (anchor: MenuRect, width: number, menuWidth: number, rtl: boolean) => number;
 type Vertical = (anchor: MenuRect, height: number, menuHeight: number) => number;
 
-const round = Math.round;
-
 /** BiasAlignment.Horizontal.align (Start = -1, CenterHorizontally = 0, End = 1). */
 const alignH = (bias: number, size: number, space: number, rtl: boolean) =>
-  round(((space - size) / 2) * (1 + (rtl ? -bias : bias)));
+  Math.round(((space - size) / 2) * (1 + (rtl ? -bias : bias)));
 /** BiasAlignment.Vertical.align (Top = -1, CenterVertically = 0, Bottom = 1). */
 const alignV = (bias: number, size: number, space: number) =>
-  round(((space - size) / 2) * (1 + bias));
+  Math.round(((space - size) / 2) * (1 + bias));
 
 const START = -1;
 const END = 1;

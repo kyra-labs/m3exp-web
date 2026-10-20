@@ -93,7 +93,7 @@ export function bottomSheetClass(
  *   (`detail: { open }`, as the other modal elements; cancelable the same way).
  */
 export class M3eBottomSheet extends M3eElement {
-  static override properties = {
+  static override properties = /* @__PURE__ */ (() => ({
     ...M3eElement.properties,
     variant: { reflect: true },
     value: { reflect: true },
@@ -105,7 +105,7 @@ export class M3eBottomSheet extends M3eElement {
     dragHandleLabel: {},
     gesturesDisabled: { type: Boolean },
     label: {},
-  };
+  }))();
 
   declare variant: string | null | undefined;
   declare value: string | null | undefined;

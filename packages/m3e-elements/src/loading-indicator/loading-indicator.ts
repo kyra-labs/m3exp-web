@@ -36,13 +36,13 @@ const REDUCED_MOTION = '(prefers-reduced-motion: reduce)';
  * `label`) names the progress bar and moves onto it.
  */
 export class M3eLoadingIndicator extends M3eElement {
-  static override properties = {
+  static override properties = /* @__PURE__ */ (() => ({
     ...M3eElement.properties,
     contained: { type: Boolean },
     progress: { type: Number },
     label: {},
     hostLabel: { attribute: 'aria-label' },
-  };
+  }))();
 
   declare contained: boolean | undefined;
   declare progress: number | null | undefined;

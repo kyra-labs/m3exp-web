@@ -26,11 +26,11 @@ export class M3eDateRangePicker extends M3eDatePickerElement<
   DateRangePickerLayout,
   DateRangePickerLayoutOptions
 > {
-  static override properties = {
+  static override properties = /* @__PURE__ */ (() => ({
     ...M3eDatePickerElement.properties,
     start: {},
     end: {},
-  };
+  }))();
 
   declare start: string | null | undefined;
   declare end: string | null | undefined;

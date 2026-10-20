@@ -8,15 +8,18 @@
  * - `emit()` for kebab-case `CustomEvent`s with a `detail` payload.
  *
  * Subclasses declare properties statically and type them with `declare` (a class field
- * initializer would shadow the generated accessor). Defaults go in the declaration:
+ * initializer would shadow the generated accessor). Defaults go in the declaration. Build the
+ * map in a `/* @__PURE__ *\/` arrow function called at once: a bare `{ ...Parent.properties }`
+ * reads a member while the class is defined, which keeps bundlers from dropping an unused class
+ * (`node tools/pure-statics.js` rewrites it, ESLint flags it):
  *
  * ```ts
  * class M3eExample extends M3eElement {
- *   static override properties = {
+ *   static override properties = /* @__PURE__ *\/ (() => ({
  *     ...M3eElement.properties,
  *     selected: { type: Boolean, reflect: true },
  *     size: { default: 'm', reflect: true },
- *   };
+ *   }))();
  *   declare selected: boolean;
  *   declare size: string;
  *   protected override update(changed: ReadonlySet<string>) { … }
@@ -62,7 +65,10 @@ const fromAttribute = (value: string | null, type: PropertyType | undefined): un
         : value;
 
 export abstract class M3eElement extends Base {
-  /** Declared reactive properties. Spread the parent's map when extending a subclass. */
+  /**
+   * Declared reactive properties. Spread the parent's map when extending a subclass, inside a
+   * pure IIFE (see the class comment).
+   */
   static properties: PropertyDeclarations = {};
 
   static get observedAttributes(): string[] {

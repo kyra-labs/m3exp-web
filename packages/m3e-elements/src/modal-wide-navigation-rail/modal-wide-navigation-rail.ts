@@ -20,11 +20,11 @@ const MODAL = 'm3e-modal-wide-navigation-rail';
  *   when Escape or the scrim collapse it (cancelable: `preventDefault()` keeps it open).
  */
 export class M3eModalWideNavigationRail extends M3eWideRailBase {
-  static override properties = {
+  static override properties = /* @__PURE__ */ (() => ({
     ...M3eWideRailBase.properties,
     hideOnCollapse: { type: Boolean },
     dialogLabel: {},
-  };
+  }))();
 
   declare hideOnCollapse: boolean | undefined;
   declare dialogLabel: string | null | undefined;

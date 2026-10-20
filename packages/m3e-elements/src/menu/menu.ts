@@ -26,7 +26,7 @@ const isDisabled = (el: Element) => el.getAttribute('aria-disabled') === 'true';
  * `submenu="<id>"` opens another `<m3e-menu>`. The label is the text content.
  */
 export class M3eMenuItem extends M3eElement {
-  static override properties = {
+  static override properties = /* @__PURE__ */ (() => ({
     ...M3eElement.properties,
     value: {},
     type: {},
@@ -38,7 +38,7 @@ export class M3eMenuItem extends M3eElement {
     trailingText: {},
     supportingText: {},
     submenu: {},
-  };
+  }))();
 
   declare value: string | null | undefined;
   declare type: string | null | undefined;
@@ -105,12 +105,12 @@ export interface M3eMenuItem {
  * give it an `aria-label`. `divider` draws a divider under the label.
  */
 export class M3eMenuGroup extends M3eElement {
-  static override properties = {
+  static override properties = /* @__PURE__ */ (() => ({
     ...M3eElement.properties,
     label: {},
     divider: { type: Boolean },
     groupLabel: { attribute: 'aria-label' },
-  };
+  }))();
 
   declare label: string | null | undefined;
   declare divider: boolean | undefined;
@@ -152,14 +152,14 @@ interface ItemRecord {
  *   `open-change` on the menu with `detail: { open }`.
  */
 export class M3eMenu extends M3eElement {
-  static override properties = {
+  static override properties = /* @__PURE__ */ (() => ({
     ...M3eElement.properties,
     open: { type: Boolean, reflect: true },
     anchor: {},
     variant: {},
     position: {},
     label: {},
-  };
+  }))();
 
   declare open: boolean | undefined;
   declare anchor: string | null | undefined;

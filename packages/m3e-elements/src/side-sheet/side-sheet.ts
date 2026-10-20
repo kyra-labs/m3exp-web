@@ -86,7 +86,7 @@ export function adaptiveSideSheetVariant(widthAtLeastMedium: boolean): SideSheet
  *   when the sheet asks: the close button, Escape, the scrim, a close request) and `back`.
  */
 export class M3eSideSheet extends M3eElement {
-  static override properties = {
+  static override properties = /* @__PURE__ */ (() => ({
     ...M3eElement.properties,
     variant: { reflect: true },
     open: { type: Boolean, reflect: true },
@@ -98,7 +98,7 @@ export class M3eSideSheet extends M3eElement {
     backLabel: {},
     detached: { type: Boolean },
     divider: { type: Boolean },
-  };
+  }))();
 
   declare variant: string | null | undefined;
   declare open: boolean | undefined;

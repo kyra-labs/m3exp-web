@@ -59,7 +59,7 @@ const ensureChildren = (parent: Element, children: readonly Node[]): void => {
  *   (`preventDefault()` keeps it open; Compose's onDismissRequest).
  */
 export class M3eDialog extends M3eElement {
-  static override properties = {
+  static override properties = /* @__PURE__ */ (() => ({
     ...M3eElement.properties,
     open: { type: Boolean, reflect: true },
     variant: { reflect: true },
@@ -67,7 +67,7 @@ export class M3eDialog extends M3eElement {
     icon: {},
     label: {},
     closeLabel: {},
-  };
+  }))();
 
   declare open: boolean | undefined;
   declare variant: string | null | undefined;

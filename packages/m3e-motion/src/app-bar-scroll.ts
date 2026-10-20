@@ -125,8 +125,10 @@ export const TOP_TITLE_ALPHA_EASING = [0.8, 0, 0.8, 0.15] as const;
 /** FastOutLinearInEasing (Easing.kt L66): CubicBezierEasing(0.4f, 0.0f, 1.0f, 1.0f). */
 export const FAST_OUT_LINEAR_IN_EASING = [0.4, 0, 1, 1] as const;
 
-const topTitleAlpha = /* @__PURE__ */ cubicBezier(...TOP_TITLE_ALPHA_EASING);
-const fastOutLinearIn = /* @__PURE__ */ cubicBezier(...FAST_OUT_LINEAR_IN_EASING);
+// Pure IIFEs: a spread argument runs the array iterator, which bundlers keep even when the
+// annotated call itself is dropped, so the spread stays inside the call they can remove.
+const topTitleAlpha = /* @__PURE__ */ (() => cubicBezier(...TOP_TITLE_ALPHA_EASING))();
+const fastOutLinearIn = /* @__PURE__ */ (() => cubicBezier(...FAST_OUT_LINEAR_IN_EASING))();
 
 /** What a two-rows bar (medium / large flexible, TwoRowsTopAppBar) draws at a collapsed fraction. */
 export interface TwoRowsFrame {

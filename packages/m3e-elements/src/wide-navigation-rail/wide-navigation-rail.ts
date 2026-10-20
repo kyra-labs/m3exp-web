@@ -11,10 +11,10 @@ const RAIL = 'm3e-wide-navigation-rail';
 
 /** What the wide and the modal rail elements share: the `<nav>`, its header and the layout. */
 export abstract class M3eWideRailBase extends M3eNavigationContainer {
-  static override properties = {
+  static override properties = /* @__PURE__ */ (() => ({
     ...M3eNavigationContainer.properties,
     expanded: { type: Boolean, reflect: true },
-  };
+  }))();
 
   declare expanded: boolean | undefined;
 

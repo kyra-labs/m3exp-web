@@ -54,11 +54,11 @@ interface Rendered {
  *   hosts, or drive a host from code that has no element reference); `recommendedTimeout`.
  */
 export class M3eSnackbarHost extends M3eElement {
-  static override properties = {
+  static override properties = /* @__PURE__ */ (() => ({
     ...M3eElement.properties,
     dismissLabel: {},
     actionOnNewLine: { type: Boolean },
-  };
+  }))();
 
   declare dismissLabel: string | null | undefined;
   declare actionOnNewLine: boolean | undefined;

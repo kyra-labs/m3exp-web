@@ -17,12 +17,12 @@ import {
  * and the `scaffold-value-change` event are those of `<m3e-list-detail-layout>`.
  */
 export class M3eSupportingPaneLayout extends M3ePaneScaffoldElement {
-  static override properties = {
+  static override properties = /* @__PURE__ */ (() => ({
     ...M3ePaneScaffoldElement.properties,
     mainLabel: {},
     supportingLabel: {},
     extraLabel: {},
-  };
+  }))();
 
   declare mainLabel: string | null | undefined;
   declare supportingLabel: string | null | undefined;

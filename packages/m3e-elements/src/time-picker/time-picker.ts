@@ -14,10 +14,10 @@ import { TimePickerLayout, type TimePickerLayoutOptions } from '../time-picker-l
  * {@link TimePickerLayout} (shared with m3e-react).
  */
 export class M3eTimePicker extends M3eTimePickerElement<TimePickerLayout, TimePickerLayoutOptions> {
-  static override properties = {
+  static override properties = /* @__PURE__ */ (() => ({
     ...M3eTimePickerElement.properties,
     layout: {},
-  };
+  }))();
 
   declare layout: string | null | undefined;
 

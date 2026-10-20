@@ -26,12 +26,12 @@ import {
  *   size change.
  */
 export class M3eListDetailLayout extends M3ePaneScaffoldElement {
-  static override properties = {
+  static override properties = /* @__PURE__ */ (() => ({
     ...M3ePaneScaffoldElement.properties,
     listLabel: {},
     detailLabel: {},
     extraLabel: {},
-  };
+  }))();
 
   declare listLabel: string | null | undefined;
   declare detailLabel: string | null | undefined;

@@ -18,10 +18,10 @@ const BLOCK = 'm3e-short-navigation-bar';
  * - Events: `selection-change` (`detail: { value }`, cancelable).
  */
 export class M3eShortNavigationBar extends M3eNavigationContainer {
-  static override properties = {
+  static override properties = /* @__PURE__ */ (() => ({
     ...M3eNavigationContainer.properties,
     layout: {},
-  };
+  }))();
 
   declare layout: string | null | undefined;
 

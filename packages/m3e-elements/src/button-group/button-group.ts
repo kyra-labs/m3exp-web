@@ -61,7 +61,7 @@ export interface ButtonGroupActionDetail {
  * group's `button-variant` for this item.
  */
 export class M3eButtonGroupItem extends M3eElement {
-  static override properties = {
+  static override properties = /* @__PURE__ */ (() => ({
     ...M3eElement.properties,
     value: {},
     selected: { type: Boolean, reflect: true },
@@ -69,7 +69,7 @@ export class M3eButtonGroupItem extends M3eElement {
     icon: {},
     variant: {},
     label: {},
-  };
+  }))();
 
   declare value: string | null | undefined;
   declare selected: boolean | undefined;
@@ -152,7 +152,7 @@ const valueOf = (item: M3eButtonGroupItem, index: number) =>
  *   `detail: { value }`.
  */
 export class M3eButtonGroup extends M3eElement {
-  static override properties = {
+  static override properties = /* @__PURE__ */ (() => ({
     ...M3eElement.properties,
     variant: {},
     size: {},
@@ -165,7 +165,7 @@ export class M3eButtonGroup extends M3eElement {
     overflowLabel: {},
     label: {},
     disabled: { type: Boolean },
-  };
+  }))();
 
   declare variant: string | null | undefined;
   declare size: string | null | undefined;
