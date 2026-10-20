@@ -695,6 +695,33 @@ For a dialog, put a picker in a `.m3e-time-picker-dialog` surface inside
 `<m3e-dialog variant="custom">`. The `time-picker-layout.js` entry (`TimePickerLayout`,
 `TimeInputLayout`, `TimeScrollLayout`) is shared with m3e-react.
 
+## Date pickers
+
+```html
+<m3e-date-picker value="2025-08-17"></m3e-date-picker>
+<m3e-date-range-picker start="2025-08-10" end="2025-08-20"></m3e-date-range-picker>
+<m3e-docked-date-picker value="2025-08-17" label="Date"></m3e-docked-date-picker>
+<script type="module">
+  document.querySelector('m3e-date-picker').addEventListener('change', (e) => {
+    console.log(e.detail.value); // "2025-08-05", or null
+  });
+</script>
+```
+
+Compose's `DatePicker` (calendar, year grid, date input) and `DateRangePicker`, and
+m3.material.io's docked date picker. Each renders a `<div>` inside itself (the host is
+`display: contents`) and imports its layout entry on first render (`ready` resolves once it has
+rendered); the input mode's `date-field` entry loads the first time it shows. Dates are ISO
+(`YYYY-MM-DD`, UTC). Attributes: `value` (range: `start`, `end`), `displayed-month` (`YYYY-MM`),
+`year-range="1900-2100"`, `display-mode="picker|input"`, `hide-mode-toggle`, `no-title`,
+`no-headline`; docked: `value`, `label`, `year-range` and `show()` / `close()`. Properties
+`selectableDates` (`{ isSelectableDate(utcMillis), isSelectableYear(year) }`) and `labels`.
+Events: `change` (`detail: { value }`, range `{ start, end }`), `display-mode-change`,
+`displayed-month-change`. The first day of the week, names, digits and the input's pattern come
+from `Intl` for the nearest `lang`; the input takes free text (`8-14-2025`, `8/4/2025`) and
+formats it on Enter or blur. Show the range picker in `<m3e-dialog variant="full-screen">` and
+the picker in `<m3e-dialog variant="custom">` around a `.m3e-date-picker-dialog` surface.
+
 ## Ripple for plain HTML
 
 m3e-css draws hover, focus and pressed overlays without JS; the press ripple needs a little.

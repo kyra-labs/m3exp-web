@@ -3,6 +3,7 @@ import '../date-range-picker/index.js';
 import '../docked-date-picker/index.js';
 import type { DatePickerBaseOptions } from '../date-picker-layout/base.js';
 import type { M3eDatePickerElement } from '../date-picker-layout/element.js';
+import { lenientDateDigits } from '../date-picker-layout/field.js';
 import './index.js';
 
 afterEach(() => {
@@ -34,6 +35,9 @@ const settle = (root: Element) =>
   vi.waitFor(() => {
     expect(root.querySelector('.m3e-text-field__input')).not.toBeNull();
   });
+const enter = (input: HTMLInputElement) => {
+  input.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
+};
 const type = (input: HTMLInputElement, text: string) => {
   for (const ch of text) {
     input.dispatchEvent(new InputEvent('beforeinput', { data: ch, inputType: 'insertText' }));
@@ -185,6 +189,9 @@ describe('<m3e-date-picker>', () => {
     host.addEventListener('change', (e) => void change((e as CustomEvent).detail));
     type(input, '03152024');
     expect(change).toHaveBeenLastCalledWith({ value: '2024-03-15' });
+    // No mask while typing; Enter puts the date in the pattern's form (owner decision M10 D5).
+    expect(input.value).toBe('03152024');
+    enter(input);
     expect(input.value).toBe('03/15/2024');
   });
 
@@ -244,7 +251,7 @@ describe('<m3e-docked-date-picker>', () => {
 });
 
 describe('<m3e-docked-date-picker> typing', () => {
-  it('a click on the field shows the calendar and keeps the focus for typing', async () => {
+  it('a click on the field leaves the calendar closed: the icon is the only way in', async () => {
     const { host, root } = await mount(
       '<m3e-docked-date-picker lang="en-US"></m3e-docked-date-picker>',
       'm3e-docked-date-picker',
@@ -252,17 +259,68 @@ describe('<m3e-docked-date-picker> typing', () => {
     const input = root.querySelector<HTMLInputElement>('.m3e-text-field__input')!;
     input.focus();
     input.click();
-    expect(root.querySelector<HTMLElement>('.m3e-date-picker--docked')!.hidden).toBe(false);
-    expect(document.activeElement).toBe(input);
+    expect(root.querySelector<HTMLElement>('.m3e-date-picker--docked')!.hidden).toBe(true);
     const change = vi.fn();
     host.addEventListener('change', (e) => void change((e as CustomEvent).detail));
-    type(input, '0814');
+    type(input, '8/14');
     // A re-render (an attribute change) keeps the partial text.
     host.setAttribute('label', 'Birthday');
     await flush();
-    expect(input.value).toBe('08/14/');
-    type(input, '2025');
+    expect(input.value).toBe('8/14');
+    type(input, '/2025');
     expect(change).toHaveBeenLastCalledWith({ value: '2025-08-14' });
+    enter(input);
+    expect(input.value).toBe('08/14/2025');
+  });
+
+  it('Shift + M / Shift + Y go to the month / year drop-downs', async () => {
+    const { root } = await mount(
+      '<m3e-docked-date-picker value="2025-08-17" lang="en-US"></m3e-docked-date-picker>',
+      'm3e-docked-date-picker',
+    );
+    root.querySelector<HTMLButtonElement>('.m3e-text-field__trailing button')!.click();
+    const [month, year] = root.querySelectorAll<HTMLButtonElement>('.m3e-date-picker__menu-button');
+    key(document.activeElement!, 'M', true);
+    expect(document.activeElement).toBe(month);
+    key(document.activeElement!, 'Y', true);
+    expect(document.activeElement).toBe(year);
+  });
+});
+
+describe('free date entry (owner decision M10 D5)', () => {
+  it.each([
+    ['08142025', '08142025'],
+    ['8/14/2025', '08142025'],
+    ['8-14-2025', '08142025'],
+    ['8.4.2025', '08042025'],
+    [' 08 14 2025 ', '08142025'],
+    ['8/14/25', null],
+    ['8/14', null],
+    ['123/4/2025', null],
+    ['0814202', null],
+  ])('%j → %j (MM/dd/yyyy)', (text, digits) => {
+    expect(lenientDateDigits(text, 'MMddyyyy', '/')).toBe(digits);
+  });
+
+  it('reads native digits and the locale order (de: dd.MM.yyyy, ar: Arabic-Indic)', () => {
+    expect(lenientDateDigits('14.8.2025', 'ddMMyyyy', '.')).toBe('14082025');
+    expect(lenientDateDigits('١٤/٨/٢٠٢٥', 'ddMMyyyy', '/')).toBe('14082025');
+    expect(lenientDateDigits('2025. 08. 14.', 'yyyyMMdd', '.')).toBe('20250814');
+  });
+
+  it('commits a date that does not parse with the pattern error', async () => {
+    const { root } = await mount(
+      '<m3e-date-picker display-mode="input" lang="en-US"></m3e-date-picker>',
+      'm3e-date-picker',
+    );
+    await settle(root);
+    const input = root.querySelector<HTMLInputElement>('.m3e-text-field__input')!;
+    type(input, '14/8');
+    expect(root.querySelector('[role="alert"]')).toBeNull();
+    enter(input);
+    expect(root.querySelector('[role="alert"]')?.textContent).toBe(
+      'Date does not match expected pattern: MM/DD/YYYY',
+    );
   });
 });
 

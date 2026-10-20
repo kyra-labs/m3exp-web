@@ -54,11 +54,12 @@ type Menu = 'month' | 'year' | null;
 /**
  * Behavior of a `.m3e-docked-date-picker` (COMPONENT_SPEC §27; m3.material.io's docked date picker,
  * owner decision M10 D1; Compose has none), shared by `<m3e-docked-date-picker>` and m3e-react's
- * `<DockedDatePicker>`: a date field (Compose's validator and transformations) whose calendar
- * drops down below it, from a click on the field or its calendar button. The calendar's navigation
- * row has the month and the year, each between its arrows and with a menu that replaces the
- * calendar; the days of the neighbouring months are dimmed (owner decision M10 D15). Picking a day
- * fills the field and closes the calendar; Escape or a click outside closes it.
+ * `<DockedDatePicker>`: a date field (Compose's validator, free entry per owner decision M10 D5)
+ * whose calendar drops down below it from its calendar button, the only way in (m3.material.io:
+ * typing a date never needs the calendar). The calendar's navigation row has the month and the
+ * year, each between its arrows and with a menu that replaces the calendar; Shift + M / Shift + Y
+ * go to them. The days of the neighbouring months are dimmed (owner decision M10 D15). Picking a
+ * day fills the field and closes the calendar; Escape or a click outside closes it.
  */
 export class DockedDatePickerLayout {
   readonly root: HTMLElement;
@@ -151,10 +152,6 @@ export class DockedDatePickerLayout {
 
     delegateRipple(this.#viewport, `.${ROOT}__day[data-date]`, signal);
     delegateRipple(this.#menu, `.${ROOT}__menu-item`, signal);
-    // A click on the field shows the calendar but leaves the focus there for typing.
-    on(this.#field.input, 'click', () => {
-      this.toggle(true, false, false);
-    });
     on(this.#viewport, 'click', (e) => {
       const day = (e.target as Element).closest<HTMLElement>(`.${ROOT}__day[data-date]`);
       if (day) this.#pick(Number(day.dataset['date']));
@@ -168,6 +165,15 @@ export class DockedDatePickerLayout {
     });
     on(this.#menu, 'keydown', (e) => {
       this.#menuKey(e);
+    });
+    on(this.#popup, 'keydown', (e) => {
+      // Shift + M / Shift + Y: to the month / year drop-down (m3.material.io keyboard table).
+      const to = e.shiftKey && !e.altKey && !e.ctrlKey && !e.metaKey ? e.key.toUpperCase() : '';
+      if (to === 'M' || to === 'Y') {
+        e.preventDefault();
+        const button = to === 'M' ? this.#monthButton : this.#yearButton;
+        if (!button.disabled) button.focus();
+      }
     });
     on(root, 'keydown', (e) => {
       if (e.key === 'Escape' && !this.#popup.hidden) {
@@ -267,17 +273,14 @@ export class DockedDatePickerLayout {
     this.#abort.abort();
   }
 
-  /**
-   * Opens (focusing the resting day unless `focusDay` is false) or closes the calendar
-   * (`refocus`: back to the field).
-   */
-  toggle(open: boolean, refocus = false, focusDay = true): void {
+  /** Opens (focusing the resting day) or closes the calendar (`refocus`: back to the field). */
+  toggle(open: boolean, refocus = false): void {
     if (open === !this.#popup.hidden) return;
     this.#popup.hidden = !open;
     if (!open) this.#open = null;
     this.#render();
-    if (open && focusDay) this.#days.find((d) => d.tabIndex === 0)?.focus({ preventScroll: true });
-    else if (!open && refocus) this.#field.input.focus();
+    if (open) this.#days.find((d) => d.tabIndex === 0)?.focus({ preventScroll: true });
+    else if (refocus) this.#field.input.focus();
   }
 
   #select(millis: number | null): void {

@@ -333,9 +333,18 @@ test.describe('behavior', () => {
     await expect(input).toHaveValue('08/17/2025');
     await expect(input).toHaveAttribute('placeholder', 'MM/DD/YYYY');
     await input.fill('');
+    // Free entry (owner decision M10 D5): no mask while typing, other separators and single
+    // digits accepted, the pattern's form on Enter.
+    await input.pressSequentially('3-5-2024');
+    await expect(input).toHaveValue('3-5-2024');
+    expect((await changes(page)).at(-1)).toEqual({ value: '2024-03-05' });
+    await input.press('Enter');
+    await expect(input).toHaveValue('03/05/2024');
+    await input.fill('');
     await input.pressSequentially('03152024');
-    await expect(input).toHaveValue('03/15/2024');
     expect((await changes(page)).at(-1)).toEqual({ value: '2024-03-15' });
+    await input.blur();
+    await expect(input).toHaveValue('03/15/2024');
     await input.fill('');
     await input.pressSequentially('01011800');
     await expect(picker.locator('[role="alert"]')).toHaveText(
@@ -400,10 +409,10 @@ test.describe('behavior', () => {
     // The dialog's exit motion keeps the page inert until it ends.
     await expect(page.locator('dialog[open]')).toHaveCount(0);
     const docked = page.getByTestId('react-docked-picker');
+    // The calendar icon is the only way into the calendar: a click on the field types.
     await docked.locator('input').click();
-    await expect(docked.locator('.m3e-date-picker--docked')).toBeVisible();
-    await expect(docked.locator('input')).toBeFocused();
-    await docked.locator('input').pressSequentially('08142025');
+    await expect(docked.locator('.m3e-date-picker--docked')).toBeHidden();
+    await docked.locator('input').pressSequentially('8/14/2025');
     await expect(page.getByTestId('react-docked')).toHaveText('2025-08-14');
   });
 });

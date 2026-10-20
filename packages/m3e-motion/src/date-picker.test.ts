@@ -116,7 +116,7 @@ describe('calendar model (CalendarModelImpl.android.kt)', () => {
   });
 
   it('indexIn / numberOfMonthsInRange', () => {
-    for (const [y, m, first, last, index, count] of reference.indexIn as number[][]) {
+    for (const [y, m, first, last, index, count] of reference.indexIn) {
       const range: YearRange = [first!, last!];
       expect(monthIndexIn(calendarMonth(y!, m!, 7), range)).toBe(index);
       expect(numberOfMonthsInRange(range)).toBe(count);
@@ -155,10 +155,9 @@ describe('date input format', () => {
   it('DateInputValidator.validate', () => {
     const ids = ['single', 'start', 'end'] as const;
     for (const c of reference.validate) {
-      const date = c.date === null ? null : (c.date as ReturnType<typeof calendarDate>);
-      expect(validateDateInput(date, ids[c.input]!, validation(c.selectable, c.start, c.end))).toBe(
-        c.error,
-      );
+      expect(
+        validateDateInput(c.date, ids[c.input]!, validation(c.selectable, c.start, c.end)),
+      ).toBe(c.error);
     }
   });
 
@@ -183,7 +182,7 @@ describe('date input format', () => {
   });
 
   it('DateOutputTransformation', () => {
-    for (const [pattern, raw, text] of reference.outputTransformation as string[][]) {
+    for (const [pattern, raw, text] of reference.outputTransformation) {
       const delimiter = /[/.-]/.exec(pattern!)![0];
       expect(dateOutputTransform(raw!, dateInputFormat(pattern!, delimiter))).toBe(text);
     }
@@ -227,7 +226,7 @@ describe('states', () => {
   });
 
   it('DateRangePickerStateImpl.setSelection', () => {
-    for (const [a, b, start, end] of reference.rangeSelection as (number | null)[][]) {
+    for (const [a, b, start, end] of reference.rangeSelection) {
       const state = new DateRangePickerModel(
         null,
         null,
@@ -245,7 +244,7 @@ describe('states', () => {
   it('updateDateSelection', () => {
     let start: number | null = null;
     let end: number | null = null;
-    for (const [tap, s, e] of reference.updateDateSelection as (number | null)[][]) {
+    for (const [tap, s, e] of reference.updateDateSelection) {
       [start, end] = updateDateSelection(tap!, start, end);
       expect([start, end]).toEqual([s, e]);
     }
@@ -306,7 +305,7 @@ describe('month grid', () => {
       utc(2024, 3, 9),
       utc(2024, 3, 14),
       true,
-      selectable.weekdays,
+      selectable['weekdays'],
     );
     expect(days).toHaveLength(31);
     expect(days.filter((d) => d.inRange).map((d) => d.dayNumber + 1)).toEqual([

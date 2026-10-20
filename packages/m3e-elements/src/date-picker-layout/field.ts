@@ -1,9 +1,10 @@
 import {
+  type CalendarDate,
   type DateInputFormat,
   type DateInputIdentifier,
   type DateInputValidation,
-  dateInputTransform,
   dateOutputTransform,
+  digitValue,
   formatWithPattern,
   parseDate,
   validateDateInput,
@@ -28,10 +29,46 @@ export interface DateFieldOptions {
 
 let ids = 0;
 
+/** The separators a typed date may use (m3.material.io Date pickers › Accessibility). */
+const SEPARATORS = /[\s./-]+/u;
+
 /**
- * An outlined m3e-css text field for one date: the field holds digits only and shows the
- * delimiters (DateInputTransformation / DateOutputTransformation over m3e-motion's port), the
- * pattern as its placeholder ("MM/DD/YYYY"), and the validator's error under it once complete.
+ * The text as the pattern's digits ("8-14-2025" → "08142025" for MMddyyyy), or null while it is
+ * not a whole date: either the pattern's digits alone (Compose's entry), or its three fields in
+ * order between separators, a month or day of one digit padded with 0 (owner decision M10 D5).
+ */
+export function lenientDateDigits(text: string, pattern: string, delimiter: string): string | null {
+  let ascii = '';
+  for (let i = 0; i < text.length; i++) {
+    const c = text.charAt(i);
+    const d = digitValue(c);
+    ascii += d < 0 ? (c === delimiter ? '/' : c) : String(d);
+  }
+  // Separators at the ends go too (a locale's "2025. 08. 14.").
+  ascii = ascii.replace(/^[\s./-]+|[\s./-]+$/gu, '');
+  if (/^\d+$/u.test(ascii)) return ascii.length === pattern.length ? ascii : null;
+  const groups = ascii.split(SEPARATORS);
+  const fields = pattern.match(/(.)\1*/gu) ?? [];
+  if (groups.length !== fields.length) return null;
+  let digits = '';
+  for (let i = 0; i < fields.length; i++) {
+    const group = groups[i] ?? '';
+    const size = fields[i]?.length ?? 0;
+    const year = fields[i]?.startsWith('y') ?? false;
+    if (!/^\d+$/u.test(group) || group.length > size || (year && group.length !== size)) {
+      return null;
+    }
+    digits += group.padStart(size, '0');
+  }
+  return digits;
+}
+
+/**
+ * An outlined m3e-css text field for one date (DateInputTextField), with the pattern as its
+ * placeholder ("MM/DD/YYYY") and Compose's validator (m3e-motion's port). The text stays as typed
+ * (owner decision M10 D5, m3.material.io: no input mask): a whole date selects as soon as it
+ * parses, and Enter or leaving the field puts it in the pattern's form; the validator's error
+ * shows under it for a whole date, and the pattern error for other text once committed.
  */
 export class DateField {
   readonly root: HTMLElement;
@@ -39,10 +76,8 @@ export class DateField {
   #label: HTMLLabelElement;
   #notch: HTMLElement;
   #o: DateFieldOptions;
-  #digits = '';
-  #before = { digits: '', caret: 0 };
+  #committed = false;
   #supporting: HTMLElement | null = null;
-
   constructor(doc: Document, options: DateFieldOptions, signal: AbortSignal) {
     this.#o = options;
     const id = `m3e-date-field-${String(++ids)}`;
@@ -65,24 +100,28 @@ export class DateField {
     container.append(label, this.input, outline);
     this.root.append(container);
     this.input.addEventListener(
-      'beforeinput',
+      'input',
       () => {
-        this.#before = { digits: this.#digits, caret: this.input.selectionStart ?? 0 };
+        this.#edit();
+      },
+      { signal },
+    );
+    // Enter or leaving the field formats the date (no mask while typing, owner decision M10 D5).
+    this.input.addEventListener(
+      'change',
+      () => {
+        this.#commit();
       },
       { signal },
     );
     this.input.addEventListener(
-      'input',
+      'keydown',
       (e) => {
-        this.#edit(e);
+        if (e.key === 'Enter') this.#commit();
       },
       { signal },
     );
     this.update(options);
-  }
-
-  get digits(): string {
-    return this.#digits;
   }
 
   update(options: DateFieldOptions): void {
@@ -93,77 +132,77 @@ export class DateField {
     setAttr(this.input, 'placeholder', pattern);
     // The label's description (DateInput.kt L90–95): "Date, MM/DD/YYYY".
     setAttr(this.input, 'aria-label', `${options.label}, ${pattern}`);
-    this.#render(this.input.selectionStart);
+    this.#renderError();
   }
 
-  /** LaunchedEffect(initialDateMillis) (L235–244): a date set from outside replaces the text. */
+  /**
+   * LaunchedEffect(initialDateMillis) (L235–244): a date set from outside replaces the text,
+   * unless the text already is that date.
+   */
   setDate(millis: number | null): void {
-    if (millis === null) return;
-    const digits = formatWithPattern(
-      millis,
-      this.#o.format.patternWithoutDelimiters,
-      this.#o.zeroDigit,
-    );
-    if (digits !== this.#digits) {
-      this.#digits = digits;
-      this.#render(null);
-    }
+    if (millis === null || this.#parse()?.utcTimeMillis === millis) return;
+    this.input.value = this.#format(millis);
+    this.#committed = false;
+    this.#renderError();
   }
 
   clear(): void {
-    this.#digits = '';
-    this.#render(null);
+    this.input.value = '';
+    this.#committed = false;
+    this.#renderError();
   }
 
-  #edit(e: Event): void {
-    const type = e instanceof InputEvent ? e.inputType : '';
-    const { delimiter } = this.#o.format;
-    const raw = this.input.value;
-    const caretRaw = this.input.selectionStart ?? raw.length;
-    let edited = raw.replaceAll(delimiter, '');
-    let caret = raw.slice(0, caretRaw).replaceAll(delimiter, '').length;
-    // Deleting a shown delimiter deletes the digit beside it (the field holds digits only).
-    if (edited === this.#before.digits && type.startsWith('delete')) {
-      const at = type.endsWith('Forward') ? caret : caret - 1;
-      if (at >= 0 && at < edited.length) {
-        edited = edited.slice(0, at) + edited.slice(at + 1);
-        caret = at;
-      }
-    }
-    const r = dateInputTransform(this.#before.digits, edited, this.#o.input, this.#o.validation());
-    if (r.reverted) {
-      this.#digits = this.#before.digits;
-      this.#render(this.#before.caret, true);
-      return;
-    }
-    this.#digits = r.text;
-    this.#render(caret);
-    if (r.selection !== undefined) this.#o.onSelection(r.selection);
+  /** The text as a date, or null while it is not a whole one. */
+  #parse(): CalendarDate | null {
+    const { patternWithoutDelimiters, delimiter } = this.#o.format;
+    const digits = lenientDateDigits(this.input.value, patternWithoutDelimiters, delimiter);
+    return digits === null ? null : parseDate(digits, patternWithoutDelimiters);
   }
 
-  /** The error the field shows (DateInputTextField L136–155): only for a complete text. */
+  /** The date in the locale's pattern and digits ("08/14/2025"). */
+  #format(millis: number): string {
+    const { format, zeroDigit } = this.#o;
+    return dateOutputTransform(
+      formatWithPattern(millis, format.patternWithoutDelimiters, zeroDigit),
+      format,
+    );
+  }
+
+  /** onDateSelectionChange: a whole, valid date, else null (DateInputTransformation L393–420). */
+  #edit(): void {
+    this.#committed = false;
+    const parsed = this.#parse();
+    const valid =
+      parsed !== null && validateDateInput(parsed, this.#o.input, this.#o.validation()) === '';
+    this.#renderError();
+    this.#o.onSelection(valid ? parsed.utcTimeMillis : null);
+  }
+
+  /** Enter or blur: a date takes the pattern's form; anything else shows the pattern error. */
+  #commit(): void {
+    const parsed = this.#parse();
+    if (parsed !== null) {
+      const text = this.#format(parsed.utcTimeMillis);
+      if (this.input.value !== text) this.input.value = text;
+    }
+    this.#committed = this.input.value.trim() !== '';
+    this.#renderError();
+  }
+
+  /**
+   * The error the field shows (DateInputTextField L136–155): the validator's for a whole date (a
+   * date that does not exist, like 02/30, is the pattern error); once committed, the pattern
+   * error for text that is not a date.
+   */
   error(): string {
-    const pattern = this.#o.format.patternWithoutDelimiters;
-    const text = this.#digits.trim();
-    if (text.length !== pattern.length) return '';
-    return validateDateInput(parseDate(text, pattern), this.#o.input, this.#o.validation());
+    const { patternWithoutDelimiters, delimiter } = this.#o.format;
+    const digits = lenientDateDigits(this.input.value, patternWithoutDelimiters, delimiter);
+    if (digits === null && !this.#committed) return '';
+    const parsed = digits === null ? null : parseDate(digits, patternWithoutDelimiters);
+    return validateDateInput(parsed, this.#o.input, this.#o.validation());
   }
 
-  /** Shows the digits with their delimiters, the caret after `caretDigits` digits, the error. */
-  #render(caretDigits: number | null, displayCaret = false): void {
-    const { delimiter } = this.#o.format;
-    const text = dateOutputTransform(this.#digits, this.#o.format);
-    if (this.input.value !== text) this.input.value = text;
-    if (caretDigits !== null && this.input.ownerDocument.activeElement === this.input) {
-      let at = text.length;
-      if (displayCaret) at = Math.min(caretDigits, text.length);
-      else if (caretDigits < this.#digits.length) {
-        let seen = 0;
-        at = 0;
-        while (at < text.length && seen < caretDigits) if (text[at++] !== delimiter) seen++;
-      }
-      this.input.setSelectionRange(at, at);
-    }
+  #renderError(): void {
     const error = this.error();
     setAttr(this.input, 'aria-invalid', error ? 'true' : null);
     if (error) {
