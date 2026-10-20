@@ -1,5 +1,6 @@
 import { M3eElement } from '../base/M3eElement.js';
 import { DialogLayout } from '../dialog-layout/dialog-layout.js';
+import type { OpenChangeDetail } from '../base/events.js';
 
 export type DialogVariant = 'alert' | 'custom' | 'full-screen';
 
@@ -231,4 +232,34 @@ export class M3eDialog extends M3eElement {
     button.append(icon);
     return button;
   }
+}
+
+/** Events of `<m3e-dialog>`: typed `addEventListener` / `removeEventListener` (M1). */
+export interface M3eDialogEventMap extends HTMLElementEventMap {
+  /** Opened or closed. Cancelable when the user closes it (scrim, Escape, close button). */
+  'open-change': CustomEvent<OpenChangeDetail>;
+}
+
+// Typed listeners merged into the class: type-only, no runtime code.
+export interface M3eDialog {
+  addEventListener<K extends keyof M3eDialogEventMap>(
+    type: K,
+    listener: (this: M3eDialog, ev: M3eDialogEventMap[K]) => unknown,
+    options?: boolean | AddEventListenerOptions,
+  ): void;
+  addEventListener(
+    type: string,
+    listener: EventListenerOrEventListenerObject,
+    options?: boolean | AddEventListenerOptions,
+  ): void;
+  removeEventListener<K extends keyof M3eDialogEventMap>(
+    type: K,
+    listener: (this: M3eDialog, ev: M3eDialogEventMap[K]) => unknown,
+    options?: boolean | EventListenerOptions,
+  ): void;
+  removeEventListener(
+    type: string,
+    listener: EventListenerOrEventListenerObject,
+    options?: boolean | EventListenerOptions,
+  ): void;
 }

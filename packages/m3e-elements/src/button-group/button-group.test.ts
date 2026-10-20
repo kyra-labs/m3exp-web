@@ -366,3 +366,42 @@ describe('press width springs (ButtonGroupLayout)', () => {
     expect(b!.style.getPropertyValue('inline-size')).toBe('');
   });
 });
+
+describe('<m3e-button-group>: M11 API', () => {
+  const SINGLE_GROUP = `
+    <m3e-button-group selection-mode="single" label="View">
+      <m3e-button-group-item value="day" selected>Day</m3e-button-group-item>
+      <m3e-button-group-item value="week">Week</m3e-button-group-item>
+    </m3e-button-group>`;
+
+  it('dispatches selection-change with the change detail; the deprecated change still fires', async () => {
+    const { host, buttons } = await setup(SINGLE_GROUP);
+    const events: [string, unknown][] = [];
+    host.addEventListener('selection-change', (e) => events.push([e.type, e.detail]));
+    host.addEventListener('change', (e) => events.push([e.type, e.detail]));
+    buttons()[1]!.click();
+    await settle();
+    const detail = { value: 'week', selected: true, values: ['week'] };
+    expect(events).toEqual([
+      ['selection-change', detail],
+      ['change', detail],
+    ]);
+  });
+
+  it('disallow-empty-selection keeps one item selected; it wins over selection-required', async () => {
+    const { host, buttons } = await setup(
+      SINGLE_GROUP.replace('label="View"', 'label="View" disallow-empty-selection'),
+    );
+    buttons()[0]!.click();
+    await settle();
+    expect(host.values).toEqual(['day']);
+    // The new name wins when both are set.
+    host.disallowEmptySelection = false;
+    // eslint-disable-next-line @typescript-eslint/no-deprecated -- the 1.x alias (D16)
+    host.selectionRequired = true;
+    await settle();
+    buttons()[0]!.click();
+    await settle();
+    expect(host.values).toEqual([]);
+  });
+});

@@ -9,7 +9,10 @@
  * The `ripple.js` entry (`attachAutoRipple`) reuses the press helpers below for plain HTML.
  */
 
-/** Ripple geometry for a press at (`x`, `y`) inside a `width` × `height` box (keyboard: null). */
+/**
+ * Ripple geometry for a press at (`x`, `y`) inside a `width` × `height` box (keyboard: null).
+ * @internal Shared with m3e-react; not part of the public API.
+ */
 export function rippleStyle(
   width: number,
   height: number,

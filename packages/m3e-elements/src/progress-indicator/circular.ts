@@ -20,6 +20,7 @@ export interface CircularProgressContract extends ProgressIndicatorOptions {
   label?: string | null | undefined;
 }
 
+/** @internal Shared with m3e-react; not part of the public API. */
 export const circularProgressClass = (c: Pick<CircularProgressContract, 'shape' | 'thickness'>) =>
   [B, c.shape === 'wavy' && `${B}--wavy`, c.thickness === 'thick' && `${B}--thick`]
     .filter(Boolean)
@@ -29,6 +30,7 @@ export const circularProgressClass = (c: Pick<CircularProgressContract, 'shape' 
  * Writes the `.m3e-circular-progress` contract into `root` (the same DOM m3e-react renders): an
  * SVG with the track and the indicator, `<circle>`s m3e-css lays out (flat) or `<path>`s the
  * driver draws (wavy).
+ * @internal Shared with m3e-react; not part of the public API.
  */
 export function renderCircularProgress(root: HTMLElement, c: CircularProgressContract): void {
   renderProgressRoot(root, circularProgressClass(c), c.value, c.label);

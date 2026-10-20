@@ -24,7 +24,7 @@ export default function FabMenuPlayground() {
             aria-label="Share"
             icon="share"
             size="medium"
-            open={open}
+            isOpen={open}
             onOpenChange={setOpen}
             items={items}
             data-testid="react-menu"

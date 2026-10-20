@@ -75,7 +75,7 @@ export default function DockedToolbarPlayground({ kind }: { kind: 'docked' | 'le
         <Scroller scrollerRef={scroller} testId="legacy-scroller" label="BottomAppBar demo" />
         <BottomAppBar
           aria-label="React legacy actions"
-          scrollBehavior="exitAlways"
+          scrollBehavior="exit-always"
           scrollTarget={scroller}
           className="docs-docked-toolbar-docked"
           data-testid="legacy-react"
@@ -118,7 +118,7 @@ export default function DockedToolbarPlayground({ kind }: { kind: 'docked' | 'le
         <DockedToolbar
           aria-label="React actions"
           arrangement={arrangement}
-          scrollBehavior="exitAlways"
+          scrollBehavior="exit-always"
           scrollTarget={scroller}
           className="docs-docked-toolbar-docked"
           data-testid="react-toolbar"

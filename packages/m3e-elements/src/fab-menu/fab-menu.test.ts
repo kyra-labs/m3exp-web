@@ -280,3 +280,16 @@ describe('M3eFabMenu types', () => {
     expect(el.open).toBeUndefined();
   });
 });
+
+describe('<m3e-fab-menu>: M11 API', () => {
+  it('action is typed and bubbles from the item (M1)', async () => {
+    const { host, toggle, items } = await mount();
+    toggle.click();
+    await flush();
+    const actions: unknown[] = [];
+    host.addEventListener('action', (e) => actions.push(e.detail));
+    items[0]!.click();
+    expect(actions).toHaveLength(1);
+    expect(actions[0]).toHaveProperty('value');
+  });
+});

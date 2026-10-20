@@ -14,17 +14,19 @@ import {
 } from 'react';
 import { useObjectRef } from 'react-aria';
 import { cx } from '../utils/cx.js';
+import { warnDeprecatedProp } from '../utils/deprecated.js';
 
 export type { FloatingToolbarExitDirection };
 export type FloatingToolbarOrientation = ToolbarOrientation;
 /** Compose `standardFloatingToolbarColors()` / `vibrantFloatingToolbarColors()`. */
 export type FloatingToolbarColorStyle = 'standard' | 'vibrant';
 /**
- * `exitAlways` (FloatingToolbarDefaults.exitAlwaysScrollBehavior): hides on scroll down, returns
+ * `exit-always` (FloatingToolbarDefaults.exitAlwaysScrollBehavior): hides on scroll down, returns
  * on scroll up. `collapse` (floatingToolbarVerticalNestedScroll): collapses on scroll down and
- * expands on scroll up, through `onExpandedChange`.
+ * expands on scroll up, through `onExpandedChange`. `'exitAlways'` is the deprecated spelling of
+ * `'exit-always'` (since 1.8, removed in 2.0; it warns once in development).
  */
-export type FloatingToolbarScrollBehavior = 'exitAlways' | 'collapse';
+export type FloatingToolbarScrollBehavior = 'exit-always' | 'exitAlways' | 'collapse';
 
 export interface FloatingToolbarClassOptions {
   orientation?: FloatingToolbarOrientation | undefined;
@@ -77,14 +79,19 @@ export interface FloatingToolbarProps extends Omit<
   /** Default `standard`. */
   colorStyle?: FloatingToolbarColorStyle;
   /** Controlled expanded state. */
+  isExpanded?: boolean;
+  /**
+   * Controlled expanded state.
+   * @deprecated Since 1.8: use `isExpanded`. Removed in 2.0.
+   */
   expanded?: boolean;
   /** Uncontrolled initial state. Default `true`. */
   defaultExpanded?: boolean;
   /** Called when the `collapse` scroll behavior expands or collapses the toolbar. */
   onExpandedChange?: (expanded: boolean) => void;
-  /** Default: none (static). */
+  /** Default: none (static). `'exitAlways'` is deprecated: use `'exit-always'`. */
   scrollBehavior?: FloatingToolbarScrollBehavior;
-  /** `exitAlways` only. Default `bottom` (horizontal) / `end` (vertical). */
+  /** `exit-always` only. Default `bottom` (horizontal) / `end` (vertical). */
   exitDirection?: FloatingToolbarExitDirection;
   /** The scrolling element the toolbar floats over. Default: the document. */
   scrollTarget?: RefObject<HTMLElement | null>;
@@ -112,7 +119,9 @@ export const FloatingToolbar = /* @__PURE__ */ forwardRef(function FloatingToolb
     fabPosition = 'end',
     orientation = 'horizontal',
     colorStyle = 'standard',
-    expanded: expandedProp,
+    isExpanded,
+    // eslint-disable-next-line @typescript-eslint/no-deprecated -- the 1.x alias (D16)
+    expanded: legacyExpanded,
     defaultExpanded = true,
     onExpandedChange,
     scrollBehavior,
@@ -121,6 +130,16 @@ export const FloatingToolbar = /* @__PURE__ */ forwardRef(function FloatingToolb
     className,
     ...rest
   } = props;
+  if (legacyExpanded !== undefined) {
+    warnDeprecatedProp('FloatingToolbar expanded', 'FloatingToolbar isExpanded');
+  }
+  if (scrollBehavior === 'exitAlways') {
+    warnDeprecatedProp(
+      'FloatingToolbar scrollBehavior="exitAlways"',
+      'FloatingToolbar scrollBehavior="exit-always"',
+    );
+  }
+  const expandedProp = isExpanded ?? legacyExpanded;
   const ref = useObjectRef(forwardedRef);
   const [uncontrolled, setUncontrolled] = useState(defaultExpanded);
   const expanded = expandedProp ?? uncontrolled;
@@ -144,7 +163,7 @@ export const FloatingToolbar = /* @__PURE__ */ forwardRef(function FloatingToolb
   useLayoutEffect(() => {
     layoutRef.current?.setScroll({
       behavior:
-        scrollBehavior === 'exitAlways'
+        scrollBehavior === 'exit-always' || scrollBehavior === 'exitAlways'
           ? 'exit-always'
           : scrollBehavior === 'collapse'
             ? 'collapse'

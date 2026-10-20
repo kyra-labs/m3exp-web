@@ -1,6 +1,6 @@
 import { M3eSplitButton } from './split-button.js';
 
-export { M3eSplitButton } from './split-button.js';
+export { M3eSplitButton, type M3eSplitButtonEventMap } from './split-button.js';
 
 M3eSplitButton.define('m3e-split-button');
 

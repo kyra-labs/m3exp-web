@@ -14,3 +14,8 @@ export {
   type TimeValue,
   VibrantTimePickerDialog,
 } from './TimePicker.js';
+// M12: the same symbols as m3e-elements' (no TS2308 in the umbrella).
+export type {
+  TimePickerLayoutType,
+  TimePickerStrings,
+} from '@kyralabs/m3e-elements/time-picker-layout.js';

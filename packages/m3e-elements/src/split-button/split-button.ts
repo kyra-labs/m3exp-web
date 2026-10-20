@@ -2,6 +2,7 @@ import type { SpringSpec } from '@kyralabs/m3e-motion';
 import { M3eElement } from '../base/M3eElement.js';
 import { attachRipple } from '../base/ripple.js';
 import { Spring, readSpring } from '../menu-popup/menu-popup.js';
+import type { EmptyDetail } from '../base/events.js';
 
 const VARIANTS = new Set(['filled', 'tonal', 'elevated', 'outlined']);
 const SIZES = new Set(['xs', 's', 'm', 'l', 'xl']);
@@ -268,6 +269,36 @@ export class M3eSplitButton extends M3eElement {
       if (d.el.getAttribute('style') === '') d.el.removeAttribute('style');
     }
   }
+}
+
+/** Events of `<m3e-split-button>` (M1): typed `addEventListener` / `removeEventListener`. */
+export interface M3eSplitButtonEventMap extends HTMLElementEventMap {
+  /** The leading button was pressed. */
+  press: CustomEvent<EmptyDetail>;
+}
+
+// Typed listeners merged into the class: type-only, no runtime code.
+export interface M3eSplitButton {
+  addEventListener<K extends keyof M3eSplitButtonEventMap>(
+    type: K,
+    listener: (this: M3eSplitButton, ev: M3eSplitButtonEventMap[K]) => unknown,
+    options?: boolean | AddEventListenerOptions,
+  ): void;
+  addEventListener(
+    type: string,
+    listener: EventListenerOrEventListenerObject,
+    options?: boolean | AddEventListenerOptions,
+  ): void;
+  removeEventListener<K extends keyof M3eSplitButtonEventMap>(
+    type: K,
+    listener: (this: M3eSplitButton, ev: M3eSplitButtonEventMap[K]) => unknown,
+    options?: boolean | EventListenerOptions,
+  ): void;
+  removeEventListener(
+    type: string,
+    listener: EventListenerOrEventListenerObject,
+    options?: boolean | EventListenerOptions,
+  ): void;
 }
 
 /** The `.m3e-icon` contract (decorative), as `<m3e-icon>` and m3e-react's `<Icon>` render it. */

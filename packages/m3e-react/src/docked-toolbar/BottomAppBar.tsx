@@ -10,6 +10,7 @@ import { cx } from '../utils/cx.js';
 import { warnDeprecated } from '../utils/deprecated.js';
 import { type DockedToolbarScrollBehavior, useDockedToolbarLayout } from './DockedToolbar.js';
 
+/** @deprecated D4: use {@link DockedToolbarProps} (`<DockedToolbar>`). Removed in 2.0. */
 export interface BottomAppBarProps extends Omit<
   HTMLAttributes<HTMLDivElement>,
   'role' | 'children'
@@ -44,6 +45,7 @@ export const BottomAppBar = /* @__PURE__ */ forwardRef(function BottomAppBar(
     scrollTarget,
     className,
     ...rest
+    // eslint-disable-next-line @typescript-eslint/no-deprecated -- D4: the legacy component's own props
   }: BottomAppBarProps,
   forwardedRef: ForwardedRef<HTMLDivElement>,
 ) {

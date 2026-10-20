@@ -23,7 +23,7 @@ const text = (label: string, testid: string, slot = '') =>
   <section aria-labelledby="modal-heading">
     <h2 id="modal-heading">Date picker (element)</h2>
     <p>
-      <code>&lt;m3e-date-picker value displayed-month year-range="1900-2100" display-mode="picker | input" hide-mode-toggle no-title no-headline&gt;</code> fires <code>change</code> (<code>detail: {'{'} value {'}'}</code>), <code>display-mode-change</code> and <code>displayed-month-change</code>. The
+      <code>&lt;m3e-date-picker value displayed-month year-range="1900-2100" display-mode="picker | input" hide-mode-toggle no-title no-headline&gt;</code> fires <code>change</code> (<code>detail: {'{'} value {'}'}</code>; the date field's native <code>input</code> / <code>change</code> do not reach the host), <code>display-mode-change</code> and <code>displayed-month-change</code>. The
       <code>selectableDates</code> property takes Compose's <code>isSelectableDate(utcMillis)</code> / <code>isSelectableYear(year)</code>; <code>labels</code> overrides the strings.
     </p>
     <div class="docs-time-picker-row">
@@ -106,7 +106,7 @@ const text = (label: string, testid: string, slot = '') =>
   <section aria-labelledby="react-heading">
     <h2 id="react-heading">React</h2>
     <p>
-      <code>&lt;DatePicker selectedDateMillis defaultSelectedDateMillis onSelectedDateChange displayedMonthMillis displayMode onDisplayModeChange yearRange selectableDates showModeToggle title headline locale labels&gt;</code>, <code>&lt;DateRangePicker selectedStartDateMillis selectedEndDateMillis onSelectedRangeChange …&gt;</code>
+      <code>&lt;DatePicker selectedDateMillis defaultSelectedDateMillis onSelectedDateChange displayedMonthMillis displayMode onDisplayModeChange yearRange selectableDates showModeToggle title showHeadline locale labels&gt;</code> (the boolean <code>headline</code> is the deprecated name of <code>showHeadline</code>, since 1.8, removed in 2.0; it warns once in development), <code>&lt;DateRangePicker selectedStartDateMillis selectedEndDateMillis onSelectedRangeChange …&gt;</code>
       and <code>&lt;DockedDatePicker selectedDateMillis onSelectedDateChange label …&gt;</code> render the same DOM as the elements. <code>&lt;DatePickerDialog dismissButton confirmButton&gt;</code> wraps a picker in <code>&lt;BasicAlertDialog&gt;</code>; put the range picker in <code>&lt;FullScreenDialog action&gt;</code>.
     </p>
     <DatePickerPlayground client:only="react" />

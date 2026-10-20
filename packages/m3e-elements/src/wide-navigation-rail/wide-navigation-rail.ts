@@ -2,8 +2,10 @@ import { createItemElement, fillItemElement } from '../navigation-item/item-elem
 import {
   M3eNavigationContainer,
   type M3eNavigationItem,
+  type M3eNavigationContainerEventMap,
 } from '../navigation-item/navigation-item.js';
 import { WideNavigationRailLayout } from '../wide-navigation-rail-layout/wide-navigation-rail-layout.js';
+import type { ExpandedChangeDetail } from '../base/events.js';
 
 const RAIL = 'm3e-wide-navigation-rail';
 
@@ -102,6 +104,36 @@ export abstract class M3eWideRailBase extends M3eNavigationContainer {
   }
 }
 
+/** Events of the wide navigation rails (M1): typed `addEventListener` / `removeEventListener`. */
+export interface M3eWideRailBaseEventMap extends M3eNavigationContainerEventMap {
+  /** Expanded or collapsed; cancelable when the rail asks. */
+  'expanded-change': CustomEvent<ExpandedChangeDetail>;
+}
+
+// Typed listeners merged into the class: type-only, no runtime code.
+export interface M3eWideRailBase {
+  addEventListener<K extends keyof M3eWideRailBaseEventMap>(
+    type: K,
+    listener: (this: M3eWideRailBase, ev: M3eWideRailBaseEventMap[K]) => unknown,
+    options?: boolean | AddEventListenerOptions,
+  ): void;
+  addEventListener(
+    type: string,
+    listener: EventListenerOrEventListenerObject,
+    options?: boolean | AddEventListenerOptions,
+  ): void;
+  removeEventListener<K extends keyof M3eWideRailBaseEventMap>(
+    type: K,
+    listener: (this: M3eWideRailBase, ev: M3eWideRailBaseEventMap[K]) => unknown,
+    options?: boolean | EventListenerOptions,
+  ): void;
+  removeEventListener(
+    type: string,
+    listener: EventListenerOrEventListenerObject,
+    options?: boolean | EventListenerOptions,
+  ): void;
+}
+
 /**
  * `<m3e-wide-navigation-rail label="Main" selected="home">` (COMPONENT_SPEC §14; Compose
  * WideNavigationRail). Renders the m3e-css `.m3e-wide-navigation-rail` contract inside itself (the
@@ -119,4 +151,31 @@ export class M3eWideNavigationRail extends M3eWideRailBase {
     if (nav.parentNode !== this) this.append(nav);
     this.syncLayout(nav);
   }
+}
+
+/** Events of `<m3e-wide-navigation-rail>` (M1). */
+export type M3eWideNavigationRailEventMap = M3eWideRailBaseEventMap;
+
+// Typed listeners merged into the class: type-only, no runtime code.
+export interface M3eWideNavigationRail {
+  addEventListener<K extends keyof M3eWideNavigationRailEventMap>(
+    type: K,
+    listener: (this: M3eWideNavigationRail, ev: M3eWideNavigationRailEventMap[K]) => unknown,
+    options?: boolean | AddEventListenerOptions,
+  ): void;
+  addEventListener(
+    type: string,
+    listener: EventListenerOrEventListenerObject,
+    options?: boolean | AddEventListenerOptions,
+  ): void;
+  removeEventListener<K extends keyof M3eWideNavigationRailEventMap>(
+    type: K,
+    listener: (this: M3eWideNavigationRail, ev: M3eWideNavigationRailEventMap[K]) => unknown,
+    options?: boolean | EventListenerOptions,
+  ): void;
+  removeEventListener(
+    type: string,
+    listener: EventListenerOrEventListenerObject,
+    options?: boolean | EventListenerOptions,
+  ): void;
 }

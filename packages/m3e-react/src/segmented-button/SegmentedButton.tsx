@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-deprecated -- D4: the legacy segmented button's own file uses its deprecated types */
 import {
   type ForwardedRef,
   type ReactNode,
@@ -50,6 +51,7 @@ interface RowProps {
   onBlur?: (e: React.FocusEvent) => void;
 }
 
+/** @deprecated D4: use `ButtonGroupProps` (`<ButtonGroup selectionMode="single">`). Removed in 2.0. */
 export interface SingleChoiceSegmentedButtonRowProps extends RowProps {
   /** Controlled selected value (`null`: none). */
   value?: string | null;
@@ -59,6 +61,7 @@ export interface SingleChoiceSegmentedButtonRowProps extends RowProps {
   isRequired?: boolean;
 }
 
+/** @deprecated D4: use `ButtonGroupProps` (`<ButtonGroup selectionMode="multiple">`). Removed in 2.0. */
 export interface MultiChoiceSegmentedButtonRowProps extends RowProps {
   /** Controlled checked values. */
   value?: string[];
@@ -134,6 +137,7 @@ export const MultiChoiceSegmentedButtonRow = /* @__PURE__ */ forwardRef(
   },
 );
 
+/** @deprecated D4: use `ButtonGroupItem` (a `<ButtonGroup>` item). Removed in 2.0. */
 export interface SegmentedButtonProps {
   /** The label. */
   children?: ReactNode;

@@ -8,13 +8,20 @@ import {
   sliderThumbBounds,
 } from '@kyralabs/m3e-motion';
 
-/** compose/ui `range_start` (Strings.SliderRangeStart): the start thumb's label. */
+/**
+ * compose/ui `range_start` (Strings.SliderRangeStart): the start thumb's label.
+ * @internal Shared with m3e-react; not part of the public API.
+ */
 export const SLIDER_RANGE_START_LABEL = 'Range start';
-/** compose/ui `range_end` (Strings.SliderRangeEnd): the end thumb's label. */
+/**
+ * compose/ui `range_end` (Strings.SliderRangeEnd): the end thumb's label.
+ * @internal Shared with m3e-react; not part of the public API.
+ */
 export const SLIDER_RANGE_END_LABEL = 'Range end';
 
 export type SliderSize = 'xs' | 's' | 'm' | 'l' | 'xl';
 
+/** @internal Shared with m3e-react; not part of the public API. */
 export const SLIDER_SIZES: readonly SliderSize[] = ['xs', 's', 'm', 'l', 'xl'];
 
 /** What decides the root's classes. */
@@ -25,7 +32,10 @@ export interface SliderShape {
   readonly vertical?: boolean | undefined;
 }
 
-/** `.m3e-slider` and its modifiers (XS, the default, adds none). */
+/**
+ * `.m3e-slider` and its modifiers (XS, the default, adds none).
+ * @internal Shared with m3e-react; not part of the public API.
+ */
 export function sliderClassName({ size, range, centered, vertical }: SliderShape): string {
   const classes = ['m3e-slider'];
   if (size && size !== 'xs' && SLIDER_SIZES.includes(size))
@@ -43,13 +53,17 @@ export interface SliderScale {
   readonly step?: number | undefined;
 }
 
-/** Compose `steps` (stops between the ends) for a scale. */
+/**
+ * Compose `steps` (stops between the ends) for a scale.
+ * @internal Shared with m3e-react; not part of the public API.
+ */
 export const sliderScaleSteps = ({ min, max, step }: SliderScale): number =>
   sliderSteps(min, max, step);
 
 /**
  * The root's custom properties (slider.css): `--m3e-comp-slider-value` (the thumb, or a range's
  * end, 0–1), `--m3e-comp-slider-start-value` (a range's start) and `--m3e-comp-slider-steps`.
+ * @internal Shared with m3e-react; not part of the public API.
  */
 export function sliderStyle(values: readonly number[], scale: SliderScale): Record<string, string> {
   const { min, max } = scale;
@@ -64,23 +78,33 @@ export function sliderStyle(values: readonly number[], scale: SliderScale): Reco
   return style;
 }
 
-/** One tick per stop (steps + 2), or none: each carries its index for slider.css. */
+/**
+ * One tick per stop (steps + 2), or none: each carries its index for slider.css.
+ * @internal Shared with m3e-react; not part of the public API.
+ */
 export const sliderTickCount = (scale: SliderScale): number => {
   const steps = sliderScaleSteps(scale);
   return steps > 0 ? steps + 2 : 0;
 };
 
-/** The tick's custom property. */
+/**
+ * The tick's custom property.
+ * @internal Shared with m3e-react; not part of the public API.
+ */
 export const SLIDER_TICK_INDEX = '--m3e-comp-slider-tick-index';
 
 /**
  * The native input's `step`: one key step (range / (steps + 1), or 1 % of the range without
  * steps), so assistive technology increments it as the keyboard does.
+ * @internal Shared with m3e-react; not part of the public API.
  */
 export const sliderInputStep = (scale: SliderScale): number =>
   sliderKeyDelta(sliderScaleSteps(scale), scale.min, scale.max);
 
-/** The native input's `min` / `max`: the thumb's bounds (a range thumb stops at the other). */
+/**
+ * The native input's `min` / `max`: the thumb's bounds (a range thumb stops at the other).
+ * @internal Shared with m3e-react; not part of the public API.
+ */
 export const sliderInputBounds = (
   values: readonly number[],
   index: number,
@@ -92,6 +116,7 @@ const formatters = new Map<string, Intl.NumberFormat>();
 /**
  * The value text (`aria-valuetext` and the value indicator): at most two fraction digits, as
  * Compose's stateDescription (`formatForSemantics` rounds to hundredths), in `locale`.
+ * @internal Shared with m3e-react; not part of the public API.
  */
 export function formatSliderValue(
   value: number,
@@ -107,7 +132,10 @@ export function formatSliderValue(
   return formatter.format(value);
 }
 
-/** Where a pointer lies along the track, 0–1 from the minimum (vertical: from the bottom). */
+/**
+ * Where a pointer lies along the track, 0–1 from the minimum (vertical: from the bottom).
+ * @internal Shared with m3e-react; not part of the public API.
+ */
 export function sliderPointerFraction(
   track: DOMRect,
   clientX: number,

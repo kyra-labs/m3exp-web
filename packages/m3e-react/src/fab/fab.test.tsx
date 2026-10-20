@@ -97,9 +97,9 @@ describe('<ExtendedFab>', () => {
     expect(button.hasAttribute('data-spring')).toBe(true);
   });
 
-  it('expanded={false} collapses (class) and keeps the label in the DOM', async () => {
+  it('isExpanded={false} collapses (class) and keeps the label in the DOM', async () => {
     const root = await renderReact(
-      <ExtendedFab icon={<Icon name="add" />} label="Create" size="medium" expanded={false} />,
+      <ExtendedFab icon={<Icon name="add" />} label="Create" size="medium" isExpanded={false} />,
     );
     const button = root.querySelector('button')!;
     expect(button.classList.contains('m3e-extended-fab--collapsed')).toBe(true);
@@ -111,14 +111,14 @@ describe('<ExtendedFab>', () => {
 
   it('does not collapse without an icon', async () => {
     const button = (
-      await renderReact(<ExtendedFab label="Save draft" expanded={false} />)
+      await renderReact(<ExtendedFab label="Save draft" isExpanded={false} />)
     ).querySelector('button')!;
     expect(button.classList.contains('m3e-extended-fab--collapsed')).toBe(false);
   });
 
   it('toggling expanded springs the width and settles back to the CSS layout', async () => {
     function Toggle({ expanded }: { expanded: boolean }) {
-      return <ExtendedFab icon={<Icon name="add" />} label="Create" expanded={expanded} />;
+      return <ExtendedFab icon={<Icon name="add" />} label="Create" isExpanded={expanded} />;
     }
     const container = document.createElement('div');
     document.body.append(container);
@@ -186,5 +186,41 @@ describe('useExtendedFabScroll', () => {
       await scrollTo(0);
       expect(seen.at(-1)).toBe(true);
     }
+  });
+});
+
+describe('M11 API (D16 aliases)', () => {
+  it('<ExtendedFab expanded> still works, warns once in development; isExpanded wins', async () => {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => undefined);
+    const root = await renderReact(
+      <>
+        {/* eslint-disable-next-line @typescript-eslint/no-deprecated -- the 1.x alias */}
+        <ExtendedFab icon={<Icon name="add" />} label="A" expanded={false} />
+        {/* eslint-disable-next-line @typescript-eslint/no-deprecated -- the 1.x alias */}
+        <ExtendedFab icon={<Icon name="add" />} label="B" expanded={false} isExpanded />
+      </>,
+    );
+    const [a, b] = root.querySelectorAll('button');
+    expect(a!.classList.contains('m3e-extended-fab--collapsed')).toBe(true);
+    expect(b!.classList.contains('m3e-extended-fab--collapsed')).toBe(false);
+    const messages = warn.mock.calls.map((c) => String(c[0]));
+    expect(messages).toEqual([
+      '[m3exp-web] <ExtendedFab expanded> is deprecated since 1.8 and will be removed in 2.0. Use <ExtendedFab isExpanded>.',
+    ]);
+  });
+
+  it('fabClassName({ size: "small" }) warns once in development (D4), as <Fab size="small">', async () => {
+    // A fresh module graph: the <Fab size="small"> test above already warned once.
+    vi.resetModules();
+    const { fabClassName } = await import('./Fab.js');
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => undefined);
+    expect(fabClassName({ size: 'baseline' })).toBe(
+      'm3e-fab m3e-fab--size-baseline m3e-fab--primary-container',
+    );
+    expect(warn).not.toHaveBeenCalled();
+    expect(fabClassName({ size: 'small' })).toContain('m3e-fab--size-small');
+    fabClassName({ size: 'small' });
+    expect(warn).toHaveBeenCalledTimes(1);
+    expect(String(warn.mock.calls[0]![0])).toContain('<Fab size="small"> is deprecated');
   });
 });

@@ -84,6 +84,8 @@ test('collapsed by both JS layers, settled, matches the static CSS states', asyn
     (await box(page.getByTestId('static-fab-collapsed'))).width,
     0,
   );
+  // The React FAB's click may have scrolled the element toolbar out of the viewport.
+  await element.scrollIntoViewIfNeeded();
   await expect(page).toHaveScreenshot('floating-toolbar-element-collapsed.png', {
     clip: await box(element),
   });

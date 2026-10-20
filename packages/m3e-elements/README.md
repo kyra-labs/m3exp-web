@@ -25,6 +25,14 @@ Each `@kyralabs/m3e-elements/<element>.js` entry registers one element; `.` regi
 them, and `./base.js` exports the `M3eElement` base class without registering anything.
 Registration is skipped outside the browser.
 
+Events are kebab-case `CustomEvent`s with a `detail`; a native event of an inner control with the
+same name (`input`, `change`, `select`) does not reach the host. Each element with events exports an
+`M3e<Name>EventMap`, and its `addEventListener` / `removeEventListener` are typed from it
+(type-only), so `document.querySelector('m3e-dialog')?.addEventListener('open-change', (e) =>
+e.detail.open)` needs no cast. Shared detail types: `OpenChangeDetail`, `ExpandedChangeDetail`,
+`ValueDetail<T>`, `SelectionChangeDetail`. Helper functions and constants tagged `@internal` are
+exported for m3e-react and are not part of the public API.
+
 ## FAB menu
 
 `import '@kyralabs/m3e-elements/fab-menu.js'` registers `<m3e-fab-menu>` (and its data child
@@ -83,10 +91,12 @@ children. Standard groups (default) grow a pressed button by Compose's `Expanded
 neighbors shrink, on an interruptible fast spatial spring; connected groups only morph the pressed
 or selected button's corners. Attributes: `variant` (`standard` | `connected`), `size` (`xs`–`xl`),
 `shape` (`round` | `square`), `button-variant`, `selection-mode` (`none` | `single` | `multiple`),
-`selection-required`, `overflow` (trailing items collapse into a "More options" menu; loads
+`disallow-empty-selection` (keeps one selected; `selection-required` is its deprecated name),
+`overflow` (trailing items collapse into a "More options" menu; loads
 `<m3e-menu>` on first use), `overflow-label`, `label`, `disabled`. Items: `value`, `icon`,
-`selected`, `disabled`, `variant`, `label` (icon-only). Events: `change` on the group
-(`detail: { value, selected, values }`) and `action` on the item (`detail: { value }`). Arrow keys,
+`selected`, `disabled`, `variant`, `label` (icon-only). Events: `selection-change` on the
+group (`detail: { value, selected, values }`; the deprecated `change` carries the same detail) and
+`action` on the item (`detail: { value }`). Arrow keys,
 Home and End move focus (one tab stop). The `button-group-layout.js` entry exports
 `ButtonGroupLayout` (springs, overflow measurement and roving focus for a rendered group), which
 m3e-react's `<ButtonGroup>` uses too.
@@ -436,8 +446,8 @@ import '@kyralabs/m3e-elements/slider.js';
 <m3e-slider label="Volume" value="0.4"></m3e-slider>
 <m3e-slider label="Percent" max="100" step="10" value="40" size="m" icon="volume_up"></m3e-slider>
 <m3e-slider label="Price" range max="100" start-value="20" end-value="80"></m3e-slider>
-<m3e-slider label="Balance" centered min="-50" max="50"></m3e-slider>
-<m3e-slider label="Brightness" vertical style="block-size: 200px"></m3e-slider>
+<m3e-slider label="Balance" variant="centered" min="-50" max="50"></m3e-slider>
+<m3e-slider label="Brightness" orientation="vertical" style="block-size: 200px"></m3e-slider>
 ```
 
 `<m3e-slider>` renders the m3e-css `.m3e-slider` (load `slider.css`) inside itself, one native
@@ -449,7 +459,8 @@ minimum is at the bottom), the handle shrink and value indicator while dragged (
 and `input` / `change` events (`detail: { value }`, a range `{ start, end }`; `change` when a drag,
 press or key ends). Attributes: `min` (0), `max` (1), `step`, `value`, `range` with `start-value` /
 `end-value` (thumbs labelled `start-label` / `end-label`, default "Range start" / "Range end"),
-`centered`, `vertical`, `size` (`xs` default, `s`, `m`, `l`, `xl`), `icon` (an inset icon, M–XL),
+`variant` (`standard` | `centered`), `orientation` (`horizontal` | `vertical`; the booleans
+`centered` and `vertical` are deprecated), `size` (`xs` default, `s`, `m`, `l`, `xl`), `icon` (an inset icon, M–XL),
 `disabled`, `label`, `name`. The value math is m3e-motion's port of Compose's `Slider.kt`; the
 `slider-layout.js` entry (class names, custom properties, input attributes, value text) is shared
 with m3e-react's `<Slider>` / `<RangeSlider>`, which render the same DOM.
@@ -483,7 +494,7 @@ the same DOM.
 ## List
 
 ```html
-<m3e-list label="Pets" selection="single">
+<m3e-list label="Pets" selection-mode="single">
   <div class="m3e-list-item" data-value="cat">
     <span class="m3e-list-item__content"><span class="m3e-list-item__headline">Cat</span></span>
   </div>
@@ -498,9 +509,9 @@ Static lists need no script (`<ul class="m3e-list">` of `<li class="m3e-list-ite
 `.m3e-list-item` children (m3e-css markup; `data-value` keys them, `aria-selected="true"` and
 `aria-disabled="true"` set the initial state) into it: a `role="listbox"` of options with one tab
 stop, arrow keys that wrap (Down / Right next, Up / Left previous), Home / End and typeahead.
-`selection="single" | "multiple"`: click, Space or Enter toggles an option and emits
+`selection-mode="single" | "multiple"` (`selection` is its deprecated name): click, Space or Enter toggles an option and emits
 `selection-change` (`detail: { values, value }`, cancelable); a checkbox, radio button or switch in
-a slot is made inert and shows the option's state. `selection="none"` (the default): click or Enter
+a slot is made inert and shows the option's state. `selection-mode="none"` (the default): click or Enter
 emits `action` (`detail: { value }`). Also `label`, `disallow-empty-selection` and the
 `selectedValues` property. The `list-layout.js` entry (ListLayout, item class names, the indicator
 markup) is shared with m3e-react's `<List>`, which renders the same DOM.
@@ -594,7 +605,7 @@ renders the same DOM.
   <m3e-side-sheet id="details" headline="Details" open>…</m3e-side-sheet>
 </div>
 
-<m3e-side-sheet id="filters" variant="modal" headline="Filters" back detached divider>
+<m3e-side-sheet id="filters" variant="modal" headline="Filters" back-button detached divider>
   …filters…
   <button class="m3e-button m3e-button--filled" slot="actions">Save</button>
   <button class="m3e-button m3e-button--outlined" slot="actions">Cancel</button>
@@ -610,7 +621,7 @@ scroll locked, Tab kept inside, focus on its first button and back on the opener
 or `adaptive` (modal below 600px, the medium window size class, standard from it; it switches when
 the window crosses 600px and stays open). The header has the close button m3.material.io requires
 (`close-label`, default "Close"), the `headline` (it names the sheet; without one, `label`, default
-"Side sheet") and, with `back`, a back button (`back-label`, default "Back") that fires `back`.
+"Side sheet") and, with `back-button` (deprecated name: `back`), a back button (`back-label`, default "Back") that fires `back`.
 `detached` insets it by 16px with all corners rounded; `divider` draws the standard sheet's line
 along its start edge, or the modal sheet's line above its actions. `open` (reflected), `show()`,
 `close()`, `toggle()`; the close button, Escape and the scrim emit a cancelable `open-change`
@@ -635,8 +646,9 @@ together) or `full-screen` (one item per screen, scrolling vertically). `item-wi
 preferred large item width (multi-browse, hero; hero without it fills the carousel but for the
 small items) or the item width (uncontained). Items snap natively one at a time (the uncontained
 layout does not snap); every item is a tab stop and the arrow keys, Home and End move between them,
-scrolling the focused item into place. `href` items are links, `action` items buttons (the carousel
-fires `item-click` with `detail: { index }`). `label` names the carousel; items are named "n of N"
+scrolling the focused item into place. `href` items are links, `action` items buttons (activating one
+dispatches `action` with `detail: { index }` from the item, bubbling through the carousel; the
+carousel's `item-click` is deprecated). `label` names the carousel; items are named "n of N"
 (`label` on an item, or `itemLabel`). `scrollToItem(index)`, `currentItem`; `ready` resolves once
 the `carousel-layout.js` entry (`CarouselLayout`, imported on first render) runs. It is shared with
 m3e-react's `<Carousel>`, which renders the same DOM.
@@ -689,7 +701,8 @@ itself (the host is `display: contents`) with the m3e-css contract. Attributes: 
 `vibrant`; the dial adds `layout="auto|vertical|horizontal"` (auto: horizontal in a landscape
 window), the input and the wheels `uncontained` (a side column with AM, PM and a mode toggle that
 fires `mode-toggle`). Property `labels` overrides the English strings. Events: `change`
-(`detail: { hour, minute }`) and `selection-change` (`detail: { selection }`). The dial takes taps,
+(`detail: { hour, minute }`; the inputs' native `input` / `change` stop inside) and
+`selection-change` (`detail: { value }`; its `selection` key is deprecated). The dial takes taps,
 drags and arrow keys (Enter picks); the input fields and the wheels are spin buttons (Up / Down).
 For a dialog, put a picker in a `.m3e-time-picker-dialog` surface inside
 `<m3e-dialog variant="custom">`. The `time-picker-layout.js` entry (`TimePickerLayout`,
@@ -716,7 +729,8 @@ rendered); the input mode's `date-field` entry loads the first time it shows. Da
 `year-range="1900-2100"`, `display-mode="picker|input"`, `hide-mode-toggle`, `no-title`,
 `no-headline`; docked: `value`, `label`, `year-range` and `show()` / `close()`. Properties
 `selectableDates` (`{ isSelectableDate(utcMillis), isSelectableYear(year) }`) and `labels`.
-Events: `change` (`detail: { value }`, range `{ start, end }`), `display-mode-change`,
+Events: `change` (`detail: { value }`, range `{ start, end }`; the date fields' native `input` /
+`change` stop inside), `display-mode-change`,
 `displayed-month-change`. The first day of the week, names, digits and the input's pattern come
 from `Intl` for the nearest `lang`; the input takes the pattern's digits and shows the delimiters
 as they come (Compose's transformations). Show the range picker in `<m3e-dialog variant="full-screen">` and

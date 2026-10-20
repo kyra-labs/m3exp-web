@@ -44,7 +44,7 @@ const cssItems = (count: number) =>
 
     <h3>Interactive items</h3>
     <p>
-      <code>href</code> makes an item a link and <code>action</code> a button (the carousel fires <code>item-click</code>): the item then shows the state layer and ripple over its content. Static items take the focus themselves.
+      <code>href</code> makes an item a link and <code>action</code> a button (activating it fires <code>action</code> with <code>&#123; index &#125;</code> from the item, bubbling through the carousel; the carousel's <code>item-click</code> is deprecated since 1.8 and removed in 2.0): the item then shows the state layer and ripple over its content. Static items take the focus themselves.
     </p>
     <div class="docs-carousel-frame">
       <m3e-carousel label="Albums" item-width="186" item-spacing="8" content-padding="16" data-testid="interactive">

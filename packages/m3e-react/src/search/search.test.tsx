@@ -141,7 +141,7 @@ describe('<SearchBar>', () => {
     expect(container.querySelector('.m3e-search')!.hasAttribute('data-expanded')).toBe(true);
   });
 
-  it('controlled expanded follows the prop', async () => {
+  it('controlled isExpanded follows the prop', async () => {
     function Controlled() {
       const [open, setOpen] = useState(false);
       return (
@@ -155,7 +155,7 @@ describe('<SearchBar>', () => {
           >
             toggle
           </button>
-          <SearchBar expanded={open} onExpandedChange={setOpen} />
+          <SearchBar isExpanded={open} onExpandedChange={setOpen} />
         </>
       );
     }
@@ -241,5 +241,26 @@ describe('<SearchBar> ⇔ <m3e-search> DOM parity', () => {
     const host = await renderElement(html);
     const fromElement = normalizeIds(canonical(host.querySelector('.m3e-search')!));
     expect(fromElement).toBe(fromReact);
+  });
+});
+
+describe('M11 API (D16 aliases)', () => {
+  it('<SearchBar expanded> still works and warns once in development', async () => {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => undefined);
+    const container = await renderReact(
+      <>
+        {/* eslint-disable-next-line @typescript-eslint/no-deprecated -- the 1.x alias */}
+        <SearchBar expanded aria-label="A" />
+        {/* eslint-disable-next-line @typescript-eslint/no-deprecated -- the 1.x alias */}
+        <SearchBar expanded aria-label="B" />
+      </>,
+    );
+    for (const root of container.querySelectorAll('.m3e-search')) {
+      expect(root.hasAttribute('data-expanded')).toBe(true);
+    }
+    const messages = warn.mock.calls.map((c) => String(c[0]));
+    expect(messages.filter((m) => m.includes('deprecated'))).toEqual([
+      '[m3exp-web] <SearchBar expanded> is deprecated since 1.8 and will be removed in 2.0. Use <SearchBar isExpanded>.',
+    ]);
   });
 });

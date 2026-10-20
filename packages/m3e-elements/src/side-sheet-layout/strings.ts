@@ -2,9 +2,18 @@
 // names for the parts (Side sheets › Anatomy: "Close icon button", "Back icon button"; Accessibility:
 // "The accessibility role for a side sheet is Dialog").
 
-/** The close icon button's name. */
+/**
+ * The close icon button's name.
+ * @internal Shared with m3e-react; not part of the public API.
+ */
 export const SIDE_SHEET_CLOSE_LABEL = 'Close';
-/** The back icon button's name. */
+/**
+ * The back icon button's name.
+ * @internal Shared with m3e-react; not part of the public API.
+ */
 export const SIDE_SHEET_BACK_LABEL = 'Back';
-/** The sheet's name when it has no headline and no label. */
+/**
+ * The sheet's name when it has no headline and no label.
+ * @internal Shared with m3e-react; not part of the public API.
+ */
 export const SIDE_SHEET_LABEL = 'Side sheet';

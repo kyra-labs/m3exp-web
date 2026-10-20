@@ -68,8 +68,8 @@ export default function TimePickerPlayground() {
         modeToggleButton={
           <TimePickerModeToggle
             displayMode={showDial ? 'picker' : 'input'}
-            onDisplayModeChange={() => {
-              setShowDial((dial) => !dial);
+            onDisplayModeChange={(next) => {
+              setShowDial(next === 'picker');
             }}
           />
         }

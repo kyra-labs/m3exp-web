@@ -349,3 +349,62 @@ describe('BottomSheetLayout geometry and drags', () => {
     layout.destroy();
   });
 });
+
+describe('<m3e-bottom-sheet>: open and open-change (M11 API, M7)', () => {
+  it('open reflects value !== hidden', async () => {
+    const host = await mount('<m3e-bottom-sheet variant="modal"></m3e-bottom-sheet>');
+    expect(host.open).toBe(false);
+    expect(host.hasAttribute('open')).toBe(false);
+    host.value = 'expanded';
+    await flush();
+    expect(host.open).toBe(true);
+    expect(host.hasAttribute('open')).toBe(true);
+  });
+
+  it('setting open shows (partially expanded) or hides the sheet, like setting value', async () => {
+    const host = await mount('<m3e-bottom-sheet variant="modal"></m3e-bottom-sheet>');
+    host.open = true;
+    await flush();
+    expect(host.value).toBe('partially-expanded');
+    expect((host.sheetElement as HTMLDialogElement).open).toBe(true);
+    host.removeAttribute('open');
+    await flush();
+    expect(host.value).toBe('hidden');
+    const skip = await mount(
+      '<m3e-bottom-sheet variant="modal" skip-partially-expanded open></m3e-bottom-sheet>',
+    );
+    expect(skip.value).toBe('expanded');
+  });
+
+  it('open-change { open } follows value-change when the sheet shows or hides; it is cancelable', async () => {
+    const host = await mount(
+      '<m3e-bottom-sheet variant="modal" value="partially-expanded"></m3e-bottom-sheet>',
+    );
+    const events: [string, unknown][] = [];
+    host.addEventListener('value-change', (e) => events.push([e.type, e.detail]));
+    host.addEventListener('open-change', (e) => events.push([e.type, e.detail]));
+    const handle = host.sheetElement!.querySelector<HTMLButtonElement>(
+      '.m3e-bottom-sheet__handle',
+    )!;
+    handle.click();
+    await flush();
+    handle.click();
+    await flush();
+    expect(events).toEqual([
+      ['value-change', { value: 'expanded' }],
+      ['value-change', { value: 'hidden' }],
+      ['open-change', { open: false }],
+    ]);
+    expect(host.open).toBe(false);
+    // preventDefault() on open-change keeps the sheet shown.
+    host.show();
+    await flush();
+    host.addEventListener('open-change', (e) => {
+      e.preventDefault();
+    });
+    host.hide();
+    await flush();
+    expect(host.value).toBe('partially-expanded');
+    expect(host.open).toBe(true);
+  });
+});

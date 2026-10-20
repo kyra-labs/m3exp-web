@@ -18,6 +18,7 @@ import {
 import { useObjectRef } from 'react-aria';
 import { BasicAlertDialog, type BasicAlertDialogProps } from '../dialog/Dialog.js';
 import { defined } from '../utils/cx.js';
+import { warnDeprecatedProp } from '../utils/deprecated.js';
 
 export type { DatePickerDisplayMode, SelectableDates, YearRange };
 
@@ -49,6 +50,11 @@ interface DatePickerHeaderProps extends DatePickerCommonProps {
   /** The header title; null: none. Default: Compose's ("Select date", "Enter dates", …). */
   title?: string | null;
   /** The header headline (default true). */
+  showHeadline?: boolean;
+  /**
+   * The header headline (default true).
+   * @deprecated Since 1.8: use `showHeadline`. Removed in 2.0.
+   */
   headline?: boolean;
 }
 
@@ -65,6 +71,7 @@ const OWN = [
   'onDisplayModeChange',
   'showModeToggle',
   'title',
+  'showHeadline',
   'headline',
 ];
 
@@ -119,7 +126,12 @@ function useDateLayout<O extends { yearRange?: YearRange | undefined }>(
 const loadDateField = () => Promise.resolve(DateField);
 
 /** The header and mode options every modal picker takes, with the callbacks kept current. */
-function useHeaderOptions(props: DatePickerHeaderProps): DatePickerBaseOptions {
+function useHeaderOptions(props: DatePickerHeaderProps, component: string): DatePickerBaseOptions {
+  // eslint-disable-next-line @typescript-eslint/no-deprecated -- the 1.x alias (D16)
+  const legacyHeadline = props.headline;
+  if (legacyHeadline !== undefined) {
+    warnDeprecatedProp(`${component} headline`, `${component} showHeadline`);
+  }
   const callbacks = useRef(props);
   callbacks.current = props;
   return {
@@ -132,7 +144,7 @@ function useHeaderOptions(props: DatePickerHeaderProps): DatePickerBaseOptions {
       displayedMonth: props.displayedMonthMillis,
       displayMode: props.displayMode,
       showModeToggle: props.showModeToggle,
-      headline: props.headline,
+      headline: props.showHeadline ?? legacyHeadline,
     }),
     ...(props.title !== undefined ? { title: props.title } : {}),
     onDisplayModeChange: (mode) => callbacks.current.onDisplayModeChange?.(mode),
@@ -164,7 +176,7 @@ export const DatePicker = /* @__PURE__ */ forwardRef(function DatePicker(
   change.current = props.onSelectedDateChange;
   const ref = useDateLayout(
     {
-      ...useHeaderOptions(props),
+      ...useHeaderOptions(props, 'DatePicker'),
       ...defined({ selectedDate: props.selectedDateMillis }),
       onChange: (millis: number | null) => change.current?.(millis),
     },
@@ -212,7 +224,7 @@ export const DateRangePicker = /* @__PURE__ */ forwardRef(function DateRangePick
   change.current = props.onSelectedRangeChange;
   const ref = useDateLayout(
     {
-      ...useHeaderOptions(props),
+      ...useHeaderOptions(props, 'DateRangePicker'),
       ...defined({
         selectedStartDate: props.selectedStartDateMillis,
         selectedEndDate: props.selectedEndDateMillis,

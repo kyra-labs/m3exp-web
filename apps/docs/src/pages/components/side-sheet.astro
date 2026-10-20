@@ -42,14 +42,14 @@ const filterList = `<ul class="docs-side-sheet-options">${filters
 
     <h3>Back button and actions</h3>
     <p>
-      <code>back</code> adds the back icon button (it fires <code>back</code>); children with <code>slot="actions"</code> are the bottom actions, start-aligned.
+      <code>back-button</code> adds the back icon button (it fires <code>back</code>; the <code>back</code> attribute is its deprecated name, since 1.8, removed in 2.0); children with <code>slot="actions"</code> are the bottom actions, start-aligned.
     </p>
     <div class="docs-side-sheet-frame" data-testid="actions-frame">
       <div class="docs-side-sheet-frame__main">
         <p>Main content</p>
         <button type="button" class="m3e-button m3e-button--tonal" data-side-sheet-toggle="actions" data-testid="toggle-actions">Toggle side sheet</button>
       </div>
-      <m3e-side-sheet headline="Filters" back open data-testid="actions">
+      <m3e-side-sheet headline="Filters" back-button open data-testid="actions">
         <Fragment set:html={filterList} />
         <button type="button" class="m3e-button m3e-button--filled" slot="actions" data-side-sheet-close>Save</button>
         <button type="button" class="m3e-button m3e-button--outlined" slot="actions" data-side-sheet-close>Cancel</button>
@@ -71,7 +71,7 @@ const filterList = `<ul class="docs-side-sheet-options">${filters
       <Fragment set:html={body} />
     </m3e-side-sheet>
 
-    <m3e-side-sheet variant="modal" headline="Filters" back detached divider data-testid="modal-detached">
+    <m3e-side-sheet variant="modal" headline="Filters" back-button detached divider data-testid="modal-detached">
       <Fragment set:html={filterList} />
       <button type="button" class="m3e-button m3e-button--filled" slot="actions" data-side-sheet-close>Save</button>
       <button type="button" class="m3e-button m3e-button--outlined" slot="actions" data-side-sheet-close>Cancel</button>
@@ -105,7 +105,7 @@ const filterList = `<ul class="docs-side-sheet-options">${filters
   <section aria-labelledby="react-heading">
     <h2 id="react-heading">React</h2>
     <p>
-      <code>&lt;SideSheet variant isOpen onOpenChange headline backButton onBack detached divider actions&gt;</code> renders the same DOM as the element. <code>onOpenChange(false)</code> reports the close button, Escape and the scrim.
+      <code>&lt;SideSheet variant isOpen onOpenChange headline backButton onBack detached divider actions&gt;</code> renders the same DOM as the element (<code>variant</code> is a <code>SideSheetVariantOption</code>: <code>'standard' | 'modal' | 'adaptive'</code>). <code>onOpenChange(false)</code> reports the close button, Escape and the scrim.
     </p>
     <SideSheetPlayground client:only="react" />
   </section>

@@ -130,3 +130,33 @@ export class M3eChipSet extends M3eElement {
     }
   }
 }
+
+/** Events of `<m3e-chip-set>` (M1): typed `addEventListener` / `removeEventListener`. */
+export interface M3eChipSetEventMap extends HTMLElementEventMap {
+  /** An input chip asks to be removed; cancelable. */
+  remove: CustomEvent<ChipSetRemoveDetail>;
+}
+
+// Typed listeners merged into the class: type-only, no runtime code.
+export interface M3eChipSet {
+  addEventListener<K extends keyof M3eChipSetEventMap>(
+    type: K,
+    listener: (this: M3eChipSet, ev: M3eChipSetEventMap[K]) => unknown,
+    options?: boolean | AddEventListenerOptions,
+  ): void;
+  addEventListener(
+    type: string,
+    listener: EventListenerOrEventListenerObject,
+    options?: boolean | AddEventListenerOptions,
+  ): void;
+  removeEventListener<K extends keyof M3eChipSetEventMap>(
+    type: K,
+    listener: (this: M3eChipSet, ev: M3eChipSetEventMap[K]) => unknown,
+    options?: boolean | EventListenerOptions,
+  ): void;
+  removeEventListener(
+    type: string,
+    listener: EventListenerOrEventListenerObject,
+    options?: boolean | EventListenerOptions,
+  ): void;
+}

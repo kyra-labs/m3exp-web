@@ -108,7 +108,10 @@ export function todayMillis(): number {
   return d.getTime();
 }
 
-/** An ISO date (YYYY-MM-DD, or a month YYYY-MM) as UTC midnight milliseconds, or null. */
+/**
+ * An ISO date (YYYY-MM-DD, or a month YYYY-MM) as UTC midnight milliseconds, or null.
+ * @internal Shared with m3e-react; not part of the public API.
+ */
 export function parseIsoDate(value: string | null | undefined): number | null {
   const m = value ? /^(-?\d{4,6})-(\d{2})(?:-(\d{2}))?$/.exec(value) : null;
   if (!m) return null;
@@ -117,10 +120,16 @@ export function parseIsoDate(value: string | null | undefined): number | null {
   return Number.isNaN(d.getTime()) ? null : d.getTime();
 }
 
-/** UTC milliseconds as an ISO date (YYYY-MM-DD). */
+/**
+ * UTC milliseconds as an ISO date (YYYY-MM-DD).
+ * @internal Shared with m3e-react; not part of the public API.
+ */
 export const toIsoDate = (millis: number): string => new Date(millis).toISOString().slice(0, 10);
 
-/** `"1900-2100"` (or `"1900 2100"`) as a year range; Compose's default otherwise. */
+/**
+ * `"1900-2100"` (or `"1900 2100"`) as a year range; Compose's default otherwise.
+ * @internal Shared with m3e-react; not part of the public API.
+ */
 export function parseYearRange(value: string | null | undefined): readonly [number, number] {
   const m = value ? /^\s*(\d+)\s*[-–\s]\s*(\d+)\s*$/.exec(value) : null;
   return m && Number(m[1]) <= Number(m[2]) ? [Number(m[1]), Number(m[2])] : DATE_PICKER_YEAR_RANGE;

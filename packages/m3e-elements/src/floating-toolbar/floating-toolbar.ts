@@ -4,6 +4,7 @@ import {
   type FloatingToolbarLayoutScrollBehavior,
   FloatingToolbarLayout,
 } from '../floating-toolbar-layout/floating-toolbar-layout.js';
+import type { ExpandedChangeDetail } from '../base/events.js';
 
 const BLOCK = 'm3e-floating-toolbar';
 
@@ -185,4 +186,34 @@ export class M3eFloatingToolbar extends M3eElement {
       fab: div('fab'),
     };
   }
+}
+
+/** Events of `<m3e-floating-toolbar>` (M1): typed `addEventListener` / `removeEventListener`. */
+export interface M3eFloatingToolbarEventMap extends HTMLElementEventMap {
+  /** Expanded or collapsed by the `collapse` scroll behavior. */
+  'expanded-change': CustomEvent<ExpandedChangeDetail>;
+}
+
+// Typed listeners merged into the class: type-only, no runtime code.
+export interface M3eFloatingToolbar {
+  addEventListener<K extends keyof M3eFloatingToolbarEventMap>(
+    type: K,
+    listener: (this: M3eFloatingToolbar, ev: M3eFloatingToolbarEventMap[K]) => unknown,
+    options?: boolean | AddEventListenerOptions,
+  ): void;
+  addEventListener(
+    type: string,
+    listener: EventListenerOrEventListenerObject,
+    options?: boolean | AddEventListenerOptions,
+  ): void;
+  removeEventListener<K extends keyof M3eFloatingToolbarEventMap>(
+    type: K,
+    listener: (this: M3eFloatingToolbar, ev: M3eFloatingToolbarEventMap[K]) => unknown,
+    options?: boolean | EventListenerOptions,
+  ): void;
+  removeEventListener(
+    type: string,
+    listener: EventListenerOrEventListenerObject,
+    options?: boolean | EventListenerOptions,
+  ): void;
 }

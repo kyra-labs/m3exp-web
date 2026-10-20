@@ -96,7 +96,7 @@ const shapes = ['round', 'square'] as const;
   <section aria-labelledby="elements-heading">
     <h2 id="elements-heading">Custom element</h2>
     <p>
-      <code>&lt;m3e-button-group variant size shape button-variant selection-mode overflow overflow-label label&gt;</code> with <code>&lt;m3e-button-group-item value icon selected disabled label&gt;</code> children. Events: <code>change</code> on the group (<code>&#123; value, selected, values &#125;</code>) and <code>action</code> on the item (<code>&#123; value &#125;</code>). Arrow keys, Home and End move focus. As in Compose (<code>ButtonGroupDefaults.OverflowIndicator</code>), the overflow button has a built-in plain tooltip: its name (<code>overflow-label</code>, default “More options”), shown above it on hover, keyboard focus or a long press; it repeats the name, so screen readers skip it.
+      <code>&lt;m3e-button-group variant size shape button-variant selection-mode disallow-empty-selection overflow overflow-label label&gt;</code> with <code>&lt;m3e-button-group-item value icon selected disabled label&gt;</code> children. Events: <code>selection-change</code> on the group (<code>&#123; value, selected, values &#125;</code>) and <code>action</code> on the item (<code>&#123; value &#125;</code>). Deprecated since 1.8 (removed in 2.0): the <code>selection-required</code> attribute (use <code>disallow-empty-selection</code>) and the group's <code>change</code> event (it still fires, with the same detail, after <code>selection-change</code>). Arrow keys, Home and End move focus. As in Compose (<code>ButtonGroupDefaults.OverflowIndicator</code>), the overflow button has a built-in plain tooltip: its name (<code>overflow-label</code>, default “More options”), shown above it on hover, keyboard focus or a long press; it repeats the name, so screen readers skip it.
     </p>
     <div class="docs-button-group-demos" data-testid="elements">
       <m3e-button-group label="Playback" button-variant="tonal" data-testid="el-standard">
@@ -109,7 +109,7 @@ const shapes = ['round', 'square'] as const;
       <m3e-button-group
         variant="connected"
         selection-mode="single"
-        selection-required
+        disallow-empty-selection
         label="Place"
         data-testid="el-connected"
       >
@@ -190,10 +190,10 @@ const shapes = ['round', 'square'] as const;
 
   const log = document.getElementById('el-log')!;
   const box = document.querySelector('[data-testid="elements"]')!;
-  box.addEventListener('change', (e) => {
+  box.addEventListener('selection-change', (e) => {
     if (!(e instanceof CustomEvent)) return;
     const { values } = (e as CustomEvent<{ values: string[] }>).detail;
-    log.textContent = `change: ${values.join(', ') || 'none'}`;
+    log.textContent = `selection-change: ${values.join(', ') || 'none'}`;
   });
   box.addEventListener('action', (e) => {
     if (!(e instanceof CustomEvent)) return;

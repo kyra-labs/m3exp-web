@@ -124,7 +124,10 @@ const views = [
     <p>
       Click a bar, type, or press ArrowDown. The expanded view moves into the top layer; Escape, the
       back button, a click outside (docked) or the scrim (with gap), Enter or a result collapse it.
-      Under reduced motion the spatial springs jump.
+      Under reduced motion the spatial springs jump. <code>&lt;m3e-search&gt;</code> fires
+      <code>expanded-change</code> (<code>&#123; expanded &#125;</code>), <code>search</code>
+      (<code>&#123; value &#125;</code>) and <code>select</code> (<code>&#123; value, label &#125;</code>),
+      both cancelable; the input's native <code>select</code> (text selected) does not reach the host.
     </p>
     <div class="docs-search-views">
       {
@@ -233,8 +236,10 @@ const views = [
     <p>
       <code
         >&lt;AppBarWithSearch navigationIcon actions scrollBehavior="enter-always"&gt;&lt;SearchBar
-        variant value onChange onSearch onSelect&gt;&lt;SearchResult …/&gt;&lt;/SearchBar&gt;&lt;/AppBarWithSearch&gt;</code
-      >
+        variant value onChange onSearch onSelect isExpanded onExpandedChange&gt;&lt;SearchResult
+        …/&gt;&lt;/SearchBar&gt;&lt;/AppBarWithSearch&gt;</code
+      >. <code>expanded</code> is the deprecated name of <code>isExpanded</code> (since 1.8, removed in
+      2.0; it warns once in development).
     </p>
     <SearchPlayground client:only="react" />
   </section>

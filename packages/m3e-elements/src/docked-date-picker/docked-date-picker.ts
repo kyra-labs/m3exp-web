@@ -6,6 +6,11 @@ import type {
 } from '../date-picker-layout/docked.js';
 import { parseIsoDate, parseYearRange, toIsoDate } from '../date-picker-layout/locale.js';
 import type { DatePickerStrings } from '../date-picker-layout/strings.js';
+import type { DatePickerChangeDetail } from '../date-picker/date-picker.js';
+
+const stopPropagation = (e: Event): void => {
+  e.stopPropagation();
+};
 
 /**
  * `<m3e-docked-date-picker value="2025-08-17" label="Date">` (COMPONENT_SPEC §27; m3.material.io's
@@ -63,7 +68,7 @@ export class M3eDockedDatePicker extends M3eElement {
       onChange: (millis: number | null) => {
         const value = millis === null ? null : toIsoDate(millis);
         this.value = value;
-        this.emit('change', { value });
+        this.emit('change', { value } satisfies DatePickerChangeDetail);
       },
     };
   }
@@ -91,8 +96,41 @@ export class M3eDockedDatePicker extends M3eElement {
         if (this.#layout || !this.isConnected) return;
         const root = this.ownerDocument.createElement('div');
         this.replaceChildren(root);
+        // The date field's native `input` / `change` stop at the root (the layout's own listeners
+        // have run by then): the host's `change` is only this element's CustomEvent with `detail`.
+        for (const type of ['input', 'change']) this.listen(root, type, stopPropagation);
         this.#layout = new DockedDatePickerLayout(root, this.#options());
       },
     );
   }
+}
+
+/** Events of `<m3e-docked-date-picker>` (M1): typed `addEventListener` / `removeEventListener`. */
+export interface M3eDockedDatePickerEventMap extends HTMLElementEventMap {
+  /** The user picked or entered a date, or cleared the field. */
+  change: CustomEvent<DatePickerChangeDetail>;
+}
+
+// Typed listeners merged into the class: type-only, no runtime code.
+export interface M3eDockedDatePicker {
+  addEventListener<K extends keyof M3eDockedDatePickerEventMap>(
+    type: K,
+    listener: (this: M3eDockedDatePicker, ev: M3eDockedDatePickerEventMap[K]) => unknown,
+    options?: boolean | AddEventListenerOptions,
+  ): void;
+  addEventListener(
+    type: string,
+    listener: EventListenerOrEventListenerObject,
+    options?: boolean | AddEventListenerOptions,
+  ): void;
+  removeEventListener<K extends keyof M3eDockedDatePickerEventMap>(
+    type: K,
+    listener: (this: M3eDockedDatePicker, ev: M3eDockedDatePickerEventMap[K]) => unknown,
+    options?: boolean | EventListenerOptions,
+  ): void;
+  removeEventListener(
+    type: string,
+    listener: EventListenerOrEventListenerObject,
+    options?: boolean | EventListenerOptions,
+  ): void;
 }

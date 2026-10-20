@@ -6,9 +6,15 @@ const ITEMS =
 const INPUT_CHIP = 'm3e-input-chip';
 /** Keys that remove the focused input chip (m3.material.io Chips › Accessibility). */
 const REMOVE_KEYS: ReadonlySet<string> = new Set(['Backspace', 'Delete']);
-/** React Aria's remove button label (@react-aria/tag `removeButtonLabel`, en-US). */
+/**
+ * React Aria's remove button label (@react-aria/tag `removeButtonLabel`, en-US).
+ * @internal Shared with m3e-react; not part of the public API.
+ */
 export const CHIP_REMOVE_LABEL = 'Remove';
-/** React Aria's description of a removable tag (@react-aria/tag `removeDescription`, en-US). */
+/**
+ * React Aria's description of a removable tag (@react-aria/tag `removeDescription`, en-US).
+ * @internal Shared with m3e-react; not part of the public API.
+ */
 export const CHIP_REMOVE_DESCRIPTION = 'Press Delete to remove tag.';
 
 let sets = 0;
@@ -22,7 +28,10 @@ const setAttr = (el: Element, name: string, value: string | null): void => {
 const isDisabled = (el: Element): boolean =>
   el.matches(':disabled') || el.getAttribute('aria-disabled') === 'true';
 
-/** An input chip's key: `data-value`, else its label (spaces removed, as React Aria's ids). */
+/**
+ * An input chip's key: `data-value`, else its label (spaces removed, as React Aria's ids).
+ * @internal Shared with m3e-react; not part of the public API.
+ */
 export const inputChipValue = (chip: Element): string =>
   chip.getAttribute('data-value') ??
   (chip.querySelector('.m3e-input-chip__label')?.textContent ?? '').trim();

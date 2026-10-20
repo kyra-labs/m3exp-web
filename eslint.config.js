@@ -86,6 +86,13 @@ export default defineConfig(
       ],
     },
   },
+  // M1 (M11 API review): each element merges typed addEventListener / removeEventListener
+  // overloads into its class with a same-named interface (type-only, no runtime code); HTMLElement
+  // implements them, so the merge is safe here.
+  {
+    files: ['packages/m3e-elements/src/**/*.ts'],
+    rules: { '@typescript-eslint/no-unsafe-declaration-merging': 'off' },
+  },
   // Downward-only layering: lower layers never import higher ones (REQUIREMENTS §5).
   {
     files: ['packages/{m3e-tokens,m3e-css,m3e-motion,m3e-shapes}/src/**/*.ts'],

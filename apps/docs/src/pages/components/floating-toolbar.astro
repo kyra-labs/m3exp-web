@@ -184,10 +184,13 @@ const classes = (s: (typeof statics)[number]) =>
   <section aria-labelledby="react-heading">
     <h2 id="react-heading">React</h2>
     <p>
-      <code>&lt;FloatingToolbar&gt;</code> with a FAB that toggles <code>expanded</code>, a vertical
-      toolbar, and the two scroll behaviors over a scrolling region: <code>exitAlways</code> hides the
+      <code>&lt;FloatingToolbar&gt;</code> with a FAB that toggles <code>isExpanded</code>, a vertical
+      toolbar, and the two scroll behaviors over a scrolling region: <code>exit-always</code> hides the
       toolbar on scroll down and brings it back on scroll up (a partly hidden toolbar snaps when
       scrolling stops); <code>collapse</code> collapses it after 40dp down and expands it after 40dp up.
+      Deprecated since 1.8 (removed in 2.0; each warns once in development): <code>expanded</code>
+      (use <code>isExpanded</code>) and <code>scrollBehavior="exitAlways"</code> (use
+      <code>"exit-always"</code>).
     </p>
     <FloatingToolbarPlayground client:only="react" />
   </section>

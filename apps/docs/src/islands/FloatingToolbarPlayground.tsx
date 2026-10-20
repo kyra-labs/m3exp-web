@@ -22,7 +22,7 @@ export default function FloatingToolbarPlayground() {
         <FloatingToolbar
           aria-label="React actions"
           colorStyle="vibrant"
-          expanded={expanded}
+          isExpanded={expanded}
           data-testid="react-fab-toolbar"
           fab={
             <Fab
@@ -72,7 +72,7 @@ export default function FloatingToolbarPlayground() {
           <FloatingToolbar
             aria-label="exitAlways toolbar"
             className="docs-floating-toolbar-anchored"
-            scrollBehavior="exitAlways"
+            scrollBehavior="exit-always"
             scrollTarget={exitScroller}
             data-testid="react-exit-toolbar"
           >
@@ -103,7 +103,7 @@ export default function FloatingToolbarPlayground() {
             className="docs-floating-toolbar-anchored"
             scrollBehavior="collapse"
             scrollTarget={collapseScroller}
-            expanded={collapseExpanded}
+            isExpanded={collapseExpanded}
             onExpandedChange={setCollapseExpanded}
             leading={actions([['check', 'Done']])}
             trailing={actions([['favorite', 'Favorite']])}

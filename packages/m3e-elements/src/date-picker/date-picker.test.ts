@@ -294,3 +294,58 @@ describe('M3eDatePickerElement', () => {
     expect(host.childElementCount).toBe(1);
   });
 });
+
+describe('date pickers: M11 API', () => {
+  const nativeAndCustom = (host: Element) => {
+    const seen: unknown[] = [];
+    host.addEventListener('change', (e: Event) => {
+      seen.push(e instanceof CustomEvent ? e.detail : `native ${e.type}`);
+    });
+    host.addEventListener('input', (e: Event) => {
+      seen.push(`native ${e.type}`);
+    });
+    return seen;
+  };
+
+  it("<m3e-docked-date-picker>: the field's native input / change stop inside", async () => {
+    const { host, root } = await mount(
+      '<m3e-docked-date-picker lang="en-US"></m3e-docked-date-picker>',
+      'm3e-docked-date-picker',
+    );
+    const seen = nativeAndCustom(host);
+    const input = root.querySelector<HTMLInputElement>('.m3e-text-field__input')!;
+    type(input, '01022025');
+    input.dispatchEvent(new Event('change', { bubbles: true, composed: true }));
+    expect(seen).toEqual([{ value: '2025-01-02' }]);
+    expect(input.value).toBe('01/02/2025');
+  });
+
+  it("<m3e-date-picker> input mode: the field's native input / change stop inside", async () => {
+    const { host, root } = await mount(
+      '<m3e-date-picker display-mode="input" lang="en-US"></m3e-date-picker>',
+      'm3e-date-picker',
+    );
+    await settle(root);
+    const seen = nativeAndCustom(host);
+    const input = root.querySelector<HTMLInputElement>('.m3e-text-field__input')!;
+    type(input, '03152024');
+    input.dispatchEvent(new Event('change', { bubbles: true, composed: true }));
+    expect(seen).toEqual([{ value: '2024-03-15' }]);
+  });
+
+  it("<m3e-date-range-picker> input mode: the fields' native input / change stop inside", async () => {
+    const { host, root } = await mount(
+      '<m3e-date-range-picker display-mode="input" lang="en-US"></m3e-date-range-picker>',
+      'm3e-date-range-picker',
+    );
+    await settle(root);
+    const seen = nativeAndCustom(host);
+    const [start, end] = root.querySelectorAll<HTMLInputElement>('.m3e-text-field__input');
+    type(start!, '08102025');
+    type(end!, '08202025');
+    end!.dispatchEvent(new Event('change', { bubbles: true, composed: true }));
+    expect(seen.length).toBeGreaterThan(0);
+    expect(seen.every((d) => typeof d === 'object')).toBe(true);
+    expect(seen.at(-1)).toEqual({ start: '2025-08-10', end: '2025-08-20' });
+  });
+});

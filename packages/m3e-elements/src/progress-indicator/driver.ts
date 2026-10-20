@@ -299,7 +299,10 @@ export abstract class ProgressIndicatorDriver {
   };
 }
 
-/** `aria-valuenow` (0–100) for a progress coerced into 0–1, or null when indeterminate. */
+/**
+ * `aria-valuenow` (0–100) for a progress coerced into 0–1, or null when indeterminate.
+ * @internal Shared with m3e-react; not part of the public API.
+ */
 export const progressValue = (value: number | null): string | null =>
   value === null
     ? null

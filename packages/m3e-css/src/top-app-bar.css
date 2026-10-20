@@ -32,8 +32,11 @@
  *   </header>
  *
  * Custom two-rows heights (Compose collapsedHeight / expandedHeight): set
- * `--_m3e-top-app-bar-collapsed-height` / `--_m3e-top-app-bar-expanded-height` on the bar (what
- * `<TopAppBar collapsedHeight expandedHeight>` writes).
+ * `--m3e-comp-top-app-bar-container-collapsed-height` /
+ * `--m3e-comp-top-app-bar-container-expanded-height` on the bar (or an ancestor). The private
+ * `--_m3e-top-app-bar-collapsed-height` / `--_m3e-top-app-bar-expanded-height` (what
+ * `<TopAppBar collapsedHeight expandedHeight>` writes inline) still work and win over them; setting
+ * them yourself is deprecated since 1.8 (removed from the documented API in 2.0).
  *
  * Sources (compose/material3 @ 19991f2c, AppBar.kt):
  * - Height AppBarSmallTokens.ContainerHeight (TopAppBarExpandedHeight); the bar grows if the
@@ -200,10 +203,19 @@
     grid-area: 1 / 2;
   }
 
-  /* Two-rows heights and the expanded title's bottom padding (TopAppBarDefaults, AppBar.kt). */
+  /*
+   * Two-rows heights and the expanded title's bottom padding (TopAppBarDefaults, AppBar.kt). The
+   * public --m3e-comp-top-app-bar-container-{collapsed,expanded}-height override the heights.
+   */
   .m3e-top-app-bar--medium-flexible {
-    --_m3e-top-app-bar-collapsed-height: var(--m3e-comp-top-app-bar-medium-collapsed-height);
-    --_m3e-top-app-bar-expanded-height: var(--m3e-comp-top-app-bar-medium-flexible-expanded-height);
+    --_m3e-top-app-bar-collapsed-height: var(
+      --m3e-comp-top-app-bar-container-collapsed-height,
+      var(--m3e-comp-top-app-bar-medium-collapsed-height)
+    );
+    --_m3e-top-app-bar-expanded-height: var(
+      --m3e-comp-top-app-bar-container-expanded-height,
+      var(--m3e-comp-top-app-bar-medium-flexible-expanded-height)
+    );
     --_m3e-top-app-bar-title-bottom-padding: var(
       --m3e-comp-top-app-bar-medium-title-bottom-padding
     );
@@ -211,25 +223,39 @@
 
   .m3e-top-app-bar--medium-flexible:has(.m3e-top-app-bar__expanded .m3e-top-app-bar__subtitle) {
     --_m3e-top-app-bar-expanded-height: var(
-      --m3e-comp-top-app-bar-medium-flexible-with-subtitle-expanded-height
+      --m3e-comp-top-app-bar-container-expanded-height,
+      var(--m3e-comp-top-app-bar-medium-flexible-with-subtitle-expanded-height)
     );
   }
 
   .m3e-top-app-bar--large-flexible {
-    --_m3e-top-app-bar-collapsed-height: var(--m3e-comp-top-app-bar-large-collapsed-height);
-    --_m3e-top-app-bar-expanded-height: var(--m3e-comp-top-app-bar-large-flexible-expanded-height);
+    --_m3e-top-app-bar-collapsed-height: var(
+      --m3e-comp-top-app-bar-container-collapsed-height,
+      var(--m3e-comp-top-app-bar-large-collapsed-height)
+    );
+    --_m3e-top-app-bar-expanded-height: var(
+      --m3e-comp-top-app-bar-container-expanded-height,
+      var(--m3e-comp-top-app-bar-large-flexible-expanded-height)
+    );
     --_m3e-top-app-bar-title-bottom-padding: var(--m3e-comp-top-app-bar-large-title-bottom-padding);
   }
 
   .m3e-top-app-bar--large-flexible:has(.m3e-top-app-bar__expanded .m3e-top-app-bar__subtitle) {
     --_m3e-top-app-bar-expanded-height: var(
-      --m3e-comp-top-app-bar-large-flexible-with-subtitle-expanded-height
+      --m3e-comp-top-app-bar-container-expanded-height,
+      var(--m3e-comp-top-app-bar-large-flexible-with-subtitle-expanded-height)
     );
   }
 
   .m3e-top-app-bar--two-rows {
-    --_m3e-top-app-bar-collapsed-height: var(--m3e-comp-top-app-bar-two-rows-collapsed-height);
-    --_m3e-top-app-bar-expanded-height: var(--m3e-comp-top-app-bar-two-rows-expanded-height);
+    --_m3e-top-app-bar-collapsed-height: var(
+      --m3e-comp-top-app-bar-container-collapsed-height,
+      var(--m3e-comp-top-app-bar-two-rows-collapsed-height)
+    );
+    --_m3e-top-app-bar-expanded-height: var(
+      --m3e-comp-top-app-bar-container-expanded-height,
+      var(--m3e-comp-top-app-bar-two-rows-expanded-height)
+    );
     --_m3e-top-app-bar-title-bottom-padding: var(
       --m3e-comp-top-app-bar-two-rows-title-bottom-padding
     );
@@ -237,7 +263,8 @@
 
   .m3e-top-app-bar--two-rows:has(.m3e-top-app-bar__expanded .m3e-top-app-bar__subtitle) {
     --_m3e-top-app-bar-expanded-height: var(
-      --m3e-comp-top-app-bar-two-rows-with-subtitle-expanded-height
+      --m3e-comp-top-app-bar-container-expanded-height,
+      var(--m3e-comp-top-app-bar-two-rows-with-subtitle-expanded-height)
     );
   }
 

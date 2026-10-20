@@ -1,4 +1,7 @@
-import { M3eTimePickerElement } from '../time-picker-layout/element.js';
+import {
+  M3eTimePickerElement,
+  type M3eTimePickerElementEventMap,
+} from '../time-picker-layout/element.js';
 import { TimePickerLayout, type TimePickerLayoutOptions } from '../time-picker-layout/dial.js';
 
 /**
@@ -32,4 +35,31 @@ export class M3eTimePicker extends M3eTimePickerElement<TimePickerLayout, TimePi
   ): TimePickerLayout {
     return new TimePickerLayout(root, options);
   }
+}
+
+/** Events of `<m3e-time-picker>` (M1). */
+export type M3eTimePickerEventMap = M3eTimePickerElementEventMap;
+
+// Typed listeners merged into the class: type-only, no runtime code.
+export interface M3eTimePicker {
+  addEventListener<K extends keyof M3eTimePickerEventMap>(
+    type: K,
+    listener: (this: M3eTimePicker, ev: M3eTimePickerEventMap[K]) => unknown,
+    options?: boolean | AddEventListenerOptions,
+  ): void;
+  addEventListener(
+    type: string,
+    listener: EventListenerOrEventListenerObject,
+    options?: boolean | AddEventListenerOptions,
+  ): void;
+  removeEventListener<K extends keyof M3eTimePickerEventMap>(
+    type: K,
+    listener: (this: M3eTimePicker, ev: M3eTimePickerEventMap[K]) => unknown,
+    options?: boolean | EventListenerOptions,
+  ): void;
+  removeEventListener(
+    type: string,
+    listener: EventListenerOrEventListenerObject,
+    options?: boolean | EventListenerOptions,
+  ): void;
 }

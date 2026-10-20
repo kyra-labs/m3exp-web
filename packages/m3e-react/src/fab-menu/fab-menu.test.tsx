@@ -76,10 +76,10 @@ describe('<FabMenu>', () => {
     expect(items).toHaveLength(3);
   });
 
-  it('controlled: follows `open`; keys move, Tab cycles, Escape closes and refocuses', async () => {
+  it('controlled: follows `isOpen`; keys move, Tab cycles, Escape closes and refocuses', async () => {
     function Controlled() {
       const [open, setOpen] = useState(false);
-      return <FabMenu aria-label="Share" items={ITEMS} open={open} onOpenChange={setOpen} />;
+      return <FabMenu aria-label="Share" items={ITEMS} isOpen={open} onOpenChange={setOpen} />;
     }
     const { root, toggle, items } = parts(await renderReact(<Controlled />));
     await press(toggle);
@@ -173,5 +173,26 @@ describe('<FabMenu> ⇔ <m3e-fab-menu> DOM parity', () => {
     const host = await renderElement(html);
     const fromElement = canonical(host.querySelector('.m3e-fab-menu')!);
     expect(normalizeIds(fromElement)).toBe(normalizeIds(fromReact));
+  });
+});
+
+describe('M11 API (D16 aliases)', () => {
+  it('<FabMenu open> still works, warns once in development; isOpen wins', async () => {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => undefined);
+    const container = await renderReact(
+      <>
+        {/* eslint-disable-next-line @typescript-eslint/no-deprecated -- the 1.x alias */}
+        <FabMenu aria-label="A" items={ITEMS} open />
+        {/* eslint-disable-next-line @typescript-eslint/no-deprecated -- the 1.x alias */}
+        <FabMenu aria-label="B" items={ITEMS} open isOpen={false} />
+      </>,
+    );
+    const [a, b] = container.querySelectorAll('.m3e-fab-menu');
+    expect(a!.classList.contains('m3e-fab-menu--open')).toBe(true);
+    expect(b!.classList.contains('m3e-fab-menu--open')).toBe(false);
+    const messages = warn.mock.calls.map((c) => String(c[0]));
+    expect(messages.filter((m) => m.includes('deprecated'))).toEqual([
+      '[m3exp-web] <FabMenu open> is deprecated since 1.8 and will be removed in 2.0. Use <FabMenu isOpen>.',
+    ]);
   });
 });

@@ -15,7 +15,11 @@ import {
   fillDrawerItemElement,
 } from '../navigation-drawer/drawer-item.js';
 import { createItemElement, fillItemElement } from '../navigation-item/item-element.js';
-import { M3eNavigationContainer, M3eNavigationItem } from '../navigation-item/navigation-item.js';
+import {
+  M3eNavigationContainer,
+  M3eNavigationItem,
+  type M3eNavigationContainerEventMap,
+} from '../navigation-item/navigation-item.js';
 import { NavigationSuiteLayout } from '../navigation-suite-layout/navigation-suite-layout.js';
 import {
   currentWindowSizeClass,
@@ -311,6 +315,48 @@ export class M3eNavigationSuite extends M3eNavigationContainer {
     if (this.#drawerItems) fillDrawerItemElement(doc, item, el, selected);
     else fillItemElement(doc, item, el, selected);
   }
+}
+
+/** `navigation-hidden-change` detail of `<m3e-navigation-suite>`. */
+export interface NavigationHiddenChangeDetail {
+  hidden: boolean;
+}
+
+/** `navigation-suite-type-change` detail of `<m3e-navigation-suite>`. */
+export interface NavigationSuiteTypeChangeDetail {
+  type: NavigationSuiteType;
+}
+
+/** Events of `<m3e-navigation-suite>` (M1): typed `addEventListener` / `removeEventListener`. */
+export interface M3eNavigationSuiteEventMap extends M3eNavigationContainerEventMap {
+  /** The navigation was shown or hidden. */
+  'navigation-hidden-change': CustomEvent<NavigationHiddenChangeDetail>;
+  /** The navigation component changed with the window size class. */
+  'navigation-suite-type-change': CustomEvent<NavigationSuiteTypeChangeDetail>;
+}
+
+// Typed listeners merged into the class: type-only, no runtime code.
+export interface M3eNavigationSuite {
+  addEventListener<K extends keyof M3eNavigationSuiteEventMap>(
+    type: K,
+    listener: (this: M3eNavigationSuite, ev: M3eNavigationSuiteEventMap[K]) => unknown,
+    options?: boolean | AddEventListenerOptions,
+  ): void;
+  addEventListener(
+    type: string,
+    listener: EventListenerOrEventListenerObject,
+    options?: boolean | AddEventListenerOptions,
+  ): void;
+  removeEventListener<K extends keyof M3eNavigationSuiteEventMap>(
+    type: K,
+    listener: (this: M3eNavigationSuite, ev: M3eNavigationSuiteEventMap[K]) => unknown,
+    options?: boolean | EventListenerOptions,
+  ): void;
+  removeEventListener(
+    type: string,
+    listener: EventListenerOrEventListenerObject,
+    options?: boolean | EventListenerOptions,
+  ): void;
 }
 
 /** Replaces `parent`'s children with `children` unless they already are, in order. */

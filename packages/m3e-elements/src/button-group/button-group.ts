@@ -4,7 +4,10 @@ import { ButtonGroupLayout } from '../button-group-layout/button-group-layout.js
 import type { M3eMenu, M3eMenuItem } from '../menu/menu.js';
 import type { TooltipController } from '../tooltip-popup/tooltip-popup.js';
 
-/** Compose `Strings.ButtonGroupMoreOptions` (androidMain res/values/strings.xml L19). */
+/**
+ * Compose `Strings.ButtonGroupMoreOptions` (androidMain res/values/strings.xml L19).
+ * @internal Shared with m3e-react; not part of the public API.
+ */
 export const BUTTON_GROUP_MORE_OPTIONS = 'More options';
 
 const VARIANTS = new Set(['standard', 'connected']);
@@ -34,6 +37,21 @@ function replaceChildrenIfChanged(parent: Element, children: readonly Element[])
   const current = parent.children;
   if (current.length === children.length && children.every((c, i) => current[i] === c)) return;
   parent.replaceChildren(...children);
+}
+
+/** `selection-change` (and the deprecated `change`) detail of `<m3e-button-group>`. */
+export interface ButtonGroupChangeDetail {
+  /** The item that changed. */
+  value: string;
+  /** Whether it is now selected. */
+  selected: boolean;
+  /** Every selected item's value. */
+  values: string[];
+}
+
+/** `action` detail of a `<m3e-button-group-item>` (it bubbles to the group). */
+export interface ButtonGroupActionDetail {
+  value: string;
 }
 
 /**
@@ -70,6 +88,36 @@ export class M3eButtonGroupItem extends M3eElement {
   }
 }
 
+/** Events of `<m3e-button-group-item>` (M1): typed `addEventListener` / `removeEventListener`. */
+export interface M3eButtonGroupItemEventMap extends HTMLElementEventMap {
+  /** Activated (it bubbles to the group). */
+  action: CustomEvent<ButtonGroupActionDetail>;
+}
+
+// Typed listeners merged into the class: type-only, no runtime code.
+export interface M3eButtonGroupItem {
+  addEventListener<K extends keyof M3eButtonGroupItemEventMap>(
+    type: K,
+    listener: (this: M3eButtonGroupItem, ev: M3eButtonGroupItemEventMap[K]) => unknown,
+    options?: boolean | AddEventListenerOptions,
+  ): void;
+  addEventListener(
+    type: string,
+    listener: EventListenerOrEventListenerObject,
+    options?: boolean | AddEventListenerOptions,
+  ): void;
+  removeEventListener<K extends keyof M3eButtonGroupItemEventMap>(
+    type: K,
+    listener: (this: M3eButtonGroupItem, ev: M3eButtonGroupItemEventMap[K]) => unknown,
+    options?: boolean | EventListenerOptions,
+  ): void;
+  removeEventListener(
+    type: string,
+    listener: EventListenerOrEventListenerObject,
+    options?: boolean | EventListenerOptions,
+  ): void;
+}
+
 let nextId = 0;
 
 const valueOf = (item: M3eButtonGroupItem, index: number) =>
@@ -86,8 +134,9 @@ const valueOf = (item: M3eButtonGroupItem, index: number) =>
  *   `shape`: `round` (default) | `square`. `button-variant`: `filled` (default) | `tonal` |
  *   `elevated` | `outlined` | `text`.
  * - `selection-mode`: `none` (default; plain buttons), `single` (`role="radiogroup"`, radio items
- *   with `aria-checked`), `multiple` (toggle buttons with `aria-pressed`). `selection-required`
- *   keeps one item selected. `disabled` disables every item. `label`: the group's accessible name.
+ *   with `aria-checked`), `multiple` (toggle buttons with `aria-pressed`).
+ *   `disallow-empty-selection` keeps one item selected (`selection-required` is its deprecated
+ *   name, since 1.8; removed in 2.0). `disabled` disables every item. `label`: the group's accessible name.
  * - `overflow` (standard groups): trailing items that do not fit collapse into a menu opened from
  *   a "More options" icon button (`overflow-label` renames it). The menu is `<m3e-menu
  *   variant="baseline">`, loaded on first use. The button carries the plain tooltip Compose builds
@@ -97,8 +146,10 @@ const valueOf = (item: M3eButtonGroupItem, index: number) =>
  *   decision M9 #2).
  * - Keyboard: Tab enters on one item (the last focused, else the checked one, else the first);
  *   ArrowLeft/ArrowRight (mirrored in RTL), Home and End move focus; Enter/Space activate.
- * - Events: `change` on the group when the selection changes, `detail: { value, selected, values }`;
- *   `action` on the `<m3e-button-group-item>` (bubbles) when it is activated, `detail: { value }`.
+ * - Events: `selection-change` on the group when the selection changes, `detail: { value,
+ *   selected, values }` (`change` carries the same detail and is deprecated since 1.8, removed in
+ *   2.0); `action` on the `<m3e-button-group-item>` (bubbles) when it is activated,
+ *   `detail: { value }`.
  */
 export class M3eButtonGroup extends M3eElement {
   static override properties = {
@@ -108,6 +159,7 @@ export class M3eButtonGroup extends M3eElement {
     shape: {},
     buttonVariant: {},
     selectionMode: {},
+    disallowEmptySelection: { type: Boolean },
     selectionRequired: { type: Boolean },
     overflow: { type: Boolean },
     overflowLabel: {},
@@ -120,6 +172,12 @@ export class M3eButtonGroup extends M3eElement {
   declare shape: string | null | undefined;
   declare buttonVariant: string | null | undefined;
   declare selectionMode: string | null | undefined;
+  /** Keeps one item selected (React Aria's `disallowEmptySelection`). */
+  declare disallowEmptySelection: boolean | undefined;
+  /**
+   * Keeps one item selected.
+   * @deprecated Since 1.8: use `disallowEmptySelection` (`disallow-empty-selection`). Removed in 2.0.
+   */
   declare selectionRequired: boolean | undefined;
   declare overflow: boolean | undefined;
   declare overflowLabel: string | null | undefined;
@@ -419,14 +477,18 @@ export class M3eButtonGroup extends M3eElement {
     const index = items.indexOf(item);
     const value = valueOf(item, index);
     item.dispatchEvent(
-      new CustomEvent('action', { bubbles: true, composed: true, detail: { value } }),
+      new CustomEvent('action', {
+        bubbles: true,
+        composed: true,
+        detail: { value } satisfies ButtonGroupActionDetail,
+      }),
     );
     const mode = this.#mode();
     if (mode === 'none') return;
     let selected: boolean;
     if (mode === 'single') {
       if (item.selected) {
-        if (this.selectionRequired) return;
+        if (this.#required()) return;
         selected = false;
       } else {
         selected = true;
@@ -434,10 +496,52 @@ export class M3eButtonGroup extends M3eElement {
       }
     } else {
       selected = !item.selected;
-      if (!selected && this.selectionRequired && this.values.length <= 1) return;
+      if (!selected && this.#required() && this.values.length <= 1) return;
     }
     item.selected = selected;
     this.requestUpdate();
-    this.emit('change', { value, selected, values: this.values });
+    const detail: ButtonGroupChangeDetail = { value, selected, values: this.values };
+    this.emit('selection-change', detail);
+    this.emit('change', { ...detail });
   }
+
+  /** `disallow-empty-selection`, else the deprecated `selection-required` (the new name wins). */
+  #required(): boolean {
+    // eslint-disable-next-line @typescript-eslint/no-deprecated -- the 1.x alias (D16)
+    return Boolean(this.disallowEmptySelection ?? this.selectionRequired);
+  }
+}
+
+/** Events of `<m3e-button-group>` (M1): typed `addEventListener` / `removeEventListener`. */
+export interface M3eButtonGroupEventMap extends HTMLElementEventMap {
+  /** The selection changed. */
+  'selection-change': CustomEvent<ButtonGroupChangeDetail>;
+  /** @deprecated Since 1.8: listen to `selection-change` (same detail). Removed in 2.0. */
+  change: CustomEvent<ButtonGroupChangeDetail>;
+  /** An item was activated (from the `<m3e-button-group-item>`, bubbling). */
+  action: CustomEvent<ButtonGroupActionDetail>;
+}
+
+// Typed listeners merged into the class: type-only, no runtime code.
+export interface M3eButtonGroup {
+  addEventListener<K extends keyof M3eButtonGroupEventMap>(
+    type: K,
+    listener: (this: M3eButtonGroup, ev: M3eButtonGroupEventMap[K]) => unknown,
+    options?: boolean | AddEventListenerOptions,
+  ): void;
+  addEventListener(
+    type: string,
+    listener: EventListenerOrEventListenerObject,
+    options?: boolean | AddEventListenerOptions,
+  ): void;
+  removeEventListener<K extends keyof M3eButtonGroupEventMap>(
+    type: K,
+    listener: (this: M3eButtonGroup, ev: M3eButtonGroupEventMap[K]) => unknown,
+    options?: boolean | EventListenerOptions,
+  ): void;
+  removeEventListener(
+    type: string,
+    listener: EventListenerOrEventListenerObject,
+    options?: boolean | EventListenerOptions,
+  ): void;
 }

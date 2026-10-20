@@ -2,7 +2,8 @@
 // <m3e-supporting-pane-layout> and m3e-react's ListDetailPaneScaffold / SupportingPaneScaffold:
 // the destination history, the pane value per size, navigation motion, focus and the drag handle
 // (pass the pane-motion.js and pane-expansion.js entries as options.motion / options.expansion).
-// Re-exports the m3e-motion three-pane scaffold port it runs on (m3e-react exports none of these).
+// Re-exports the m3e-motion three-pane scaffold port it runs on (m3e-react re-exports a few of these
+// as the same symbols, M12).
 export {
   type AttachPaneExpansion,
   PANE_EXPANSION_DRAG_HANDLE_LABEL,
@@ -47,3 +48,8 @@ export {
   threePaneScaffoldDirective,
   threePaneScaffoldLayout,
 } from '@kyralabs/m3e-motion';
+// The pane scaffold elements' event (M1).
+export type {
+  M3ePaneScaffoldElementEventMap,
+  ScaffoldValueChangeDetail,
+} from './pane-scaffold-element.js';

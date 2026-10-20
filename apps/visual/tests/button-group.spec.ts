@@ -138,7 +138,7 @@ test('connected: pressing tightens the inner corners only; selection morphs them
   await expect(restaurant!).toHaveAttribute('aria-checked', 'true');
   await expect.poll(() => radii(restaurant!)).toEqual(Array(4).fill(b.height / 2));
   expect(await widths(group)).toEqual(before);
-  await expect(page.locator('#el-log')).toHaveText('change: restaurant');
+  await expect(page.locator('#el-log')).toHaveText('selection-change: restaurant');
 });
 
 test('pressed item grows by ExpandedRatio, neighbors shrink, total width constant', async ({
@@ -368,7 +368,7 @@ test('selection: single radios (selection required), multiple aria-pressed, Reac
   const multiple = items(page.getByTestId('el-multiple'));
   await multiple.nth(1).click();
   await expect(multiple.nth(1)).toHaveAttribute('aria-pressed', 'true');
-  await expect(page.locator('#el-log')).toHaveText('change: bold, italic');
+  await expect(page.locator('#el-log')).toHaveText('selection-change: bold, italic');
   const react = items(page.getByTestId('react-connected'));
   await react.nth(2).click();
   await expect(react.nth(2)).toHaveAttribute('aria-checked', 'true');

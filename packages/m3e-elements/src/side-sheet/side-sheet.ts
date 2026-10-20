@@ -7,6 +7,7 @@ import {
   SIDE_SHEET_LABEL,
 } from '../side-sheet-layout/strings.js';
 import { observeWindowSizeClass } from '../window-size-class/window-size-class.js';
+import type { EmptyDetail, OpenChangeDetail } from '../base/events.js';
 
 const SHEET = 'm3e-side-sheet';
 
@@ -74,8 +75,9 @@ export function adaptiveSideSheetVariant(widthAtLeastMedium: boolean): SideSheet
  *   content beside it), `modal` (a `<dialog>` at the window's end edge over a scrim) or `adaptive`
  *   (modal below the medium window size class, 600dp, standard from it; owner decision M9 #17).
  * - `open` (reflected). `headline` (the title; it names the sheet), `label` (the name without a
- *   headline; default "Side sheet"), `close-label` (default "Close"), `back` (show the back icon
- *   button; `back-label`, default "Back"), `detached` (inset 16dp, all corners rounded; owner
+ *   headline; default "Side sheet"), `close-label` (default "Close"), `back-button` (show the back
+ *   icon button; `back-label`, default "Back"; `back` is its deprecated name, since 1.8, removed in
+ *   2.0), `detached` (inset 16dp, all corners rounded; owner
  *   decision M9 #18), `divider` (standard: the line along its start edge; modal: above the
  *   actions).
  * - Children with `slot="actions"` are the bottom action buttons; the other child nodes are the
@@ -91,6 +93,7 @@ export class M3eSideSheet extends M3eElement {
     headline: {},
     label: {},
     closeLabel: {},
+    backButton: { type: Boolean },
     back: { type: Boolean },
     backLabel: {},
     detached: { type: Boolean },
@@ -102,6 +105,12 @@ export class M3eSideSheet extends M3eElement {
   declare headline: string | null | undefined;
   declare label: string | null | undefined;
   declare closeLabel: string | null | undefined;
+  /** Shows the back icon button (React's `backButton`); it fires `back`. */
+  declare backButton: boolean | undefined;
+  /**
+   * Shows the back icon button.
+   * @deprecated Since 1.8: use `backButton` (`back-button`); the `back` event stays. Removed in 2.0.
+   */
   declare back: boolean | undefined;
   declare backLabel: string | null | undefined;
   declare detached: boolean | undefined;
@@ -229,7 +238,9 @@ export class M3eSideSheet extends M3eElement {
     // Header: [back] [headline] close.
     const header = (this.#header ??= el(doc, 'div', `${SHEET}__header`));
     const parts: Node[] = [];
-    if (this.back) {
+    // The new name wins; the deprecated `back` attribute is the 1.x alias (D16).
+    // eslint-disable-next-line @typescript-eslint/no-deprecated
+    if (this.backButton ?? this.back) {
       const back = (this.#backButton ??= this.#iconButton(doc, 'back', 'arrow_back'));
       setAttr(back, 'aria-label', this.backLabel ?? SIDE_SHEET_BACK_LABEL);
       parts.push(back);
@@ -289,4 +300,39 @@ export class M3eSideSheet extends M3eElement {
     button.append(icon);
     return button;
   }
+}
+
+/** Events of `<m3e-side-sheet>` (M1): typed `addEventListener` / `removeEventListener`. */
+export interface M3eSideSheetEventMap extends HTMLElementEventMap {
+  /**
+   * Opened or closed; cancelable when the sheet asks (close button, Escape, scrim, a close
+   * request).
+   */
+  'open-change': CustomEvent<OpenChangeDetail>;
+  /** The back icon button (`back-button`) was pressed. */
+  back: CustomEvent<EmptyDetail>;
+}
+
+// Typed listeners merged into the class: type-only, no runtime code.
+export interface M3eSideSheet {
+  addEventListener<K extends keyof M3eSideSheetEventMap>(
+    type: K,
+    listener: (this: M3eSideSheet, ev: M3eSideSheetEventMap[K]) => unknown,
+    options?: boolean | AddEventListenerOptions,
+  ): void;
+  addEventListener(
+    type: string,
+    listener: EventListenerOrEventListenerObject,
+    options?: boolean | AddEventListenerOptions,
+  ): void;
+  removeEventListener<K extends keyof M3eSideSheetEventMap>(
+    type: K,
+    listener: (this: M3eSideSheet, ev: M3eSideSheetEventMap[K]) => unknown,
+    options?: boolean | EventListenerOptions,
+  ): void;
+  removeEventListener(
+    type: string,
+    listener: EventListenerOrEventListenerObject,
+    options?: boolean | EventListenerOptions,
+  ): void;
 }

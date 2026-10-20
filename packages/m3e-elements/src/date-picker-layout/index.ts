@@ -6,3 +6,12 @@ export { type DatePickerBaseOptions, DatePickerBase } from './base.js';
 export { DatePickerLayout, type DatePickerLayoutOptions } from './picker.js';
 export { DATE_PICKER_STRINGS, type DatePickerStrings } from './strings.js';
 export { parseIsoDate, parseYearRange, toIsoDate } from './locale.js';
+// The date pickers' option types (Compose's, from m3e-motion), for `selectableDates`, `year-range`
+// and `display-mode` (M15). m3e-react re-exports these symbols.
+export type { DatePickerDisplayMode, SelectableDates, YearRange } from '@kyralabs/m3e-motion';
+// The date pickers' shared events (M1).
+export type {
+  DisplayModeChangeDetail,
+  DisplayedMonthChangeDetail,
+  M3eDatePickerElementEventMap,
+} from './element.js';

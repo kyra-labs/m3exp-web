@@ -116,8 +116,10 @@ const classes = (s: (typeof statics)[number]) =>
   <section aria-labelledby="react-heading">
     <h2 id="react-heading">React</h2>
     <p>
-      <code>&lt;FabMenu&gt;</code> opening from a medium FAB. Press the FAB twice quickly: the toggle and
-      the items reverse from their current speed.
+      <code>&lt;FabMenu items isOpen defaultOpen onOpenChange icon closeIcon size color align&gt;</code>
+      opening from a medium FAB. Press the FAB twice quickly: the toggle and the items reverse from
+      their current speed. <code>open</code> is the deprecated name of <code>isOpen</code> (since 1.8,
+      removed in 2.0; it warns once in development).
     </p>
     <FabMenuPlayground client:only="react" />
   </section>

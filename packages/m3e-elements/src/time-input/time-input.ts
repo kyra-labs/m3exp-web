@@ -1,4 +1,7 @@
-import { M3eTimePickerElement } from '../time-picker-layout/element.js';
+import {
+  M3eTimePickerElement,
+  type M3eTimePickerElementEventMap,
+} from '../time-picker-layout/element.js';
 import { TimeInputLayout, type TimeInputLayoutOptions } from '../time-picker-layout/input.js';
 
 /**
@@ -31,4 +34,34 @@ export class M3eTimeInput extends M3eTimePickerElement<TimeInputLayout, TimeInpu
   ): TimeInputLayout {
     return new TimeInputLayout(root, options);
   }
+}
+
+/** Events of `<m3e-time-input>` (M1): typed `addEventListener` / `removeEventListener`. */
+export interface M3eTimeInputEventMap extends M3eTimePickerElementEventMap {
+  /** The `uncontained` side column's mode toggle was pressed. */
+  'mode-toggle': CustomEvent<null>;
+}
+
+// Typed listeners merged into the class: type-only, no runtime code.
+export interface M3eTimeInput {
+  addEventListener<K extends keyof M3eTimeInputEventMap>(
+    type: K,
+    listener: (this: M3eTimeInput, ev: M3eTimeInputEventMap[K]) => unknown,
+    options?: boolean | AddEventListenerOptions,
+  ): void;
+  addEventListener(
+    type: string,
+    listener: EventListenerOrEventListenerObject,
+    options?: boolean | AddEventListenerOptions,
+  ): void;
+  removeEventListener<K extends keyof M3eTimeInputEventMap>(
+    type: K,
+    listener: (this: M3eTimeInput, ev: M3eTimeInputEventMap[K]) => unknown,
+    options?: boolean | EventListenerOptions,
+  ): void;
+  removeEventListener(
+    type: string,
+    listener: EventListenerOrEventListenerObject,
+    options?: boolean | EventListenerOptions,
+  ): void;
 }

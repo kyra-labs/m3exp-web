@@ -1,4 +1,7 @@
-import { M3eTimePickerElement } from '../time-picker-layout/element.js';
+import {
+  M3eTimePickerElement,
+  type M3eTimePickerElementEventMap,
+} from '../time-picker-layout/element.js';
 import { TimeScrollLayout, type TimeScrollLayoutOptions } from '../time-picker-layout/scroll.js';
 
 /**
@@ -31,4 +34,34 @@ export class M3eTimeScroll extends M3eTimePickerElement<TimeScrollLayout, TimeSc
   ): TimeScrollLayout {
     return new TimeScrollLayout(root, options);
   }
+}
+
+/** Events of `<m3e-time-scroll>` (M1): typed `addEventListener` / `removeEventListener`. */
+export interface M3eTimeScrollEventMap extends M3eTimePickerElementEventMap {
+  /** The `uncontained` side column's mode toggle was pressed. */
+  'mode-toggle': CustomEvent<null>;
+}
+
+// Typed listeners merged into the class: type-only, no runtime code.
+export interface M3eTimeScroll {
+  addEventListener<K extends keyof M3eTimeScrollEventMap>(
+    type: K,
+    listener: (this: M3eTimeScroll, ev: M3eTimeScrollEventMap[K]) => unknown,
+    options?: boolean | AddEventListenerOptions,
+  ): void;
+  addEventListener(
+    type: string,
+    listener: EventListenerOrEventListenerObject,
+    options?: boolean | AddEventListenerOptions,
+  ): void;
+  removeEventListener<K extends keyof M3eTimeScrollEventMap>(
+    type: K,
+    listener: (this: M3eTimeScroll, ev: M3eTimeScrollEventMap[K]) => unknown,
+    options?: boolean | EventListenerOptions,
+  ): void;
+  removeEventListener(
+    type: string,
+    listener: EventListenerOrEventListenerObject,
+    options?: boolean | EventListenerOptions,
+  ): void;
 }

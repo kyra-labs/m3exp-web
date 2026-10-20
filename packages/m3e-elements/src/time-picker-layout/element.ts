@@ -3,16 +3,28 @@ import { M3eElement } from '../base/M3eElement.js';
 import type { TimePickerBase, TimePickerBaseOptions } from './shared.js';
 import type { TimePickerStrings } from './strings.js';
 
+const stopPropagation = (e: Event): void => {
+  e.stopPropagation();
+};
+
 /** `change` event detail: the time the user picked. */
 export interface TimePickerChangeDetail {
   hour: number;
   minute: number;
 }
 
+/** `selection-change` detail: the field (hour or minute) the user moved to. */
+export interface TimePickerSelectionChangeDetail {
+  value: TimePickerSelection;
+  /** @deprecated Since 1.8: use `value`. Removed in 2.0. */
+  selection: TimePickerSelection;
+}
+
 /**
  * What `<m3e-time-picker>`, `<m3e-time-input>` and `<m3e-time-scroll>` share: the attributes
  * (`hour`, `minute`, `hour-cycle="12 | 24"`, `selection`, `vibrant`), the `labels` property
- * (string overrides), the `change` / `selection-change` events, and a root `<div>` inside the
+ * (string overrides), the `change` (`detail: { hour, minute }`) / `selection-change` (`detail: { value }`; its
+ * `selection` key is deprecated since 1.8) events, and a root `<div>` inside the
  * host (`display: contents`) that the layout builds.
  */
 export abstract class M3eTimePickerElement<
@@ -64,7 +76,11 @@ export abstract class M3eTimePickerElement<
       },
       onSelectionChange: (value: TimePickerSelection) => {
         this.selection = value;
-        this.emit('selection-change', { selection: value });
+        // `value` (M2: as the other `selection-change` events); `selection` is the deprecated key.
+        this.emit('selection-change', {
+          value,
+          selection: value,
+        } satisfies TimePickerSelectionChangeDetail);
       },
     } as O;
   }
@@ -84,9 +100,47 @@ export abstract class M3eTimePickerElement<
     if (!this.#layout) {
       const root = this.ownerDocument.createElement('div');
       this.replaceChildren(root);
+      // The inner <input>s' native `input` / `change` stop at the root (the layout's own listeners
+      // have run by then): the host's `change` is only this element's CustomEvent with `detail`.
+      for (const type of ['input', 'change']) this.listen(root, type, stopPropagation);
       this.#layout = this.createLayout(root, this.options());
     } else {
       this.#layout.update(this.options());
     }
   }
+}
+
+/** Events of the time pickers (M1): typed `addEventListener` / `removeEventListener`. */
+export interface M3eTimePickerElementEventMap extends HTMLElementEventMap {
+  /** The user changed the time (the inputs' native `input` / `change` stop inside). */
+  change: CustomEvent<TimePickerChangeDetail>;
+  /** The selected field (hour or minute) changed. */
+  'selection-change': CustomEvent<TimePickerSelectionChangeDetail>;
+}
+
+// Typed listeners merged into the class: type-only, no runtime code.
+export interface M3eTimePickerElement<
+  L extends TimePickerBase<O>,
+  O extends TimePickerBaseOptions,
+> {
+  addEventListener<K extends keyof M3eTimePickerElementEventMap>(
+    type: K,
+    listener: (this: M3eTimePickerElement<L, O>, ev: M3eTimePickerElementEventMap[K]) => unknown,
+    options?: boolean | AddEventListenerOptions,
+  ): void;
+  addEventListener(
+    type: string,
+    listener: EventListenerOrEventListenerObject,
+    options?: boolean | AddEventListenerOptions,
+  ): void;
+  removeEventListener<K extends keyof M3eTimePickerElementEventMap>(
+    type: K,
+    listener: (this: M3eTimePickerElement<L, O>, ev: M3eTimePickerElementEventMap[K]) => unknown,
+    options?: boolean | EventListenerOptions,
+  ): void;
+  removeEventListener(
+    type: string,
+    listener: EventListenerOrEventListenerObject,
+    options?: boolean | EventListenerOptions,
+  ): void;
 }

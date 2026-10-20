@@ -9,6 +9,7 @@ import {
   BOTTOM_SHEET_PANE_TITLE,
 } from '../bottom-sheet-layout/strings.js';
 import type { TooltipController } from '../tooltip-popup/tooltip-popup.js';
+import type { OpenChangeDetail } from '../base/events.js';
 
 const SHEET = 'm3e-bottom-sheet';
 const VALUES: readonly SheetValue[] = ['hidden', 'partially-expanded', 'expanded'];
@@ -39,6 +40,11 @@ const ensureChildren = (parent: Element, children: readonly Node[]): void => {
   }
 };
 
+/** `value-change` detail of `<m3e-bottom-sheet>`. */
+export interface SheetValueChangeDetail {
+  value: SheetValue;
+}
+
 /** The root's class for a variant, a value and the peek option (bottom-sheet.css). */
 export function bottomSheetClass(
   variant: BottomSheetVariant,
@@ -68,7 +74,8 @@ export function bottomSheetClass(
  * - `variant`: `standard` (default; Compose BottomSheet: fixed to the bottom of its positioned
  *   container, a region named `label`) or `modal` (ModalBottomSheet: a `<dialog>` named `label`
  *   over a scrim).
- * - `value` (reflected): `hidden` (default), `partially-expanded`, `expanded`.
+ * - `value` (reflected): `hidden` (default), `partially-expanded`, `expanded`. `open`
+ *   (reflected): whether `value` is not `hidden`; setting it shows or hides the sheet.
  *   `skip-partially-expanded` drops the partially expanded state. `peek-height` (px; empty: 56,
  *   standard only) makes PartiallyExpanded show that much of the sheet (BottomSheetScaffold's
  *   sheetPeekHeight); `skip-hidden-state` then drops Hidden.
@@ -79,16 +86,18 @@ export function bottomSheetClass(
  *   `tooltip-popup.js` entry when the handle is first rendered (outside this entry's D17 budget).
  *   The tooltip repeats the handle's name, so it is `aria-hidden` (owner decision M9 #2).
  * - Methods `show()`, `hide()`, `expand()`, `partialExpand()` (Compose SheetState); `ready`.
- *   Event
+ *   Events
  *   `value-change` (`detail: { value }`), cancelable when the sheet asks (the handle, a drag,
  *   Escape, the scrim, the methods): `preventDefault()` keeps it (Compose confirmValueChange;
- *   `hidden` is onDismissRequest).
+ *   `hidden` is onDismissRequest); then, when that shows or hides the sheet, `open-change`
+ *   (`detail: { open }`, as the other modal elements; cancelable the same way).
  */
 export class M3eBottomSheet extends M3eElement {
   static override properties = {
     ...M3eElement.properties,
     variant: { reflect: true },
     value: { reflect: true },
+    open: { type: Boolean, reflect: true },
     skipPartiallyExpanded: { type: Boolean },
     peekHeight: {},
     skipHiddenState: { type: Boolean },
@@ -100,6 +109,12 @@ export class M3eBottomSheet extends M3eElement {
 
   declare variant: string | null | undefined;
   declare value: string | null | undefined;
+  /**
+   * Whether the sheet shows (reflected): `value` is not `hidden`. Setting it shows the sheet (as
+   * `show()` would pick: partially expanded, or expanded when that is skipped) or hides it, like
+   * setting `value` (no events).
+   */
+  declare open: boolean | undefined;
   declare skipPartiallyExpanded: boolean | undefined;
   declare peekHeight: string | null | undefined;
   declare skipHiddenState: boolean | undefined;
@@ -161,10 +176,23 @@ export class M3eBottomSheet extends M3eElement {
     else if (!this.skipPartiallyExpanded) this.#ask('partially-expanded');
   }
 
-  /** Asks (cancelable `value-change`), then takes the value: what the layout does once loaded. */
+  /**
+   * Asks (cancelable `value-change`, then a cancelable `open-change` when the sheet shows or hides),
+   * then takes the value: what the layout does once loaded.
+   */
   #ask(value: SheetValue): boolean {
-    if (value === this.#value()) return true;
-    if (!this.emit('value-change', { value }, { cancelable: true })) return false;
+    const from = this.#value();
+    if (value === from) return true;
+    if (
+      !this.emit('value-change', { value } satisfies SheetValueChangeDetail, { cancelable: true })
+    )
+      return false;
+    const open = value !== 'hidden';
+    if (
+      open !== (from !== 'hidden') &&
+      !this.emit('open-change', { open } satisfies OpenChangeDetail, { cancelable: true })
+    )
+      return false;
     this.value = value;
     return true;
   }
@@ -218,7 +246,17 @@ export class M3eBottomSheet extends M3eElement {
     const content = (this.#content ??= el(doc, 'div', `${SHEET}__content`));
     const peekText = this.peekHeight;
     const peek = variant === 'standard' && peekText !== null && peekText !== undefined;
+    // `open` (a boolean view of `value`): setting it shows or hides the sheet, like `value`.
+    if (
+      changed.has('open') &&
+      this.open !== undefined &&
+      this.open !== (this.#value() !== 'hidden')
+    ) {
+      if (this.open) this.value = this.skipPartiallyExpanded ? 'expanded' : 'partially-expanded';
+      else if (!(this.skipHiddenState && peek)) this.value = 'hidden';
+    }
     const value = this.#value();
+    if (this.open !== (value !== 'hidden')) this.open = value !== 'hidden';
     root.className = bottomSheetClass(variant, value, peek);
     const peekPx = peek ? Number.parseFloat(peekText) : Number.NaN;
     if (Number.isFinite(peekPx)) {
@@ -339,4 +377,36 @@ export class M3eBottomSheet extends M3eElement {
       if (this.isConnected) this.#bindTooltip();
     });
   }
+}
+
+/** Events of `<m3e-bottom-sheet>` (M1): typed `addEventListener` / `removeEventListener`. */
+export interface M3eBottomSheetEventMap extends HTMLElementEventMap {
+  /** The sheet asks for a value; cancelable (Compose confirmValueChange). */
+  'value-change': CustomEvent<SheetValueChangeDetail>;
+  /** After `value-change`, when it shows or hides the sheet; cancelable. */
+  'open-change': CustomEvent<OpenChangeDetail>;
+}
+
+// Typed listeners merged into the class: type-only, no runtime code.
+export interface M3eBottomSheet {
+  addEventListener<K extends keyof M3eBottomSheetEventMap>(
+    type: K,
+    listener: (this: M3eBottomSheet, ev: M3eBottomSheetEventMap[K]) => unknown,
+    options?: boolean | AddEventListenerOptions,
+  ): void;
+  addEventListener(
+    type: string,
+    listener: EventListenerOrEventListenerObject,
+    options?: boolean | AddEventListenerOptions,
+  ): void;
+  removeEventListener<K extends keyof M3eBottomSheetEventMap>(
+    type: K,
+    listener: (this: M3eBottomSheet, ev: M3eBottomSheetEventMap[K]) => unknown,
+    options?: boolean | EventListenerOptions,
+  ): void;
+  removeEventListener(
+    type: string,
+    listener: EventListenerOrEventListenerObject,
+    options?: boolean | EventListenerOptions,
+  ): void;
 }

@@ -350,3 +350,21 @@ describe('SideSheetLayout', () => {
     expect(layout.isOpen).toBe(true);
   });
 });
+
+describe('<m3e-side-sheet>: M11 API', () => {
+  it('back-button shows the back button (it fires back); the deprecated back attribute still works', async () => {
+    const host = await mount('<m3e-side-sheet back-button open></m3e-side-sheet>');
+    const back = vi.fn();
+    host.addEventListener('back', (e) => {
+      back(e.detail);
+    });
+    host.sheetElement!.querySelector<HTMLButtonElement>('.m3e-side-sheet__back')!.click();
+    expect(back).toHaveBeenCalledWith({});
+    const old = await mount('<m3e-side-sheet back open></m3e-side-sheet>');
+    expect(old.sheetElement!.querySelector('.m3e-side-sheet__back')).not.toBeNull();
+    // The new name wins.
+    old.backButton = false;
+    await flush();
+    expect(old.sheetElement!.querySelector('.m3e-side-sheet__back')).toBeNull();
+  });
+});

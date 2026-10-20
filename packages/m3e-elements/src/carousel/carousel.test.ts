@@ -323,3 +323,20 @@ describe('CarouselLayout (keys and focus, owner decision M9 #26)', () => {
     expect(frames).toHaveLength(0);
   });
 });
+
+describe('<m3e-carousel>: M11 API', () => {
+  it('an action item dispatches a bubbling action { index }; the deprecated item-click still fires', async () => {
+    const { host, items: rendered } = await mount(
+      `<m3e-carousel item-width="186">${items(3, (i) => (i === 2 ? ' action' : ''))}</m3e-carousel>`,
+    );
+    const events: [string, EventTarget | null, unknown][] = [];
+    host.addEventListener('action', (e) => events.push([e.type, e.target, e.detail]));
+    host.addEventListener('item-click', (e) => events.push([e.type, e.target, e.detail]));
+    (rendered()[2]!.firstElementChild as HTMLElement).click();
+    const source = host.querySelectorAll('m3e-carousel-item')[2];
+    expect(events).toEqual([
+      ['action', source, { index: 2 }],
+      ['item-click', host, { index: 2 }],
+    ]);
+  });
+});

@@ -23,7 +23,7 @@ const text = (label: string, testid: string) =>
   <section aria-labelledby="dial-heading">
     <h2 id="dial-heading">Dial (element)</h2>
     <p>
-      <code>&lt;m3e-time-picker hour minute hour-cycle="12 | 24" selection="hour | minute" vibrant layout="auto | vertical | horizontal"&gt;</code> fires <code>change</code> (<code>detail: {'{'} hour, minute {'}'}</code>) and <code>selection-change</code>. <code>layout="auto"</code> lays the picker out horizontally in a landscape
+      <code>&lt;m3e-time-picker hour minute hour-cycle="12 | 24" selection="hour | minute" vibrant layout="auto | vertical | horizontal"&gt;</code> fires <code>change</code> (<code>detail: {'{'} hour, minute {'}'}</code>; the inputs' native <code>input</code> / <code>change</code> do not reach the host) and <code>selection-change</code> (<code>detail: {'{'} value {'}'}</code>, <code>'hour' | 'minute'</code>; its <code>selection</code> key is deprecated since 1.8, removed in 2.0). <code>layout="auto"</code> lays the picker out horizontally in a landscape
       window, as Compose.
     </p>
     <div class="docs-time-picker-row">
@@ -120,8 +120,8 @@ const text = (label: string, testid: string) =>
   <section aria-labelledby="react-heading">
     <h2 id="react-heading">React</h2>
     <p>
-      <code>&lt;TimePicker value defaultValue onChange is24Hour selection onSelectionChange vibrant layout locale labels&gt;</code>, <code>&lt;TimeInput vibrant uncontained onModeToggle&gt;</code> and <code>&lt;TimeScroll uncontained onModeToggle&gt;</code> render the same DOM as the elements.
-      <code>&lt;TimePickerDialog title modeToggleButton dismissButton confirmButton&gt;</code> and <code>&lt;VibrantTimePickerDialog&gt;</code> wrap a picker in <code>&lt;BasicAlertDialog&gt;</code>; <code>&lt;TimePickerModeToggle displayMode onDisplayModeChange&gt;</code> is the icon button with its tooltip that switches between the picker and the
+      <code>&lt;TimePicker value defaultValue onChange is24Hour selection onSelectionChange vibrant layout locale labels&gt;</code>, <code>&lt;TimeInput vibrant uncontained onModeToggle&gt;</code> and <code>&lt;TimeScroll uncontained onModeToggle&gt;</code> render the same DOM as the elements (<code>onModeToggle(next)</code> gets the mode the toggle asks for: <code>'scroll'</code> from the input, <code>'input'</code> from the wheels).
+      <code>&lt;TimePickerDialog title modeToggleButton dismissButton confirmButton&gt;</code> and <code>&lt;VibrantTimePickerDialog&gt;</code> wrap a picker in <code>&lt;BasicAlertDialog&gt;</code>; <code>&lt;TimePickerModeToggle displayMode scroll onDisplayModeChange&gt;</code> (<code>onDisplayModeChange(next)</code> gets the mode to show) is the icon button with its tooltip that switches between the picker and the
       input (Compose's switchable sample).
     </p>
     <TimePickerPlayground client:only="react" />

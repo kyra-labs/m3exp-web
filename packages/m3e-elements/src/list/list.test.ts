@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it } from 'vitest';
-import type { ListActionDetail, ListSelectionChangeDetail } from './index.js';
+import type { ListSelectionChangeDetail } from './index.js';
 import './index.js';
 import { createListControl, listControlTree, listItemClassName } from '../list-layout/index.js';
 
@@ -111,7 +111,7 @@ describe('<m3e-list>', () => {
     const [a, b] = options() as [HTMLElement, HTMLElement];
     const changes: ListSelectionChangeDetail[] = [];
     host.addEventListener('selection-change', (e) => {
-      changes.push((e as CustomEvent<ListSelectionChangeDetail>).detail);
+      changes.push(e.detail);
     });
     const input = (el: HTMLElement) => el.querySelector('input')!;
     expect(a.querySelector('.m3e-radio-button')!.hasAttribute('inert')).toBe(true);
@@ -177,7 +177,7 @@ describe('<m3e-list>', () => {
     expect(a.hasAttribute('aria-selected')).toBe(false);
     const actions: string[] = [];
     host.addEventListener('action', (e) => {
-      actions.push((e as CustomEvent<ListActionDetail>).detail.value);
+      actions.push(e.detail.value);
     });
     a.click();
     a.focus();
@@ -214,5 +214,25 @@ describe('list contract helpers', () => {
     const checkbox = createListControl(document, 'checkbox');
     expect(checkbox.querySelector('svg')!.namespaceURI).toBe('http://www.w3.org/2000/svg');
     expect(listControlTree('radio')[2]).toHaveLength(3);
+  });
+});
+
+describe('<m3e-list>: M11 API', () => {
+  it('selection-mode is the selection mode; the deprecated selection still works; the new name wins', async () => {
+    const { host, root, options } = await mount(
+      `<m3e-list label="Pets" selection-mode="single">${item('cat', 'Cat')}${item('dog', 'Dog')}</m3e-list>`,
+    );
+    const changes: ListSelectionChangeDetail[] = [];
+    host.addEventListener('selection-change', (e) => changes.push(e.detail));
+    options()[1]!.click();
+    expect(changes).toEqual([{ values: ['dog'], value: 'dog' }]);
+    expect(host.selectedValues).toEqual(['dog']);
+    // The new name wins over the deprecated one.
+    host.setAttribute('selection', 'multiple');
+    await flush();
+    expect(root.getAttribute('aria-multiselectable')).toBeNull();
+    host.removeAttribute('selection-mode');
+    await flush();
+    expect(root.getAttribute('aria-multiselectable')).toBe('true');
   });
 });

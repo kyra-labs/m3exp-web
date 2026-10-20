@@ -227,3 +227,39 @@ export abstract class M3ePaneScaffoldElement extends M3eElement {
     return handle;
   }
 }
+
+/** `scaffold-value-change` detail of `<m3e-list-detail-layout>` / `<m3e-supporting-pane-layout>`. */
+export interface ScaffoldValueChangeDetail {
+  value: ThreePaneScaffoldValue;
+  destination: ThreePaneScaffoldDestinationItem | null;
+}
+
+/** Events of the pane scaffolds (M1): typed `addEventListener` / `removeEventListener`. */
+export interface M3ePaneScaffoldElementEventMap extends HTMLElementEventMap {
+  /** The navigator moved: the scaffold value and the current destination. */
+  'scaffold-value-change': CustomEvent<ScaffoldValueChangeDetail>;
+}
+
+// Typed listeners merged into the class: type-only, no runtime code.
+export interface M3ePaneScaffoldElement {
+  addEventListener<K extends keyof M3ePaneScaffoldElementEventMap>(
+    type: K,
+    listener: (this: M3ePaneScaffoldElement, ev: M3ePaneScaffoldElementEventMap[K]) => unknown,
+    options?: boolean | AddEventListenerOptions,
+  ): void;
+  addEventListener(
+    type: string,
+    listener: EventListenerOrEventListenerObject,
+    options?: boolean | AddEventListenerOptions,
+  ): void;
+  removeEventListener<K extends keyof M3ePaneScaffoldElementEventMap>(
+    type: K,
+    listener: (this: M3ePaneScaffoldElement, ev: M3ePaneScaffoldElementEventMap[K]) => unknown,
+    options?: boolean | EventListenerOptions,
+  ): void;
+  removeEventListener(
+    type: string,
+    listener: EventListenerOrEventListenerObject,
+    options?: boolean | EventListenerOptions,
+  ): void;
+}

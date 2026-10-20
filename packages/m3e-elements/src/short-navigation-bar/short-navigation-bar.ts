@@ -2,6 +2,7 @@ import { createItemElement, fillItemElement } from '../navigation-item/item-elem
 import {
   M3eNavigationContainer,
   type M3eNavigationItem,
+  type M3eNavigationContainerEventMap,
 } from '../navigation-item/navigation-item.js';
 
 const BLOCK = 'm3e-short-navigation-bar';
@@ -51,4 +52,31 @@ export class M3eShortNavigationBar extends M3eNavigationContainer {
   ): void {
     fillItemElement(doc, item, el, selected);
   }
+}
+
+/** Events of `<m3e-short-navigation-bar>` (M1). */
+export type M3eShortNavigationBarEventMap = M3eNavigationContainerEventMap;
+
+// Typed listeners merged into the class: type-only, no runtime code.
+export interface M3eShortNavigationBar {
+  addEventListener<K extends keyof M3eShortNavigationBarEventMap>(
+    type: K,
+    listener: (this: M3eShortNavigationBar, ev: M3eShortNavigationBarEventMap[K]) => unknown,
+    options?: boolean | AddEventListenerOptions,
+  ): void;
+  addEventListener(
+    type: string,
+    listener: EventListenerOrEventListenerObject,
+    options?: boolean | AddEventListenerOptions,
+  ): void;
+  removeEventListener<K extends keyof M3eShortNavigationBarEventMap>(
+    type: K,
+    listener: (this: M3eShortNavigationBar, ev: M3eShortNavigationBarEventMap[K]) => unknown,
+    options?: boolean | EventListenerOptions,
+  ): void;
+  removeEventListener(
+    type: string,
+    listener: EventListenerOrEventListenerObject,
+    options?: boolean | EventListenerOptions,
+  ): void;
 }

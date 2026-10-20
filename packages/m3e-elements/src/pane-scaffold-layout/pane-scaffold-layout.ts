@@ -29,9 +29,15 @@ import {
 import { readSpringTokens } from '../base/scroll.js';
 import type * as PaneMotion from '../pane-motion/index.js';
 
-/** The pane-motion entry (`@kyralabs/m3e-elements/pane-motion.js`). */
+/**
+ * The pane-motion entry (`@kyralabs/m3e-elements/pane-motion.js`).
+ * @internal Shared with m3e-react; not part of the public API.
+ */
 export type PaneMotionModule = typeof PaneMotion;
-/** The pane-expansion entry's `attachPaneExpansion`. */
+/**
+ * The pane-expansion entry's `attachPaneExpansion`.
+ * @internal Shared with m3e-react; not part of the public API.
+ */
 export type AttachPaneExpansion = (layout: PaneScaffoldLayout, signal: AbortSignal) => void;
 import {
   currentWindowSizeClass,
@@ -44,6 +50,7 @@ export type PaneScaffoldVariant = 'list-detail' | 'supporting-pane';
 /**
  * Spoken pane titles (material3-adaptive androidMain res/values/strings.xml @ 19991f2c L19-30,
  * `m3_adaptive_default_pane_title_*`): each pane's default region name.
+ * @internal Shared with m3e-react; not part of the public API.
  */
 export const PANE_SCAFFOLD_PANE_TITLES: Readonly<Record<ThreePaneScaffoldRole, string>> = {
   primary: 'Primary pane',
@@ -51,10 +58,16 @@ export const PANE_SCAFFOLD_PANE_TITLES: Readonly<Record<ThreePaneScaffoldRole, s
   tertiary: 'Tertiary pane',
 };
 
-/** `m3_adaptive_default_pane_expansion_drag_handle_content_description` (strings.xml L32-34). */
+/**
+ * `m3_adaptive_default_pane_expansion_drag_handle_content_description` (strings.xml L32-34).
+ * @internal Shared with m3e-react; not part of the public API.
+ */
 export const PANE_EXPANSION_DRAG_HANDLE_LABEL = 'Pane expansion drag handle';
 
-/** Pane names per variant (Compose's ListDetailPaneScaffoldRole / SupportingPaneScaffoldRole). */
+/**
+ * Pane names per variant (Compose's ListDetailPaneScaffoldRole / SupportingPaneScaffoldRole).
+ * @internal Shared with m3e-react; not part of the public API.
+ */
 export const PANE_SCAFFOLD_PANE_NAMES: Readonly<
   Record<PaneScaffoldVariant, Readonly<Record<string, ThreePaneScaffoldRole>>>
 > = {
@@ -62,7 +75,10 @@ export const PANE_SCAFFOLD_PANE_NAMES: Readonly<
   'supporting-pane': { main: 'primary', supporting: 'secondary', extra: 'tertiary' },
 };
 
-/** A pane name (`list`, `detail`, `main`, …) or a role (`primary`, …) as a role, else null. */
+/**
+ * A pane name (`list`, `detail`, `main`, …) or a role (`primary`, …) as a role, else null.
+ * @internal Shared with m3e-react; not part of the public API.
+ */
 export function paneScaffoldRole(
   variant: PaneScaffoldVariant,
   name: string | null | undefined,
@@ -72,7 +88,10 @@ export function paneScaffoldRole(
   return PANE_SCAFFOLD_PANE_NAMES[variant][name] ?? null;
 }
 
-/** Start-to-end pane order of a variant. */
+/**
+ * Start-to-end pane order of a variant.
+ * @internal Shared with m3e-react; not part of the public API.
+ */
 export const paneScaffoldOrder = (
   variant: PaneScaffoldVariant,
 ): readonly ThreePaneScaffoldRole[] =>
@@ -91,6 +110,7 @@ const viewport = () => currentWindowSizeClass() ?? windowSizeClass({ width: 0, h
  * rememberListDetailPaneScaffoldNavigator / rememberSupportingPaneScaffoldNavigator: a navigator
  * with the variant's adapt strategies and initial destination, its directive from the viewport
  * until a PaneScaffoldLayout sizes it by its own container.
+ * @internal Shared with m3e-react; not part of the public API.
  */
 export function createPaneScaffoldNavigator<T = unknown>(
   variant: PaneScaffoldVariant,

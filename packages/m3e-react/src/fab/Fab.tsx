@@ -50,7 +50,11 @@ export const fabClassName = (
     color = 'primary-container',
   }: { size?: FabSize | undefined; color?: FabColor | undefined },
   className?: string,
-): string => cx('m3e-fab', `m3e-fab--size-${size}`, `m3e-fab--${color}`, className);
+): string => {
+  // D4: the small FAB warns once in development, through the helper too.
+  if (size === 'small') warnDeprecated('Fab size="small"', 'Fab size="baseline"');
+  return cx('m3e-fab', `m3e-fab--size-${size}`, `m3e-fab--${color}`, className);
+};
 
 /** Native button props a FAB passes through (FABs have no disabled state in Compose). */
 export type FabNativeProps = Omit<

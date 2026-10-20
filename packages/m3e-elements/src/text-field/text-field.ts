@@ -47,7 +47,10 @@ export interface TextFieldParts {
   readonly counterLabel: string;
 }
 
-/** The ids of a field's parts (the input's id is `parts.id`). */
+/**
+ * The ids of a field's parts (the input's id is `parts.id`).
+ * @internal Shared with m3e-react; not part of the public API.
+ */
 export const textFieldIds = (id: string) =>
   ({
     label: `${id}-label`,
@@ -61,6 +64,7 @@ export const textFieldIds = (id: string) =>
  * outline fieldset with the notch legend), then the supporting row (message, counter). Reuses
  * `input` when its element type still fits. Returns the input. m3e-react's `<TextField>` renders
  * the same DOM.
+ * @internal Shared with m3e-react; not part of the public API.
  */
 export function renderTextField(
   root: HTMLElement,
