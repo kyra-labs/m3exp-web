@@ -1,4 +1,6 @@
 ---
+import Sources from '../../components/Sources.astro';
+import StateEventsNote from '../../components/StateEventsNote.astro';
 import MenusPlayground from '../../islands/MenusPlayground.tsx';
 import Base from '../../layouts/Base.astro';
 
@@ -227,6 +229,7 @@ const leadingOf = (item: StaticItem) =>
     <p>
       An <code>&lt;m3e-menu anchor="…"&gt;</code> with <code>&lt;m3e-menu-item&gt;</code> and <code>&lt;m3e-menu-group&gt;</code> children. Events: <code>action</code> on the item, with a detail of <code>&#123; value, checked &#125;</code>, and <code>open-change</code> on the menu.
     </p>
+    <StateEventsNote events={['open-change']} />
     <div class="docs-menu-demos" data-testid="elements">
       <button
         type="button"
@@ -339,6 +342,23 @@ const leadingOf = (item: StaticItem) =>
       </div>
     </div>
   </section>
+
+  <Sources>
+    <p>
+      androidx Compose Material3 1.5.0-beta01 (<code>19991f2c</code>): <code>MenuTokens.kt</code>,{' '}
+      <code>StandardMenuTokens.kt</code>, <code>VibrantMenuTokens.kt</code> and{' '}
+      <code>SegmentedMenuTokens.kt</code> as read by <code>MenuDefaults.kt</code> (shapes L105–170,
+      group and item shapes L197–229, the group label L311, item colors L744–845) and{' '}
+      <code>Menu.kt</code> (<code>DropdownMenuPopup</code> L208, <code>DropdownMenuGroup</code>{' '}
+      L275, <code>DropdownMenuItem</code> L386, <code>CheckableDropdownMenuItem</code> L463,{' '}
+      <code>SelectableDropdownMenuItem</code> L705, <code>DropdownMenuPopupContent</code> L1875,{' '}
+      <code>DropdownMenuItemContent</code> L1990, the baseline item L2141); placement ported from{' '}
+      <code>DropdownMenuPositionProvider</code> (<code>internal/MenuPosition.kt</code>,{' '}
+      <code>AndroidMenu.android.kt</code> L65); the literals Compose renders in{' '}
+      <code>components/menu-defaults.css</code> (lines in <code>PARITY.md</code>). SOURCES register
+      #38.
+    </p>
+  </Sources>
 </Base>
 
 <script>

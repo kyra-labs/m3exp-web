@@ -1,4 +1,5 @@
 ---
+import Sources from '../../components/Sources.astro';
 import IconButtonPlayground from '../../islands/IconButtonPlayground.tsx';
 import Base from '../../layouts/Base.astro';
 
@@ -135,4 +136,21 @@ const widths = ['narrow', 'default', 'wide'] as const;
     </p>
     <IconButtonPlayground client:only="react" />
   </section>
+
+  <Sources>
+    <p>
+      androidx Compose Material3 1.5.0-beta01 (<code>19991f2c</code>):{' '}
+      <code>&#123;XSmall,Small,Medium,Large,XLarge&#125;IconButtonTokens.kt</code> (sizes; the width
+      is the icon plus the leading and trailing space,{' '}
+      <code>IconButtonDefaults.*ContainerSize</code> in <code>IconButtonDefaults.kt</code>),{' '}
+      <code>StandardIconButtonTokens.kt</code>, <code>FilledIconButtonTokens.kt</code>,{' '}
+      <code>FilledTonalIconButtonTokens.kt</code> and <code>OutlinedIconButtonTokens.kt</code>{' '}
+      (colors: standard and outlined buttons inherit <code>LocalContentColor</code>, the vibrant
+      variants read the tokens); <code>IconButton.kt</code> (<code>shapeForInteraction</code>: the
+      press and selection morph on the default effects spring).
+    </p>
+    <p>
+      m3.material.io Icon buttons overview. SOURCES register #20.
+    </p>
+  </Sources>
 </Base>

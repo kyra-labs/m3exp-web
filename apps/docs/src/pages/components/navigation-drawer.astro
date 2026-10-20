@@ -1,4 +1,6 @@
 ---
+import Sources from '../../components/Sources.astro';
+import StateEventsNote from '../../components/StateEventsNote.astro';
 import DrawerPlayground from '../../islands/DrawerPlayground.tsx';
 import Base from '../../layouts/Base.astro';
 
@@ -118,6 +120,7 @@ const entries: Entry[] = [
       <code>close()</code>, <code>toggle()</code>; Escape closes; arrow keys move between items. The
       dismissible drawer pushes the content beside it.
     </p>
+    <StateEventsNote events={['selection-change', 'open-change']} />
     <div class="docs-drawer-frame" data-testid="dismissible-frame">
       <m3e-navigation-drawer
         variant="dismissible"
@@ -176,6 +179,29 @@ const entries: Entry[] = [
     </p>
     <DrawerPlayground client:only="react" />
   </section>
+
+  <Sources>
+    <p>
+      androidx Compose Material3 1.5.0-beta01 (<code>19991f2c</code>):{' '}
+      <code>NavigationDrawerTokens.kt</code> and <code>ScrimTokens.kt</code> as read by{' '}
+      <code>NavigationDrawer.kt</code> (the sheet width L853–866 and L1342–1343, the sheets L644–664
+      and L733–839, <code>DrawerDefaults</code> L1054–1068, the scrim L388–393, the items L1122–1166
+      and their colors L1217–1237, <code>ItemPadding</code> L1243, the open and close springs
+      L354–355 and L501–502, the settle tween L1354 and the thresholds L1339–1341),{' '}
+      <code>MaterialTheme.kt</code> (L113, body large labels) and <code>DrawerSamples.kt</code>{' '}
+      (L111); read: <code>Scrim.kt</code>, foundation <code>gestures/AnchoredDraggable.kt</code>,
+      animation-core <code>FloatDecayAnimationSpec.kt</code> and <code>AnimationSpec.kt</code>{' '}
+      (L100), material3 <code>internal/Strings.android.kt</code> (L270–274) and compose/ui{' '}
+      <code>res/values/strings.xml</code> (L38, L44). Values in{' '}
+      <code>components/navigation-drawer-defaults.css</code> (lines in <code>PARITY.md</code>).
+    </p>
+    <p>
+      m3.material.io Navigation drawer (Specs redlines for the 56dp headline row and the 28dp
+      divider inset, Guidelines, Accessibility keyboard table; token DB{' '}
+      <code>md.comp.navigation-drawer</code> and <code>md.comp.divider.color</code>). SOURCES
+      register #33 (the headline row and the divider inset, DECISIONS D19 (1)).
+    </p>
+  </Sources>
 </Base>
 
 <script>
@@ -190,7 +216,8 @@ const entries: Entry[] = [
       drawer.toggle();
     });
     if (button.hasAttribute('aria-expanded')) {
-      drawer.addEventListener('open-change', () => {
+      drawer.addEventListener('open-change', (e) => {
+        if (e.target !== drawer) return; // state events bubble in 1.x (DECISIONS D25)
         queueMicrotask(() => {
           button.setAttribute('aria-expanded', String(Boolean(drawer.open)));
         });

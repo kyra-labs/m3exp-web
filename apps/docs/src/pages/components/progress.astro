@@ -1,4 +1,5 @@
 ---
+import Sources from '../../components/Sources.astro';
 import ProgressPlayground from '../../islands/ProgressPlayground.tsx';
 import Base from '../../layouts/Base.astro';
 
@@ -169,6 +170,31 @@ const valueStyle = (v: number) => `--m3e-comp-progress-indicator-value: ${String
     </p>
     <ProgressPlayground client:only="react" />
   </section>
+
+  <Sources>
+    <p>
+      androidx Compose Material3 1.5.0-beta01 (<code>19991f2c</code>):{' '}
+      <code>LinearProgressIndicatorTokens.kt</code>, <code>CircularProgressIndicatorTokens.kt</code>{' '}
+      and <code>ProgressIndicatorTokens.kt</code> as read by <code>ProgressIndicator.kt</code>{' '}
+      (<code>LinearIndicatorWidth</code> L1031, <code>StopIndicatorTrailingSpace</code> L1038,{' '}
+      <code>circularIndeterminateTrackColor</code> L835, <code>ProgressAnimationSpec</code>{' '}
+      L862–869, the indeterminate keyframes L929–1076), <code>WavyProgressIndicator.kt</code> (the
+      wave speed L109, the amplitude ramp L492 and its tweens L501–512),{' '}
+      <code>internal/LinearWavyProgressModifiers.kt</code> (L303) and{' '}
+      <code>internal/CircularWavyProgressModifiers.kt</code>;{' '}
+      <code>ProgressIndicatorSamples.kt</code> for the thick configurations;{' '}
+      <code>MotionTokens.kt</code>; animation-core <code>AnimationSpec.kt</code> and{' '}
+      <code>VectorizedAnimationSpec.kt</code>. Values in{' '}
+      <code>components/progress-indicator-defaults.css</code> (lines in <code>PARITY.md</code>); the
+      flat circular arc near 0% and 100% as Android draws it (<code>AndroidCanvas.android.kt</code>{' '}
+      L183–197).
+    </p>
+    <p>
+      m3.material.io Progress indicators (overview, Specs, Guidelines, Accessibility; token DB{' '}
+      <code>TOKEN_TABLE.6f51f7ab7775a392</code> for the thick linear height). SOURCES register #26
+      and #64.
+    </p>
+  </Sources>
 </Base>
 
 <script>

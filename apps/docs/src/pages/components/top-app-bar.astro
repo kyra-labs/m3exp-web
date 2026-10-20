@@ -1,4 +1,5 @@
 ---
+import Sources from '../../components/Sources.astro';
 import TopAppBarPlayground from '../../islands/TopAppBarPlayground.tsx';
 import Base from '../../layouts/Base.astro';
 
@@ -386,8 +387,7 @@ const collapsing = [
     <TopAppBarPlayground client:only="react" />
   </section>
 
-  <section aria-labelledby="sources-heading">
-    <h2 id="sources-heading">Sources</h2>
+  <Sources>
     <p>
       androidx Compose Material3 1.5.0-beta01 (<code>19991f2c</code>): <code>AppBar.kt</code>{' '}
       (<code>TopAppBar</code>, <code>CenterAlignedTopAppBar</code>, <code
@@ -402,7 +402,7 @@ const collapsing = [
         >AppBarSamples.kt</code
       > for the configurations above.
     </p>
-  </section>
+  </Sources>
 </Base>
 
 <script>

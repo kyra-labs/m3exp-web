@@ -1,5 +1,6 @@
 ---
 import DeprecationBanner from '../../components/DeprecationBanner.astro';
+import Sources from '../../components/Sources.astro';
 import DockedToolbarPlayground from '../../islands/DockedToolbarPlayground.tsx';
 import Base from '../../layouts/Base.astro';
 
@@ -209,8 +210,7 @@ const rows = Array.from({ length: 30 }, (_, i) => `Row ${String(i + 1)}`);
     <DockedToolbarPlayground client:only="react" kind="legacy" />
   </section>
 
-  <section aria-labelledby="sources-heading">
-    <h2 id="sources-heading">Sources</h2>
+  <Sources>
     <p>
       androidx Compose Material3 1.5.0-beta01 (<code>19991f2c</code>): <code>AppBar.kt</code>{' '}
       (<code>FlexibleBottomAppBar</code>, <code>BottomAppBar</code>, <code>BottomAppBarDefaults</code>,{' '}
@@ -221,7 +221,7 @@ const rows = Array.from({ length: 30 }, (_, i) => `Row ${String(i + 1)}`);
       <code>components/bottom-app-bar-defaults.css</code>; <code>AppBarSamples.kt</code> for the
       space-around / space-evenly arrangements, the vibrant color and the bottom app bar FAB.
     </p>
-  </section>
+  </Sources>
 </Base>
 
 <script>

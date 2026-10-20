@@ -1,4 +1,5 @@
 ---
+import Sources from '../../components/Sources.astro';
 import StaticTextField from '../../components/StaticTextField.astro';
 import TextFieldPlayground from '../../islands/TextFieldPlayground.tsx';
 import Base from '../../layouts/Base.astro';
@@ -70,6 +71,26 @@ const VARIANTS = [
     </p>
     <TextFieldPlayground client:only="react" />
   </section>
+
+  <Sources>
+    <p>
+      androidx Compose Material3 1.5.0-beta01 (<code>19991f2c</code>):{' '}
+      <code>FilledTextFieldTokens.kt</code> and <code>OutlinedTextFieldTokens.kt</code> as read by{' '}
+      <code>TextField.kt</code> (<code>TextFieldWithLabelVerticalPadding</code> L842–843; the motion
+      L783 / L797), <code>OutlinedTextField.kt</code> (<code>outlineCutout</code> L562–591),{' '}
+      <code>TextFieldDefaults.kt</code> and <code>internal/TextFieldImpl.kt</code> (the label,
+      indicator and color motion L2036–2142; the layout constants L2235–2250),{' '}
+      <code>internal/Strings.kt</code> / <code>internal/Strings.android.kt</code>,{' '}
+      <code>TextFieldSamples.kt</code> and compose/ui <code>strings.xml</code> (L48, "Invalid
+      input"); values in <code>components/text-field-defaults.css</code> (lines in{' '}
+      <code>PARITY.md</code>).
+    </p>
+    <p>
+      m3.material.io Text fields (page <code>8741ef66-1a80-4b39-adb1-66bea5e6992f</code>) for what
+      Compose lacks: the character counter, the required asterisk and the error message's alert
+      role. SOURCES register #43.
+    </p>
+  </Sources>
 </Base>
 
 <script>

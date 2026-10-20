@@ -31,7 +31,10 @@ same name (`input`, `change`, `select`) does not reach the host. Each element wi
 (type-only), so `document.querySelector('m3e-dialog')?.addEventListener('open-change', (e) =>
 e.detail.open)` needs no cast. Shared detail types: `OpenChangeDetail`, `ExpandedChangeDetail`,
 `ValueDetail<T>`, `SelectionChangeDetail`. Helper functions and constants tagged `@internal` are
-exported for m3e-react and are not part of the public API.
+exported for m3e-react and are not part of the public API. State events (`open-change`,
+`expanded-change`, `selection-change`, `value-change`, `navigation-*-change`, …) bubble in 1.x, so a
+listener also hears them from components nested inside its host (a tooltip in a dialog): guard it
+with `if (e.target !== host) return;` (DECISIONS D25 proposes non-bubbling state events for 2.0).
 
 ## FAB menu
 

@@ -1,4 +1,5 @@
 ---
+import Sources from '../../components/Sources.astro';
 import ChipsPlayground from '../../islands/ChipsPlayground.tsx';
 import Base from '../../layouts/Base.astro';
 
@@ -264,6 +265,26 @@ const SUGGESTION_ROWS = [
     </p>
     <ChipsPlayground client:only="react" />
   </section>
+
+  <Sources>
+    <p>
+      androidx Compose Material3 1.5.0-beta01 (<code>19991f2c</code>):{' '}
+      <code>FilterChipTokens.kt</code>, <code>InputChipTokens.kt</code>,{' '}
+      <code>SuggestionChipTokens.kt</code> and <code>ChipsTokens.kt</code> as read by{' '}
+      <code>Chip.kt</code>: the spacing (L2235 / L2238, L2639 / L2642),{' '}
+      <code>InputChipDefaults.contentPadding</code> (L2683–2684), <code>filterChipElevation</code>{' '}
+      (L2391–2396), the tonal leading icon (L2374, L2790), the elevated suggestion chip's disabled
+      opacities from <code>AssistChipTokens</code> (L3100, L3106), the expressive shapes
+      (<code>defaultChipShapes</code> L2612–2621, <code>shapeByInteraction</code> L4269–4289 on fast
+      spatial L3312) and the icon slots' motion (<code>AnimatingChipContent</code> L3423–3520;
+      L3280–3283, L3340–3343); <code>ChipSamples.kt</code> for the 4dp chip padding in a set.
+      Generated into <code>components/chips-defaults.css</code> (lines in <code>PARITY.md</code>).
+    </p>
+    <p>
+      m3.material.io Chips (a chip set is one tab stop with arrow keys between its chips). SOURCES
+      register #35 (the input chip avatar keeps androidx's full corners over the Specs text's 12dp).
+    </p>
+  </Sources>
 </Base>
 
 <script>

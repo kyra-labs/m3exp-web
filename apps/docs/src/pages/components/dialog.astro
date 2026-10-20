@@ -1,4 +1,5 @@
 ---
+import Sources from '../../components/Sources.astro';
 import DialogPlayground from '../../islands/DialogPlayground.tsx';
 import Base from '../../layouts/Base.astro';
 
@@ -72,6 +73,30 @@ const paragraphs = Array.from(
     </p>
     <DialogPlayground client:only="react" />
   </section>
+
+  <Sources>
+    <p>
+      androidx Compose Material3 1.5.0-beta01 (<code>19991f2c</code>): <code>DialogTokens.kt</code>{' '}
+      as read by <code>AlertDialog.kt</code> (<code>AlertDialogDefaults</code> L194–234,{' '}
+      <code>AlertDialogContent</code> L308–313, the 280–560dp width L409–412, the 24dp padding
+      L229–233, the icon and title padding L419–420, the buttons L366–401 and L414–417),{' '}
+      <code>AndroidAlertDialog.android.kt</code>, <code>AlertDialogSamples.kt</code>,{' '}
+      <code>ScrimTokens.kt</code>, <code>Button.kt</code> (<code>ButtonDefaults.MinHeight</code>),
+      material3 res <code>strings.xml</code> (L21, "Dialog") and compose/ui res{' '}
+      <code>styles.xml</code>; the scrim fade of <code>ModalBottomSheet.kt</code> (L146–151); the
+      values in <code>components/dialog-defaults.css</code> (lines in <code>PARITY.md</code>).
+    </p>
+    <p>
+      Material Web 2.5.0 (a secondary source): <code>dialog/internal/animations.js</code> and{' '}
+      <code>internal/motion/animation.js</code> for the open and close motion (SOURCES register #72,
+      DECISIONS D19 (11)), on androidx's emphasized easing (<code>tokens/MotionTokens.kt</code> L40,
+      DECISIONS D20 (6)); <code>dialog/internal/_dialog.scss</code> L39–40 for the 24px window
+      margin (#73, D19 (12)). m3.material.io Dialogs (Specs, Guidelines, Accessibility; token DB{' '}
+      <code>md.comp.dialog</code> and <code>md.comp.full-screen-dialog</code>,{' '}
+      <code>TOKEN_TABLE.0b1e39a67d5bafdc</code>) for the alert dialog role and the full-screen
+      dialog (its surface colors: #74, D19 (13)). SOURCES register #46.
+    </p>
+  </Sources>
 </Base>
 
 <script>

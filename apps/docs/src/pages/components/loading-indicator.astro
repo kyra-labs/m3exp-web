@@ -1,4 +1,5 @@
 ---
+import Sources from '../../components/Sources.astro';
 import { loadingIndicatorShapes } from '@kyralabs/m3e-shapes';
 import { loadingIndicatorTokens } from '@kyralabs/m3e-tokens/components';
 import LoadingIndicatorPlayground from '../../islands/LoadingIndicatorPlayground.tsx';
@@ -81,6 +82,23 @@ const softBurst = loadingIndicatorShapes(null, true, scale).pathData(0, 0, 100);
     <h2 id="react-heading">React</h2>
     <LoadingIndicatorPlayground client:only="react" />
   </section>
+
+  <Sources>
+    <p>
+      androidx Compose Material3 1.5.0-beta01 (<code>19991f2c</code>):{' '}
+      <code>LoadingIndicator.kt</code> (the indeterminate polygons L541–550, the morph spring L401,
+      +90° per morph L415–416, <code>MorphIntervalMillis</code> 650 L681,{' '}
+      <code>GlobalRotationDurationMillis</code> 4666 L680, the determinate polygons L560–566 and
+      rotation L330), <code>LoadingIndicatorTokens.kt</code> and <code>MaterialShapes.kt</code>,
+      with graphics-shapes 1.0.1 for the shapes (ported to m3e-shapes and checked bit-exact against
+      a JVM reference); the timings are generated into{' '}
+      <code>components/loading-indicator-motion.css</code>.
+    </p>
+    <p>
+      m3.material.io Transitions for reduced motion ("disable decorative effects like … shape
+      morphing"). SOURCES register #25.
+    </p>
+  </Sources>
 </Base>
 
 <script>

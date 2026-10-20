@@ -1,4 +1,5 @@
 ---
+import Sources from '../../components/Sources.astro';
 import ButtonPlayground from '../../islands/ButtonPlayground.tsx';
 import Base from '../../layouts/Base.astro';
 
@@ -91,4 +92,25 @@ const sizes = ['xs', 's', 'm', 'l', 'xl'] as const;
     </p>
     <ButtonPlayground client:only="react" />
   </section>
+
+  <Sources>
+    <p>
+      androidx Compose Material3 1.5.0-beta01 (<code>19991f2c</code>):{' '}
+      <code>Button&#123;XSmall,Small,Medium,Large,XLarge&#125;Tokens.kt</code> for the sizes;{' '}
+      <code>FilledButtonTokens.kt</code>, <code>ElevatedButtonTokens.kt</code>,{' '}
+      <code>FilledTonalButtonTokens.kt</code>, <code>OutlinedButtonTokens.kt</code> and{' '}
+      <code>TonalButtonTokens.kt</code> for the colors, as read by <code>Button.kt</code> and{' '}
+      <code>ToggleButton.kt</code>; the <code>ButtonDefaults</code> values Compose renders (the XS
+      padding and icon spacing, the vertical paddings, <code>MinWidth</code> 58dp,{' '}
+      <code>textStyleFor</code> L1640, the text button's primary label L1414) in{' '}
+      <code>components/button-defaults.css</code> (lines in <code>PARITY.md</code>); the press morph
+      on the default effects spring (<code>Button.kt</code> L212–215), the toggle shape on fast
+      spatial (<code>ToggleButton.kt</code> L176) and the elevation tweens
+      (<code>internal/Elevation.kt</code> L107–113).
+    </p>
+    <p>
+      m3.material.io Buttons overview (the M3 Expressive update, May 2025: 16dp padding on small
+      buttons). SOURCES register #18 and #19.
+    </p>
+  </Sources>
 </Base>

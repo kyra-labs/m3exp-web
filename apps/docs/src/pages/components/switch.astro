@@ -1,4 +1,5 @@
 ---
+import Sources from '../../components/Sources.astro';
 import SwitchPlayground from '../../islands/SwitchPlayground.tsx';
 import Base from '../../layouts/Base.astro';
 
@@ -147,6 +148,24 @@ const SETTINGS = [
     </p>
     <SwitchPlayground client:only="react" />
   </section>
+
+  <Sources>
+    <p>
+      androidx Compose Material3 1.5.0-beta01 (<code>19991f2c</code>): <code>SwitchTokens.kt</code>{' '}
+      as read by <code>Switch.kt</code> (<code>SwitchImpl</code> L117–211;{' '}
+      <code>ThumbNode.measure</code> L279–327 with the handle on fast spatial L188 and L307–317 and
+      the press snap L671; <code>defaultSwitchColors</code> L426–470; the 16dp icon L473) and{' '}
+      <code>SwitchSamples.kt</code> (<code>SwitchWithThumbIconSample</code>, L49–70); the inline
+      label's spacing and style from the expressive list item (<code>ListItem.kt</code> L1573,
+      L1992–1993); values in <code>components/switch-defaults.css</code> (lines in{' '}
+      <code>PARITY.md</code>).
+    </p>
+    <p>
+      m3.material.io Switch (Guidelines: an inline label; Accessibility, page{' '}
+      <code>a4ad43f1-5c39-44b2-ae15-a7110bdf4fa6</code>). SOURCES register #41 and #67 (the label,
+      DECISIONS D19 (7)).
+    </p>
+  </Sources>
 </Base>
 
 <script>
