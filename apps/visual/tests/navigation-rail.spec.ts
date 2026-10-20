@@ -609,10 +609,10 @@ test.describe('badges', () => {
     await page.locator('#badges-heading').evaluate((el) => {
       el.scrollIntoView({ block: 'start' });
     });
+    // A locator screenshot measures the frames when it captures (a clip box measured before the
+    // capture can frame content that moved since).
     const frames = page.locator('section[aria-labelledby="badges-heading"] .docs-rail-frames');
-    await expect(page).toHaveScreenshot('navigation-rail-badges.png', {
-      clip: await box(frames.first()),
-    });
+    await expect(frames.first()).toHaveScreenshot('navigation-rail-badges.png');
     const rail = page.getByTestId('react-badges-rail');
     await rail.evaluate((el) => {
       el.scrollIntoView({ block: 'center' });
