@@ -1,0 +1,40 @@
+<div
+  style="
+    display: flex;
+    inline-size: 100%;
+    block-size: var(--m3e-sys-window-height-medium);
+    overflow: hidden;
+  "
+>
+  <m3e-navigation-drawer id="modal-drawer" variant="modal" label="Mail, modal" selected="inbox">
+    <m3e-navigation-item value="inbox" icon="inbox" badge="24">Inbox</m3e-navigation-item>
+    <m3e-navigation-item value="outbox" icon="send">Outbox</m3e-navigation-item>
+    <m3e-navigation-item value="favorites" icon="favorite">Favorites</m3e-navigation-item>
+  </m3e-navigation-drawer>
+  <div style="padding: var(--m3e-sys-space-200)">
+    <button
+      type="button"
+      id="modal-menu"
+      class="m3e-icon-button m3e-icon-button--standard"
+      aria-label="Navigation menu"
+      aria-expanded="false"
+    >
+      <span class="m3e-icon" aria-hidden="true">menu</span>
+    </button>
+    <p>Selected: <output id="modal-selected">inbox</output></p>
+  </div>
+</div>
+<script>
+  const drawer = document.getElementById('modal-drawer');
+  const menu = document.getElementById('modal-menu');
+  menu.addEventListener('click', () => drawer.toggle());
+  drawer.addEventListener('open-change', (event) => {
+    if (event.target !== drawer) return; // state events bubble in 1.x (D25)
+    menu.setAttribute('aria-expanded', String(event.detail.open));
+  });
+  drawer.addEventListener('selection-change', (event) => {
+    if (event.target !== drawer) return;
+    document.getElementById('modal-selected').textContent = event.detail.value;
+    drawer.close();
+  });
+</script>

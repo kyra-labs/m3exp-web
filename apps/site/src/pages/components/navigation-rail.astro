@@ -1,0 +1,16 @@
+---
+import '@kyralabs/m3e-css/badge.css';
+import '@kyralabs/m3e-css/navigation-item.css';
+import '@kyralabs/m3e-css/navigation-rail.css';
+import '@kyralabs/m3e-css/wide-navigation-rail.css';
+import ComponentPage from '../../layouts/ComponentPage.astro';
+---
+
+<ComponentPage
+  slug="navigation-rail"
+  examples={[
+    { name: 'wide', title: 'Collapsed and expanded', description: 'The menu button expands the rail on Compose\'s springs: the width, the items and the labels move together.' },
+    { name: 'modal', title: 'Modal', description: 'Collapsed it is a rail. Expanded, it opens as a modal window above a scrim: focus stays inside, and Escape or the scrim close it and return focus to the button.' },
+    { name: 'legacy-navigation-rail', title: 'Navigation rail (deprecated)', description: '**Deprecated (D4):** the 80dp `NavigationRail` ships until 2.0. Use the wide navigation rail.' },
+  ]}
+/>

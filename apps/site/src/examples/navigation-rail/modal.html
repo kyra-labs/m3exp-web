@@ -1,0 +1,28 @@
+<div style="display: flex; block-size: var(--m3e-sys-window-height-medium)">
+  <m3e-modal-wide-navigation-rail id="modal-rail" label="Main, modal" selected="home">
+    <button
+      type="button"
+      class="m3e-icon-button m3e-icon-button--standard"
+      aria-label="Open navigation"
+      aria-expanded="false"
+    >
+      <span class="m3e-icon" aria-hidden="true">menu</span>
+    </button>
+    <m3e-navigation-item value="home" icon="home">Home</m3e-navigation-item>
+    <m3e-navigation-item value="search" icon="search">Search</m3e-navigation-item>
+    <m3e-navigation-item value="mail" icon="mail">Mail</m3e-navigation-item>
+    <m3e-navigation-item value="settings" icon="settings">Settings</m3e-navigation-item>
+  </m3e-modal-wide-navigation-rail>
+</div>
+<script>
+  const rail = document.getElementById('modal-rail');
+  const menu = rail.querySelector('button');
+  menu.addEventListener('click', () => rail.toggle());
+  rail.addEventListener('expanded-change', (event) => {
+    if (event.target !== rail) return; // state events bubble in 1.x (D25)
+    const { expanded } = event.detail;
+    menu.setAttribute('aria-expanded', String(expanded));
+    menu.setAttribute('aria-label', expanded ? 'Close navigation' : 'Open navigation');
+    menu.querySelector('.m3e-icon').textContent = expanded ? 'menu_open' : 'menu';
+  });
+</script>
