@@ -2,13 +2,15 @@
 import CodeBlock from '../../components/CodeBlock.astro';
 import ScrollTable from '../../components/ScrollTable.astro';
 import Guide from '../../layouts/Guide.astro';
+import { ICON_AXES_DEMO as demo } from '../../data/icon-demo';
+// The site's icon font pins the weight; the demo's weight row uses this face (scripts/icons.js).
+import '../../generated/icons/site-icons-axes.css';
 
 const profiles = [
   { entry: 'fonts.css', axes: 'wght, opsz (default)', latin: '138.8 KiB', all: '328.5 KiB' },
   { entry: 'fonts-rond.css', axes: 'wght, opsz, ROND', latin: '205.2 KiB', all: '468.1 KiB' },
   { entry: 'fonts-full.css', axes: 'wght, opsz, ROND, wdth, slnt', latin: '1020.8 KiB', all: '2026.8 KiB' },
 ];
-const demo = ['home', 'favorite', 'settings', 'star'];
 ---
 
 <Guide
@@ -124,7 +126,7 @@ const demo = ['home', 'favorite', 'settings', 'star'];
     <div class="site-icon-demo__row">
       {demo.map((name) => <span class="m3e-icon" aria-hidden="true" data-fill>{name}</span>)}
     </div>
-    <div class="site-icon-demo__row site-icon-demo__row--bold">
+    <div class="site-icon-demo__row site-icon-demo__row--bold site-icon-demo__row--axes">
       {demo.map((name) => <span class="m3e-icon" aria-hidden="true">{name}</span>)}
     </div>
     <figcaption>Rounded icons: default, filled, and weight 700.</figcaption>
