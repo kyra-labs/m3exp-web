@@ -19,14 +19,14 @@ const ARRANGEMENTS: readonly string[] = ['center', 'space-around', 'space-evenly
  *   behavior (hides on scroll down, returns on scroll up, snaps on the fast spatial spring).
  */
 export class M3eDockedToolbar extends M3eElement {
-  static override properties = {
+  static override properties = /* @__PURE__ */ (() => ({
     ...M3eElement.properties,
     arrangement: {},
     colorStyle: {},
     label: {},
     scrollBehavior: {},
     scrollTarget: {},
-  };
+  }))();
 
   declare arrangement: string | null | undefined;
   declare colorStyle: string | null | undefined;

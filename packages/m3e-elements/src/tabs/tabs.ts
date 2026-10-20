@@ -37,7 +37,7 @@ const requestParentUpdate = (el: Element) => {
  * for the dot, the shown text otherwise; `""` leaves it out). The label is the text content.
  */
 export class M3eTab extends M3eElement {
-  static override properties = {
+  static override properties = /* @__PURE__ */ (() => ({
     ...M3eElement.properties,
     value: {},
     icon: {},
@@ -45,7 +45,7 @@ export class M3eTab extends M3eElement {
     labelHidden: { type: Boolean },
     badge: {},
     badgeLabel: {},
-  };
+  }))();
 
   declare value: string | null | undefined;
   declare icon: string | null | undefined;
@@ -75,10 +75,10 @@ export class M3eTab extends M3eElement {
  * (`.m3e-tab-panel`, labelled by the tab, focusable) and hides it while the tab is not selected.
  */
 export class M3eTabPanel extends M3eElement {
-  static override properties = {
+  static override properties = /* @__PURE__ */ (() => ({
     ...M3eElement.properties,
     value: {},
-  };
+  }))();
 
   declare value: string | null | undefined;
 
@@ -107,14 +107,14 @@ export class M3eTabPanel extends M3eElement {
  *   `preventDefault()` keeps the selection (controlled), otherwise `selected` follows.
  */
 export class M3eTabs extends M3eElement {
-  static override properties = {
+  static override properties = /* @__PURE__ */ (() => ({
     ...M3eElement.properties,
     variant: {},
     scrollable: { type: Boolean },
     iconPosition: {},
     label: {},
     selected: { reflect: true },
-  };
+  }))();
 
   declare variant: string | null | undefined;
   declare scrollable: boolean | undefined;

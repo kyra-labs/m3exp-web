@@ -55,7 +55,9 @@ export const AngleEpsilon = /* @__PURE__ */ f(1e-6);
 
 export const Zero: Point = /* @__PURE__ */ point(0, 0);
 export const FloatPi = /* @__PURE__ */ f(Math.PI);
-export const TwoPi = /* @__PURE__ */ f(2 * FloatPi);
+// Same value; the pure IIFE lets bundlers drop `2 * FloatPi` too (a bare annotated call keeps its
+// arguments when unused).
+export const TwoPi = /* @__PURE__ */ (() => f(2 * FloatPi))();
 
 export const angle = (x: number, y: number): number => f(f(f(Math.atan2(y, x)) + TwoPi) % TwoPi);
 

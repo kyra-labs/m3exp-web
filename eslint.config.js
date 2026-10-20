@@ -12,6 +12,7 @@ export default defineConfig(
     '**/dist/',
     '**/.astro/',
     '**/coverage/',
+    '**/.dts/',
     'packages/m3e-tokens/src/generated/',
     // Vendored upstream sources (Material Web's dialog animations are JavaScript), read only.
     'packages/m3e-codegen/vendor/',
@@ -82,6 +83,17 @@ export default defineConfig(
               message: 'm3e-elements has zero runtime dependencies (D7).',
             },
           ],
+        },
+      ],
+      // `static properties = { ...Parent.properties, … }` reads a member while the class is
+      // defined, so bundlers keep every element class a page imports, used or not.
+      'no-restricted-syntax': [
+        'error',
+        {
+          selector:
+            'PropertyDefinition[static=true][key.name="properties"] > ObjectExpression > SpreadElement',
+          message:
+            'Build static properties in a pure IIFE: `/* @__PURE__ */ (() => ({ ...Parent.properties, … }))()` (run `node tools/pure-statics.js`).',
         },
       ],
     },

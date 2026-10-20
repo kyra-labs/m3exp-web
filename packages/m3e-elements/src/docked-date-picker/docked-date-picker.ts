@@ -21,14 +21,14 @@ const stopPropagation = (e: Event): void => {
  * with m3e-react).
  */
 export class M3eDockedDatePicker extends M3eElement {
-  static override properties = {
+  static override properties = /* @__PURE__ */ (() => ({
     ...M3eElement.properties,
     value: {},
     label: {},
     yearRange: {},
     labels: { attribute: false as const },
     selectableDates: { attribute: false as const },
-  };
+  }))();
 
   declare value: string | null | undefined;
   declare label: string | null | undefined;

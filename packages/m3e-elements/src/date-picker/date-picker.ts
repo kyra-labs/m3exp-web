@@ -19,10 +19,10 @@ export interface DatePickerChangeDetail {
  * {@link DatePickerLayout} (shared with m3e-react).
  */
 export class M3eDatePicker extends M3eDatePickerElement<DatePickerLayout, DatePickerLayoutOptions> {
-  static override properties = {
+  static override properties = /* @__PURE__ */ (() => ({
     ...M3eDatePickerElement.properties,
     value: {},
-  };
+  }))();
 
   declare value: string | null | undefined;
 

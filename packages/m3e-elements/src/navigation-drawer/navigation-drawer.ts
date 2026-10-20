@@ -35,12 +35,12 @@ const VARIANTS: readonly NavigationDrawerVariant[] = ['permanent', 'dismissible'
  *   when Escape, the scrim or a drag ask to change it.
  */
 export class M3eNavigationDrawer extends M3eNavigationContainer {
-  static override properties = {
+  static override properties = /* @__PURE__ */ (() => ({
     ...M3eNavigationContainer.properties,
     variant: { reflect: true },
     open: { type: Boolean, reflect: true },
     dialogLabel: {},
-  };
+  }))();
 
   declare variant: string | null | undefined;
   declare open: boolean | undefined;

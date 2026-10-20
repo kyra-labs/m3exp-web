@@ -19,7 +19,7 @@ export abstract class M3eDatePickerElement<
   L extends { update(options: O): void; destroy(): void },
   O extends DatePickerBaseOptions,
 > extends M3eElement {
-  static override properties = {
+  static override properties = /* @__PURE__ */ (() => ({
     ...M3eElement.properties,
     displayedMonth: {},
     yearRange: {},
@@ -29,7 +29,7 @@ export abstract class M3eDatePickerElement<
     noHeadline: { type: Boolean },
     labels: { attribute: false as const },
     selectableDates: { attribute: false as const },
-  };
+  }))();
 
   declare displayedMonth: string | null | undefined;
   declare yearRange: string | null | undefined;

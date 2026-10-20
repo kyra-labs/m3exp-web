@@ -89,7 +89,7 @@ export const checkboxState = (checked: boolean, indeterminate: boolean): Checkbo
  * `indeterminate`, as the native input does.
  */
 export class M3eCheckbox extends M3eElement {
-  static override properties = {
+  static override properties = /* @__PURE__ */ (() => ({
     ...M3eElement.properties,
     checked: { type: Boolean },
     indeterminate: { type: Boolean },
@@ -99,7 +99,7 @@ export class M3eCheckbox extends M3eElement {
     name: {},
     value: {},
     label: {},
-  };
+  }))();
 
   declare checked: boolean | undefined;
   declare indeterminate: boolean | undefined;

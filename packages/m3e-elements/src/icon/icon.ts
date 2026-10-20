@@ -13,7 +13,7 @@ import { M3eElement } from '../base/M3eElement.js';
  * `name`, the element's initial text content is used.
  */
 export class M3eIcon extends M3eElement {
-  static override properties = {
+  static override properties = /* @__PURE__ */ (() => ({
     ...M3eElement.properties,
     name: {},
     fill: { type: Boolean },
@@ -21,7 +21,7 @@ export class M3eIcon extends M3eElement {
     grade: { type: Number },
     opticalSize: { type: Number },
     label: {},
-  };
+  }))();
 
   declare name: string | null | undefined;
   declare fill: boolean | undefined;

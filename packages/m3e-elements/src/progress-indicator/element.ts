@@ -17,7 +17,7 @@ export interface ProgressContract extends ProgressIndicatorOptions {
  * `aria-label`, which moves onto the progress bar).
  */
 export abstract class M3eProgressElement extends M3eElement {
-  static override properties = {
+  static override properties = /* @__PURE__ */ (() => ({
     ...M3eElement.properties,
     value: { type: Number },
     shape: {},
@@ -27,7 +27,7 @@ export abstract class M3eProgressElement extends M3eElement {
     waveSpeed: { type: Number },
     label: {},
     hostLabel: { attribute: 'aria-label' },
-  };
+  }))();
 
   declare value: number | null | undefined;
   declare shape: string | null | undefined;

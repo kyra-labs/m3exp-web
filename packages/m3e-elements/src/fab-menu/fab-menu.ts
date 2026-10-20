@@ -57,11 +57,11 @@ function fabMenuClassName({ open, size, color, align }: FabMenuContract): string
  * `detail: { value }` and closes the menu.
  */
 export class M3eFabMenuItem extends M3eElement {
-  static override properties = {
+  static override properties = /* @__PURE__ */ (() => ({
     ...M3eElement.properties,
     icon: {},
     value: {},
-  };
+  }))();
 
   declare icon: string | null | undefined;
   declare value: string | null | undefined;
@@ -156,7 +156,7 @@ interface ItemRecord {
  *   activated `<m3e-fab-menu-item>`.
  */
 export class M3eFabMenu extends M3eElement {
-  static override properties = {
+  static override properties = /* @__PURE__ */ (() => ({
     ...M3eElement.properties,
     open: { type: Boolean, reflect: true },
     label: {},
@@ -165,7 +165,7 @@ export class M3eFabMenu extends M3eElement {
     size: {},
     color: {},
     align: {},
-  };
+  }))();
 
   declare open: boolean | undefined;
   declare label: string | null | undefined;

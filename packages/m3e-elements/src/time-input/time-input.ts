@@ -11,10 +11,10 @@ import { TimeInputLayout, type TimeInputLayoutOptions } from '../time-picker-lay
  * fires `mode-toggle`). Built and run by {@link TimeInputLayout} (shared with m3e-react).
  */
 export class M3eTimeInput extends M3eTimePickerElement<TimeInputLayout, TimeInputLayoutOptions> {
-  static override properties = {
+  static override properties = /* @__PURE__ */ (() => ({
     ...M3eTimePickerElement.properties,
     uncontained: { type: Boolean, reflect: true },
-  };
+  }))();
 
   declare uncontained: boolean | undefined;
 

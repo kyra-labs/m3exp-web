@@ -37,14 +37,14 @@ const icon = (doc: Document, name: string) =>
  * Symbols), `supporting-text`, `disabled`. The label is the text content.
  */
 export class M3eSearchResult extends M3eElement {
-  static override properties = {
+  static override properties = /* @__PURE__ */ (() => ({
     ...M3eElement.properties,
     value: {},
     icon: {},
     trailingIcon: {},
     supportingText: {},
     disabled: { type: Boolean },
-  };
+  }))();
 
   declare value: string | null | undefined;
   declare icon: string | null | undefined;
@@ -84,7 +84,7 @@ export class M3eSearchResult extends M3eElement {
  * - `expand()` / `collapse()`.
  */
 export class M3eSearch extends M3eElement {
-  static override properties = {
+  static override properties = /* @__PURE__ */ (() => ({
     ...M3eElement.properties,
     variant: {},
     placeholder: {},
@@ -95,7 +95,7 @@ export class M3eSearch extends M3eElement {
     backLabel: {},
     expanded: { type: Boolean, reflect: true },
     disabled: { type: Boolean },
-  };
+  }))();
 
   declare variant: string | null | undefined;
   declare placeholder: string | null | undefined;

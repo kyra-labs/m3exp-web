@@ -1,14 +1,27 @@
 import { defineConfig } from 'tsup';
 import { baseOptions } from '../../tsup.base.js';
 
-// The d.ts build (one rollup-plugin-dts program over every entry, in a worker) outgrew V8's
-// default heap on machines with ~8 GB (the Playwright Docker image under Docker Desktop: the
-// worker ran out of memory once the bottom sheet entries were added). Workers take the process's
-// V8 flags, so raise the old-space limit before tsup starts it. (node:v8 is imported by name: this
-// config is typechecked with the browser sources, without Node's types.)
-const V8 = 'node:v8';
-const v8 = (await import(V8)) as { setFlagsFromString(flags: string): void };
-v8.setFlagsFromString('--max-old-space-size=4096');
+// d.ts: the build script first runs `tsc -p tsconfig.dts.json`, which emits one .d.ts per source
+// file into .dts/ in a single TypeScript program (m3e-motion / m3e-shapes resolve to their built
+// d.ts, the package's lazy self-imports to its sources). tsup then bundles those .d.ts files per
+// entry: rollup-plugin-dts creates no TypeScript program for .d.ts inputs, so the whole build fits
+// a 512 MB heap. (Given the .ts entries, it created one program per entry and needed a 4 GB heap.)
+// The keys keep every public type path: dist/index.d.ts and dist/<entry>/index.d.ts. (node:fs is
+// imported by name: this config is typechecked with the browser sources, without Node's types.)
+const FS = 'node:fs';
+const fs = (await import(FS)) as {
+  readdirSync(
+    path: string,
+    options: { withFileTypes: true },
+  ): { name: string; isDirectory(): boolean }[];
+  existsSync(path: string): boolean;
+};
+const dtsEntry: Record<string, string> = { index: '.dts/index.d.ts' };
+for (const dir of fs.readdirSync('src', { withFileTypes: true })) {
+  if (dir.isDirectory() && fs.existsSync(`src/${dir.name}/index.ts`)) {
+    dtsEntry[`${dir.name}/index`] = `.dts/${dir.name}/index.d.ts`;
+  }
+}
 
 // One entry per element (`@kyralabs/m3e-elements/<element>.js` registers it, built to
 // dist/<element>/index.js), `base.js` (M3eElement and helpers, registers nothing) and the
@@ -16,7 +29,11 @@ v8.setFlagsFromString('--max-old-space-size=4096');
 // (zero runtime dependencies, D7), so their types are inlined into the d.ts as well.
 export default defineConfig({
   ...baseOptions,
-  dts: { ...baseOptions.dts, resolve: ['@kyralabs/m3e-motion', '@kyralabs/m3e-shapes'] },
+  dts: {
+    ...baseOptions.dts,
+    entry: dtsEntry,
+    resolve: ['@kyralabs/m3e-motion', '@kyralabs/m3e-shapes'],
+  },
   entry: ['src/index.ts', 'src/*/index.ts'],
   splitting: true,
   // <m3e-button-group> imports the menu entry lazily (its first overflow); keep it a package import.

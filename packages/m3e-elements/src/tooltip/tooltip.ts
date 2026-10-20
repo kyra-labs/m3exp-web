@@ -36,7 +36,7 @@ const POSITIONS = new Set(['above', 'below', 'left', 'right', 'start', 'end']);
  * - Events: `open-change` with `detail: { open }`; `action` (cancelable) from the action button.
  */
 export class M3eTooltip extends M3eElement {
-  static override properties = {
+  static override properties = /* @__PURE__ */ (() => ({
     ...M3eElement.properties,
     open: { type: Boolean, reflect: true },
     anchor: {},
@@ -47,7 +47,7 @@ export class M3eTooltip extends M3eElement {
     manual: { type: Boolean },
     subhead: {},
     action: {},
-  };
+  }))();
 
   declare open: boolean | undefined;
   declare anchor: string | null | undefined;

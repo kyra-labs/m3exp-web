@@ -16,7 +16,7 @@ import type { SelectionChangeDetail } from '../base/events.js';
  * trailing badge text instead (`badge-label` unused).
  */
 export class M3eNavigationItem extends M3eElement {
-  static override properties = {
+  static override properties = /* @__PURE__ */ (() => ({
     ...M3eElement.properties,
     value: {},
     icon: {},
@@ -25,7 +25,7 @@ export class M3eNavigationItem extends M3eElement {
     labelHidden: { type: Boolean },
     badge: {},
     badgeLabel: {},
-  };
+  }))();
 
   declare value: string | null | undefined;
   declare icon: string | null | undefined;
@@ -101,11 +101,11 @@ export function setItemAttributes(
  *   `preventDefault()` keeps the selection (controlled), otherwise `selected` follows.
  */
 export abstract class M3eNavigationContainer extends M3eElement {
-  static override properties = {
+  static override properties = /* @__PURE__ */ (() => ({
     ...M3eElement.properties,
     label: {},
     selected: { reflect: true },
-  };
+  }))();
 
   declare label: string | null | undefined;
   declare selected: string | null | undefined;

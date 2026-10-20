@@ -18,3 +18,6 @@ apps/visual/tests/**/*-darwin.png
 packages/*/LICENSE
 packages/*/NOTICE
 apps/docs/public/icons/
+
+# m3e-elements: declarations emitted by tsc before tsup bundles them
+packages/*/.dts/

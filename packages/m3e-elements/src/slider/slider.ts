@@ -122,7 +122,7 @@ export type SliderValueDetail = { value: number } | { start: number; end: number
  * standard M / L / XL), `disabled`, `label` (the accessible name), `name`.
  */
 export class M3eSlider extends M3eElement {
-  static override properties = {
+  static override properties = /* @__PURE__ */ (() => ({
     ...M3eElement.properties,
     min: { type: Number },
     max: { type: Number },
@@ -142,7 +142,7 @@ export class M3eSlider extends M3eElement {
     endLabel: {},
     icon: {},
     name: {},
-  };
+  }))();
 
   declare min: number | null | undefined;
   declare max: number | null | undefined;

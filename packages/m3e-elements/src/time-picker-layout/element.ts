@@ -31,7 +31,7 @@ export abstract class M3eTimePickerElement<
   L extends TimePickerBase<O>,
   O extends TimePickerBaseOptions,
 > extends M3eElement {
-  static override properties = {
+  static override properties = /* @__PURE__ */ (() => ({
     ...M3eElement.properties,
     hour: { type: Number },
     minute: { type: Number },
@@ -39,7 +39,7 @@ export abstract class M3eTimePickerElement<
     selection: { reflect: true },
     vibrant: { type: Boolean, reflect: true },
     labels: { attribute: false as const },
-  };
+  }))();
 
   declare hour: number | null | undefined;
   declare minute: number | null | undefined;
