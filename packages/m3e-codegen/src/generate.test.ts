@@ -638,6 +638,11 @@ describe('tabs values (M7)', () => {
     expect(t('icon-distance-from-baseline')).toBe('20px');
     expect(t('leading-icon-label-space')).toBe('8px');
     expect(t('label-max-lines')).toBe('2');
+    // m3.material.io Tabs › Specs: "Overlap of badge on stacked icon 6dp" (D20 (1)).
+    expect(t('stacked-badge-overlap')).toBe('6px');
+    expect(output.get('PARITY.md')).toMatch(
+      /f37f47ba-8e67-4f1e-98a3-3bea94879e52\.json\) \| `--m3e-comp-tabs-stacked-badge-overlap` \| `6px`/,
+    );
   });
 
   it('the label baseline position comes from the Google Sans Flex metrics', () => {
@@ -2452,7 +2457,14 @@ describe('dialog values (M9)', () => {
 
   it('Material Web 2.5.0 motion: 500ms emphasized open, 150ms emphasized-accelerate close (#9)', () => {
     expect(t('enter-duration')).toBe('500ms');
-    expect(t('enter-easing')).toBe('cubic-bezier(0.3, 0, 0, 1)');
+    // D20 (6): androidx's emphasized easing (MotionTokens.kt), not Material Web's (.3, 0, 0, 1).
+    expect(t('enter-easing')).toBe('var(--m3e-sys-motion-easing-emphasized)');
+    expect(declarations(output.get('tokens.css')!).get('--m3e-sys-motion-easing-emphasized')).toBe(
+      'cubic-bezier(0.2, 0, 0, 1)',
+    );
+    expect(output.get('PARITY.md')).toMatch(
+      /MotionTokens\.kt@[0-9a-f]{40} L40 \| `--m3e-comp-dialog-enter-easing` \| `var\(--m3e-sys-motion-easing-emphasized\)`/,
+    );
     expect(t('slide-distance')).toBe('50px');
     expect(t('container-collapsed-height')).toBe('35%');
     expect(t('container-enter-fade-duration')).toBe('50ms');

@@ -1343,7 +1343,10 @@ export function generate({
   setLiterals(
     'dialog-defaults',
     'AlertDialogDefaults',
-    extractDialogDefaults(material3Sources, materialWebVersion),
+    extractDialogDefaults(material3Sources, materialWebVersion, {
+      text: files.find((f) => f.name === 'MotionTokens.kt')?.content,
+      path: `${upstreamPath}/MotionTokens.kt@${commit}`,
+    }),
   );
 
   // Snackbar.kt / SnackbarHost.kt / Scaffold.kt values Compose renders: the
@@ -1766,10 +1769,10 @@ export function generate({
                                                       )
                                                     : name === 'dialog-defaults'
                                                       ? cssFile(
-                                                          'Compose AlertDialog / BasicAlertDialog values that are not in DialogTokens, or that pick one of them, the modal scrim fade, Material Web’s dialog motion and the m3.material.io full-screen dialog (lines: PARITY.md).',
+                                                          'Compose AlertDialog / BasicAlertDialog values that are not in DialogTokens, or that pick one of them, the modal scrim fade, Material Web’s dialog motion (on the emphasized easing, D20 (6)) and the m3.material.io full-screen dialog (lines: PARITY.md).',
                                                           c.tokens,
                                                           [],
-                                                          `${MATERIAL3_DIR}/{AlertDialog,Button,ModalBottomSheet}.kt + ${MATERIAL3_SAMPLES_DIR}/AlertDialogSamples.kt + @material/web@${materialWebVersion} dialog/internal/{animations.js,_dialog.scss} + m3.material.io TOKEN_TABLE.0b1e39a67d5bafdc`,
+                                                          `${MATERIAL3_DIR}/{AlertDialog,Button,ModalBottomSheet}.kt + ${MATERIAL3_SAMPLES_DIR}/AlertDialogSamples.kt + @material/web@${materialWebVersion} dialog/internal/{animations.js,_dialog.scss} + tokens/MotionTokens.kt + m3.material.io TOKEN_TABLE.0b1e39a67d5bafdc`,
                                                         )
                                                       : name === 'badge-defaults'
                                                         ? cssFile(
@@ -1822,10 +1825,10 @@ export function generate({
                                                                       )
                                                                     : name === 'tabs-defaults'
                                                                       ? cssFile(
-                                                                          'Compose tab row / tab values that are not in Primary/SecondaryNavigationTabTokens (lines: PARITY.md).',
+                                                                          'Compose tab row / tab values that are not in Primary/SecondaryNavigationTabTokens (lines: PARITY.md), and the m3.material.io stacked-tab badge overlap.',
                                                                           c.tokens,
                                                                           [],
-                                                                          `${MATERIAL3_DIR}/{TabRow,Tab}.kt + ${MATERIAL3_SAMPLES_DIR}/TabSamples.kt`,
+                                                                          `${MATERIAL3_DIR}/{TabRow,Tab}.kt + ${MATERIAL3_SAMPLES_DIR}/TabSamples.kt + m3.material.io Tabs › Specs`,
                                                                         )
                                                                       : name ===
                                                                           'progress-indicator-defaults'

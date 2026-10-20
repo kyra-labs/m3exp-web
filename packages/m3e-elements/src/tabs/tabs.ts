@@ -31,10 +31,11 @@ const requestParentUpdate = (el: Element) => {
  * `<m3e-tab value="photos" icon="photo">Photos</m3e-tab>` — data for one tab of a `<m3e-tabs>`
  * (it renders nothing itself; the row renders the `.m3e-tab` contract): `value` (default: the
  * label), `icon` (Material Symbols, filled while selected), `disabled`, `label-hidden` (icon only;
- * the label becomes the accessible name), `badge` (a Compose Badge on the label, or on the icon
- * when the label is hidden: `""` the dot, digits a count — `999+` above 999 — other text as is)
- * and `badge-label` (its visually hidden text, read after the label: default "New notification"
- * for the dot, the shown text otherwise; `""` leaves it out). The label is the text content.
+ * the label becomes the accessible name), `badge` (a Compose Badge on the label; on the icon when
+ * the label is hidden or sits under the icon (a stacked tab, D20 (1)): `""` the dot, digits a
+ * count — `999+` above 999 — other text as is) and `badge-label` (its visually hidden text, read
+ * after the label: default "New notification" for the dot, the shown text otherwise; `""` leaves
+ * it out). The label is the text content.
  */
 export class M3eTab extends M3eElement {
   static override properties = /* @__PURE__ */ (() => ({
@@ -271,14 +272,17 @@ export class M3eTabs extends M3eElement {
       text = content.querySelector(`.${TAB}__label`) ?? span(doc, `${TAB}__label`);
       if (text.textContent !== label) text.textContent = label;
     }
-    // The badge sits on the label (on the icon when the label is hidden): read after the label.
-    const anchor = tab.labelHidden ? icon : text;
+    // The badge is read after the label. A stacked tab (icon above the label) badges its icon and
+    // puts the label first in the DOM (D20 (1)); others badge the label (the icon, label hidden).
+    const stacked = icon !== null && text !== null && this.iconPosition !== 'leading';
+    const anchor = tab.labelHidden || stacked ? icon : text;
     const badge = anchor ? badgeContent(tab.badge, tab.badgeLabel) : null;
     setAttr(el, 'aria-label', tab.labelHidden ? nameWithBadge(label, badge) : null);
     const parts: Element[] = [];
     if (anchor && badge) {
       const box = content.querySelector(':scope > .m3e-badged-box');
-      if (icon && !tab.labelHidden) parts.push(icon);
+      if (stacked && text) parts.push(text);
+      else if (icon && !tab.labelHidden) parts.push(icon);
       parts.push(renderBadgedBox(doc, box, anchor, badge, !tab.labelHidden));
     } else {
       parts.push(...[icon, text].filter((p): p is Element => p !== null));

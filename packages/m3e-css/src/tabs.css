@@ -29,6 +29,24 @@
  *           </span>
  *         </span>
  *
+ * A stacked tab (icon above the label) puts the badge on the icon (m3.material.io Tabs › Specs:
+ * "Overlap of badge on stacked icon 6dp" and the anatomy; D20 (1)). The label comes first and the
+ * badged icon follows, drawn above it (order), so the badge's hidden text is read after the label
+ * ("Photos 8") and the badge paints over the label, as Compose's TabBaselineLayout emits the
+ * text, then the icon (Tab.kt L298-305) and the navigation item does (navigation-item.css). The
+ * badge overlaps the icon by --m3e-comp-tabs-stacked-badge-overlap inline (6dp, dot or count),
+ * the BadgedBox vertical offsets otherwise. The earlier markup (icon, then a badged label) keeps
+ * its styles:
+ *
+ *           <span class="m3e-tab__label">Photos</span>
+ *           <span class="m3e-badged-box">
+ *             <span class="m3e-icon m3e-tab__icon" aria-hidden="true">photo</span>
+ *             <span class="m3e-badge m3e-badge--large">
+ *               <span class="m3e-badge__text" aria-hidden="true">8</span>
+ *               <span class="m3e-badge__label">8</span>
+ *             </span>
+ *           </span>
+ *
  * Tab has Modifier.badgeBounds() (Tab.kt L110), LeadingIconTab none: TabsLayout writes the
  * box's --_m3e-badged-box-bounds-end / -top from the tab's edges (badge.css keeps the badge
  * inside the tab), except in a leading-icon tab with an icon and a label. Without TabsLayout the
@@ -243,8 +261,29 @@
 
   /* Icon + label (TabBaselineLayout placeTextAndIcon): the pair sits at the bottom. */
   .m3e-tabs:not(.m3e-tabs--leading-icon)
-    .m3e-tab:has(.m3e-tab__icon + :is(.m3e-tab__label, .m3e-badged-box)) {
+    .m3e-tab:has(
+      .m3e-tab__icon + :is(.m3e-tab__label, .m3e-badged-box),
+      .m3e-tab__label + .m3e-badged-box > .m3e-tab__icon
+    ) {
     min-block-size: var(--m3e-comp-tabs-large-tab-height);
+  }
+
+  /*
+   * Stacked tab with a badged icon (D20 (1)): the label first in the DOM, the icon drawn above it
+   * (order), with the gap below the icon the label's margin gives otherwise (--_m3e-tab-baseline:
+   * see below).
+   */
+  .m3e-tabs:not(.m3e-tabs--leading-icon) .m3e-tab__label + .m3e-badged-box {
+    order: -1;
+    margin-block-end: calc(
+      var(--m3e-comp-tabs-icon-distance-from-baseline) -
+        var(--m3e-comp-tabs-label-text-line-height) + var(--_m3e-tab-baseline)
+    );
+  }
+
+  /* m3.material.io Tabs › Specs: "Overlap of badge on stacked icon 6dp" (dot and count). */
+  .m3e-tabs:not(.m3e-tabs--leading-icon) .m3e-tab__label + .m3e-badged-box > .m3e-badge {
+    --_m3e-badge-offset-inline: var(--m3e-comp-tabs-stacked-badge-overlap);
   }
 
   /*
@@ -253,7 +292,10 @@
    * from the bottom of a label line to its baseline (half-leading, Google Sans Flex metrics).
    */
   .m3e-tabs:not(.m3e-tabs--leading-icon)
-    .m3e-tab__content:has(.m3e-tab__icon + :is(.m3e-tab__label, .m3e-badged-box)) {
+    .m3e-tab__content:has(
+      .m3e-tab__icon + :is(.m3e-tab__label, .m3e-badged-box),
+      .m3e-tab__label + .m3e-badged-box > .m3e-tab__icon
+    ) {
     --_m3e-tab-baseline: calc(
       var(--m3e-comp-tabs-label-text-line-height) / 2 - var(--m3e-comp-tabs-label-text-size) *
         var(--m3e-comp-tabs-label-baseline-shift)

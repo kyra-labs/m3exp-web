@@ -120,7 +120,7 @@ describe('element / React DOM parity (CLAUDE.md "Done means" #8)', () => {
   });
 });
 
-describe('badges (on the label; on the icon when the label is hidden)', () => {
+describe('badges (on the label; on the icon when stacked (D20 (1)) or the label is hidden)', () => {
   const BADGED: TabItem[] = [
     { key: 'inbox', label: 'Inbox', icon: 'inbox', badge: 1200 },
     { key: 'chat', label: 'Chat', badge: true },
@@ -156,25 +156,39 @@ describe('badges (on the label; on the icon when the label is hidden)', () => {
     );
   });
 
-  it('wraps the label (or the hidden label’s icon) and names the tab label first', async () => {
+  it('stacked: the label first, then the badged icon; the tab reads label first', async () => {
     const root = await renderReact(<Tabs aria-label="Mail" items={BADGED} />);
     const [inbox, chat, mail, fav, off] = [...root.querySelectorAll('.m3e-tab')];
     const box = inbox!.querySelector('.m3e-tab__content > .m3e-badged-box')!;
     expect([...box.children].map((c) => c.className)).toEqual([
-      'm3e-tab__label',
+      'm3e-icon m3e-tab__icon',
       'm3e-badge m3e-badge--large',
     ]);
-    expect(inbox!.querySelector('.m3e-tab__content')!.firstElementChild!.className).toContain(
-      'm3e-tab__icon',
+    expect(inbox!.querySelector('.m3e-tab__content')!.firstElementChild!.className).toBe(
+      'm3e-tab__label',
     );
     expect(inbox!.querySelector('.m3e-badge__text')!.textContent).toBe('999+');
-    expect(inbox!.textContent).toBe('inboxInbox999+999+');
+    expect(inbox!.textContent).toBe('Inboxinbox999+999+');
+    expect(chat!.querySelector('.m3e-badged-box > .m3e-tab__label')).not.toBeNull();
     expect(chat!.querySelector('.m3e-badge__label')!.textContent).toBe('New notification');
     expect(mail!.querySelector('.m3e-badge__label')!.textContent).toBe('8 unread');
     expect(fav!.getAttribute('aria-label')).toBe('Favorites 3');
     expect(fav!.querySelector('.m3e-badged-box > .m3e-tab__icon')).not.toBeNull();
     expect(fav!.querySelector('.m3e-badge__label')).toBeNull();
     expect(off!.querySelector('.m3e-badged-box')).toBeNull();
+  });
+
+  it('leading icons: the icon, then the badged label (unchanged)', async () => {
+    const root = await renderReact(
+      <Tabs aria-label="Mail" items={BADGED} iconPosition="leading" />,
+    );
+    const inbox = root.querySelector('.m3e-tab')!;
+    const content = inbox.querySelector('.m3e-tab__content')!;
+    expect(content.firstElementChild!.className).toContain('m3e-tab__icon');
+    expect(
+      [...content.querySelector(':scope > .m3e-badged-box')!.children].map((c) => c.className),
+    ).toEqual(['m3e-tab__label', 'm3e-badge m3e-badge--large']);
+    expect(inbox.textContent).toBe('inboxInbox999+999+');
   });
 });
 

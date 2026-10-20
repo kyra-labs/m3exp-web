@@ -676,9 +676,9 @@
     "limit": "8 KB"
   },
   {
-    "name": "m3e-elements: date-picker-layout entry (DatePickerLayout: the header, calendar, paging and year grid with m3e-motion's DatePicker port, SpringAnimatable; the date-field entry for the input mode is imported on first use and measured on its own; used by m3e-react's <DatePicker>. 10 KB: a layout entry, not an element entry, like the time-picker-layout entry (12 KB), M10)",
+    "name": "m3e-elements: date-picker-layout entry (DatePickerLayout: the header, calendar, paging and year grid with m3e-motion's DatePicker port, SpringAnimatable; the date-field entry for the input mode is imported on first use and measured on its own; used by m3e-react's <DatePicker>. A layout entry, not an element entry, like the time-picker-layout entry (12 KB), M10. Raised 10 → 12 KB: the first render stays as built, month paging is not split into a lazy entry (D20 (3), D18 (2)))",
     "path": "packages/m3e-elements/dist/date-picker-layout/index.js",
-    "limit": "10 KB",
+    "limit": "12 KB",
     "ignore": ["@kyralabs/m3e-elements"]
   },
   {
@@ -688,14 +688,14 @@
     "limit": "8 KB"
   },
   {
-    "name": "m3e-elements: date picker + date-picker-layout + date-field (what a page with an element date picker loads in all, input mode included)",
+    "name": "m3e-elements: date picker + date-picker-layout + date-field (what a page with an element date picker loads in all, input mode included). Raised 14 → 16 KB with the layout entry (D20 (3), D18 (3))",
     "path": [
       "packages/m3e-elements/dist/date-picker/index.js",
       "packages/m3e-elements/dist/date-picker-layout/index.js",
       "packages/m3e-elements/dist/date-field/index.js"
     ],
     "ignore": ["@kyralabs/m3e-elements"],
-    "limit": "14 KB"
+    "limit": "16 KB"
   },
   {
     "name": "m3e-elements: <m3e-date-range-picker> entry (renders the host; the date-range-picker-layout entry is imported on first render)",

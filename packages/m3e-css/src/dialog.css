@@ -46,6 +46,8 @@
  * - @material/web 2.5.0 dialog/internal/animations.js (secondary source; owner decision M9 #9,
  *   SOURCES register #72): open, the container slides down and its background grows from 35% of
  *   its height, then the parts fade in; close, the reverse, faster. Reduced motion: fades only.
+ *   The open easing is androidx's emphasized (0.2, 0, 0, 1) (tokens/MotionTokens.kt L40,
+ *   --m3e-sys-motion-easing-emphasized), not Material Web's approximation (D20 (6)).
  *   _dialog.scss: the window margin (register #73).
  * - m3.material.io Dialogs › Specs (full-screen; owner decision M9 #11, register #74).
  */
