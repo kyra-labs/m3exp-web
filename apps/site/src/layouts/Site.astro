@@ -30,6 +30,13 @@ const canonical = new URL(pathname, Astro.site).href;
 <html lang="en">
   <head>
     <meta charset="utf-8" />
+    {
+      /* The m3e cascade layer order, before any stylesheet: pages load single m3e-css files, and
+         only css/index.css declares the order, so the bundle's file order would decide it. */
+    }
+    <style is:inline>
+      @layer m3e.tokens, m3e.base, m3e.components;
+    </style>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="color-scheme" content="light dark" />
     <title>{fullTitle}</title>

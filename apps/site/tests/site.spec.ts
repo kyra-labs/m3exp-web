@@ -55,6 +55,29 @@ for (const path of PAGES) {
       expect(unresolved).toEqual([]);
     });
 
+    test('declares the cascade layers in order', async ({ page }) => {
+      await page.goto(path);
+      // The first mention of a layer fixes its place: components must come after base.
+      const order = await page.evaluate(() => {
+        const names: string[] = [];
+        const visit = (rules: CSSRuleList) => {
+          for (const rule of rules) {
+            const found =
+              rule instanceof CSSLayerStatementRule
+                ? [...rule.nameList]
+                : rule instanceof CSSLayerBlockRule
+                  ? [rule.name]
+                  : [];
+            for (const name of found) if (!names.includes(name)) names.push(name);
+            if ('cssRules' in rule) visit((rule as CSSGroupingRule).cssRules);
+          }
+        };
+        for (const sheet of document.styleSheets) visit(sheet.cssRules);
+        return names.filter((n) => n.startsWith('m3e.'));
+      });
+      expect(order).toEqual(['m3e.tokens', 'm3e.base', 'm3e.components']);
+    });
+
     test('does not scroll sideways', async ({ page }) => {
       await page.goto(path);
       await settle(page);
