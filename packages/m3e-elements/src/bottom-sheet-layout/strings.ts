@@ -11,3 +11,9 @@ export const BOTTOM_SHEET_PANE_TITLE = 'Bottom Sheet';
  * @internal Shared with m3e-react; not part of the public API.
  */
 export const BOTTOM_SHEET_DRAG_HANDLE_LABEL = 'Drag handle';
+/**
+ * The drag handle's `aria-keyshortcuts` (DECISIONS D20 (9)): ArrowUp / ArrowDown stand in for
+ * Compose's expand / collapse / dismiss accessibility actions (BottomSheet.kt L373-398).
+ * @internal Shared with m3e-react; not part of the public API.
+ */
+export const BOTTOM_SHEET_HANDLE_KEYS = 'ArrowUp ArrowDown';

@@ -1,5 +1,6 @@
 import {
   BOTTOM_SHEET_DRAG_HANDLE_LABEL,
+  BOTTOM_SHEET_HANDLE_KEYS,
   BOTTOM_SHEET_PANE_TITLE,
   BottomSheetLayout,
   type SheetValue,
@@ -48,13 +49,24 @@ function rootClass(modal: boolean, value: SheetValue, peek: boolean, className?:
 }
 
 /** The `.m3e-bottom-sheet__sheet` surface: the drag handle with its tooltip, then the content. */
-function sheetParts(dragHandle: boolean, dragHandleLabel: string, children: ReactNode): ReactNode {
+function sheetParts(
+  dragHandle: boolean,
+  dragHandleLabel: string,
+  gesturesEnabled: boolean,
+  children: ReactNode,
+): ReactNode {
   return (
     <>
       {dragHandle ? (
-        // DragHandleWithTooltip: TooltipBox(Above) { DragHandle } with a PlainTooltip.
+        // DragHandleWithTooltip: TooltipBox(Above) { DragHandle } with a PlainTooltip. The arrow
+        // keys (Compose's expand / collapse / dismiss actions) are announced (DECISIONS D20 (9)).
         <TooltipTrigger>
-          <button type="button" className={`${SHEET}__handle`} aria-label={dragHandleLabel}>
+          <button
+            type="button"
+            className={`${SHEET}__handle`}
+            aria-label={dragHandleLabel}
+            aria-keyshortcuts={gesturesEnabled ? BOTTOM_SHEET_HANDLE_KEYS : undefined}
+          >
             <span className={`${SHEET}__handle-bar`} />
           </button>
           <PlainTooltip>{dragHandleLabel}</PlainTooltip>
@@ -199,7 +211,7 @@ export const BottomSheet = /* @__PURE__ */ forwardRef(function BottomSheet(
       style={peekStyle || style ? { ...peekStyle, ...style } : undefined}
     >
       <div className={`${SHEET}__sheet`} role="region" aria-label={ariaLabel}>
-        {sheetParts(dragHandle, dragHandleLabel, children)}
+        {sheetParts(dragHandle, dragHandleLabel, gesturesEnabled, children)}
       </div>
     </div>
   );
@@ -288,7 +300,9 @@ export const ModalBottomSheet = /* @__PURE__ */ forwardRef(function ModalBottomS
       aria-label={ariaLabel}
     >
       <div className={`${SHEET}__scrim`} aria-hidden="true" />
-      <div className={`${SHEET}__sheet`}>{sheetParts(dragHandle, dragHandleLabel, children)}</div>
+      <div className={`${SHEET}__sheet`}>
+        {sheetParts(dragHandle, dragHandleLabel, gesturesEnabled, children)}
+      </div>
     </dialog>
   );
 });

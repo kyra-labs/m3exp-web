@@ -235,6 +235,8 @@ test('keyboard: the handle expands and dismisses (Enter), ArrowUp / ArrowDown ex
 }) => {
   const root = await open(page, 'modal', true);
   const handle = handleOf(page, 'modal');
+  // D20 (9): the arrow keys are announced.
+  await expect(handle).toHaveAttribute('aria-keyshortcuts', 'ArrowUp ArrowDown');
   await page.keyboard.press('Enter');
   await rests(root);
   expect(await valueOf(page, 'modal')).toBe('expanded');
@@ -343,6 +345,29 @@ test('overflowing content is a scroll region (a group) named like its sheet (M11
   await expect(modalContent).toHaveAttribute('aria-label', 'Bottom Sheet');
 });
 
+test('keyboard focus on content a partially expanded sheet clips expands it (D21 (3), WCAG 2.4.11)', async ({
+  page,
+}) => {
+  // The standard sheet: its scroll region's top shows, so focusing it keeps the sheet.
+  await handleOf(page, 'standard').focus();
+  await page.keyboard.press('Tab');
+  await expect(rootOf(page, 'standard').locator('.m3e-bottom-sheet__content')).toBeFocused();
+  await rests(rootOf(page, 'standard'));
+  expect(await valueOf(page, 'standard')).toBe('partially-expanded');
+  // The peek sheet: its button is below the 128dp that show (M11 a11y audit M1).
+  const peek = rootOf(page, 'peek');
+  const button = page.getByTestId('peek').getByRole('button', { name: 'Click to collapse sheet' });
+  const frame = await box(page.getByTestId('peek-frame'));
+  expect((await box(button)).y).toBeGreaterThan(frame.y + frame.height);
+  await handleOf(page, 'peek').focus();
+  await page.keyboard.press('Tab');
+  await expect(button).toBeFocused();
+  await rests(peek);
+  expect(await valueOf(page, 'peek')).toBe('expanded');
+  const shown = await box(button);
+  expect(shown.y + shown.height).toBeLessThanOrEqual(frame.y + frame.height + 1);
+});
+
 test('the drag handles have 48 × 48 hit areas (hit testing)', async ({ page }) => {
   await expectTargetSizes(handleOf(page, 'standard'), 'standard handle');
   const root = await open(page, 'modal');
@@ -433,6 +458,26 @@ test.describe('reduced motion', () => {
     const viewport = page.viewportSize()!;
     expect((await box(sheetOf(page, 'modal'))).y).toBeCloseTo(0, 0);
     expect(viewport.height).toBeGreaterThan(0);
+  });
+
+  test('focus on content the peek sheet clips expands it at once (D21 (3))', async ({ page }) => {
+    const peek = rootOf(page, 'peek');
+    await peek.evaluate((root) => {
+      const seen: string[] = [];
+      (window as unknown as { peekTranslates: string[] }).peekTranslates = seen;
+      new MutationObserver(() => {
+        if (root.hasAttribute('data-animating')) seen.push(root.style.cssText);
+      }).observe(root, { attributes: true, attributeFilter: ['style', 'data-animating'] });
+    });
+    await handleOf(page, 'peek').focus();
+    await page.keyboard.press('Tab');
+    await rests(peek);
+    expect(await valueOf(page, 'peek')).toBe('expanded');
+    // No spring frames: at most the end position.
+    const frames = await page.evaluate(
+      () => (window as unknown as { peekTranslates: string[] }).peekTranslates,
+    );
+    expect(frames.length).toBeLessThanOrEqual(1);
   });
 });
 

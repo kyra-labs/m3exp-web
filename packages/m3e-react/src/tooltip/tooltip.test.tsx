@@ -198,6 +198,42 @@ describe('<TooltipTrigger> behavior (the shared TooltipController)', () => {
     expect(onAction).toHaveBeenCalledTimes(1);
     expect(onOpenChange).toHaveBeenLastCalledWith(false);
   });
+
+  it('no Tab trap (D21 (1)): Tab from the action leaves past the anchor; a non-persistent tooltip hides', async () => {
+    const onOpenChange = vi.fn();
+    const container = await renderReact(
+      <>
+        <TooltipTrigger onOpenChange={onOpenChange}>
+          <Button>Info</Button>
+          <RichTooltip action="Got it">Details</RichTooltip>
+        </TooltipTrigger>
+        <button type="button" id="after">
+          After
+        </button>
+      </>,
+    );
+    const anchor = container.querySelector('button')!;
+    const key = (target: Element, shiftKey = false) =>
+      run(() => {
+        target.dispatchEvent(
+          new KeyboardEvent('keydown', { key: 'Tab', shiftKey, bubbles: true, cancelable: true }),
+        );
+      });
+    await run(() => {
+      anchor.focus();
+    });
+    expect(onOpenChange).toHaveBeenLastCalledWith(true);
+    await key(anchor);
+    const action = tooltip().querySelector('button')!;
+    expect(document.activeElement).toBe(action);
+    await key(action, true);
+    expect(document.activeElement).toBe(anchor);
+    await key(anchor);
+    expect(document.activeElement).toBe(action);
+    await key(action);
+    expect(document.activeElement).toBe(document.getElementById('after'));
+    expect(onOpenChange).toHaveBeenLastCalledWith(false);
+  });
 });
 
 describe('<PlainTooltip> / <RichTooltip> ⇔ <m3e-tooltip> DOM parity', () => {

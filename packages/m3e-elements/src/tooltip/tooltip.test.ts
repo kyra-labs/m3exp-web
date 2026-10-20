@@ -337,7 +337,7 @@ describe('<m3e-tooltip> with an action', () => {
     expect(host.open).toBe(false);
   });
 
-  it('Tab from the anchor moves into the tooltip; focus stays there; Escape returns to the anchor', async () => {
+  it('Tab from the anchor moves into the tooltip; Escape returns to the anchor', async () => {
     const { host, anchor, tooltip } = await setup(RICH);
     anchor.focus();
     await settle();
@@ -347,12 +347,75 @@ describe('<m3e-tooltip> with an action', () => {
     expect(document.activeElement).toBe(button);
     await settle();
     expect(host.open).toBe(true);
-    expect(key(button, 'Tab')).toBe(false);
-    expect(document.activeElement).toBe(button);
     key(button, 'Escape');
     await settle();
     expect(document.activeElement).toBe(anchor);
     // Focus came back from the tooltip: it does not show again.
     expect(host.open).toBe(false);
+  });
+
+  it('no Tab trap (D21 (1)): Tab from the last control goes past the anchor, Shift+Tab back to it', async () => {
+    const { host, anchor, tooltip } = await setup(RICH);
+    const after = document.getElementById('after')!;
+    anchor.focus();
+    await settle();
+    const button = tooltip.querySelector('button')!;
+    // Shift+Tab on the anchor is the browser's (backwards, out of the tooltip's way).
+    expect(key(anchor, 'Tab', { shiftKey: true })).toBe(true);
+    key(anchor, 'Tab');
+    expect(document.activeElement).toBe(button);
+    // Shift+Tab from the first control returns to the anchor; the tooltip stays.
+    expect(key(button, 'Tab', { shiftKey: true })).toBe(false);
+    expect(document.activeElement).toBe(anchor);
+    await settle();
+    expect(host.open).toBe(true);
+    key(anchor, 'Tab');
+    expect(document.activeElement).toBe(button);
+    // Tab from the last control: the stop after the anchor (the tooltip's own button skipped).
+    expect(key(button, 'Tab')).toBe(false);
+    expect(document.activeElement).toBe(after);
+    await settle();
+    // Persistent: focus leaving does not hide it.
+    expect(host.open).toBe(true);
+  });
+
+  it('a non-persistent tooltip hides when focus leaves it', async () => {
+    const { host, anchor, tooltip } = await setup(RICH.replace(' persistent', ''));
+    anchor.focus();
+    await settle();
+    const button = tooltip.querySelector('button')!;
+    key(anchor, 'Tab');
+    expect(document.activeElement).toBe(button);
+    await settle();
+    expect(host.open).toBe(true);
+    key(button, 'Tab');
+    expect(document.activeElement).toBe(document.getElementById('after'));
+    await settle();
+    expect(host.open).toBe(false);
+  });
+
+  it('the tab stop after the anchor skips the tooltip wherever it sits', async () => {
+    const { anchor, tooltip } = await setup(
+      `<m3e-tooltip anchor="info" variant="rich" action="OK">Text</m3e-tooltip><p><button id="info">Info</button></p><button disabled>Off</button><span tabindex="-1">No</span><a href="#x" id="link">Link</a>`,
+    );
+    anchor.focus();
+    await settle();
+    const button = tooltip.querySelector('button')!;
+    key(anchor, 'Tab');
+    expect(document.activeElement).toBe(button);
+    key(button, 'Tab');
+    expect(document.activeElement).toBe(document.getElementById('link'));
+  });
+
+  it('nothing after the anchor: the browser’s Tab leaves the tooltip', async () => {
+    const { anchor, tooltip } = await setup(
+      `<button id="info">Info</button><m3e-tooltip anchor="info" variant="rich" action="OK">Text</m3e-tooltip>`,
+    );
+    anchor.focus();
+    await settle();
+    const button = tooltip.querySelector('button')!;
+    key(anchor, 'Tab');
+    expect(document.activeElement).toBe(button);
+    expect(key(button, 'Tab')).toBe(true);
   });
 });
