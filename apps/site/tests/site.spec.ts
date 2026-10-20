@@ -48,7 +48,9 @@ for (const path of PAGES) {
       // (.m3e-icon clips it with overflow: hidden, so compare the content width).
       const unresolved = await page.evaluate(() =>
         [...document.querySelectorAll<HTMLElement>('.m3e-icon')]
-          .filter((el) => el.offsetParent !== null && el.textContent.trim().length > 1)
+          // Icons a component collapses on purpose (width 0) show nothing either way.
+          .filter((el) => el.offsetParent !== null && el.clientWidth > 0)
+          .filter((el) => el.textContent.trim().length > 1)
           .filter((el) => el.scrollWidth > el.clientWidth * 1.5)
           .map((el) => el.textContent.trim()),
       );
