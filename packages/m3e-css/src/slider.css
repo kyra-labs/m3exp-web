@@ -73,9 +73,9 @@
  *   the inactive part (m3.material.io "the icon moves to the inactive track"); colors: the tick
  *   colors of its part.
  * - Value indicator (owner decision M8 #19): SliderTokens.ValueIndicator* (inverse surface,
- *   label large, 12dp above the handle), 48 × 44dp (m3.material.io Measurements), shape
- *   TODO(verify) (register #69), while dragging or keyboard focused; a vertical slider's shows at
- *   the inline start of the thumb.
+ *   label large, 12dp above the handle), 48 × 44dp (m3.material.io Measurements), fully rounded
+ *   (the Specs redline; register #69), while dragging or keyboard focused; a vertical slider's
+ *   shows at the inline start of the thumb.
  */
 @import '@kyralabs/m3e-tokens/components/slider.css';
 @import '@kyralabs/m3e-tokens/components/slider-defaults.css';

@@ -335,13 +335,14 @@ const M3IO: readonly NavigationDrawerDefault[] = [
   },
   {
     name: `${P}-divider-color`,
-    value: 'var(--m3e-sys-color-outline)',
-    js: 'var(--m3e-sys-color-outline)',
-    raw: 'md.comp.navigation-drawer.divider.color = md.sys.color.outline',
+    value: 'var(--m3e-sys-color-outline-variant)',
+    js: 'var(--m3e-sys-color-outline-variant)',
+    raw: 'md.comp.divider.color = md.sys.color.outline-variant',
     owner: 'm3.material.io',
-    member: 'md.comp.navigation-drawer.divider.color',
+    member:
+      'md.comp.divider.color (replaces the deprecated md.comp.navigation-drawer.divider.color)',
     cite: NAVIGATION_DRAWER_M3IO_TOKENS,
-    note: 'thickness: DividerTokens.Thickness (divider.css)',
+    note: 'rev 7989 deprecates the drawer divider token for the standalone divider token (Divider TOKEN_TABLE.77f7657eb270e53d); the drawer Specs point to the divider specs [1.8.0]; androidx DividerTokens.Color = OutlineVariant (DividerTokens.kt L24–25); SOURCES #33. Thickness: DividerTokens.Thickness (divider.css)',
   },
 ];
 

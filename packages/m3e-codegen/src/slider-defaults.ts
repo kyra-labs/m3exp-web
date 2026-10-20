@@ -453,7 +453,7 @@ function valueIndicatorRows(): SliderDefault[] {
       file: 'm3.material.io',
       line: 0,
       cite: SLIDER_M3IO_PAGE,
-      note: 'TODO(verify) SOURCES register #69: m3.material.io states no shape (the token DB’s label.container.* tokens are deprecated); full until verified',
+      note: 'SOURCES register #69: the Specs redline [1.17.0] draws the label container fully rounded (the token DB’s label.container.* tokens are deprecated)',
     },
   ];
 }

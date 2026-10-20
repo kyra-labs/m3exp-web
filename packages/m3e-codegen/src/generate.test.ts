@@ -1184,7 +1184,7 @@ describe('slider values (M8)', () => {
     expect(t('small-icon-size')).toBeUndefined();
   });
 
-  it('value indicator: SliderTokens colors and type, 48 × 44dp, shape TODO(verify) (M8 #19)', () => {
+  it('value indicator: SliderTokens colors and type, 48 × 44dp, fully rounded (#69, M8 #19)', () => {
     expect(tok('value-indicator-container-color')).toBe('var(--m3e-sys-color-inverse-surface)');
     expect(tok('value-indicator-label-text-size')).toBe(
       'var(--m3e-sys-typescale-label-large-size)',
@@ -1193,7 +1193,7 @@ describe('slider values (M8)', () => {
     expect(t('value-indicator-container-width')).toBe('48px');
     expect(t('value-indicator-container-height')).toBe('44px');
     expect(t('value-indicator-container-shape')).toBe('var(--m3e-sys-shape-corner-full)');
-    expect(output.get('PARITY.md')).toMatch(/TODO\(verify\) SOURCES register #69/);
+    expect(output.get('PARITY.md')).toMatch(/SOURCES register #69: the Specs redline/);
   });
 
   it('keys: m3e-motion steps and pages match slideOnKeyEvents', () => {

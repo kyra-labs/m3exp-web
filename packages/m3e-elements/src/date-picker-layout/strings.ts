@@ -60,8 +60,8 @@ export interface DatePickerStrings {
   /** L77 */
   invalidRange: string;
   /**
-   * The docked picker's year arrows (m3.material.io only; no Compose string, worded as Compose's
-   * month ones: TODO(verify) SOURCES register #89).
+   * The docked picker's year arrows (m3.material.io only, Compose has none: Date pickers ›
+   * Accessibility [3.11.0], "Previous year (Shift+Pageup)"; SOURCES #89).
    */
   previousYear: string;
   nextYear: string;
@@ -95,6 +95,6 @@ export const DATE_PICKER_STRINGS: DatePickerStrings = {
   inRange: 'In range',
   rangeInputTitle: 'Enter dates',
   invalidRange: 'Invalid date range input',
-  previousYear: 'Change to previous year',
-  nextYear: 'Change to next year',
+  previousYear: 'Previous year',
+  nextYear: 'Next year',
 };
