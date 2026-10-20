@@ -1,0 +1,13 @@
+---
+import '@kyralabs/m3e-css/list.css';
+import ComponentPage from '../../layouts/ComponentPage.astro';
+---
+
+<ComponentPage
+  slug="list"
+  examples={[
+    { name: 'static', title: 'Static list', description: 'One to three lines with leading and trailing content. Static lists need no JavaScript.' },
+    { name: 'selectable', title: 'Single selection', description: 'An interactive list is a listbox with one tab stop: arrow keys move, Space or Enter selects.' },
+    { name: 'segmented', title: 'Segmented items', description: 'Items on their own surfaces, 2dp apart, with actions (`onAction`).' },
+  ]}
+/>

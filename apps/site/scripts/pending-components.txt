@@ -1,12 +1,5 @@
 # Component pages not written yet (scripts/check-components.js). The component-page PRs remove
 # lines as they add pages; the last one empties this file.
-card
-list
-carousel
-dialog
-bottom-sheet
-side-sheet
-divider
 top-app-bar
 floating-toolbar
 docked-toolbar
