@@ -29,6 +29,7 @@ const ALLOWED_WORKSPACE_DEPS = {
   'm3e-react': [
     '@kyralabs/m3e-tokens',
     '@kyralabs/m3e-css',
+    '@kyralabs/m3e-elements', // D22: for its d.ts; the JavaScript it uses is bundled
     '@kyralabs/m3e-motion',
     '@kyralabs/m3e-shapes',
   ],
@@ -90,6 +91,11 @@ describe('repository layout', () => {
   it('m3e-elements has zero runtime dependencies (D7)', () => {
     expect(pkgs['m3e-elements'].dependencies ?? {}).toEqual({});
     expect(pkgs['m3e-elements'].peerDependencies ?? {}).toEqual({});
+  });
+
+  it('m3e-react declares m3e-elements, which its published types import (D22)', () => {
+    expect(pkgs['m3e-react'].dependencies).toHaveProperty('@kyralabs/m3e-elements');
+    expect(pkgs['m3e-react'].devDependencies ?? {}).not.toHaveProperty('@kyralabs/m3e-elements');
   });
 
   it('m3e-css contains no JavaScript', () => {

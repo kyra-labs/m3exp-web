@@ -64,10 +64,11 @@
  * - Colors (defaultSliderColors L1716–1757): disabled parts translucent, the disabled handle
  *   composited over surface. Hover changes nothing (owner decision M8 #3).
  * - Sizes (owner decision M8 #16): the m3.material.io token DB (slider-defaults.css): track
- *   thickness 16 / 24 / 40 / 56 / 96dp, handle 44 / 44 / 44 / 68 / 108dp (M: TODO(verify),
- *   SOURCES register #68), corner 8 / 8 / 12 / 16 / 28dp; S–XL shrink corners like the Compose
- *   samples' Track(trackCornerSize). Stop indicators sit one corner size in (TODO(verify),
- *   register #70: the token DB says a 4dp trailing space).
+ *   thickness 16 / 24 / 40 / 56 / 96dp, handle 44 / 44 / 44 / 68 / 108dp (M: the DB, not the
+ *   Specs table's 52dp; D19 (8), SOURCES register #68), corner 8 / 8 / 12 / 16 / 28dp; S–XL
+ *   shrink corners like the Compose samples' Track(trackCornerSize). Stop indicators sit one
+ *   corner size in, as Compose draws them (Slider.kt L2550–2566; the token DB's 4dp trailing
+ *   space is not used: D19 (9), register #70).
  * - Inset icon (owner decision M8 #18): M / L / XL 24 / 24 / 32dp, padding 6 / 6 / 8dp; on the
  *   active part when icon + 2 × padding fits (SliderWithTrackIconsSample), else at the start of
  *   the inactive part (m3.material.io "the icon moves to the inactive track"); colors: the tick

@@ -58,7 +58,8 @@ type Menu = 'month' | 'year' | null;
  * whose calendar drops down below it from its calendar button, the only way in (m3.material.io:
  * typing a date never needs the calendar). The calendar's navigation row has the month and the
  * year, each between its arrows and with a menu that replaces the calendar; Shift + M / Shift + Y
- * go to them. The days of the neighbouring months are dimmed (owner decision M10 D15). Picking a
+ * go to them while focus is in the popup, announced by their `aria-keyshortcuts` (DECISIONS
+ * D20 (5)). The days of the neighbouring months are dimmed (owner decision M10 D15). Picking a
  * day fills the field and closes the calendar; Escape or a click outside closes it.
  */
 export class DockedDatePickerLayout {
@@ -123,6 +124,8 @@ export class DockedDatePickerLayout {
         type: 'button',
         'aria-expanded': 'false',
         'aria-haspopup': 'listbox',
+        // The popup's Shift + M / Shift + Y move focus here (DECISIONS D20 (5)).
+        'aria-keyshortcuts': menu === 'month' ? 'Shift+M' : 'Shift+Y',
       });
       const arrow = el(doc, 'span', 'm3e-icon', { 'aria-hidden': 'true' });
       arrow.textContent = 'arrow_drop_down';

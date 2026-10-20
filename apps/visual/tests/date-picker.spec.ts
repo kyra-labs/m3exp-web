@@ -109,7 +109,8 @@ test.describe('baselines', () => {
     await day(picker, utc(2025, 8, 17)).focus();
     await page.keyboard.press('ArrowRight');
     await expect(day(picker, utc(2025, 8, 18))).toBeFocused();
-    await expect(day(picker, utc(2025, 8, 18))).toHaveCSS('outline-style', 'solid');
+    // The ring grows from a zero-width outline (D19 (3)).
+    await expect(day(picker, utc(2025, 8, 18))).toHaveCSS('outline-width', '3px');
     await expect(figure(page, 'picker')).toHaveScreenshot('picker-focus.png');
   });
 
@@ -211,8 +212,8 @@ test.describe('geometry (DatePickerModalTokens, DatePicker.kt)', () => {
     await expect(popup).toBeVisible();
     // The docked header's arrows are left out: its two groups fill the 360dp row edge to edge,
     // so the arrows next to a menu button or the other group's arrow share their 48dp targets
-    // (44px effective). Giving them 48dp slots needs m3.material.io's header geometry (the menu
-    // buttons' insets are open in SOURCES register #87), a fidelity question for the owner.
+    // (44px effective). Giving them 48dp slots would need m3.material.io header geometry it does
+    // not give (the menu buttons take the modal year button's insets: SOURCES #87, D19 (24)).
     await expectTargetSizes(popup.locator('.m3e-date-picker__menu-button'), 'docked menu buttons');
     await expectTargetSizes(popup.locator('.m3e-date-picker__day[data-date]'), 'docked days');
     await page.keyboard.press('Escape');
@@ -415,6 +416,25 @@ test.describe('behavior', () => {
     await expect(docked.locator('input')).toHaveValue('08/21/2025');
     expect(await changes(page)).toEqual([{ value: '2025-08-21' }]);
     await docked.locator('.m3e-text-field__trailing button').click();
+    await page.keyboard.press('Escape');
+    await expect(popup).toBeHidden();
+  });
+
+  test('docked: Shift+M / Shift+Y go to the month / year menus, announced (D20 (5))', async ({
+    page,
+  }) => {
+    const docked = root(page, 'docked');
+    const popup = docked.locator('.m3e-date-picker--docked');
+    const month = popup.locator('.m3e-date-picker__menu-button').first();
+    const year = popup.locator('.m3e-date-picker__menu-button').nth(1);
+    await docked.locator('.m3e-text-field__trailing button').click();
+    await expect(day(popup, utc(2025, 8, 17))).toBeFocused();
+    await expect(month).toHaveAttribute('aria-keyshortcuts', 'Shift+M');
+    await expect(year).toHaveAttribute('aria-keyshortcuts', 'Shift+Y');
+    await page.keyboard.press('Shift+Y');
+    await expect(year).toBeFocused();
+    await page.keyboard.press('Shift+M');
+    await expect(month).toBeFocused();
     await page.keyboard.press('Escape');
     await expect(popup).toBeHidden();
   });

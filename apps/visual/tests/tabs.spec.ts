@@ -214,12 +214,16 @@ for (const id of ['element-primary', 'element-secondary', 'element-scrollable'])
     await tabs(page, id).first().focus();
     await page.keyboard.press('ArrowRight');
     await expect(second).toBeFocused();
-    const ring = await second.evaluate((el) => {
-      const s = getComputedStyle(el);
-      return { style: s.outlineStyle, offset: s.outlineOffset };
-    });
-    expect(ring.style).toBe('solid');
-    expect(ring.offset).toBe(await token(page, '--m3e-sys-state-focus-indicator-inner-offset'));
+    // The ring grows from a zero-width outline at offset 0 (D19 (3)): poll its settled values.
+    const inner = await token(page, '--m3e-sys-state-focus-indicator-inner-offset');
+    await expect
+      .poll(() =>
+        second.evaluate((el) => {
+          const s = getComputedStyle(el);
+          return { width: s.outlineWidth, offset: s.outlineOffset };
+        }),
+      )
+      .toEqual({ width: '3px', offset: inner });
     await expect(page).toHaveScreenshot(`tabs-${id}-focused.png`, { clip });
     await page.keyboard.press('Tab');
     const b = await box(second);

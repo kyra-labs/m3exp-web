@@ -27,7 +27,7 @@
     --m3e-comp-side-sheet-modal-container-shape-end-start: var(--m3e-sys-shape-corner-large-start-end-start);
     --m3e-comp-side-sheet-detached-container-shape: var(--m3e-sys-shape-corner-large);
     --m3e-comp-side-sheet-detached-margin: 16px;
-    --m3e-comp-side-sheet-divider-color: var(--m3e-sys-color-outline);
+    --m3e-comp-side-sheet-divider-color: var(--m3e-sys-color-outline-variant);
     --m3e-comp-side-sheet-headline-color: var(--m3e-sys-color-on-surface-variant);
     --m3e-comp-side-sheet-headline-font: var(--m3e-sys-typescale-title-large-font);
     --m3e-comp-side-sheet-headline-weight: var(--m3e-sys-typescale-title-large-weight);

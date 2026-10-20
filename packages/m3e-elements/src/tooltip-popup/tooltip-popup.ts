@@ -148,12 +148,14 @@ const RANK: Readonly<Record<TooltipShowPriority, number>> = {
 };
 
 /**
- * Compose defers to the platform (ViewConfiguration.longPressTimeoutMillis); the web has no such
- * setting, so this is React Aria useLongPress's default threshold (react-aria 3.53.1).
- * TODO(verify): SOURCES.md register #71.
+ * Compose shows the tooltip after `viewConfiguration.longPressTimeoutMillis`
+ * (`internal/BasicTooltip.kt@19991f2c` L221), which on Android reads
+ * `android.view.ViewConfiguration.getLongPressTimeout()` (`AndroidViewConfiguration.android.kt`
+ * L31–32): the platform default, 400ms (AOSP `ViewConfiguration.DEFAULT_LONG_PRESS_TIMEOUT`).
+ * The web has no such setting, so the default ships (SOURCES.md register #71, DECISIONS D19 (10)).
  * @internal Shared with m3e-react; not part of the public API.
  */
-export const LONG_PRESS_TIMEOUT_MS = 500;
+export const LONG_PRESS_TIMEOUT_MS = 400;
 
 interface Job {
   owner: TooltipController;
@@ -177,6 +179,24 @@ let holder: Job | null = null;
 const FOCUSABLE =
   'a[href], button:not(:disabled), input:not(:disabled), select:not(:disabled), textarea:not(:disabled), [tabindex]:not([tabindex="-1"])';
 
+/** The rendered, non-inert tab stops in `root`, in DOM order. */
+const tabStops = (root: ParentNode): HTMLElement[] =>
+  [...root.querySelectorAll<HTMLElement>(FOCUSABLE)].filter(
+    (el) => el.tabIndex >= 0 && el.getClientRects().length > 0 && !el.closest('[inert]'),
+  );
+
+/**
+ * The first tab stop after `anchor` in document order, outside the anchor and `skip` (the
+ * tooltip, which may sit right after the anchor). Positive tabindex values are not ordered.
+ */
+const tabStopAfter = (anchor: HTMLElement, skip: Element): HTMLElement | undefined =>
+  tabStops(anchor.getRootNode() as Document | ShadowRoot).find(
+    (el) =>
+      anchor.compareDocumentPosition(el) & Node.DOCUMENT_POSITION_FOLLOWING &&
+      !anchor.contains(el) &&
+      !skip.contains(el),
+  );
+
 export interface TooltipControllerOptions {
   /** The `.m3e-tooltip` (a `popover="manual"` element). */
   tooltip: HTMLElement;
@@ -198,8 +218,10 @@ export interface TooltipControllerOptions {
  * - Touch / pen: a long press shows it (PreventUserInput) and swallows the click that follows; a
  *   non-persistent tooltip hides when the press ends, but not before `--m3e-comp-tooltip-duration`.
  * - Keyboard: focusing the anchor (`:focus-visible`) shows it (PreventUserInput) until focus leaves
- *   or Escape. Tab moves into a tooltip that `hasAction` (focus stays in it until Escape, which
- *   returns to the anchor, or a click outside), as Compose makes the popup focusable.
+ *   or Escape. Tab moves into a tooltip that `hasAction`, as Compose makes the popup focusable, but
+ *   does not stay there (DECISIONS D21 (1), WCAG 2.1.2): Tab from its last control moves to the
+ *   tab stop after the anchor, Shift+Tab from its first returns to the anchor, Escape returns to
+ *   the anchor, and focus leaving the tooltip hides it unless it is persistent.
  * - `show()` (TooltipState.show, Default priority): a non-persistent tooltip hides after
  *   `--m3e-comp-tooltip-duration`; a persistent one stays until `dismiss()`.
  * - A pointer going down outside the tooltip (the anchor included) hides it (Popup
@@ -458,8 +480,8 @@ export class TooltipController {
 
   #onAnchorKeyDown = (e: KeyboardEvent): void => {
     if (!this.enableUserInput || !this.#visible) return;
-    if (this.hasAction && e.key === 'Tab') {
-      const first = this.tooltip.querySelector<HTMLElement>(FOCUSABLE);
+    if (this.hasAction && e.key === 'Tab' && !e.shiftKey) {
+      const first = tabStops(this.tooltip)[0];
       if (first) {
         e.preventDefault();
         first.focus();
@@ -491,19 +513,28 @@ export class TooltipController {
         this.dismiss();
         this.#returnFocus();
       } else if (e.key === 'Tab') {
-        // The focusable popup keeps focus (its focus search wraps) until it is dismissed.
-        const items = [...this.tooltip.querySelectorAll<HTMLElement>(FOCUSABLE)];
-        if (items.length === 0) return;
+        // No Tab trap (DECISIONS D21 (1), WCAG 2.1.2; Compose's focusable popup wraps): the
+        // tooltip sits between the anchor and what follows it in the tab order.
+        const anchor = this.#anchor;
+        const items = tabStops(this.tooltip);
         const index = items.indexOf(e.target as HTMLElement);
-        const next = (index + (e.shiftKey ? -1 : 1) + items.length) % items.length;
-        e.preventDefault();
-        items[next]?.focus();
+        if (!anchor || index < 0) return;
+        if (e.shiftKey && index === 0) {
+          e.preventDefault();
+          this.#returnFocus();
+        } else if (!e.shiftKey && index === items.length - 1) {
+          // Nothing after the anchor: the browser's own Tab leaves the tooltip.
+          const after = tabStopAfter(anchor, this.tooltip);
+          if (!after) return;
+          e.preventDefault();
+          after.focus();
+        }
       }
     });
     this.tooltip.addEventListener('focusout', (e) => {
       const next = e.relatedTarget as Node | null;
       if (next && (this.tooltip.contains(next) || this.#anchor?.contains(next))) return;
-      if (next) this.dismiss();
+      if (next && !this.isPersistent) this.dismiss();
     });
   }
 

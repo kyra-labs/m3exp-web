@@ -50,6 +50,10 @@ Each milestone ships when its Definition of Done (DoD) is met **and** the owner 
 ## M11 — Hardening
 - Docs completeness, API review, bundle audit, a11y audit, TODO(verify) register at zero, deprecation notices documented with 2.0 removal plan. No version gate: 1.0.0 shipped after M4 (D16), and breaking changes wait for 2.0.
 
+## After M11 — 1.x minors
+- `Scaffold` (COMPONENT_SPEC §39): specced, not built in M11 (DECISIONS D19 (27), SOURCES #56). Additive, so a 1.x minor (D16).
+- Out of 1.x scope (D19 (27)): `SecureTextField` / `OutlinedSecureTextField`, `ExposedDropdownMenuBox`, `SwipeToDismissBox`, `AppBarRow` / `AppBarColumn` / `AppBarOverflowIndicator`. Per-step density (FOUNDATIONS §8) is not in 1.x either (D19 (2)); adding it later would be a minor.
+
 ## Per-component DoD (all milestones)
 - css + elements/react as specified.
 - Playground page with every variant/size/state.

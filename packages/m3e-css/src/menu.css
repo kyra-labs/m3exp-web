@@ -337,6 +337,7 @@
     user-select: none;
     -webkit-tap-highlight-color: transparent;
     transition:
+      var(--_m3e-focus-ring-transition, outline-width, outline-offset),
       border-radius var(--m3e-sys-motion-spring-fast-spatial-duration)
         var(--m3e-sys-motion-spring-fast-spatial-easing),
       background-color var(--m3e-sys-motion-spring-fast-effects-duration)

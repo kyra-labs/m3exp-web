@@ -136,9 +136,10 @@ test('focus ring on the indicator pill', async ({ page }) => {
   await page.getByTestId('c-home').focus();
   await page.keyboard.press('Tab');
   await expect(item).toBeFocused();
-  expect(await part(item, 'state').evaluate((el) => getComputedStyle(el).outlineStyle)).toBe(
-    'solid',
-  );
+  // The ring grows from a zero-width outline (D19 (3)): wait for its 3dp width.
+  await expect
+    .poll(() => part(item, 'state').evaluate((el) => getComputedStyle(el).outlineWidth))
+    .toBe('3px');
   // A locator screenshot: a clip measured from the frame's box was cropped wherever the frame
   // reached past the viewport, so its height followed the text above it.
   await expect(page.getByTestId('rail-collapsed')).toHaveScreenshot('navigation-rail-focused.png');

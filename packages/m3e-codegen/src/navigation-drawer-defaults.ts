@@ -311,7 +311,7 @@ const M3IO: readonly NavigationDrawerDefault[] = [
     owner: 'm3.material.io',
     member: 'Specs › headline “Mail”, section label “Labels”',
     cite: NAVIGATION_DRAWER_M3IO_SPECS,
-    note: 'TODO(verify) SOURCES #33: measured from the redlines (unlabelled): the first item starts 68dp below the sheet (12dp + a 56dp headline row, text centred); a section label is a 56dp row below its divider',
+    note: 'D19 (1) (SOURCES #33): measured from the redlines (unlabelled; the DB has no headline or section height, and it matches the 56dp item height): the first item starts 68dp below the sheet (12dp + a 56dp headline row, text centred); a section label is a 56dp row below its divider',
   },
   {
     name: `${P}-headline-padding-inline`,
@@ -331,7 +331,7 @@ const M3IO: readonly NavigationDrawerDefault[] = [
     owner: 'm3.material.io',
     member: 'Specs › Padding and margins (divider)',
     cite: NAVIGATION_DRAWER_M3IO_SPECS,
-    note: 'the divider follows the last item of a group without a gap; the Guidelines text mentions full-width dividers (SOURCES #33)',
+    note: 'the divider follows the last item of a group without a gap; the redline’s inset, not the Guidelines text’s “full-width dividers” (D19 (1), SOURCES #33)',
   },
   {
     name: `${P}-divider-color`,

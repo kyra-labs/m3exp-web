@@ -63,8 +63,10 @@
     background-color: var(--_m3e-card-container);
     box-shadow: var(--_m3e-card-shadow);
     color: var(--_m3e-card-content);
-    transition: box-shadow var(--m3e-comp-elevation-outgoing-duration-hovered)
-      var(--m3e-comp-elevation-outgoing-easing);
+    transition:
+      var(--_m3e-focus-ring-transition, outline-width, outline-offset),
+      box-shadow var(--m3e-comp-elevation-outgoing-duration-hovered)
+        var(--m3e-comp-elevation-outgoing-easing);
   }
 
   .m3e-card--elevated {
@@ -140,27 +142,35 @@
   @media (hover: hover) {
     .m3e-card--interactive:hover {
       box-shadow: var(--_m3e-card-shadow-hovered);
-      transition-duration: var(--m3e-comp-elevation-incoming-duration);
-      transition-timing-function: var(--m3e-comp-elevation-incoming-easing);
+      transition:
+        var(--_m3e-focus-ring-transition, outline-width, outline-offset),
+        box-shadow var(--m3e-comp-elevation-incoming-duration)
+          var(--m3e-comp-elevation-incoming-easing);
     }
   }
 
   .m3e-card--interactive:has(.m3e-card__action:focus-visible) {
     box-shadow: var(--_m3e-card-shadow-focused);
-    transition-duration: var(--m3e-comp-elevation-incoming-duration);
-    transition-timing-function: var(--m3e-comp-elevation-incoming-easing);
+    transition:
+      var(--_m3e-focus-ring-transition, outline-width, outline-offset),
+      box-shadow var(--m3e-comp-elevation-incoming-duration)
+        var(--m3e-comp-elevation-incoming-easing);
   }
 
   .m3e-card--interactive:is(:has(.m3e-card__action:active), [data-pressed]) {
     box-shadow: var(--_m3e-card-shadow-pressed);
-    transition-duration: var(--m3e-comp-elevation-incoming-duration);
-    transition-timing-function: var(--m3e-comp-elevation-incoming-easing);
+    transition:
+      var(--_m3e-focus-ring-transition, outline-width, outline-offset),
+      box-shadow var(--m3e-comp-elevation-incoming-duration)
+        var(--m3e-comp-elevation-incoming-easing);
   }
 
   .m3e-card[data-dragged] {
     box-shadow: var(--_m3e-card-shadow-dragged);
-    transition-duration: var(--m3e-comp-elevation-incoming-duration);
-    transition-timing-function: var(--m3e-comp-elevation-incoming-easing);
+    transition:
+      var(--_m3e-focus-ring-transition, outline-width, outline-offset),
+      box-shadow var(--m3e-comp-elevation-incoming-duration)
+        var(--m3e-comp-elevation-incoming-easing);
   }
 
   /* --- Disabled (interactive cards whose action is aria-disabled) -------------------------- */
@@ -173,7 +183,7 @@
       transparent
     );
     cursor: default;
-    transition: none;
+    transition: var(--_m3e-focus-ring-transition, outline-width, outline-offset);
   }
 
   .m3e-card--outlined.m3e-card--interactive:has(.m3e-card__action[aria-disabled='true']) {

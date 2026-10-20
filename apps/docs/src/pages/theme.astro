@@ -70,6 +70,13 @@ m3e-theme --seed "#d84848" --variant fidelity \\
     With spec 2025 (tonalSpot, neutral, vibrant, expressive) the outline and surface-variant roles
     come from the neutral palette, so <code>neutralVariant</code> has no effect there.
   </p>
+  <p>
+    Each core color becomes its own tonal palette with the color's hue and chroma
+    (<code>TonalPalette.fromHct</code>, as Angular Material's <code>theme-color</code> schematic).
+    Material Theme Builder's own mapping is not public, so exports may differ. Theme Builder turns
+    fidelity ("match color") on by default (m3.material.io Color › Advanced), so for the closest
+    match pick the <code>fidelity</code> variant.
+  </p>
   <div class="docs-schemes">
     <section aria-labelledby="light-heading">
       <h2 id="light-heading">Light</h2>

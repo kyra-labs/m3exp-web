@@ -357,19 +357,20 @@ for (const [name, i] of [
 test('focus: Tab enters a single-choice row at its selected button and rings it', async ({
   page,
 }) => {
-  const ring = (el: Locator) => el.evaluate((n) => getComputedStyle(n).outlineStyle);
+  // The ring grows from a zero-width outline (D19 (3)): its width, polled.
+  const ring = (el: Locator) => el.evaluate((n) => getComputedStyle(n).outlineWidth);
   // From the next row back: Shift+Tab lands on the selected radio ("Day"), not the last one.
   await input(page, 'multi', 0).focus();
   await page.keyboard.press('Shift+Tab');
   await expect(input(page, 'single', 0)).toBeFocused();
-  expect(await ring(button(page, 'single', 0))).toBe('solid');
+  await expect.poll(() => ring(button(page, 'single', 0))).toBe('3px');
   await expect(page).toHaveScreenshot('segmented-button-selected-focused.png', {
     clip: await clipAround(page.getByTestId('static-single')),
   });
   // Tab leaves the radio group for the first checkbox of the next row.
   await page.keyboard.press('Tab');
   await expect(input(page, 'multi', 0)).toBeFocused();
-  expect(await ring(button(page, 'multi', 0))).toBe('solid');
+  await expect.poll(() => ring(button(page, 'multi', 0))).toBe('3px');
   await expect(page).toHaveScreenshot('segmented-button-unselected-focused.png', {
     clip: await clipAround(page.getByTestId('static-multi')),
   });

@@ -1,8 +1,8 @@
 /*
  * Side sheets (COMPONENT_SPEC §31; D8: Compose has no side sheet, m3.material.io is the only
- * reference; the values it leaves open are SOURCES register #78–#81). The standard sheet sits at
- * the end of a flex row and narrows the content beside it; the modal sheet is a dialog at the
- * window's end edge over a scrim. Static sheets need no JavaScript; the m3e-elements side sheet
+ * reference; the values it leaves open are the owner's picks, SOURCES register #78–#81 and D19).
+ * The standard sheet sits at the end of a flex row and narrows the content beside it; the modal
+ * sheet is a dialog at the window's end edge over a scrim. Static sheets need no JavaScript; the m3e-elements side sheet
  * layout (<m3e-side-sheet>, m3e-react's <SideSheet>) animates them and runs the modal window.
  *
  *   <div style="display: flex">                                                    (standard)
@@ -33,7 +33,8 @@
  *   #14). Set the container width to resize a sheet.
  * - --detached: inset by 16dp from the end edge, top and bottom, all corners large (owner decision
  *   M9 #18). --divider: the standard sheet's line along its start edge, the modal sheet's line
- *   above its actions (the two anatomies; color outline, owner decision M9 #15).
+ *   above its actions (the two anatomies; color outline-variant: md.comp.divider.color and the
+ *   standard color legend, D19 (16), register #79).
  * - The header follows the Specs redlines: 24dp above the row; 24dp start / end padding (16dp before
  *   a back icon) and 12dp between the elements, measured to the 24dp icons (the icon buttons' 40dp
  *   containers sit 8dp outside them); the headline title large in on-surface-variant.
@@ -45,7 +46,8 @@
  *
  * Sources (values: side-sheet-defaults.css, lines in PARITY.md): m3.material.io Side sheets
  * (Specs, Guidelines, Accessibility; token DB md.comp.sheet.side); the motion and scrim of
- * NavigationDrawer.kt (owner decision M9 #16: the drawer mirrored to the end edge, no drags).
+ * NavigationDrawer.kt (owner decision M9 #16, D19 (17): the drawer mirrored to the end edge, no
+ * drags).
  */
 @import '@kyralabs/m3e-tokens/components/side-sheet-defaults.css';
 @import '@kyralabs/m3e-tokens/components/small-icon-button.css';

@@ -138,12 +138,16 @@ test('hover and focus states (focus ring inside the shape)', async ({ page }) =>
   await page.keyboard.press('Tab');
   const outbox = page.getByTestId('p-outbox');
   await expect(outbox).toBeFocused();
-  const ring = await outbox.evaluate((el) => {
-    const s = getComputedStyle(el);
-    return { style: s.outlineStyle, offset: s.outlineOffset };
-  });
-  expect(ring.style).toBe('solid');
-  expect(ring.offset).toBe(await token(page, '--m3e-sys-state-focus-indicator-inner-offset'));
+  // The ring grows from a zero-width outline at offset 0 (D19 (3)): poll its settled values.
+  const inner = await token(page, '--m3e-sys-state-focus-indicator-inner-offset');
+  await expect
+    .poll(() =>
+      outbox.evaluate((el) => {
+        const s = getComputedStyle(el);
+        return { width: s.outlineWidth, offset: s.outlineOffset };
+      }),
+    )
+    .toEqual({ width: '3px', offset: inner });
   await expect(page).toHaveScreenshot('navigation-drawer-focused.png', { clip });
 });
 

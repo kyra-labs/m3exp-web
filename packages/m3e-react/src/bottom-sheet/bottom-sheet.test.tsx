@@ -40,6 +40,7 @@ describe('<BottomSheet> (COMPONENT_SPEC §30)', () => {
     ]);
     const handle = sheet.querySelector('.m3e-bottom-sheet__handle')!;
     expect(handle.getAttribute('aria-label')).toBe('Drag handle');
+    expect(handle.getAttribute('aria-keyshortcuts')).toBe('ArrowUp ArrowDown');
     expect(handle.hasAttribute('aria-describedby')).toBe(false);
     expect(sheet.querySelector('.m3e-tooltip')!.getAttribute('aria-hidden')).toBe('true');
   });
@@ -62,6 +63,27 @@ describe('<BottomSheet> (COMPONENT_SPEC §30)', () => {
       'partially-expanded',
       'hidden',
     ]);
+  });
+
+  it('keyboard focus on content the partially expanded sheet clips expands it (D21 (3))', async () => {
+    const onValueChange = vi.fn<(value: string) => void>();
+    const container = await renderReact(
+      <BottomSheet defaultValue="partially-expanded" onValueChange={onValueChange}>
+        <button type="button" id="inside">
+          Inside
+        </button>
+      </BottomSheet>,
+    );
+    const root = container.firstElementChild as HTMLElement;
+    root.getBoundingClientRect = () => new DOMRect(0, 0, 400, 800);
+    const inside = root.querySelector<HTMLButtonElement>('#inside')!;
+    inside.getBoundingClientRect = () => new DOMRect(0, 820, 100, 40);
+    await act(async () => {
+      inside.focus();
+      await Promise.resolve();
+    });
+    expect(onValueChange).toHaveBeenCalledWith('expanded');
+    expect(root.className).toBe('m3e-bottom-sheet m3e-bottom-sheet--expanded');
   });
 
   it('controlled: follows `value`', async () => {
@@ -177,6 +199,11 @@ describe('<BottomSheet> / <ModalBottomSheet> ⇔ <m3e-bottom-sheet> DOM parity',
     await same(
       '<m3e-bottom-sheet value="partially-expanded" peek-height="128" skip-hidden-state></m3e-bottom-sheet>',
       <BottomSheet defaultValue="partially-expanded" peekHeight={128} skipHiddenState />,
+    );
+    // Without gestures the handle has no arrow keys, so no aria-keyshortcuts (D20 (9)).
+    await same(
+      '<m3e-bottom-sheet value="partially-expanded" gestures-disabled></m3e-bottom-sheet>',
+      <BottomSheet defaultValue="partially-expanded" gesturesEnabled={false} />,
     );
   });
 

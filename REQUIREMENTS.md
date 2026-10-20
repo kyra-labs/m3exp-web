@@ -66,6 +66,7 @@ Rules:
 - `m3e-elements` has **no runtime dependencies** (D7). A ≤1 KB internal base class (`M3eElement`) provides attribute reflection, lifecycle and event helpers.
 - `m3e-elements` and `m3e-react` both render the same DOM and class contract, so one Playwright baseline covers both.
 - `m3e-motion` and `m3e-shapes` are published (internal-first) because both elements and react import them.
+- `m3e-react` lists `m3e-elements` in `dependencies` because its published types import the shared layout types; its JavaScript bundles the m3e-elements code it uses, so nothing loads twice (D22).
 - `@kyralabs/m3exp-web` is a convenience umbrella; apps may depend on layer packages directly for smaller installs.
 
 ## 6. Browser support
