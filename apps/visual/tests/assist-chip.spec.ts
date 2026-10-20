@@ -1,5 +1,6 @@
 import AxeBuilder from '@axe-core/playwright';
 import { type Locator, type Page, expect, test } from '@playwright/test';
+import { runningSpatialAnimations } from './reduced-motion.js';
 
 // Assist chip (COMPONENT_SPEC §18): acceptance + light/dark × 3 browsers baselines, axe.
 const VARIANTS = ['flat', 'elevated'] as const;
@@ -173,6 +174,26 @@ test.describe('forced colors', () => {
         .getByTestId(`${variant}-plain`)
         .evaluate((el) => getComputedStyle(el).borderTopStyle);
       expect(style, variant).toBe('solid');
+    }
+  });
+});
+
+test.describe('reduced motion', () => {
+  test.use({ reducedMotion: 'reduce' });
+
+  test('hover and press move nothing: only the elevation and state layer change', async ({
+    page,
+  }) => {
+    for (const variant of VARIANTS) {
+      const chip = page.getByTestId(`${variant}-plain`);
+      await chip.scrollIntoViewIfNeeded();
+      const before = await box(chip);
+      await chip.hover();
+      expect(await runningSpatialAnimations(page), `${variant} hover`).toEqual([]);
+      await page.mouse.down();
+      expect(await runningSpatialAnimations(page), `${variant} press`).toEqual([]);
+      expect(await box(chip), `${variant} pressed box`).toEqual(before);
+      await page.mouse.up();
     }
   });
 });

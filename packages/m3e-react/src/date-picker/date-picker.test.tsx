@@ -74,6 +74,29 @@ describe('element / React DOM parity (CLAUDE.md "Done means" #8)', () => {
   });
 });
 
+describe('ids on a page with both layers (M11 a11y audit M2)', () => {
+  it('an element and a React docked picker get distinct field ids and label targets', async () => {
+    await renderElement(
+      '<m3e-docked-date-picker value="2025-08-17" label="Birthday"></m3e-docked-date-picker>',
+    );
+    await renderReactIn(
+      <DockedDatePicker defaultSelectedDateMillis={utc(2025, 8, 17)} label="Anniversary" />,
+    );
+    const inputs = [...document.querySelectorAll<HTMLInputElement>('.m3e-text-field__input')];
+    expect(inputs).toHaveLength(2);
+    const [a, b] = inputs.map((input) => input.id);
+    expect(a).toMatch(/^m3e-date-field-\d+$/);
+    expect(b).toMatch(/^m3e-date-field-\d+$/);
+    expect(a).not.toBe(b);
+    for (const input of inputs) {
+      expect(document.querySelectorAll(`[id="${input.id}"]`)).toHaveLength(1);
+      expect(document.querySelector(`label[for="${input.id}"]`)?.textContent).toBe(
+        input.getAttribute('aria-label')!.split(',')[0],
+      );
+    }
+  });
+});
+
 describe('<DatePicker>', () => {
   it('is controlled: onSelectedDateChange reports the pick, the prop wins', async () => {
     const onChange = vi.fn();

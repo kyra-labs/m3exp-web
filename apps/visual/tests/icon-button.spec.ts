@@ -1,5 +1,6 @@
 import AxeBuilder from '@axe-core/playwright';
 import { type Locator, type Page, expect, test } from '@playwright/test';
+import { runningSpatialAnimations } from './reduced-motion.js';
 
 // Icon button (COMPONENT_SPEC §2): acceptance criteria + light/dark × 3 browsers baselines, axe.
 const SIZE_TOKEN = {
@@ -147,5 +148,40 @@ test.describe('forced colors', () => {
         .evaluate((el) => getComputedStyle(el).borderTopStyle);
       expect(style, variant).toBe('solid');
     }
+  });
+});
+
+test.describe('reduced motion', () => {
+  test.use({ reducedMotion: 'reduce' });
+
+  // The toggle's corner morph is an effect (IconButton.kt: the default effects spring), so under
+  // reduced motion it runs on the fast effects spring (FOUNDATIONS §4) instead of jumping; nothing
+  // spatial moves.
+  test('the toggle shape morphs on the fast effects spring; nothing moves', async ({ page }) => {
+    const sys = (name: string) =>
+      page.evaluate(
+        (n) => getComputedStyle(document.documentElement).getPropertyValue(n).trim(),
+        name,
+      );
+    expect(await sys('--m3e-sys-motion-spring-default-effects-duration')).toBe(
+      await sys('--m3e-sys-motion-spring-fast-effects-duration'),
+    );
+    const toggle = page.getByTestId('react-icon-toggles').locator('button').nth(1);
+    await toggle.scrollIntoViewIfNeeded();
+    const before = (await toggle.boundingBox())!;
+    const selected = await token(
+      page,
+      '--m3e-comp-medium-icon-button-container-shape-round-selected',
+    );
+    await toggle.click();
+    await expect(toggle).toHaveAttribute('aria-pressed', 'true');
+    expect(await runningSpatialAnimations(page)).toEqual([]);
+    await expect.poll(() => radius(toggle), { timeout: 1000 }).toBeCloseTo(selected, 1);
+    expect(await toggle.boundingBox()).toEqual(before);
+    expect(
+      await toggle
+        .locator('.m3e-icon')
+        .evaluate((el) => getComputedStyle(el).fontVariationSettings),
+    ).toContain('"FILL" 1');
   });
 });

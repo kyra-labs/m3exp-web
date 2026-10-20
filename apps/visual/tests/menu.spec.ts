@@ -1,5 +1,6 @@
 import AxeBuilder from '@axe-core/playwright';
 import { type Locator, type Page, expect, test } from '@playwright/test';
+import { expectTargetSizes } from './target-size.js';
 
 // Menus (COMPONENT_SPEC §21): acceptance + light/dark × 3 browsers baselines, axe.
 const box = async (el: Locator) => (await el.boundingBox())!;
@@ -425,4 +426,13 @@ test.describe('forced colors', () => {
     const group = page.getByTestId('segmented').locator('.m3e-menu__group').first();
     expect(await style(group, 'border-top-style')).toBe('solid');
   });
+});
+
+test('static menus: items by hit testing, 48 × 48 (baseline) or ≥ 24 (expressive 44dp, audit L2)', async ({
+  page,
+}) => {
+  await expectTargetSizes(
+    page.getByTestId('static').locator('.m3e-menu__item').filter({ visible: true }),
+    'static menu items',
+  );
 });

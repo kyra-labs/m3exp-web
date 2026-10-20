@@ -180,6 +180,51 @@ describe('<BottomSheet> / <ModalBottomSheet> ⇔ <m3e-bottom-sheet> DOM parity',
     );
   });
 
+  it('overflowing content: the same named scroll region (M11 a11y audit L9)', async () => {
+    const proto = HTMLElement.prototype;
+    const scroll = Object.getOwnPropertyDescriptor(proto, 'scrollHeight');
+    const client = Object.getOwnPropertyDescriptor(proto, 'clientHeight');
+    const content = (el: HTMLElement) => el.classList.contains('m3e-bottom-sheet__content');
+    Object.defineProperty(proto, 'scrollHeight', {
+      configurable: true,
+      get(this: HTMLElement) {
+        return content(this) ? 900 : 0;
+      },
+    });
+    Object.defineProperty(proto, 'clientHeight', {
+      configurable: true,
+      get(this: HTMLElement) {
+        return content(this) ? 100 : 0;
+      },
+    });
+    try {
+      const host = await renderElement(
+        '<m3e-bottom-sheet value="expanded" label="Filters"><p>Content</p></m3e-bottom-sheet>',
+      );
+      await (host as M3eBottomSheet).ready;
+      const region = host.querySelector('.m3e-bottom-sheet__content')!;
+      expect(region.getAttribute('role')).toBe('group');
+      expect(region.getAttribute('aria-label')).toBe('Filters');
+      expect(region.getAttribute('tabindex')).toBe('0');
+      document.body.innerHTML = '';
+      await same(
+        '<m3e-bottom-sheet value="expanded" label="Filters"><p>Content</p></m3e-bottom-sheet>',
+        <BottomSheet defaultValue="expanded" aria-label="Filters">
+          <p>Content</p>
+        </BottomSheet>,
+      );
+      await same(
+        '<m3e-bottom-sheet variant="modal" value="expanded"><p>Content</p></m3e-bottom-sheet>',
+        <ModalBottomSheet defaultOpen skipPartiallyExpanded>
+          <p>Content</p>
+        </ModalBottomSheet>,
+      );
+    } finally {
+      if (scroll) Object.defineProperty(proto, 'scrollHeight', scroll);
+      if (client) Object.defineProperty(proto, 'clientHeight', client);
+    }
+  });
+
   it('modal: open partially expanded, and hidden', async () => {
     await same(
       '<m3e-bottom-sheet variant="modal" value="partially-expanded"><p>Content</p></m3e-bottom-sheet>',

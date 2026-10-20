@@ -1206,7 +1206,8 @@ describe('slider values (M8)', () => {
 });
 
 describe('filter / input / suggestion chip values (M8)', () => {
-  const decl = declarations(output.get('components/chips-defaults.css')!);
+  const css = output.get('components/chips-defaults.css')!;
+  const decl = declarations(css.slice(0, css.indexOf('@media')));
   const kt = inputs.material3Sources['Chip.kt']!.replace(/\r\n/g, '\n');
   const samples = inputs.material3Sources['ChipSamples.kt']!.replace(/\r\n/g, '\n');
   const t = (name: string) => decl.get(`--m3e-comp-${name}`);
@@ -1292,6 +1293,12 @@ describe('filter / input / suggestion chip values (M8)', () => {
     expect(spring('expressive-icon-shrink')).toBe(
       'var(--m3e-sys-motion-spring-fast-spatial-duration)',
     );
+  });
+
+  it('reduced motion: the baseline slot shrink (geometry on DefaultEffects) jumps; fades stay (M11 a11y L4)', () => {
+    const reduced = declarations(css.slice(css.indexOf('@media')));
+    expect(css.slice(css.indexOf('@media'))).toMatch(/^@media \(prefers-reduced-motion: reduce\)/);
+    expect([...reduced]).toEqual([['--m3e-comp-selectable-chip-icon-shrink-duration', '0ms']]);
   });
 
   it('elevated suggestion chip disabled colors read AssistChipTokens', () => {

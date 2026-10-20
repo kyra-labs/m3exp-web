@@ -1,5 +1,6 @@
 import AxeBuilder from '@axe-core/playwright';
 import { type Locator, expect, test } from '@playwright/test';
+import { runningSpatialAnimations } from './reduced-motion.js';
 
 // Card (COMPONENT_SPEC §19): acceptance + light/dark × 3 browsers baselines, axe.
 const VARIANTS = ['filled', 'elevated', 'outlined'] as const;
@@ -146,6 +147,27 @@ test.describe('forced colors', () => {
         .locator(`[data-variant="${variant}"]`)
         .evaluate((el) => getComputedStyle(el, '::after').borderTopStyle);
       expect(style, variant).toBe('solid');
+    }
+  });
+});
+
+test.describe('reduced motion', () => {
+  test.use({ reducedMotion: 'reduce' });
+
+  test('hover and press move nothing: only the elevation and state layer change', async ({
+    page,
+  }) => {
+    for (const variant of VARIANTS) {
+      const card = page.getByTestId('interactive').locator(`[data-variant="${variant}"]`);
+      await card.scrollIntoViewIfNeeded();
+      const before = (await card.boundingBox())!;
+      await card.hover(CORNER);
+      expect(await runningSpatialAnimations(page), `${variant} hover`).toEqual([]);
+      await page.mouse.down();
+      expect(await runningSpatialAnimations(page), `${variant} press`).toEqual([]);
+      expect(await card.boundingBox(), `${variant} pressed box`).toEqual(before);
+      await page.mouse.up();
+      await page.mouse.move(0, 0);
     }
   });
 });

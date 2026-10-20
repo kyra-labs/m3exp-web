@@ -80,6 +80,7 @@
 @import '@kyralabs/m3e-tokens/components/slider.css';
 @import '@kyralabs/m3e-tokens/components/slider-defaults.css';
 @import '@kyralabs/m3e-tokens/components/button-defaults.css';
+@import '@kyralabs/m3e-tokens/components/divider.css';
 
 @layer m3e.components {
   .m3e-slider {
@@ -730,9 +731,14 @@
 
   /* --- Forced colors: system colors with visible parts --------------------------------------- */
   @media (forced-colors: active) {
+    /*
+     * GrayText means "disabled" in forced colors, so an enabled slider's inactive track is an
+     * empty CanvasText outline (its ticks, stop and inset icon stay CanvasText on Canvas) and only
+     * a disabled slider is GrayText (M11 a11y audit L8).
+     */
     .m3e-slider {
       --_m3e-slider-active: Highlight;
-      --_m3e-slider-inactive: GrayText;
+      --_m3e-slider-inactive: Canvas;
       --_m3e-slider-tick-active: HighlightText;
       --_m3e-slider-tick-inactive: CanvasText;
       --_m3e-slider-stop: CanvasText;
@@ -750,6 +756,11 @@
       --_m3e-slider-thumb: GrayText;
       --_m3e-slider-icon-active: Canvas;
       --_m3e-slider-icon-inactive: Canvas;
+    }
+
+    .m3e-slider:not(:has(.m3e-slider__input:disabled))
+      :is(.m3e-slider__inactive-start, .m3e-slider__inactive-end) {
+      box-shadow: inset 0 0 0 var(--m3e-comp-divider-thickness) CanvasText;
     }
 
     .m3e-slider__track {

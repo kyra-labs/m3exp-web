@@ -1,6 +1,7 @@
 import AxeBuilder from '@axe-core/playwright';
 import { springValue } from '@kyralabs/m3e-motion';
 import { type Locator, type Page, expect, test } from '@playwright/test';
+import { expectTargetSizes } from './target-size.js';
 
 // Bottom sheets (COMPONENT_SPEC §30): the modal sheet (a dialog), the standard sheet and its peek
 // option, element and React. Acceptance (a fling down dismisses, the handle expands / collapses
@@ -323,6 +324,29 @@ test('the scrim hides the sheet; drags from the list move it; the content behind
   await handleOf(page, 'peek').click();
   await rests(peek);
   expect(await valueOf(page, 'peek')).toBe('partially-expanded');
+});
+
+test('overflowing content is a scroll region (a group) named like its sheet (M11 a11y audit L9)', async ({
+  page,
+}) => {
+  const content = rootOf(page, 'standard').locator('.m3e-bottom-sheet__content');
+  await expect(content).toHaveAttribute('tabindex', '0');
+  await expect(content).toHaveAttribute('role', 'group');
+  await expect(content).toHaveAttribute('aria-label', 'Standard sheet');
+  await expect(
+    page.getByTestId('standard').getByRole('group', { name: 'Standard sheet' }),
+  ).toHaveCount(1);
+  const root = await open(page, 'modal');
+  const modalContent = root.locator('.m3e-bottom-sheet__content');
+  await expect(modalContent).toHaveAttribute('tabindex', '0');
+  await expect(modalContent).toHaveAttribute('role', 'group');
+  await expect(modalContent).toHaveAttribute('aria-label', 'Bottom Sheet');
+});
+
+test('the drag handles have 48 × 48 hit areas (hit testing)', async ({ page }) => {
+  await expectTargetSizes(handleOf(page, 'standard'), 'standard handle');
+  const root = await open(page, 'modal');
+  await expectTargetSizes(root.locator('.m3e-bottom-sheet__handle'), 'modal handle');
 });
 
 test('the handle shows its tooltip above it on hover', async ({ page }) => {

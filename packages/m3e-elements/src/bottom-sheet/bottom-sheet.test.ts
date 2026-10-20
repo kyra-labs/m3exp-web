@@ -251,6 +251,47 @@ describe('dismissing (ModalBottomSheet)', () => {
   });
 });
 
+describe('the scroll region (M11 a11y audit L9)', () => {
+  it('overflowing content is a focusable group named like the sheet; it follows renames', () => {
+    const { root, sheet } = standard('expanded');
+    sheet.setAttribute('role', 'region');
+    sheet.setAttribute('aria-label', 'Bottom Sheet');
+    const content = root.querySelector<HTMLElement>('.m3e-bottom-sheet__content')!;
+    let overflow = true;
+    Object.defineProperty(content, 'scrollHeight', { get: () => (overflow ? 900 : 100) });
+    Object.defineProperty(content, 'clientHeight', { get: () => 100 });
+    const layout = new BottomSheetLayout(root, { value: 'expanded' });
+    expect(content.getAttribute('tabindex')).toBe('0');
+    expect(content.getAttribute('role')).toBe('group');
+    expect(content.getAttribute('aria-label')).toBe('Bottom Sheet');
+    sheet.setAttribute('aria-label', 'Filters');
+    layout.update();
+    expect(content.getAttribute('aria-label')).toBe('Filters');
+    overflow = false;
+    layout.update();
+    for (const name of ['tabindex', 'role', 'aria-label']) {
+      expect(content.hasAttribute(name), name).toBe(false);
+    }
+    layout.destroy();
+  });
+
+  it("modal: the region takes the dialog's name", () => {
+    const root = document.createElement('dialog');
+    root.className = 'm3e-bottom-sheet m3e-bottom-sheet--modal';
+    root.setAttribute('aria-label', 'Bottom Sheet');
+    root.innerHTML =
+      '<div class="m3e-bottom-sheet__scrim" aria-hidden="true"></div><div class="m3e-bottom-sheet__sheet"><div class="m3e-bottom-sheet__content"></div></div>';
+    document.body.append(root);
+    const content = root.querySelector<HTMLElement>('.m3e-bottom-sheet__content')!;
+    Object.defineProperty(content, 'scrollHeight', { get: () => 900 });
+    Object.defineProperty(content, 'clientHeight', { get: () => 100 });
+    const layout = new BottomSheetLayout(root);
+    expect(content.getAttribute('role')).toBe('group');
+    expect(content.getAttribute('aria-label')).toBe('Bottom Sheet');
+    layout.destroy();
+  });
+});
+
 describe('BottomSheetLayout geometry and drags', () => {
   it('measures the anchors (Hidden 800, PartiallyExpanded 400, Expanded 100)', () => {
     const { root } = standard();

@@ -15,7 +15,11 @@ import { type BaselineColor, baselineColors } from './color.js';
 import { TOP_APP_BAR_REDUCED_MOTION, extractAppBarDefaults } from './app-bar-defaults.js';
 import { extractButtonDefaults } from './button-defaults.js';
 import { checkSmallAgainstCompose, extractButtonGroupDefaults } from './button-group-defaults.js';
-import { extractChipDefaults, extractChipsDefaults } from './chip-defaults.js';
+import {
+  CHIPS_REDUCED_MOTION,
+  extractChipDefaults,
+  extractChipsDefaults,
+} from './chip-defaults.js';
 import { extractElevationMotion } from './elevation-motion.js';
 import { extractFabDefaults } from './fab-defaults.js';
 import { extractFabMenuDefaults } from './fab-menu-defaults.js';
@@ -1642,7 +1646,13 @@ export function generate({
                                   ? cssFile(
                                       'Compose FilterChip / InputChip / SuggestionChip values that are not in their *ChipTokens, or that pick one of them, and the chip group spacing (lines: PARITY.md).',
                                       c.tokens,
-                                      [],
+                                      [
+                                        '@media (prefers-reduced-motion: reduce) {',
+                                        '  :root {',
+                                        ...CHIPS_REDUCED_MOTION.map((l) => `    ${l}`),
+                                        '  }',
+                                        '}',
+                                      ],
                                       `${MATERIAL3_DIR}/Chip.kt + ${MATERIAL3_SAMPLES_DIR}/ChipSamples.kt`,
                                     )
                                   : name === 'slider-defaults'

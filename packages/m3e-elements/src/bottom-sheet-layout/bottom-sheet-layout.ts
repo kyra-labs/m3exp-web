@@ -38,6 +38,11 @@ const SHEET = 'm3e-bottom-sheet';
 const VARS = ['--_m3e-bs-translate', '--_m3e-bs-stretch', '--_m3e-bs-scrim'] as const;
 export { BOTTOM_SHEET_DRAG_HANDLE_LABEL, BOTTOM_SHEET_PANE_TITLE } from './strings.js';
 
+/** Sets (or, for null, removes) an attribute, touching the DOM only when it changes. */
+const setAttr = (el: Element, name: string, value: string | null): void => {
+  if (value === null) el.removeAttribute(name);
+  else if (el.getAttribute(name) !== value) el.setAttribute(name, value);
+};
 const px = (v: number) => `${String(Math.round(v * 100) / 100)}px`;
 const round = (v: number) => String(Math.round(v * 1e4) / 1e4);
 const EDITABLE = 'input, textarea, select, [contenteditable="true"]';
@@ -190,6 +195,8 @@ export class BottomSheetLayout {
       for (const el of targets) this.#observer.observe(el);
       this.#observed = targets;
     }
+    // A render may have renamed the sheet; the scroll region follows.
+    this.#updateScrolls();
   }
 
   /**
@@ -399,16 +406,28 @@ export class BottomSheetLayout {
   }
 
   /**
-   * While the content overflows it is a keyboard-focusable scroll region (`tabindex="0"`), and on
-   * an expanded sheet `data-scrolls` lets touch scroll it instead of dragging the sheet.
+   * While the content overflows it is a keyboard-focusable scroll region (`tabindex="0"`) with a
+   * role and a name (M11 a11y audit L9): `role="group"` named like the sheet (the dialog's or the
+   * sheet region's `aria-label`). Not a second `region`: a landmark with the sheet's own name
+   * would repeat it (axe `landmark-unique`). On an expanded sheet `data-scrolls` lets touch
+   * scroll it instead of dragging the sheet.
    */
   #updateScrolls(): void {
     const content = this.#content;
     if (!content) return;
     const overflows = content.scrollHeight > content.clientHeight;
     this.root.toggleAttribute('data-scrolls', overflows && this.#state.currentValue === 'expanded');
-    if (overflows) content.setAttribute('tabindex', '0');
-    else if (content.getAttribute('tabindex') === '0') content.removeAttribute('tabindex');
+    if (overflows) {
+      const named = this.variant === 'modal' ? this.root : this.sheet;
+      const name = named?.getAttribute('aria-label') ?? '';
+      setAttr(content, 'tabindex', '0');
+      setAttr(content, 'role', 'group');
+      setAttr(content, 'aria-label', name === '' ? null : name);
+    } else if (content.getAttribute('tabindex') === '0') {
+      content.removeAttribute('tabindex');
+      content.removeAttribute('role');
+      content.removeAttribute('aria-label');
+    }
   }
 
   // --- Visibility -----------------------------------------------------------------------------

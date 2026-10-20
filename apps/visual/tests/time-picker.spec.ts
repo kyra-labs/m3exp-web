@@ -1,5 +1,6 @@
 import AxeBuilder from '@axe-core/playwright';
 import { type Locator, type Page, expect, test } from '@playwright/test';
+import { expectTargetSizes } from './target-size.js';
 
 // Time pickers (COMPONENT_SPEC §28): <m3e-time-picker> (12 / 24-hour vibrant / horizontal),
 // <m3e-time-input> (12-hour, 24-hour vibrant, uncontained), <m3e-time-scroll> (12-hour, 24-hour
@@ -272,6 +273,27 @@ test.describe('geometry (TimePickerTokens, TimePicker.kt)', () => {
         expect(size, selector).toBeGreaterThanOrEqual(47.5);
       }
     }
+  });
+
+  test('hit testing: every visible part has a 48 × 48 hit area; AM / PM at least 24 (audit L1)', async ({
+    page,
+  }) => {
+    // The ::after sum above misses overlap: the AM / PM items' targets overlap each other (42px
+    // for AM), as Compose's 40dp toggles in an 80dp column do (a COMPOSE_TARGET_EXCEPTIONS entry).
+    // (The dial labels are left to the test above: the selector covers the selected one.)
+    const parts = [
+      '.m3e-time-picker__selector',
+      '.m3e-time-picker__period-item',
+      '.m3e-time-input__input',
+      '.m3e-time-scroll__field',
+      '.m3e-time-picker__side .m3e-icon-button',
+    ].join(', ');
+    await expectTargetSizes(
+      page
+        .locator(`:is(m3e-time-picker, m3e-time-input, m3e-time-scroll) :is(${parts})`)
+        .filter({ visible: true }),
+      'time picker parts',
+    );
   });
 
   test('the scroll fields: 100dp wide, as tall as the time fields (TimeScroll L2310–2337)', async ({

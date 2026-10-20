@@ -443,6 +443,37 @@ test.describe('forced colors', () => {
       for (const [k, v] of Object.entries(style)) expect(v, `${id} ${k}`).not.toMatch(transparent);
     }
   });
+
+  test('GrayText only when disabled: an enabled inactive track is a CanvasText outline (M11 a11y L8)', async ({
+    page,
+  }) => {
+    const system = (name: string) =>
+      page.evaluate((c) => {
+        const probe = document.createElement('div');
+        probe.style.color = c;
+        document.body.append(probe);
+        const out = getComputedStyle(probe).color;
+        probe.remove();
+        return out;
+      }, name);
+    const [grayText, canvasText, canvas] = await Promise.all(
+      ['GrayText', 'CanvasText', 'Canvas'].map(system),
+    );
+    const inactive = (id: string) =>
+      slider(page, id)
+        .locator('.m3e-slider__inactive-end')
+        .evaluate((el) => {
+          const s = getComputedStyle(el);
+          return { fill: s.backgroundColor, outline: s.boxShadow };
+        });
+    const enabled = await inactive('static-stops');
+    expect(enabled.fill).toBe(canvas);
+    expect(enabled.fill).not.toBe(grayText);
+    expect(enabled.outline).toContain(canvasText);
+    const disabled = await inactive('static-disabled');
+    expect(disabled.fill).toBe(grayText);
+    expect(disabled.outline).toBe('none');
+  });
 });
 
 test.describe('reduced motion', () => {
