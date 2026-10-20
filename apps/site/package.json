@@ -7,7 +7,7 @@
     "dev": "pnpm icons && pnpm api && astro dev",
     "build": "pnpm icons && pnpm api && astro build && pagefind --site dist --output-subdir pagefind",
     "preview": "astro preview",
-    "typecheck": "astro check",
+    "typecheck": "node scripts/api.js --stub-if-missing && astro check",
     "icons": "node scripts/icons.js",
     "check:links": "node scripts/check-links.js",
     "test:a11y": "playwright test",
