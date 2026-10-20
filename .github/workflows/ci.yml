@@ -70,6 +70,16 @@ jobs:
           test -f packages/m3exp-web/dist/css/index.css
       - name: process.env.NODE_ENV is left for consumer bundlers
         run: node tools/check-node-env.js
+      # m3e-elements bundles m3e-motion / m3e-shapes (D7); m3e-react bundles the m3e-elements code it
+      # uses and lists m3e-elements only for its d.ts (D22), so nothing loads twice.
+      - name: Bundled layers stay bundled (D7, D22)
+        run: |
+          if grep -rEn "(from |import ?\(?)['\"]@kyralabs/m3e-(motion|shapes)" packages/m3e-elements/dist --include=*.js; then
+            echo "::error::m3e-elements dist imports m3e-motion / m3e-shapes (D7: bundle them)"; exit 1
+          fi
+          if grep -En "(from |import ?\(?)['\"]@kyralabs/m3e-elements" packages/m3e-react/dist/index.js; then
+            echo "::error::m3e-react dist imports m3e-elements at runtime (D22: bundle it)"; exit 1
+          fi
       - name: Docs prose keeps its spaces next to inline tags (compressHTML)
         run: node tools/check-docs-whitespace.js
       - name: Fonts rebuild byte-identically from the pinned TTF
@@ -98,6 +108,10 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm build:packages
       - run: pnpm size
+      # What a no-bundler / CDN page downloads per m3e-elements entry, which size-limit cannot see.
+      # Reported in the job summary; fails only past a regression cap (tools/unbundled-closure.js).
+      - name: Unbundled closure of each m3e-elements entry (reported; D24)
+        run: node tools/unbundled-closure.js
       - name: Font sizes (reported, not failed; REQUIREMENTS §8)
         run: node tools/report-fonts.js
 
