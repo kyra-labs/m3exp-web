@@ -27,6 +27,16 @@ export const GUIDES: NavLink[] = [
   { href: '/get-started/versioning/', label: 'Versioning', icon: 'commit' },
 ];
 
+/** The foundations pages, in reading order (also their previous / next links). */
+export const FOUNDATIONS: NavLink[] = [
+  { href: '/foundations/', label: 'Overview', icon: 'foundation' },
+  { href: '/foundations/color/', label: 'Color', icon: 'palette' },
+  { href: '/foundations/typography/', label: 'Typography', icon: 'text_fields' },
+  { href: '/foundations/shape/', label: 'Shape', icon: 'interests' },
+  { href: '/foundations/motion/', label: 'Motion', icon: 'animation' },
+  { href: '/foundations/layout/', label: 'Layout', icon: 'dashboard' },
+];
+
 /** Component pages not written yet (scripts/pending-components.txt). */
 export const PENDING = new Set(
   pendingList
@@ -40,6 +50,7 @@ export const NAV: NavSection[] = [
     links: [{ href: '/', label: 'Home', icon: 'home' }],
   },
   { label: 'Get started', links: GUIDES },
+  { label: 'Foundations', links: FOUNDATIONS },
   {
     label: 'Components',
     links: [

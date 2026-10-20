@@ -1,0 +1,189 @@
+---
+import '@kyralabs/m3e-css/button.css';
+import { springToLinear } from '@kyralabs/m3e-motion';
+import { motion } from '@kyralabs/m3e-tokens';
+import CodeBlock from '../../components/CodeBlock.astro';
+import ScrollTable from '../../components/ScrollTable.astro';
+import Guide from '../../layouts/Guide.astro';
+import { kebab } from '../../lib/kebab';
+
+// The six springs of each motion scheme (StandardMotionTokens.kt / ExpressiveMotionTokens.kt,
+// generated), sampled into the same linear() curves the CSS tokens carry (m3e-motion).
+const SPEEDS = ['fast', 'default', 'slow'] as const;
+const TYPES = ['Spatial', 'Effects'] as const;
+type Scheme = keyof typeof motion.springs;
+const SCHEMES: Scheme[] = ['expressive', 'standard'];
+const springs = SCHEMES.flatMap((scheme) =>
+  TYPES.flatMap((type) =>
+    SPEEDS.map((speed) => {
+      const key = `${speed}${type}` as keyof (typeof motion.springs)[Scheme];
+      const spec = motion.springs[scheme][key];
+      const curve = springToLinear(spec);
+      return { scheme, key, token: kebab(key), spec, curve };
+    }),
+  ),
+);
+
+// Each curve as an SVG polyline: time 0–1 across, value up (−0.1 to 1.3, room for overshoot).
+const W = 100;
+const H = 60;
+const toY = (v: number) => H - ((v + 0.1) / 1.4) * H;
+const points = (stops: readonly (readonly [number, number])[]) =>
+  stops.map(([t, v]) => `${(t * W).toFixed(2)},${toY(v).toFixed(2)}`).join(' ');
+const rest = toY(1).toFixed(2);
+---
+
+<Guide
+  title="Motion"
+  description="Motion in M3 Expressive is physics: springs with a damping ratio and a stiffness, in two schemes. Spatial springs move things and may overshoot; effects springs fade and recolor, and never do."
+>
+  <h2 id="springs">The springs</h2>
+  <p>
+    Each scheme has six springs: fast, default and slow, for spatial and for effects changes. Use
+    <strong>spatial</strong> springs for position, size, scale, rotation, corner radius and shape
+    morph; <strong>effects</strong> springs for color, opacity and elevation. Fast suits small
+    components, default most transitions, slow large or full-screen ones. The expressive scheme is
+    the default; <code>createTheme({'{'} motionScheme: 'standard' {'}'})</code> switches.
+  </p>
+  <ScrollTable label="Spring values">
+    <table>
+      <thead>
+        <tr>
+          <th scope="col">Spring</th>
+          <th scope="col">Expressive ζ / k</th>
+          <th scope="col">Standard ζ / k</th>
+          <th scope="col">Expressive settle (ms)</th>
+          <th scope="col">Standard settle (ms)</th>
+        </tr>
+      </thead>
+      <tbody>
+        {
+          TYPES.flatMap((type) =>
+            SPEEDS.map((speed) => {
+              const key = `${speed}${type}`;
+              const e = springs.find((s) => s.scheme === 'expressive' && s.key === key)!;
+              const s = springs.find((x) => x.scheme === 'standard' && x.key === key)!;
+              return (
+                <tr>
+                  <th scope="row">
+                    <code>{e.token}</code>
+                  </th>
+                  <td>
+                    {e.spec.dampingRatio} / {e.spec.stiffness}
+                  </td>
+                  <td>
+                    {s.spec.dampingRatio} / {s.spec.stiffness}
+                  </td>
+                  <td>{e.curve.durationMillis}</td>
+                  <td>{s.curve.durationMillis}</td>
+                </tr>
+              );
+            }),
+          )
+        }
+      </tbody>
+    </table>
+  </ScrollTable>
+  <p>
+    ζ is the damping ratio (1 never overshoots) and k the stiffness, with a mass of 1. The settle
+    time is Compose's own estimate for the spring, the duration of its CSS curve.
+  </p>
+
+  <h2 id="curves">Curves</h2>
+  <p>
+    Progress over each spring's settle time; the dashed line is the end value. Expressive spatial
+    springs overshoot and come back; effects springs approach it from below.
+  </p>
+  <ul class="site-spring-curves">
+    {
+      springs.map((s) => (
+        <li class="site-spring-curves__item">
+          <svg class="site-spring-curves__svg" viewBox={`0 0 ${String(W)} ${String(H)}`} aria-hidden="true">
+            <line class="site-spring-curves__rest" x1="0" x2={W} y1={rest} y2={rest} />
+            <polyline class="site-spring-curves__line" points={points(s.curve.stops)} />
+          </svg>
+          <span>
+            {s.scheme} · {s.token}
+          </span>
+        </li>
+      ))
+    }
+  </ul>
+
+  <h2 id="demo">Try them</h2>
+  <p>Each dot crosses its track with one spring's CSS curve and duration. Press Play again to go back.</p>
+  <div class="site-spring-demo" data-spring-demo>
+    <button type="button" class="m3e-button m3e-button--filled m3e-button--size-s site-js-only" data-spring-play>
+      <span class="m3e-icon" aria-hidden="true">play_arrow</span>
+      Play
+    </button>
+    <ul class="site-spring-demo__tracks">
+      {
+        springs
+          .filter((s) => s.key.endsWith('Spatial'))
+          .map((s) => (
+            <li class="site-spring-demo__track">
+              <span class="site-spring-demo__label">
+                {s.scheme} · {s.token}
+              </span>
+              <span
+                class="site-spring-demo__dot"
+                style={[
+                  `transition-timing-function: var(--m3e-sys-motion-spring-${s.scheme}-${s.token}-easing)`,
+                  `transition-duration: var(--m3e-sys-motion-spring-${s.scheme}-${s.token}-duration)`,
+                ].join('; ')}
+              />
+            </li>
+          ))
+      }
+    </ul>
+  </div>
+
+  <h2 id="css">In CSS</h2>
+  <p>
+    Each spring is a <code>linear()</code> easing and a duration: Compose's spring simulation
+    sampled every millisecond and reduced to at most 40 stops. The unprefixed tokens follow the
+    active scheme; the <code>-standard-</code> and <code>-expressive-</code> ones are fixed. A
+    cubic-bezier fallback from m3.material.io is there too (<code>-bezier</code>,
+    <code>-bezier-duration</code>).
+  </p>
+  <CodeBlock
+    lang="css"
+    label="spring CSS"
+    code={`.panel {
+  transition:
+    translate var(--m3e-sys-motion-spring-default-spatial-duration)
+      var(--m3e-sys-motion-spring-default-spatial-easing),
+    opacity var(--m3e-sys-motion-spring-default-effects-duration)
+      var(--m3e-sys-motion-spring-default-effects-easing);
+}`}
+  />
+  <p>
+    A CSS curve cannot carry velocity into an interruption: it restarts. Gestures, drags and fast
+    toggles use the JavaScript springs in <code>@kyralabs/m3e-motion</code> instead, as the
+    components do. Under <code>prefers-reduced-motion: reduce</code> the spatial tokens snap
+    (duration 0) and the default and slow effects use the fast effects curve.
+  </p>
+
+  <h2 id="sources">Sources</h2>
+  <ul>
+    <li>
+      Spring parameters: <code>StandardMotionTokens.kt</code> L20–31 and
+      <code>ExpressiveMotionTokens.kt</code> L22–33 at the pinned commit, generated
+      (FOUNDATIONS_SPEC §4).
+    </li>
+    <li>
+      Curves: a port of Compose's <code>SpringSimulation</code>; durations from
+      <code>FloatSpringSpec.getDurationNanos</code>. Bezier fallback: m3.material.io, Motion
+      overview › Specs.
+    </li>
+  </ul>
+</Guide>
+
+<script>
+  for (const demo of document.querySelectorAll<HTMLElement>('[data-spring-demo]')) {
+    demo.querySelector('[data-spring-play]')?.addEventListener('click', () => {
+      demo.toggleAttribute('data-played');
+    });
+  }
+</script>

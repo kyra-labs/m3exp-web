@@ -1,0 +1,119 @@
+---
+import '@kyralabs/m3e-css/button.css';
+import '@kyralabs/m3e-css/menu.css';
+import '@kyralabs/m3e-css/slider.css';
+import { shape } from '@kyralabs/m3e-tokens';
+import {
+  materialShape,
+  materialShapeNames,
+  polygonToPath,
+  toSvgPathData,
+} from '@kyralabs/m3e-shapes';
+import CodeBlock from '../../components/CodeBlock.astro';
+import Island from '../../components/Island.astro';
+import Guide from '../../layouts/Guide.astro';
+import { kebab } from '../../lib/kebab';
+
+// The corner scale (ShapeTokens.kt, generated). Partial shapes (…Top, …Start) and the unitless
+// cornerValue* duplicates are left out of the tiles.
+const corners = Object.entries(shape)
+  .flatMap(([key, value]) =>
+    !key.startsWith('cornerValue') && (value === null || typeof value === 'number')
+      ? [{ name: kebab(key).replace(/^corner-/, ''), value }]
+      : [],
+  )
+  .sort((a, b) => (a.value ?? Infinity) - (b.value ?? Infinity));
+
+// The 35 Material shapes, each drawn from its RoundedPolygon in the unit square at build time.
+const shapes = materialShapeNames.map((name) => ({
+  name,
+  path: toSvgPathData(polygonToPath(materialShape(name))),
+}));
+const label = (name: string) =>
+  name.replace(/([a-z])([A-Z0-9])/g, '$1 $2').replace(/ ([A-Z])/g, (m) => m.toLowerCase());
+---
+
+<Guide
+  title="Shape"
+  description="Corners from none to full, and 35 expressive shapes that morph into each other. Components take their corner radii from the shape tokens; the expressive shapes are polygons ported from androidx graphics-shapes."
+>
+  <h2 id="corners">Corner scale</h2>
+  <p>
+    Each step is <code>--m3e-sys-shape-corner-&lt;step&gt;</code>. <code>full</code> is a true pill,
+    rendered as <code>calc(infinity * 1px)</code>, not half of the component's size. Partial
+    variants (for example <code>extra-large-top</code>) set some corners of a step and leave the
+    others square, as four logical-corner properties.
+  </p>
+  <ul class="site-corner-scale">
+    {
+      corners.map((corner) => (
+        <li class="site-corner-scale__item">
+          <span
+            class="site-corner-scale__tile"
+            style={`border-start-start-radius: var(--m3e-sys-shape-corner-${corner.name})`}
+          />
+          <code>{corner.name}</code>
+          <span class="site-corner-scale__value">
+            {corner.value === null || !Number.isFinite(corner.value) ? 'pill' : `${String(corner.value)}dp`}
+          </span>
+        </li>
+      ))
+    }
+  </ul>
+
+  <h2 id="materialshapes">Material shapes</h2>
+  <p>
+    The 35 presets of Compose's <code>MaterialShapes</code>, built with the same
+    <code>RoundedPolygon</code> parameters and normalized to a unit square. They appear in the
+    loading indicator, in avatars and in image masks; <code>materialShape(name)</code> in
+    <code>@kyralabs/m3e-shapes</code> returns one.
+  </p>
+  <ul class="site-shape-grid">
+    {
+      shapes.map((s) => (
+        <li class="site-shape-grid__item">
+          <svg class="site-shape-grid__svg" viewBox="0 0 1 1" aria-hidden="true">
+            <path d={s.path} />
+          </svg>
+          <span>{label(s.name)}</span>
+        </li>
+      ))
+    }
+  </ul>
+
+  <h2 id="morph">Shape morph</h2>
+  <p>
+    A <code>Morph</code> pairs the curves of two shapes by proximity and splits curves where their
+    counts differ, then interpolates. Drag the progress or press Morph: the animation runs on the
+    expressive default spatial spring, as every geometry change does, and jumps under reduced
+    motion.
+  </p>
+  <Island name="ShapeMorph" class="site-morph-island">
+    <p class="site-example__note">The morph demo runs with JavaScript.</p>
+  </Island>
+  <CodeBlock
+    lang="ts"
+    label="morph example"
+    code={`import { Morph, materialShape, morphToPath, toSvgPathData } from '@kyralabs/m3e-shapes';
+
+const morph = new Morph(materialShape('Circle'), materialShape('Cookie9Sided'));
+path.setAttribute('d', toSvgPathData(morphToPath(morph, 0.5))); // in a viewBox="0 0 1 1" SVG`}
+  />
+  <p>
+    Rectangular components (a button's corners on press, a FAB menu toggle) animate
+    <code>border-radius</code> on a spring instead of morphing polygons.
+  </p>
+
+  <h2 id="sources">Sources</h2>
+  <ul>
+    <li>
+      Corner scale: <code>ShapeTokens.kt</code> L28–81 at the pinned commit, generated
+      (FOUNDATIONS_SPEC §3).
+    </li>
+    <li>
+      Shapes and morph: <code>MaterialShapes.kt</code> (Material3 1.5.0-beta01) and
+      <code>androidx.graphics.shapes</code> 1.0.1, ported to TypeScript with their Apache-2.0
+      headers.
+    </li>
+  </ul>
+</Guide>

@@ -1,0 +1,44 @@
+---
+import Guide from '../../layouts/Guide.astro';
+import { FOUNDATIONS } from '../../data/nav';
+
+const summaries: Record<string, string> = {
+  '/foundations/color/':
+    'Color roles, dynamic color from one seed (Material Color Utilities), contrast levels and a theme builder.',
+  '/foundations/typography/':
+    'The type scale in Google Sans Flex, with the emphasized styles, as tokens.',
+  '/foundations/shape/':
+    'The corner scale, the 35 Material shapes and the shape morph, ported from androidx graphics-shapes.',
+  '/foundations/motion/':
+    'The spring tokens of the standard and expressive motion schemes, their CSS curves and when to use each.',
+  '/foundations/layout/':
+    'Window size classes, the spacing scale, elevation and state layers.',
+};
+---
+
+<Guide
+  title="Foundations"
+  description="The design tokens every component reads: color, type, shape, motion and layout, generated from the pinned androidx sources and shown here from those same tokens."
+>
+  <p>
+    Every value on these pages comes from <code>@kyralabs/m3e-tokens</code> at build time, the
+    same objects and custom properties the components use, so the tables cannot drift from the
+    library. The sources are Compose Material3 at the pinned commit, Material Color Utilities
+    0.4.0 and m3.material.io (see <code>FOUNDATIONS_SPEC.md</code> and <code>SOURCES.md</code>).
+  </p>
+  <ul class="site-foundation-cards">
+    {
+      FOUNDATIONS.slice(1).map((page) => (
+        <li class="m3e-card m3e-card--outlined site-foundation-card">
+          <span class="m3e-icon" aria-hidden="true">
+            {page.icon}
+          </span>
+          <h2 class="site-foundation-card__title">
+            <a href={page.href}>{page.label}</a>
+          </h2>
+          <p>{summaries[page.href]}</p>
+        </li>
+      ))
+    }
+  </ul>
+</Guide>

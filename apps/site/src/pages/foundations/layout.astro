@@ -1,0 +1,214 @@
+---
+import { elevation, space, state, windowBreakpoints } from '@kyralabs/m3e-tokens';
+import CodeBlock from '../../components/CodeBlock.astro';
+import ScrollTable from '../../components/ScrollTable.astro';
+import Guide from '../../layouts/Guide.astro';
+import { kebab } from '../../lib/kebab';
+
+// Window size classes (WindowSizeClass.kt, generated as windowBreakpoints).
+const { width, height } = windowBreakpoints;
+const widthClasses = [
+  { name: 'compact', from: 0, to: width.medium },
+  { name: 'medium', from: width.medium, to: width.expanded },
+  { name: 'expanded', from: width.expanded, to: width.large },
+  { name: 'large', from: width.large, to: width.extraLarge },
+  { name: 'extra-large', from: width.extraLarge, to: null },
+];
+const heightClasses = [
+  { name: 'compact', from: 0, to: height.medium },
+  { name: 'medium', from: height.medium, to: height.expanded },
+  { name: 'expanded', from: height.expanded, to: null },
+];
+const range = (c: { from: number; to: number | null }) =>
+  c.to === null ? `${String(c.from)}dp and up` : `${String(c.from)}–${String(c.to - 1)}dp`;
+
+// The spacing scale (space0…space900 → --m3e-sys-space-<step>).
+const spaces = Object.entries(space).map(([key, value]) => ({
+  name: key.replace(/^space/, ''),
+  value,
+}));
+const levels = Object.entries(elevation).map(([key, value]) => ({ name: key, value }));
+const stateRows = [
+  ['hover', state.hoverStateLayerOpacity],
+  ['focus', state.focusStateLayerOpacity],
+  ['pressed', state.pressedStateLayerOpacity],
+  ['dragged', state.draggedStateLayerOpacity],
+] as const;
+---
+
+<Guide
+  title="Layout"
+  description="Window size classes decide how many panes fit and which navigation to show; the spacing scale, elevation and state layers are the rest of the layout tokens."
+>
+  <h2 id="window-size-classes">Window size classes</h2>
+  <p>
+    Layouts adapt by class, not by device. This window is
+    <strong><output id="site-size-class">(needs JavaScript)</output></strong>.
+  </p>
+  <ScrollTable label="Width size classes">
+    <table>
+      <thead>
+        <tr>
+          <th scope="col">Width class</th>
+          <th scope="col">Range</th>
+          <th scope="col">Typical use</th>
+        </tr>
+      </thead>
+      <tbody>
+        {
+          widthClasses.map((c, i) => (
+            <tr>
+              <th scope="row">{c.name}</th>
+              <td>{range(c)}</td>
+              <td>
+                {
+                  [
+                    'One pane; a navigation bar',
+                    'One pane; a collapsed navigation rail',
+                    'Two panes; a navigation rail',
+                    'Two panes; the expanded rail',
+                    'Up to three panes; the expanded rail',
+                  ][i]
+                }
+              </td>
+            </tr>
+          ))
+        }
+      </tbody>
+    </table>
+  </ScrollTable>
+  <ScrollTable label="Height size classes">
+    <table>
+      <thead>
+        <tr>
+          <th scope="col">Height class</th>
+          <th scope="col">Range</th>
+        </tr>
+      </thead>
+      <tbody>
+        {
+          heightClasses.map((c) => (
+            <tr>
+              <th scope="row">{c.name}</th>
+              <td>{range(c)}</td>
+            </tr>
+          ))
+        }
+      </tbody>
+    </table>
+  </ScrollTable>
+  <p>
+    The breakpoints are <code>--m3e-sys-window-*</code> tokens and the <code>windowBreakpoints</code>
+    object. In JavaScript, <code>observeWindowSizeClass()</code> (custom elements) and
+    <code>useWindowSizeClass()</code> (React) report the current class. The
+    <a href="/components/navigation-suite/">navigation suite</a> switches bar and rail by it, and
+    the <a href="/components/canonical-layouts/">canonical layouts</a> apply the same breakpoints
+    to their own width with container queries.
+  </p>
+  <CodeBlock
+    lang="ts"
+    label="window size class example"
+    code={`import { observeWindowSizeClass } from '@kyralabs/m3exp-web/elements';
+
+observeWindowSizeClass(({ widthClass, heightClass }) => {
+  document.body.dataset.layout = widthClass; // 'compact' … 'extra-large'
+}, { signal: new AbortController().signal });`}
+  />
+
+  <h2 id="spacing">Spacing</h2>
+  <p>
+    An 8dp-based scale (m3.material.io, 2026), from 0 to 72dp, as
+    <code>--m3e-sys-space-&lt;step&gt;</code>. Compose has no spacing tokens at the pinned version.
+  </p>
+  <ul class="site-space-scale">
+    {
+      spaces.map((s) => (
+        <li class="site-space-scale__item">
+          <code>space-{s.name}</code>
+          <span class="site-space-scale__bar" style={`inline-size: var(--m3e-sys-space-${s.name})`} />
+          <span>{s.value}dp</span>
+        </li>
+      ))
+    }
+  </ul>
+
+  <h2 id="elevation">Elevation</h2>
+  <p>
+    Six levels, drawn as two-layer shadows in the <code>shadow</code> color role
+    (<code>--m3e-sys-elevation-levelN-shadow</code>). Surfaces show depth through their container
+    tone too; surface tint is not applied.
+  </p>
+  <ul class="site-elevation-levels">
+    {
+      levels.map((l) => (
+        <li
+          class="site-elevation-levels__tile"
+          style={`box-shadow: var(--m3e-sys-elevation-${kebab(l.name)}-shadow)`}
+        >
+          <span>{l.name}</span>
+          <span>{l.value}dp</span>
+        </li>
+      ))
+    }
+  </ul>
+
+  <h2 id="state">State layers</h2>
+  <p>
+    Interactive elements lay a translucent layer of their content color over themselves: these
+    opacities for each state, and a ripple from the press point. The focus ring is separate:
+    {state.focusIndicator.thickness}dp in the <code>secondary</code> role,
+    {state.focusIndicator.outerOffset}dp outside the component.
+  </p>
+  <ScrollTable label="State layer opacities">
+    <table>
+      <thead>
+        <tr>
+          <th scope="col">State</th>
+          <th scope="col">Opacity</th>
+          <th scope="col">Token</th>
+        </tr>
+      </thead>
+      <tbody>
+        {
+          stateRows.map(([name, value]) => (
+            <tr>
+              <th scope="row">{name}</th>
+              <td>{value}</td>
+              <td>
+                <code>--m3e-sys-state-{name}-state-layer-opacity</code>
+              </td>
+            </tr>
+          ))
+        }
+      </tbody>
+    </table>
+  </ScrollTable>
+
+  <h2 id="sources">Sources</h2>
+  <ul>
+    <li>
+      Window size classes: androidx window-core <code>WindowSizeClass.kt</code> L146–161 at the
+      pinned commit (FOUNDATIONS_SPEC §9); pane counts: m3.material.io Breakpoints and Compose
+      <code>calculatePaneScaffoldDirective</code>.
+    </li>
+    <li>Spacing: the m3.material.io token database (<code>md.sys.measurement.space*</code>).</li>
+    <li>
+      Elevation: <code>ElevationTokens.kt</code> L24–40; shadows from Material Web 2.5.0. State
+      layers: <code>StateTokens.kt</code> L22–25 (FOUNDATIONS_SPEC §5, §6).
+    </li>
+  </ul>
+</Guide>
+
+<script>
+  import { observeWindowSizeClass } from '@kyralabs/m3e-elements/window-size-class.js';
+
+  const output = document.getElementById('site-size-class');
+  if (output) {
+    observeWindowSizeClass(
+      ({ widthClass, heightClass }) => {
+        output.textContent = `${widthClass} width, ${heightClass} height`;
+      },
+      { signal: new AbortController().signal },
+    );
+  }
+</script>

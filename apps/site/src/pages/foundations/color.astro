@@ -1,0 +1,148 @@
+---
+import '@kyralabs/m3e-css/button.css';
+import '@kyralabs/m3e-css/button-group.css';
+import '@kyralabs/m3e-css/menu.css';
+import '@kyralabs/m3e-css/switch.css';
+import '@kyralabs/m3e-css/text-field.css';
+import { baselineColors } from '@kyralabs/m3e-tokens';
+import CodeBlock from '../../components/CodeBlock.astro';
+import Island from '../../components/Island.astro';
+import ScrollTable from '../../components/ScrollTable.astro';
+import Guide from '../../layouts/Guide.astro';
+import { kebab } from '../../lib/kebab';
+
+// The baseline scheme's roles, grouped as FOUNDATIONS_SPEC §1 lists them (tokens: Compose's
+// ColorLightTokens / ColorDarkTokens with the expressive overrides, generated).
+const GROUPS: [string, (role: string) => boolean][] = [
+  ['Primary', (r) => /primary/i.test(r)],
+  ['Secondary', (r) => /secondary/i.test(r)],
+  ['Tertiary', (r) => /tertiary/i.test(r)],
+  ['Error', (r) => /error/i.test(r)],
+  ['Surface and background', (r) => /surface|background/i.test(r)],
+  ['Other', () => true],
+];
+const roles = Object.keys(baselineColors.light).sort();
+const used = new Set<string>();
+const groups = GROUPS.map(([label, test]) => {
+  const list = roles.filter((r) => !used.has(r) && test(r));
+  list.forEach((r) => used.add(r));
+  return { label, roles: list };
+}).filter((g) => g.roles.length > 0);
+const light = baselineColors.light as Record<string, string>;
+const dark = baselineColors.dark as Record<string, string>;
+const VARIANTS = 'tonalSpot (default), expressive, vibrant, neutral, monochrome, fidelity, content, rainbow and fruitSalad';
+---
+
+<Guide
+  title="Color"
+  description="Components read color roles, not colors: primary, surface-container, on-surface and the rest. A scheme assigns every role a color for light and dark, either the baseline scheme or one generated from your seed color."
+>
+  <h2 id="builder">Build a scheme</h2>
+  <p>
+    Pick a seed color and a scheme variant. Material Color Utilities 0.4.0 derives tonal palettes
+    from it and maps every role, for the contrast level and color spec you choose. The swatches
+    and the CSS below update together; the CSS is what <code>createTheme</code> returns for those
+    options, scoped to a selector. <strong>Use on this site</strong> applies the theme to every
+    page, components included.
+  </p>
+  <Island name="ThemeBuilder" class="site-theme-builder-island">
+    <p class="site-example__note">
+      The theme builder runs with JavaScript. The same output comes from
+      <code>createTheme</code> (below) or the <code>m3e-theme</code> CLI in the
+      <a href="/get-started/theming/">theming guide</a>.
+    </p>
+  </Island>
+
+  <h2 id="dynamic">Dynamic color</h2>
+  <ul>
+    <li>
+      <strong>Variants:</strong>
+      {VARIANTS}. Each is a <code>DynamicScheme</code> of Material Color Utilities that moves the
+      roles' hue and chroma differently from the seed; expressive is deliberately detached from it.
+    </li>
+    <li>
+      <strong>Contrast:</strong> from −1 to 1, where 0 is standard; the presets are standard (0),
+      medium (0.5) and high (1). Color spec 2025 treats negative contrast as standard.
+    </li>
+    <li>
+      <strong>Color spec:</strong> 2025 is the default (DECISIONS D3) and adds the
+      <code>-dim</code> roles; 2021 stays selectable. Material Color Utilities itself still
+      defaults to 2021, so <code>createTheme</code> always passes the version explicitly.
+    </li>
+    <li>
+      <strong>Dark mode:</strong> <code>mode: 'system'</code> writes both schemes and follows
+      <code>prefers-color-scheme</code>; <code>data-theme="light"</code> or <code>"dark"</code> on an
+      ancestor forces one.
+    </li>
+  </ul>
+  <CodeBlock
+    lang="ts"
+    label="createTheme example"
+    code={`import { createTheme } from '@kyralabs/m3exp-web/theme';
+
+const { cssText } = createTheme({ seed: '#6750a4', variant: 'expressive', contrast: 'medium' });
+document.head.append(Object.assign(document.createElement('style'), { textContent: cssText }));`}
+  />
+
+  <h2 id="roles">Roles of the baseline scheme</h2>
+  <p>
+    Without a seed theme the components use the baseline scheme in
+    <code>@kyralabs/m3e-tokens/theme.css</code>: Compose's expressive light scheme (its
+    <code>on-*-container</code> roles are tone 30, not 10) and the dark scheme. Each role is a
+    custom property, <code>--m3e-sys-color-&lt;role&gt;</code>. The swatches show the current
+    theme of this site; the values are the baseline's.
+  </p>
+  {
+    groups.map((group) => (
+      <>
+        <h3>{group.label}</h3>
+        <ScrollTable label={`${group.label} color roles`}>
+          <table class="site-color-table">
+            <thead>
+              <tr>
+                <th scope="col">Role</th>
+                <th scope="col">Now</th>
+                <th scope="col">Baseline light</th>
+                <th scope="col">Baseline dark</th>
+              </tr>
+            </thead>
+            <tbody>
+              {group.roles.map((role) => (
+                <tr>
+                  <th scope="row">
+                    <code>--m3e-sys-color-{kebab(role)}</code>
+                  </th>
+                  <td>
+                    <span
+                      class="site-swatch"
+                      style={`background-color: var(--m3e-sys-color-${kebab(role)})`}
+                    />
+                  </td>
+                  <td>
+                    <code>{light[role]}</code>
+                  </td>
+                  <td>
+                    <code>{dark[role]}</code>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </ScrollTable>
+      </>
+    ))
+  }
+
+  <h2 id="sources">Sources</h2>
+  <ul>
+    <li>
+      Roles, variants, contrast and spec versions: <code>@material/material-color-utilities</code>
+      0.4.0 (<code>dynamiccolor/</code>, <code>scheme/</code>; FOUNDATIONS_SPEC §1).
+    </li>
+    <li>
+      Baseline scheme: Compose <code>ColorLightTokens</code>, <code>ColorDarkTokens</code>,
+      <code>PaletteTokens</code> and <code>expressiveLightColorScheme()</code>
+      (<code>ColorScheme.kt</code> L1172–1179) at the pinned commit, generated by m3e-codegen.
+    </li>
+  </ul>
+</Guide>
