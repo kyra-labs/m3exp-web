@@ -36,6 +36,22 @@
   accent-color: var(--m3e-sys-color-primary);
 }
 
+/*
+ * Native docs controls outside .docs-controls (the playgrounds' selects and checkboxes; the
+ * components carry classes): 48px-high targets (CLAUDE.md; M11 a11y audit L6). A checkbox's
+ * target is its label. Zero specificity, so a page's own layout of the label still applies.
+ */
+:where(select:not([class])) {
+  min-block-size: var(--m3e-sys-space-600);
+}
+
+:where(label:has(> input[type='checkbox']:not([class]))) {
+  display: inline-flex;
+  gap: var(--m3e-sys-space-100);
+  align-items: center;
+  min-block-size: var(--m3e-sys-space-600);
+}
+
 /* Theme page: optional core colors, a checkbox and a color picker each. */
 .docs-core-colors {
   display: flex;
@@ -1193,9 +1209,13 @@ button.docs-layout-item:focus-visible {
   margin-block-start: 0;
 }
 
+/*
+ * The header's 40dp back button reaches 4dp below the header with its 48dp target; the list
+ * starts below that, so the first checkbox's target does not cover it (M11 a11y audit L7).
+ */
 .docs-side-sheet-options {
   margin: 0;
-  padding: 0;
+  padding: var(--m3e-sys-space-50) 0 0;
   list-style: none;
 }
 

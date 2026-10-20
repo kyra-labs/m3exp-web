@@ -4,6 +4,7 @@
 // useListBox / useOption and reads the class names and indicator markup from here.
 import { attachRipple } from '../base/ripple.js';
 import { TypeSelect } from '../base/type-select.js';
+import { uid } from '../base/uid.js';
 import { RovingFocus } from '../roving-focus/roving-focus.js';
 
 /** Selection behavior of an interactive list (React Aria's SelectionMode). */
@@ -173,8 +174,6 @@ export const listItemText = (item: Element): string =>
     item.querySelector(`:scope > .${BLOCK}__content > .${BLOCK}__headline`)?.textContent ?? ''
   ).trim();
 
-let lists = 0;
-
 /** Sets (or, for null, removes) an attribute, touching the DOM only when it changes. */
 const setAttr = (el: Element, name: string, value: string | null | undefined): void => {
   if (value === null || value === undefined) el.removeAttribute(name);
@@ -229,7 +228,7 @@ export class ListLayout {
   #mutations: MutationObserver;
   #ripples = new WeakSet<HTMLElement>();
   #typeahead = new TypeSelect();
-  #id = `m3e-list-${String(++lists)}`;
+  #id = uid('m3e-list');
   #entered = false;
 
   constructor(root: HTMLElement, options: ListLayoutOptions = {}) {

@@ -1,5 +1,6 @@
 import AxeBuilder from '@axe-core/playwright';
 import { type Locator, type Page, expect, test } from '@playwright/test';
+import { expectTargetSizes } from './target-size.js';
 
 // Chips (COMPONENT_SPEC §18): filter (flat / elevated × baseline / expressive), input chips in
 // <m3e-chip-set>, suggestion chips, a single-line chip set and React. Acceptance (the leading
@@ -276,6 +277,15 @@ test('touch targets reach 48dp; the remove icon has its own', async ({ page }) =
   expect(r.height - 2 * target.top).toBeCloseTo(48, 0);
 });
 
+test('every chip and remove button has a 48 × 48 hit area (hit testing)', async ({ page }) => {
+  await expectTargetSizes(
+    page.locator(
+      '.m3e-filter-chip__input, .m3e-suggestion-chip, .m3e-input-chip, .m3e-input-chip__remove',
+    ),
+    'chips',
+  );
+});
+
 test('disabled chips draw no state layer and keep the default cursor', async ({ page }) => {
   for (const el of [
     chip(page, 'filter-flat-disabled'),
@@ -332,5 +342,22 @@ test.describe('reduced motion', () => {
     await el.click();
     expect(Math.round((await box(slot)).width)).toBe(18);
     expect(await token(page, '--m3e-sys-motion-spring-fast-spatial-duration')).toMatch(/^0/);
+  });
+
+  test('the check slot jumps closed too: its DefaultEffects shrink is geometry (M11 a11y L4)', async ({
+    page,
+  }) => {
+    const el = chip(page, 'filter-flat-selected');
+    const slot = el.locator('.m3e-filter-chip__leading');
+    expect(Math.round((await box(slot)).width)).toBe(18);
+    expect(await token(page, '--m3e-comp-selectable-chip-icon-shrink-duration')).toMatch(/^0m?s$/);
+    await el.click();
+    await expect(el.locator('input')).not.toBeChecked();
+    expect(Math.round((await box(slot)).width)).toBe(0);
+    // Only the fade runs (effects stay under reduced motion).
+    const running = await slot.evaluate((node) =>
+      node.getAnimations().map((a) => (a as CSSTransition).transitionProperty),
+    );
+    expect(running).not.toContain('inline-size');
   });
 });

@@ -245,7 +245,20 @@
     visibility: hidden;
   }
 
+  /*
+   * Each arrow in its own 48dp slot (androidx @ 19991f2c): MonthsNavigation's arrows are a Row of
+   * two IconButtonWithTooltip (DatePicker.kt L2507–2522, L2561–2578), whose IconButton lays out
+   * minimumInteractiveComponentSize() then the 40dp container (IconButton.kt L156–173 →
+   * IconButtonImpl L244–248), and that modifier centers the button in max(size, 48dp)
+   * (InteractiveComponentSize.kt L101–137). So the containers sit 8dp apart, 4dp in from the
+   * row's padding, and each 48dp target stands alone.
+   */
   .m3e-date-picker__arrows .m3e-icon-button {
+    flex: none;
+    margin-inline: max(
+      0%,
+      calc((var(--m3e-comp-minimum-interactive-component-size) - var(--_m3e-icon-button-width)) / 2)
+    );
     color: inherit;
   }
 
@@ -367,6 +380,14 @@
 
     border: var(--m3e-comp-date-picker-modal-date-today-container-outline-width) solid
       var(--m3e-comp-date-picker-modal-date-today-container-outline-color);
+  }
+
+  /* Today's outline is inside the box: its padding box is smaller, so the target grows back. */
+  .m3e-date-picker__day[aria-current='date']:not([aria-selected='true'])::after {
+    inset: calc(
+      (var(--_m3e-date-picker-day) - var(--_m3e-date-picker-cell)) / 2 -
+        var(--m3e-comp-date-picker-modal-date-today-container-outline-width)
+    );
   }
 
   /* In-range days snap (no color animation, L976–985). */
@@ -515,6 +536,16 @@
 
     border: var(--m3e-comp-date-picker-modal-date-today-container-outline-width) solid
       var(--m3e-comp-date-picker-modal-date-today-container-outline-color);
+  }
+
+  .m3e-date-picker__year[aria-current='date']:not([aria-selected='true'])::after {
+    inset-block: calc(
+      (
+          var(--m3e-comp-date-picker-modal-selection-year-container-height) -
+            var(--m3e-comp-minimum-interactive-component-size)
+        ) /
+        2 - var(--m3e-comp-date-picker-modal-date-today-container-outline-width)
+    );
   }
 
   .m3e-date-picker__year[aria-selected='true'] {

@@ -46,6 +46,8 @@
  *   fast effects, expand fast spatial, shrink default effects. Expressive (L3340-3343): fades
  *   default effects, expand and shrink fast spatial. Here the slot's inline-size and opacity
  *   transition with the springs' linear() easings (the arrangement switches at once, as Compose).
+ *   Under reduced motion the width jumps both ways (the baseline shrink is geometry on an effects
+ *   spring: 0ms in chips-defaults.css, as the sheets and drawer); the fades keep their timing.
  * - Expressive shape (shapeByInteraction L4269-4289, ChipShapes from ChipsTokens L2612-2621):
  *   pressed CornerSmall (8dp) > selected CornerFull > rest CornerMedium (12dp), on fast spatial
  *   (L3311-3313); CornerFull is half the height so the morph springs between finite radii.

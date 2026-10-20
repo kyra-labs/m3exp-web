@@ -1,6 +1,7 @@
 import AxeBuilder from '@axe-core/playwright';
 import { springValue } from '@kyralabs/m3e-motion';
 import { type Locator, type Page, expect, test } from '@playwright/test';
+import { expectTargetSizes } from './target-size.js';
 
 // Side sheets (COMPONENT_SPEC §31; D8: m3.material.io only): the standard sheet beside the
 // content, the modal sheet (a dialog) docked and detached, the adaptive variant, element and React.
@@ -212,6 +213,23 @@ test('geometry and color from m3.material.io (token DB, Specs redlines)', async 
   expect([save.x - a.x, d.y + d.height - (save.y + save.height)]).toEqual([24, 24]);
   expect(await actions.evaluate((n) => getComputedStyle(n).borderTopColor)).toBe(
     await tokenColor(page, '--m3e-sys-color-outline'),
+  );
+});
+
+test('header buttons and the docs filter checkboxes have 48 × 48 hit areas (hit testing)', async ({
+  page,
+}) => {
+  // The docs list starts below the back button's target (M11 a11y audit L7: the first checkbox's
+  // target covered its bottom 4px).
+  const actions = rootOf(page, 'actions');
+  await expectTargetSizes(
+    actions.locator('.m3e-side-sheet__back, .m3e-side-sheet__close'),
+    'standard header buttons',
+  );
+  await expectTargetSizes(actions.locator('.m3e-checkbox__input'), 'filter checkboxes');
+  await expectTargetSizes(
+    rootOf(page, 'standard').locator('.m3e-side-sheet__close'),
+    'standard close',
   );
 });
 

@@ -105,6 +105,14 @@ const IN = '--m3e-comp-input-chip';
 const SG = '--m3e-comp-suggestion-chip';
 const SEL = '--m3e-comp-selectable-chip';
 
+/**
+ * The baseline leading / trailing slot shrinks its width on DefaultEffects (AnimatingChipContent's
+ * shrinkSpec), so under reduced motion it would still animate geometry for the fast-effects
+ * duration. Geometry on an effects spring jumps (the sheets' and drawer's policy; M11 a11y audit
+ * L4); the fades keep their effects timing. The other slot moves are spatial and already 0ms.
+ */
+export const CHIPS_REDUCED_MOTION = [`${SEL}-icon-shrink-duration: 0ms;`];
+
 /** `public object <owner> {` … `public val <member>: Dp = <n>.dp`. */
 const dpIn = (owner: string, member: string): RegExp =>
   new RegExp(`public object ${owner} \\{[\\s\\S]*?public val ${member}: Dp = (\\d+)\\.dp`, 'd');

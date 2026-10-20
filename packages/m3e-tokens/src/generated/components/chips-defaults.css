@@ -64,4 +64,9 @@
     --m3e-comp-selectable-chip-expressive-icon-shrink-stiffness: var(--m3e-sys-motion-spring-fast-spatial-stiffness);
     --m3e-comp-chip-set-chip-padding-horizontal: 4px;
   }
+  @media (prefers-reduced-motion: reduce) {
+    :root {
+      --m3e-comp-selectable-chip-icon-shrink-duration: 0ms;
+    }
+  }
 }

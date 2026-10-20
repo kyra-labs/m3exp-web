@@ -1,5 +1,6 @@
 import AxeBuilder from '@axe-core/playwright';
 import { type Locator, type Page, expect, test } from '@playwright/test';
+import { expectTargetSizes } from './target-size.js';
 
 // Date pickers (COMPONENT_SPEC §27): <m3e-date-picker> (calendar, input, selectable dates),
 // <m3e-date-range-picker> (month list, input), <m3e-docked-date-picker>, the dialogs (element
@@ -177,14 +178,52 @@ test.describe('geometry (DatePickerModalTokens, DatePicker.kt)', () => {
     // The month / year row (MonthYearHeight 56dp) and its 48dp arrows.
     const nav = await box(picker.locator('.m3e-date-picker__nav'));
     expect(nav.height).toBe(await px(page, '--m3e-comp-date-picker-month-year-height'));
-    // The arrows: 40dp icon buttons with the ::after touch target.
-    for (const arrow of await picker.locator('.m3e-date-picker__arrows > button').all()) {
-      const target = await arrow.evaluate((node) => {
-        const after = getComputedStyle(node, '::after');
-        return Math.min(Number.parseFloat(after.width), Number.parseFloat(after.height));
-      });
-      expect(target).toBeGreaterThanOrEqual(48);
-    }
+    // The arrows: 40dp icon buttons, each in its own 48dp slot (IconButton is
+    // minimumInteractiveComponentSize() then its 40dp size, IconButton.kt L244–248, and
+    // MonthsNavigation's arrows are a Row of two, DatePicker.kt L2507–2522), so their centers
+    // are 48dp apart, the next arrow sits 4dp in from the row's padding and neither target
+    // overlaps the other (M11 a11y audit M3).
+    const slot = await px(page, '--m3e-comp-minimum-interactive-component-size');
+    const padding = await px(page, '--m3e-comp-date-picker-horizontal-padding');
+    const [previous, next] = await picker.locator('.m3e-date-picker__arrows > button').all();
+    const p = await box(previous!);
+    const n = await box(next!);
+    expect(p.width).toBe(40);
+    expect(n.x - p.x).toBe(slot);
+    expect(nav.x + nav.width - padding - (n.x + n.width)).toBe((slot - n.width) / 2);
+    await expectTargetSizes(picker.locator('.m3e-date-picker__arrows > button'), 'month arrows');
+  });
+
+  test('targets by hit testing: header, navigation, days, the docked drop-down', async ({
+    page,
+  }) => {
+    const picker = root(page, 'picker');
+    await expectTargetSizes(
+      picker.locator(
+        '.m3e-date-picker__mode-toggle, .m3e-date-picker__year-button, .m3e-date-picker__arrows > button',
+      ),
+      'picker header and navigation',
+    );
+    await expectTargetSizes(picker.locator('.m3e-date-picker__day[data-date]'), 'picker days');
+    const docked = root(page, 'docked');
+    await docked.locator('.m3e-text-field__trailing button').click();
+    const popup = docked.locator('.m3e-date-picker--docked');
+    await expect(popup).toBeVisible();
+    // The docked header's arrows are left out: its two groups fill the 360dp row edge to edge,
+    // so the arrows next to a menu button or the other group's arrow share their 48dp targets
+    // (44px effective). Giving them 48dp slots needs m3.material.io's header geometry (the menu
+    // buttons' insets are open in SOURCES register #87), a fidelity question for the owner.
+    await expectTargetSizes(popup.locator('.m3e-date-picker__menu-button'), 'docked menu buttons');
+    await expectTargetSizes(popup.locator('.m3e-date-picker__day[data-date]'), 'docked days');
+    await page.keyboard.press('Escape');
+    // The current year's outline (like today's) must not shrink its 48dp target.
+    const selectable = root(page, 'selectable');
+    await yearButton(selectable).click();
+    await settle(page);
+    await expectTargetSizes(
+      selectable.locator('.m3e-date-picker__year[aria-current="date"]'),
+      'current year',
+    );
   });
 
   test('the year grid: three years a row, 72 × 36 containers', async ({ page }) => {

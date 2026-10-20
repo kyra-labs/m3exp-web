@@ -1,5 +1,6 @@
 import AxeBuilder from '@axe-core/playwright';
 import { type Locator, type Page, expect, test } from '@playwright/test';
+import { expectTargetSizes } from './target-size.js';
 
 // Carousel (COMPONENT_SPEC §36; owner decisions M9 #22–#26): multi-browse, interactive items,
 // uncontained, hero, center-aligned hero, full screen, CSS only, React. Acceptance ("keyboard
@@ -226,4 +227,23 @@ test('forced colors: every item keeps a visible boundary', async ({ page }) => {
   const item = itemsOf(rootOf(page, 'multi-browse')).first();
   const border = await item.evaluate((n) => getComputedStyle(n, '::after').borderTopStyle);
   expect(border).toBe('solid');
+});
+
+test('items by hit testing: small keyline items at least 24px (audit L3), the rest 48', async ({
+  page,
+}) => {
+  const root = rootOf(page, 'multi-browse');
+  const items = itemsOf(root);
+  // The items in view at rest, measured where they are (scrolling the carousel would move them).
+  const inView = await items.evaluateAll((els) =>
+    els.flatMap((el, i) => {
+      const scroller = el.parentElement!.getBoundingClientRect();
+      const r = el.getBoundingClientRect();
+      return Math.min(r.right, scroller.right) - Math.max(r.left, scroller.left) >= 1 ? [i] : [];
+    }),
+  );
+  expect(inView.length).toBeGreaterThan(1);
+  for (const i of inView) {
+    await expectTargetSizes(items.nth(i), `multi-browse item ${String(i)}`, 'page');
+  }
 });

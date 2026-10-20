@@ -1,5 +1,6 @@
 import AxeBuilder from '@axe-core/playwright';
 import { type Locator, type Page, expect, test } from '@playwright/test';
+import { runningSpatialAnimations } from './reduced-motion.js';
 import { expectComposePlacement, placement } from './badge-placement.js';
 
 // Navigation bar (COMPONENT_SPEC §13): short navigation bar + legacy (D4) bar.
@@ -302,5 +303,36 @@ test.describe('badges', () => {
     await expect(page).toHaveScreenshot('navigation-bar-badges-selected.png', {
       clip: { x: frame.x - 8, y: frame.y - 8, width: frame.width + 16, height: frame.height + 16 },
     });
+  });
+});
+
+test.describe('reduced motion', () => {
+  test.use({ reducedMotion: 'reduce' });
+
+  test('the indicator jumps between items (default spatial spring off)', async ({ page }) => {
+    const bar = page.getByTestId('react-bar');
+    const items = bar.locator('.m3e-navigation-item');
+    await bar.scrollIntoViewIfNeeded();
+    const target = part(items.nth(2), 'indicator');
+    const widths = target.evaluate(
+      (el) =>
+        new Promise<number[]>((resolve) => {
+          const samples: number[] = [];
+          const start = performance.now();
+          const tick = () => {
+            samples.push(el.getBoundingClientRect().width);
+            if (performance.now() - start < 600) requestAnimationFrame(tick);
+            else resolve(samples);
+          };
+          requestAnimationFrame(tick);
+        }),
+    );
+    await items.nth(2).click();
+    const samples = await widths;
+    expect(samples.at(-1)).toBeCloseTo(56, 1);
+    // No frame between the closed pill and the full one.
+    expect(samples.filter((w) => w > 0.5 && w < 55.5)).toEqual([]);
+    expect(await box(part(items.nth(0), 'indicator')).then((b) => b.width)).toBeCloseTo(0, 1);
+    expect(await runningSpatialAnimations(page)).toEqual([]);
   });
 });

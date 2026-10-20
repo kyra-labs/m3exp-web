@@ -1,3 +1,4 @@
+import { uid } from '../base/uid.js';
 import { RovingFocus } from '../roving-focus/roving-focus.js';
 
 /** The focusable part of each chip: the chip itself, or a filter chip's native checkbox. */
@@ -16,8 +17,6 @@ export const CHIP_REMOVE_LABEL = 'Remove';
  * @internal Shared with m3e-react; not part of the public API.
  */
 export const CHIP_REMOVE_DESCRIPTION = 'Press Delete to remove tag.';
-
-let sets = 0;
 
 /** Sets (or, for null, removes) an attribute, touching the DOM only when it changes. */
 const setAttr = (el: Element, name: string, value: string | null): void => {
@@ -73,7 +72,7 @@ export class ChipSetLayout {
   #options: ChipSetLayoutOptions;
   #abort = new AbortController();
   #mutations: MutationObserver;
-  #prefix = `m3e-chip-set-${String(++sets)}`;
+  #prefix = uid('m3e-chip-set');
 
   constructor(root: HTMLElement, options: ChipSetLayoutOptions = {}) {
     this.root = root;

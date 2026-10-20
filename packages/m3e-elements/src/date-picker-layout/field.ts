@@ -8,6 +8,7 @@ import {
   parseDate,
   validateDateInput,
 } from '@kyralabs/m3e-motion';
+import { uid } from '../base/uid.js';
 import { el, setAttr, setText } from '../time-picker-layout/shared.js';
 
 const TF = 'm3e-text-field';
@@ -26,8 +27,6 @@ export interface DateFieldOptions {
   onSelection: (millis: number | null) => void;
 }
 
-let ids = 0;
-
 /**
  * An outlined m3e-css text field for one date: the field holds digits only and shows the
  * delimiters (DateInputTransformation / DateOutputTransformation over m3e-motion's port), the
@@ -45,7 +44,7 @@ export class DateField {
 
   constructor(doc: Document, options: DateFieldOptions, signal: AbortSignal) {
     this.#o = options;
-    const id = `m3e-date-field-${String(++ids)}`;
+    const id = uid('m3e-date-field');
     this.root = el(doc, 'div', `${TF} ${TF}--outlined`);
     const container = el(doc, 'div', `${TF}__container`);
     const label = el(doc, 'label', `${TF}__label`, { for: id });
