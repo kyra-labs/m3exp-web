@@ -129,8 +129,9 @@ test.describe('primitives', () => {
 
   test('a mouse click never shows the focus ring', async ({ page }) => {
     await tile(page, 0).click();
-    const outline = await tile(page, 0).evaluate((el) => getComputedStyle(el).outlineStyle);
-    expect(outline).toBe('none');
+    // At rest the ring is a zero-width outline (D19 (3)).
+    const outline = await tile(page, 0).evaluate((el) => getComputedStyle(el).outlineWidth);
+    expect(outline).toBe('0px');
   });
 
   test('disabled tiles draw no state layer', async ({ page }) => {

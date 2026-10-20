@@ -106,17 +106,18 @@ test.describe('baselines', () => {
     await page.keyboard.press('ArrowLeft');
     await expect(label(page, 'dial-12h', '9')).toBeFocused();
     // The selected label is under the handle: the handle shows the ring.
+    // The ring grows from (and shrinks to) a zero-width outline (D19 (3)).
     await expect(root(page, 'dial-12h').locator('.m3e-time-picker__handle')).toHaveCSS(
-      'outline-style',
-      'solid',
+      'outline-width',
+      '3px',
     );
     await expect(figure(page, 'dial-12h')).toHaveScreenshot('dial-12h-focus.png');
     // Another label shows its own ring.
     await page.keyboard.press('ArrowRight');
-    await expect(label(page, 'dial-12h', '10')).toHaveCSS('outline-style', 'solid');
+    await expect(label(page, 'dial-12h', '10')).toHaveCSS('outline-width', '3px');
     await expect(root(page, 'dial-12h').locator('.m3e-time-picker__handle')).toHaveCSS(
-      'outline-style',
-      'none',
+      'outline-width',
+      '0px',
     );
   });
 

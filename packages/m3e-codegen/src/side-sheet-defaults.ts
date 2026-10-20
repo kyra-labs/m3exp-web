@@ -1,9 +1,10 @@
 // Side sheet values (COMPONENT_SPEC §31). Compose Material3 has no side sheet, so D8 makes
 // m3.material.io the only fidelity reference:
 // - the m3.material.io token DB (md.comp.sheet.side): the docked width (256dp; owner decision M9
-//   #14), the standard / modal container colors, the modal sheet's level 1 elevation and
-//   large-start shape, the detached shape, the divider color (outline; owner decision M9 #15), the
-//   headline type and color;
+//   #14, D19 (15)), the standard / modal container colors, the modal sheet's level 1 elevation and
+//   large-start shape, the detached shape, the headline type and color;
+// - the divider color: outline-variant, the standalone md.comp.divider.color and the standard
+//   sheet's color legend (D19 (16), as the navigation drawer's; not md.comp.sheet.side.docked.divider.color);
 // - the Side sheets › Specs tables and redlines: start / end padding 24dp (16dp before a back
 //   icon), 12dp between the top elements, the 400dp max width (#14), the bottom actions (72dp, 16 /
 //   24dp padding, start-aligned), the 16dp detached margin (owner decision M9 #18), the 24dp above
@@ -13,8 +14,8 @@
 //   close FastEffects (0ms under reduced motion, the drawer's policy), the scrim
 //   (DrawerDefaults.scrimColor) at the open fraction;
 // - the spacing between the action buttons, which m3.material.io does not give, is AlertDialog's
-//   (ButtonsMainAxisSpacing; register #81).
-// The m3.material.io values that need an owner decision are SOURCES register #78–#81 (D8). The Compose
+//   (ButtonsMainAxisSpacing; register #81, D19 (18)).
+// The owner's picks for the m3.material.io values are SOURCES register #78–#81 (D8, D19). The Compose
 // literals are read with targeted regexes and cited by line; CHECKS throw when the wiring
 // side-sheet.css and the side sheet layout assume changes upstream.
 import {
@@ -45,7 +46,7 @@ const RULES: readonly LiteralRule[] = [
     file: DRAWER,
     pattern:
       /public fun ModalNavigationDrawer\([\s\S]*?val openMotion: FiniteAnimationSpec<Float> = MotionSchemeKeyTokens\.(\w+)\.value\(\)/d,
-    note: 'owner decision M9 #16 (TODO(verify) SOURCES register #80: no side sheet motion in any source): the drawer’s DrawerState.open(), mirrored to the end edge; from the current offset and velocity',
+    note: 'owner decision M9 #16, D19 (17) (SOURCES register #80: no side sheet motion in any source): the drawer’s DrawerState.open(), mirrored to the end edge; from the current offset and velocity',
   },
   {
     kind: 'motion',
@@ -55,7 +56,7 @@ const RULES: readonly LiteralRule[] = [
     file: DRAWER,
     pattern:
       /public fun ModalNavigationDrawer\([\s\S]*?val closeMotion: FiniteAnimationSpec<Float> = MotionSchemeKeyTokens\.(\w+)\.value\(\)/d,
-    note: 'owner decision M9 #16 (TODO(verify) SOURCES register #80): the drawer’s DrawerState.close(); jumps under reduced motion (it moves the sheet)',
+    note: 'owner decision M9 #16, D19 (17) (SOURCES register #80): the drawer’s DrawerState.close(); jumps under reduced motion (it moves the sheet)',
   },
   {
     kind: 'token',
@@ -84,7 +85,7 @@ const RULES: readonly LiteralRule[] = [
     member: 'ButtonsMainAxisSpacing',
     file: DIALOG,
     pattern: /private val ButtonsMainAxisSpacing\n\s*get\(\) = (\d+)\.dp/d,
-    note: 'TODO(verify) SOURCES register #81: m3.material.io gives no spacing between a side sheet’s action buttons; the dialog’s',
+    note: 'D19 (18) (SOURCES register #81): m3.material.io gives no spacing between a side sheet’s action buttons; the dialog’s',
   },
 ];
 
@@ -107,6 +108,10 @@ const CHECKS: readonly LiteralCheck[] = [
 /** m3.material.io token DB the side sheet values come from (read 2026-10-19). */
 const DSDB =
   'm3.material.io token DB "Google Material 3" v38.2.9 rev 7989 (_dsm/data/dsdb-m3/2026-10-13_06-10-19/TOKEN_TABLE.06c2c925cf96adca.json, Side sheets › Tokens & specs: md.comp.sheet.side)';
+
+/** m3.material.io token DB of the standalone divider (the divider color, D19 (16)). */
+const DIVIDER_DSDB =
+  'm3.material.io token DB "Google Material 3" v38.2.9 rev 7989 (_dsm/data/dsdb-m3/2026-10-13_06-10-19/TOKEN_TABLE.77f7657eb270e53d.json, Divider: md.comp.divider)';
 
 /** m3.material.io page whose Specs tables, color legends and redlines are cited. */
 const PAGE =
@@ -141,7 +146,7 @@ function m3Rows(): SideSheetDefault[] {
     js: value,
   });
   const width =
-    'TODO(verify) SOURCES register #78 (owner decision M9 #14): the DB’s docked width is the default; the Specs tables say "Max-width 400dp"';
+    'owner decision M9 #14, D19 (15) (SOURCES register #78): the DB’s docked width is the default; the Specs tables say "Max-width 400dp"';
   return [
     dp('container-width', 'md.comp.sheet.side.docked.container.width', 256, DSDB, width),
     dp('max-width', 'Max-width', 400, PAGE, width),
@@ -191,11 +196,13 @@ function m3Rows(): SideSheetDefault[] {
       PAGE,
       'owner decision M9 #18; Guidelines: "They can be slightly inset by 16dp"',
     ),
-    color(
+    row(
       'divider-color',
-      'md.comp.sheet.side.docked.divider.color',
-      'outline',
-      'TODO(verify) SOURCES register #79 (owner decision M9 #15): the standard color legend says "Outline variant" for the divider',
+      'var(--m3e-sys-color-outline-variant)',
+      'md.comp.divider.color (not md.comp.sheet.side.docked.divider.color = outline)',
+      'md.comp.divider.color = md.sys.color.outline-variant',
+      DIVIDER_DSDB,
+      'D19 (16) (SOURCES register #79, as the navigation drawer’s #33): the standard color legend says "Outline variant" for the divider; androidx DividerTokens.Color = OutlineVariant (DividerTokens.kt L24–25)',
     ),
     color('headline-color', 'md.comp.sheet.side.docked.headline.color', 'on-surface-variant'),
     ...TYPE_FIELDS.map((field) =>
@@ -213,7 +220,7 @@ function m3Rows(): SideSheetDefault[] {
       'Side sheet color roles (close / back icon)',
       'color legend: "On surface variant" (close icon; modal: back icon too)',
       PAGE,
-      'TODO(verify) SOURCES register #81: the legends only (the DB has no icon color token)',
+      'D19 (18) (SOURCES register #81): the legends only (the DB has no icon color token)',
     ),
     dp('padding-inline', 'Start/end padding', 24, PAGE),
     dp('padding-inline-start-icon', 'Start padding with icon', 16, PAGE, 'before the back icon'),
@@ -229,7 +236,7 @@ function m3Rows(): SideSheetDefault[] {
       'Padding and size measurements (redline)',
       24,
       PAGE,
-      'TODO(verify) SOURCES register #81: the redlines’ 24dp above the header row (the 24dp icons and the headline); not in the tables',
+      'D19 (18) (SOURCES register #81): the redlines’ 24dp above the header row (the 24dp icons and the headline); not in the tables',
     ),
     dp('actions-height', 'Bottom actions height', 72, PAGE),
     dp('actions-padding-top', 'Bottom actions top padding', 16, PAGE),

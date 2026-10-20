@@ -55,7 +55,9 @@
  * lines in PARITY.md): PaneScaffoldDirective.kt (spacer, default pane sizes), ThreePaneScaffold.kt
  * (measure policy L700-771), ListDetailPaneScaffold.kt / SupportingPaneScaffold.kt (pane orders);
  * feed: m3.material.io Canonical examples › Feed (one column at compact, more columns as the
- * window grows) and Breakpoints (margins 16dp compact, 24dp from medium).
+ * window grows), Breakpoints (margins 16dp compact, 24dp from medium) and Cards › Specs (8dp
+ * between cards; SOURCES register #65, D19 (5)); the 240dp column minimum is a project default
+ * (register #66, D19 (6)).
  */
 @import '@kyralabs/m3e-tokens/components/pane-scaffold-defaults.css';
 @import '@kyralabs/m3e-tokens/components/button-defaults.css';

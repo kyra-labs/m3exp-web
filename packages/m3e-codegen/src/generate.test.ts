@@ -1172,7 +1172,9 @@ describe('slider values (M8)', () => {
     }
     expect(t('x-small-track-height')).toBe(t('track-height'));
     expect(t('x-small-thumb-height')).toBe(t('thumb-height'));
-    expect(output.get('PARITY.md')).toMatch(/TODO\(verify\) SOURCES register #68/);
+    expect(output.get('PARITY.md')).toMatch(
+      /D19 \(8\) \(SOURCES register #68\): the token DB’s 44dp/,
+    );
   });
 
   it('inset icon M / L / XL 24 / 24 / 32dp, padding 6 / 6 / 8dp (owner decision M8 #18)', () => {
@@ -2162,14 +2164,15 @@ describe('canonical layout values (M7)', () => {
     );
   });
 
-  it('feed: m3.material.io margins 16 / 24dp; gap and column width flagged TODO(verify)', () => {
+  it('feed: m3.material.io margins 16 / 24dp, the Cards Specs’ 8dp gap, a 240dp column (D19)', () => {
     expect(t('feed-margin-compact')).toBe('16px');
     expect(t('feed-margin')).toBe('24px');
-    expect(t('feed-gap')).toBe('16px');
+    expect(t('feed-gap')).toBe('8px');
     expect(t('feed-column-min-width')).toBe('240px');
     const parity = output.get('PARITY.md')!;
-    expect(parity).toContain('TODO(verify): SOURCES.md register #65');
-    expect(parity).toContain('TODO(verify): SOURCES.md register #66');
+    expect(parity).toMatch(/“Padding between cards 8dp max”.*register #65, DECISIONS D19 \(5\)/);
+    expect(parity).toContain('SOURCES.md register #66, DECISIONS D19 (6)');
+    expect(parity).not.toContain('TODO(verify)');
   });
 });
 
@@ -2501,7 +2504,7 @@ describe('side sheet values (M9, D8)', () => {
   const drawerCss = output.get('components/navigation-drawer-defaults.css')!;
   const drawer = declarations(drawerCss.slice(0, drawerCss.indexOf('@media')));
 
-  it('m3.material.io token DB: 256dp docked width, 400dp max (#14), colors, shapes, divider outline (#15)', () => {
+  it('m3.material.io token DB: 256dp docked width, 400dp max (#14), colors, shapes, divider outline-variant (D19)', () => {
     expect(t('container-width')).toBe('256px');
     expect(t('max-width')).toBe('400px');
     expect(t('standard-container-color')).toBe('var(--m3e-sys-color-surface)');
@@ -2512,7 +2515,12 @@ describe('side sheet values (M9, D8)', () => {
     );
     expect(t('detached-container-shape')).toBe('var(--m3e-sys-shape-corner-large)');
     expect(t('detached-margin')).toBe('16px');
-    expect(t('divider-color')).toBe('var(--m3e-sys-color-outline)');
+    // D19 (16): the standalone md.comp.divider.color and the color legend, as the drawer's (#33).
+    expect(t('divider-color')).toBe('var(--m3e-sys-color-outline-variant)');
+    expect(t('divider-color')).toBe(drawer.get('--m3e-comp-navigation-drawer-divider-color'));
+    expect(output.get('PARITY.md')).toMatch(
+      /TOKEN_TABLE\.77f7657eb270e53d\.json, Divider: md\.comp\.divider\) \| `--m3e-comp-side-sheet-divider-color`/,
+    );
     expect(t('headline-size')).toBe('var(--m3e-sys-typescale-title-large-size)');
     expect(t('headline-color')).toBe('var(--m3e-sys-color-on-surface-variant)');
   });

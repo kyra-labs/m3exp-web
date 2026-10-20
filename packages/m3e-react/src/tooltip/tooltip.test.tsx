@@ -124,6 +124,26 @@ describe('<TooltipTrigger> behavior (the shared TooltipController)', () => {
     expect(tooltip().hasAttribute('data-driven')).toBe(false);
   });
 
+  it('a touch long press shows it after 400ms (Android’s default timeout), as the element', async () => {
+    const onOpenChange = vi.fn();
+    const container = await renderReact(
+      <TooltipTrigger onOpenChange={onOpenChange}>
+        <Button>Favorite</Button>
+        <PlainTooltip>Add to favorites</PlainTooltip>
+      </TooltipTrigger>,
+    );
+    const anchor = container.querySelector('button')!;
+    await pointer(anchor, 'pointerdown', 'touch');
+    await run(() => {
+      vi.advanceTimersByTime(399);
+    });
+    expect(onOpenChange).not.toHaveBeenCalled();
+    await run(() => {
+      vi.advanceTimersByTime(1);
+    });
+    expect(onOpenChange).toHaveBeenLastCalledWith(true);
+  });
+
   it('keyboard focus shows it; Escape hides it', async () => {
     const container = await renderReact(
       <TooltipTrigger>

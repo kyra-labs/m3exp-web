@@ -287,10 +287,12 @@ for (const id of [
     await label.locator('.m3e-checkbox__input').focus();
     await page.keyboard.press('Shift+Tab');
     await page.keyboard.press('Tab');
-    const ring = await label
-      .locator('.m3e-checkbox__state')
-      .evaluate((el) => getComputedStyle(el).outlineStyle);
-    expect(ring).toBe('solid');
+    // The ring grows from a zero-width outline (D19 (3)): wait for its 3dp width.
+    await expect
+      .poll(() =>
+        label.locator('.m3e-checkbox__state').evaluate((el) => getComputedStyle(el).outlineWidth),
+      )
+      .toBe('3px');
     await expect(page).toHaveScreenshot(`checkbox-${id}-focused.png`, { clip });
     await page.keyboard.press('Shift+Tab');
     const input = await box(label.locator('.m3e-checkbox__input'));

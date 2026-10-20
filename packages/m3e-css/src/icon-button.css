@@ -101,6 +101,7 @@
     user-select: none;
     -webkit-tap-highlight-color: transparent;
     transition:
+      var(--_m3e-focus-ring-transition, outline-width, outline-offset),
       border-radius var(--m3e-sys-motion-spring-default-effects-duration)
         var(--m3e-sys-motion-spring-default-effects-easing),
       background-color var(--m3e-sys-motion-spring-fast-effects-duration)
@@ -332,7 +333,7 @@
 
   /* m3e-react animates the radius with an interruptible spring (inline style). */
   .m3e-icon-button[data-spring] {
-    transition-property: background-color, color, box-shadow;
+    transition-property: outline-width, outline-offset, background-color, color, box-shadow;
   }
 
   @media (forced-colors: active) {

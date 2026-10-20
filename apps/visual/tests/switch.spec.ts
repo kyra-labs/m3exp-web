@@ -265,10 +265,12 @@ test('focus: Tab rings the track and shows the handle focus layer; Space toggles
   await sw(page, 'static-enabled-checked').locator('input').focus();
   await page.keyboard.press('Tab');
   await expect(input).toBeFocused();
-  const ring = await label
-    .locator('.m3e-switch__track')
-    .evaluate((el) => getComputedStyle(el).outlineStyle);
-  expect(ring).toBe('solid');
+  // The ring grows from a zero-width outline (D19 (3)): wait for its 3dp width.
+  await expect
+    .poll(() =>
+      label.locator('.m3e-switch__track').evaluate((el) => getComputedStyle(el).outlineWidth),
+    )
+    .toBe('3px');
   await expect(page).toHaveScreenshot('switch-static-enabled-unchecked-focused.png', {
     clip: await clipAround(label),
   });
@@ -293,11 +295,12 @@ test('the state layer is the content color, checked or not; colors do not animat
       layer: getComputedStyle(root.querySelector('.m3e-switch__state')!, '::before')
         .backgroundColor,
       content: getComputedStyle(root).color,
-      track: getComputedStyle(root.querySelector('.m3e-switch__track')!).transitionDuration,
+      // The track carries the focus ring, whose width / offset animate (D19 (3)); colors must not.
+      track: getComputedStyle(root.querySelector('.m3e-switch__track')!).transitionProperty,
       handle: getComputedStyle(root.querySelector('.m3e-switch__handle')!).transitionProperty,
     }));
     expect(layer, id).toBe(content);
-    expect(transitions.track).toBe('0s');
+    expect(transitions.track).not.toMatch(/color|background|all/);
     expect(transitions.handle).not.toMatch(/color|background|all/);
   }
 });

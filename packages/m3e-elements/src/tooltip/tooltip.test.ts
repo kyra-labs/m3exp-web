@@ -1,6 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import './index.js';
 import type { M3eTooltip } from './tooltip.js';
+import { LONG_PRESS_TIMEOUT_MS } from '../tooltip-popup/index.js';
 
 // happy-dom has no layout or motion tokens: springs settle on the first frame; the duration is set
 // on the root as tooltip-defaults.css would.
@@ -204,7 +205,9 @@ describe('<m3e-tooltip> behavior (TooltipBox)', () => {
     const clicks = vi.fn();
     anchor.addEventListener('click', clicks);
     pointer(anchor, 'pointerdown', 'touch');
-    vi.advanceTimersByTime(499);
+    // Android's default long-press timeout (SOURCES register #71, D19 (10)).
+    expect(LONG_PRESS_TIMEOUT_MS).toBe(400);
+    vi.advanceTimersByTime(399);
     await settle();
     expect(host.open).toBeFalsy();
     vi.advanceTimersByTime(1);

@@ -17,7 +17,7 @@ const filterList = `<ul class="docs-side-sheet-options">${filters
   <link rel="stylesheet" href="/icons/docs-icons.css" slot="head" />
   <h1>Side sheets</h1>
   <p>
-    Side sheets (COMPONENT_SPEC §31) show supplementary content anchored to the end edge of the window (the left edge in right-to-left languages). Compose Material3 has no side sheet, so m3.material.io is the only reference (D8); the values it leaves open are SOURCES register #78–#81. The <strong>standard side sheet</strong> sits next to the main content and narrows it while open; the <strong>modal side sheet</strong> is a dialog over a 32% scrim that has to be dismissed before the page can be used again. The <strong>adaptive</strong> variant is modal below 600dp (the medium window size class) and standard from it.
+    Side sheets (COMPONENT_SPEC §31) show supplementary content anchored to the end edge of the window (the left edge in right-to-left languages). Compose Material3 has no side sheet, so m3.material.io is the only reference (D8); the values it leaves open are the owner's picks (SOURCES register #78–#81, DECISIONS D19). The <strong>standard side sheet</strong> sits next to the main content and narrows it while open; the <strong>modal side sheet</strong> is a dialog over a 32% scrim that has to be dismissed before the page can be used again. The <strong>adaptive</strong> variant is modal below 600dp (the medium window size class) and standard from it.
   </p>
   <p>
     The sheet is 256dp wide by default (the token DB's docked width; set <code>--m3e-comp-side-sheet-container-width</code>, up to 400dp). The standard sheet takes surface, the modal sheet surface-container-low with 16dp corners on its open side and a level 1 shadow. The header has an optional back button, the headline (title large) and the close button that m3.material.io requires; optional action buttons sit at the bottom. Sheets open on the default spatial spring and close on the fast effects spring, the navigation drawer's motion mirrored to the end edge (there are no drags). The close button and Escape close a sheet; the scrim closes a modal one.
@@ -26,7 +26,7 @@ const filterList = `<ul class="docs-side-sheet-options">${filters
   <section aria-labelledby="standard-heading">
     <h2 id="standard-heading">Standard side sheet (element)</h2>
     <p>
-      <code>&lt;m3e-side-sheet headline="Title" open&gt;</code> as the last child of a flex row: opening it takes its width from the row, so the content beside it shrinks instead of being covered. Its content scrolls on its own. <code>divider</code> draws the line along its start edge.
+      <code>&lt;m3e-side-sheet headline="Title" open&gt;</code> as the last child of a flex row: opening it takes its width from the row, so the content beside it shrinks instead of being covered. Its content scrolls on its own. <code>divider</code> draws the line along its start edge (outline-variant, the divider token and the standard sheet's color legend).
     </p>
     <div class="docs-side-sheet-frame" data-testid="standard-frame">
       <div class="docs-side-sheet-frame__main">

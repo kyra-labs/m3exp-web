@@ -109,7 +109,8 @@ test.describe('baselines', () => {
     await day(picker, utc(2025, 8, 17)).focus();
     await page.keyboard.press('ArrowRight');
     await expect(day(picker, utc(2025, 8, 18))).toBeFocused();
-    await expect(day(picker, utc(2025, 8, 18))).toHaveCSS('outline-style', 'solid');
+    // The ring grows from a zero-width outline (D19 (3)).
+    await expect(day(picker, utc(2025, 8, 18))).toHaveCSS('outline-width', '3px');
     await expect(figure(page, 'picker')).toHaveScreenshot('picker-focus.png');
   });
 
@@ -211,8 +212,8 @@ test.describe('geometry (DatePickerModalTokens, DatePicker.kt)', () => {
     await expect(popup).toBeVisible();
     // The docked header's arrows are left out: its two groups fill the 360dp row edge to edge,
     // so the arrows next to a menu button or the other group's arrow share their 48dp targets
-    // (44px effective). Giving them 48dp slots needs m3.material.io's header geometry (the menu
-    // buttons' insets are open in SOURCES register #87), a fidelity question for the owner.
+    // (44px effective). Giving them 48dp slots would need m3.material.io header geometry it does
+    // not give (the menu buttons take the modal year button's insets: SOURCES #87, D19 (24)).
     await expectTargetSizes(popup.locator('.m3e-date-picker__menu-button'), 'docked menu buttons');
     await expectTargetSizes(popup.locator('.m3e-date-picker__day[data-date]'), 'docked days');
     await page.keyboard.press('Escape');

@@ -104,7 +104,8 @@ test('keyboard focus on the action rings the card', async ({ page }) => {
   await page.keyboard.press('Shift+Tab');
   await page.keyboard.press('Tab');
   await expect(action).toBeFocused();
-  expect(await card.evaluate((el) => getComputedStyle(el).outlineStyle)).toBe('solid');
+  // The ring grows from a zero-width outline (D19 (3)): wait for its 3dp width.
+  await expect.poll(() => card.evaluate((el) => getComputedStyle(el).outlineWidth)).toBe('3px');
   const box = (await card.boundingBox())!;
   await expect(page).toHaveScreenshot('card-focused.png', {
     clip: { x: box.x - 8, y: box.y - 8, width: box.width + 16, height: box.height + 16 },

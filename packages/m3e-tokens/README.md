@@ -56,6 +56,10 @@ The CLI flags are `--secondary`, `--tertiary`, `--neutral`, `--neutral-variant` 
 With spec 2025 (the `tonalSpot`, `neutral`, `vibrant` and `expressive` variants) the outline and
 surface-variant roles come from the neutral palette, so `neutralVariant` has no effect there.
 
+Material Theme Builder's own core-color mapping is not public, so its exports may differ. Theme
+Builder turns fidelity ("match color") on by default (m3.material.io Color › Advanced), so
+`variant: 'fidelity'` (`--variant fidelity`) is the closest match.
+
 ## Window size classes
 
 The breakpoints come from androidx window-core `WindowSizeClass` (the lower bounds Compose

@@ -148,12 +148,14 @@ const RANK: Readonly<Record<TooltipShowPriority, number>> = {
 };
 
 /**
- * Compose defers to the platform (ViewConfiguration.longPressTimeoutMillis); the web has no such
- * setting, so this is React Aria useLongPress's default threshold (react-aria 3.53.1).
- * TODO(verify): SOURCES.md register #71.
+ * Compose shows the tooltip after `viewConfiguration.longPressTimeoutMillis`
+ * (`internal/BasicTooltip.kt@19991f2c` L221), which on Android reads
+ * `android.view.ViewConfiguration.getLongPressTimeout()` (`AndroidViewConfiguration.android.kt`
+ * L31–32): the platform default, 400ms (AOSP `ViewConfiguration.DEFAULT_LONG_PRESS_TIMEOUT`).
+ * The web has no such setting, so the default ships (SOURCES.md register #71, DECISIONS D19 (10)).
  * @internal Shared with m3e-react; not part of the public API.
  */
-export const LONG_PRESS_TIMEOUT_MS = 500;
+export const LONG_PRESS_TIMEOUT_MS = 400;
 
 interface Job {
   owner: TooltipController;

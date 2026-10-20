@@ -70,8 +70,11 @@
     overscroll-behavior-y: contain;
   }
 
-  /* Overflowing content is a focusable scroll region (the layout): the ring drawn inside it. */
+  /* Overflowing content is a focusable scroll region (the layout): the ring drawn inside it
+     (motion: focus-ring.css). */
   .m3e-pull-to-refresh__content:focus-visible {
+    --_m3e-focus-ring-transition: var(--_m3e-focus-ring-in);
+
     outline: var(--m3e-sys-state-focus-indicator-thickness) solid var(--m3e-sys-color-secondary);
     outline-offset: var(--m3e-sys-state-focus-indicator-inner-offset);
   }

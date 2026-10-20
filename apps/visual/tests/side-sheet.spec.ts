@@ -125,7 +125,8 @@ test('standard: pushes the content (does not overlay) at ≥ 840px, and closes f
 });
 
 test('geometry and color from m3.material.io (token DB, Specs redlines)', async ({ page }) => {
-  // Standard: surface, square corners, no shadow; the divider along its start edge (outline).
+  // Standard: surface, square corners, no shadow; the divider along its start edge
+  // (outline-variant: md.comp.divider.color and the color legend, D19 (16)).
   const standard = sheetOf(rootOf(page, 'standard'));
   const s = await standard.evaluate((n) => {
     const c = getComputedStyle(n);
@@ -141,7 +142,7 @@ test('geometry and color from m3.material.io (token DB, Specs redlines)', async 
     await tokenColor(page, '--m3e-sys-color-surface'),
     '0px',
     'none',
-    await tokenColor(page, '--m3e-sys-color-outline'),
+    await tokenColor(page, '--m3e-sys-color-outline-variant'),
     '1px',
   ]);
   // Modal, docked: at the window's end, full height, surface-container-low, 16dp start corners,
@@ -212,7 +213,7 @@ test('geometry and color from m3.material.io (token DB, Specs redlines)', async 
   const save = await box(actions.locator('button').first());
   expect([save.x - a.x, d.y + d.height - (save.y + save.height)]).toEqual([24, 24]);
   expect(await actions.evaluate((n) => getComputedStyle(n).borderTopColor)).toBe(
-    await tokenColor(page, '--m3e-sys-color-outline'),
+    await tokenColor(page, '--m3e-sys-color-outline-variant'),
   );
 });
 
