@@ -68,47 +68,63 @@ function reactApi() {
       inherits: [],
     };
     if (isComponent) {
-      const propsType = checker.getTypeOfSymbol(signatures[0].getParameters()[0]);
       const inherited = new Set();
-      for (const prop of checker.getPropertiesOfType(propsType)) {
-        const pdecl = prop.declarations?.[0];
-        if (!pdecl) continue;
-        const from = pdecl.getSourceFile().fileName;
-        if (prop.getName() === 'ref' || prop.getName() === 'key') continue;
-        if (!from.includes('m3e-react')) {
-          if (from.includes('@types/react')) inherited.add('HTML attributes');
-          else if (from.includes('react-aria') || from.includes('@react-types')) {
-            inherited.add('React Aria props');
+      const seen = new Set();
+      // Every call signature: a deprecated overload (ListItem's legacy `headlineContent` props)
+      // adds its own props, deprecated with it.
+      for (const signature of signatures) {
+        const parameter = signature.getParameters()[0];
+        if (!parameter) continue;
+        const declaration = signature.getDeclaration();
+        const overloadDeprecated =
+          signature === signatures[0] || !declaration
+            ? null
+            : (jsdoc(declaration).tags.deprecated ?? null);
+        const propsType = checker.getTypeOfSymbol(parameter);
+        for (const prop of checker.getPropertiesOfType(propsType)) {
+          const pdecl = prop.declarations?.[0];
+          if (!pdecl || seen.has(prop.getName())) continue;
+          seen.add(prop.getName());
+          const from = pdecl.getSourceFile().fileName;
+          if (prop.getName() === 'ref' || prop.getName() === 'key') continue;
+          if (!from.includes('m3e-react')) {
+            if (from.includes('@types/react')) inherited.add('HTML attributes');
+            else if (from.includes('react-aria') || from.includes('@react-types')) {
+              inherited.add('React Aria props');
+            }
+            continue;
           }
-          continue;
+          const pdoc = jsdoc(pdecl);
+          const declared =
+            ts.isPropertySignature(pdecl) && pdecl.type ? pdecl.type.getText() : null;
+          const description = pdoc.text;
+          const def = /Default(?:s to)?:? `([^`]+)`/.exec(description);
+          // A named union of literals (`ButtonVariant`) is shown with its values.
+          const propType = checker.getNonNullableType(
+            checker.getTypeOfSymbolAtLocation(prop, pdecl),
+          );
+          const values =
+            declared && /^[A-Z]\w*(\s*\|\s*undefined)?$/.test(declared) && propType.isUnion()
+              ? propType.types.every((t) => t.isLiteral())
+                ? propType.types.map((t) => checker.typeToString(t)).join(' | ')
+                : null
+              : null;
+          entry.props.push({
+            name: prop.getName(),
+            type:
+              declared ??
+              checker.typeToString(
+                checker.getTypeOfSymbolAtLocation(prop, pdecl),
+                undefined,
+                ts.TypeFormatFlags.NoTruncation,
+              ),
+            values,
+            optional: Boolean(prop.flags & ts.SymbolFlags.Optional),
+            description,
+            default: def ? def[1] : null,
+            deprecated: pdoc.tags.deprecated ?? overloadDeprecated,
+          });
         }
-        const pdoc = jsdoc(pdecl);
-        const declared = ts.isPropertySignature(pdecl) && pdecl.type ? pdecl.type.getText() : null;
-        const description = pdoc.text;
-        const def = /Default(?:s to)?:? `([^`]+)`/.exec(description);
-        // A named union of literals (`ButtonVariant`) is shown with its values.
-        const propType = checker.getNonNullableType(checker.getTypeOfSymbolAtLocation(prop, pdecl));
-        const values =
-          declared && /^[A-Z]\w*(\s*\|\s*undefined)?$/.test(declared) && propType.isUnion()
-            ? propType.types.every((t) => t.isLiteral())
-              ? propType.types.map((t) => checker.typeToString(t)).join(' | ')
-              : null
-            : null;
-        entry.props.push({
-          name: prop.getName(),
-          type:
-            declared ??
-            checker.typeToString(
-              checker.getTypeOfSymbolAtLocation(prop, pdecl),
-              undefined,
-              ts.TypeFormatFlags.NoTruncation,
-            ),
-          values,
-          optional: Boolean(prop.flags & ts.SymbolFlags.Optional),
-          description,
-          default: def ? def[1] : null,
-          deprecated: pdoc.tags.deprecated ?? null,
-        });
       }
       entry.inherits = [...inherited].sort();
     }
@@ -191,7 +207,8 @@ function staticProperties(cls, classes) {
         if (!ts.isPropertyAssignment(o)) continue;
         // `attribute: false as const` is `false`.
         let value = o.initializer;
-        while (ts.isAsExpression(value) || ts.isSatisfiesExpression(value)) value = value.expression;
+        while (ts.isAsExpression(value) || ts.isSatisfiesExpression(value))
+          value = value.expression;
         opts[o.name.getText()] = value.getText();
       }
     }
@@ -217,7 +234,9 @@ function staticProperties(cls, classes) {
   }
   for (const p of props) {
     if (p.attribute !== null && !/^[a-z][a-z0-9-]*$/.test(p.attribute)) {
-      throw new Error(`${cls.name?.getText() ?? '?'}.${p.property}: unreadable attribute ${p.attribute}`);
+      throw new Error(
+        `${cls.name?.getText() ?? '?'}.${p.property}: unreadable attribute ${p.attribute}`,
+      );
     }
   }
   // A subclass may redeclare a property; keep the last.

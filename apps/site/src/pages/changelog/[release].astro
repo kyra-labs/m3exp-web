@@ -1,0 +1,57 @@
+---
+import ChangelogRelease from '../../components/ChangelogRelease.astro';
+import Site from '../../layouts/Site.astro';
+import { RELEASES, releaseId } from '../../lib/releases';
+import type { Release } from '../../lib/changelog';
+
+export function getStaticPaths() {
+  return RELEASES.map((release, i) => ({
+    params: { release: releaseId(release.version) },
+    props: { release, newer: RELEASES[i - 1], older: RELEASES[i + 1] },
+  }));
+}
+
+interface Props {
+  release: Release;
+  newer: Release | undefined;
+  older: Release | undefined;
+}
+
+const { release, newer, older } = Astro.props;
+---
+
+<Site
+  title={`Release ${release.version}`}
+  description={`What changed in @kyralabs ${release.version}, merged from the package changelogs.`}
+>
+  <p><a href="/changelog/">Changelog</a></p>
+  <ChangelogRelease release={release} level={1} />
+  <nav class="site-pager" aria-label="Releases" data-pagefind-ignore>
+    {
+      older && (
+        <a
+          class="m3e-button m3e-button--outlined m3e-button--size-m site-pager__previous"
+          href={`/changelog/${releaseId(older.version)}/`}
+        >
+          <span class="m3e-icon" aria-hidden="true">
+            arrow_back
+          </span>
+          {older.version}
+        </a>
+      )
+    }
+    {
+      newer && (
+        <a
+          class="m3e-button m3e-button--tonal m3e-button--size-m site-pager__next"
+          href={`/changelog/${releaseId(newer.version)}/`}
+        >
+          {newer.version}
+          <span class="m3e-icon" aria-hidden="true">
+            arrow_forward
+          </span>
+        </a>
+      )
+    }
+  </nav>
+</Site>

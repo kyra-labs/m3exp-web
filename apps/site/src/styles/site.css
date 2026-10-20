@@ -272,7 +272,16 @@ m3e-search:not(:defined) {
   line-height: var(--m3e-sys-typescale-body-medium-line-height);
 }
 
-.site-code pre:focus-visible {
+.site-repo-markdown pre {
+  margin: 0 0 var(--m3e-sys-space-200);
+  padding: var(--m3e-sys-space-200);
+  overflow-x: auto;
+  border-radius: var(--m3e-sys-shape-corner-large);
+  line-height: var(--m3e-sys-typescale-body-medium-line-height);
+}
+
+.site-code pre:focus-visible,
+.site-repo-markdown pre:focus-visible {
   outline: var(--m3e-sys-state-focus-indicator-thickness) solid var(--m3e-sys-color-secondary);
   outline-offset: var(--m3e-sys-state-focus-indicator-outer-offset);
 }
@@ -983,4 +992,55 @@ m3e-tabs:not(:defined) > m3e-tab-panel::before {
   block-size: var(--m3e-sys-space-900);
   border-radius: var(--m3e-sys-shape-corner-medium);
   background-color: var(--m3e-sys-color-surface-container-low);
+}
+
+/* --- Releases --------------------------------------------------------------------------------- */
+.site-changelog-index ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--m3e-sys-space-100) var(--m3e-sys-space-200);
+  margin: 0 0 var(--m3e-sys-space-400);
+  padding: 0;
+  list-style: none;
+}
+
+.site-changelog-release {
+  margin-block-end: var(--m3e-sys-space-500);
+}
+
+.site-changelog-changes {
+  display: grid;
+  gap: var(--m3e-sys-space-200);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.site-changelog-change {
+  padding: var(--m3e-sys-space-200);
+  border-radius: var(--m3e-sys-shape-corner-large);
+  background-color: var(--m3e-sys-color-surface-container-low);
+}
+
+.site-changelog-change > :first-child {
+  margin-block-start: 0;
+}
+
+.site-changelog-change__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--m3e-sys-space-100);
+  align-items: center;
+  margin-block-end: 0;
+}
+
+.site-changelog-change__package {
+  padding: var(--m3e-sys-space-25) var(--m3e-sys-space-100);
+  border-radius: var(--m3e-sys-shape-corner-small);
+  background-color: var(--m3e-sys-color-secondary-container);
+  color: var(--m3e-sys-color-on-secondary-container);
+  font-family: var(--m3e-sys-typescale-label-medium-font);
+  font-weight: var(--m3e-sys-typescale-label-medium-weight);
+  font-size: var(--m3e-sys-typescale-label-medium-size);
+  line-height: var(--m3e-sys-typescale-label-medium-line-height);
 }
