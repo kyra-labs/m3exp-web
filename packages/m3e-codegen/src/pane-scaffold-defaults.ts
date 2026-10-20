@@ -5,8 +5,9 @@
 // CHECKS throw when wiring that m3e-motion's three-pane-scaffold.ts ports changes upstream.
 //
 // Plus the feed canonical layout, which has no Compose scaffold: its margins from m3.material.io
-// (source priority 2, CLAUDE.md) and two values m3.material.io does not state (TODO(verify),
-// SOURCES.md register #65 and #66).
+// (source priority 2, CLAUDE.md), its gap from the Cards Specs (a feed shows cards and lists) and
+// its column width, which m3.material.io does not state (owner decisions: SOURCES.md register
+// #65 and #66, DECISIONS D19 (5) and (6)).
 import { springToLinear } from '@kyralabs/m3e-motion';
 
 export interface PaneScaffoldDefault {
@@ -107,6 +108,10 @@ const CHECKS: readonly [string, string, RegExp][] = [
 /** m3.material.io pages the feed values come from (content JSON, carbon 2026-10-13_06-10-19). */
 const M3_BREAKPOINTS =
   'm3.material.io Foundations › Layout › Breakpoints (_dsm/content/m3/2026-10-13_06-10-19/16281dc1-7630-4e78-abaf-c9bc8be69663.json, updated 2026-07-17)';
+const M3_CARDS =
+  'm3.material.io Cards › Specs › Measurements (_dsm/content/m3/2026-10-13_06-10-19/1a23fbe7-0474-444c-abfb-717bb148d3a8.json, updated 2026-07-22)';
+const M3_FEED =
+  'm3.material.io Canonical examples › Feed (_dsm/content/m3/2026-10-13_06-10-19/23b84814-755b-469b-83a9-771fe027b0c0.json)';
 
 /**
  * `sources`: vendored files by name (PaneScaffoldDirective.kt, PaneMotion.kt, PaneExpansionState.kt
@@ -227,7 +232,8 @@ export function extractPaneScaffoldDefaults(
     },
   );
 
-  // Feed: no Compose scaffold. Margins from m3.material.io; the gap and column width are not stated.
+  // Feed: no Compose scaffold. Margins from m3.material.io, the gap from the Cards Specs; the column
+  // width is not stated (a project default, D19 (6)).
   const m3 = (
     field: string,
     px: number,
@@ -263,16 +269,16 @@ export function extractPaneScaffoldDefaults(
     ),
     m3(
       'gap',
-      16,
+      8,
       'gap',
-      'TODO(verify): SOURCES.md register #65 — m3.material.io Canonical examples › Feed states no spacing between items (project default: md.sys.measurement.space200)',
-      'between feed items, both axes',
+      `${M3_CARDS} sections[1].contentBlocks[23] “Padding between cards 8dp max”; ${M3_FEED} sections[1].contentBlocks[3] “cards and lists” (SOURCES.md register #65, DECISIONS D19 (5); md.sys.measurement.space100)`,
+      'between feed items, both axes (the Feed page states no spacing of its own)',
     ),
     m3(
       'column-min-width',
       240,
       'column min width',
-      'TODO(verify): SOURCES.md register #66 — m3.material.io Canonical examples › Feed gives no column counts or widths per window class (only “should usually increase”; project default)',
+      `project default (SOURCES.md register #66, DECISIONS D19 (6)): ${M3_FEED} gives no column counts or widths per window class (only “should usually increase”)`,
       'from medium width: as many columns as fit at this width (compact: one column, verified)',
     ),
   );

@@ -79,12 +79,15 @@
     cursor: pointer;
     user-select: none;
     -webkit-tap-highlight-color: transparent;
-    transition: box-shadow var(--_m3e-chip-shadow-duration) var(--_m3e-chip-shadow-easing);
+    transition:
+      var(--_m3e-focus-ring-transition, outline-width, outline-offset),
+      box-shadow var(--_m3e-chip-shadow-duration) var(--_m3e-chip-shadow-easing);
   }
 
   /* The expressive selection morph (shapeByInteraction): the corners on fast spatial. */
   :is(.m3e-filter-chip--expressive, .m3e-input-chip--expressive) {
     transition:
+      var(--_m3e-focus-ring-transition, outline-width, outline-offset),
       box-shadow var(--_m3e-chip-shadow-duration) var(--_m3e-chip-shadow-easing),
       border-radius var(--m3e-comp-selectable-chip-shape-duration)
         var(--m3e-comp-selectable-chip-shape-easing);
@@ -92,7 +95,7 @@
 
   /* m3e-react springs the corners itself (inline style, interruptible). */
   :is(.m3e-filter-chip--expressive, .m3e-input-chip--expressive)[data-spring] {
-    transition-property: box-shadow;
+    transition-property: outline-width, outline-offset, box-shadow;
   }
 
   /* The input chip's row holds one gridcell, which lays out the content. */
@@ -195,7 +198,7 @@
     box-shadow: var(--_m3e-chip-shadow-disabled);
     color: var(--_m3e-chip-label-disabled);
     cursor: default;
-    transition: none;
+    transition: var(--_m3e-focus-ring-transition, outline-width, outline-offset);
   }
 
   :is(.m3e-assist-chip, .m3e-input-chip, .m3e-suggestion-chip):is(:disabled, [aria-disabled='true'])

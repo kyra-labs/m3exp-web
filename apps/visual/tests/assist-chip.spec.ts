@@ -136,7 +136,8 @@ test('keyboard focus shows the ring', async ({ page }) => {
   await page.getByTestId('elevated-plain').focus();
   await page.keyboard.press('Tab');
   await expect(chip).toBeFocused();
-  expect(await chip.evaluate((el) => getComputedStyle(el).outlineStyle)).toBe('solid');
+  // The ring grows from a zero-width outline (D19 (3)): wait for its 3dp width.
+  await expect.poll(() => chip.evaluate((el) => getComputedStyle(el).outlineWidth)).toBe('3px');
   const b = await box(chip);
   await expect(page).toHaveScreenshot('assist-chip-focused.png', {
     clip: { x: b.x - 8, y: b.y - 8, width: b.width + 16, height: b.height + 16 },

@@ -5,10 +5,125 @@
  *
  * Thickness and offsets: md.sys.state.focus-indicator (m3.material.io, matches Material Web).
  * Color: secondary (every androidx *Tokens.FocusIndicatorColor). The ring is an outline, so it
- * follows the host's border-radius. Shape and motion have no source yet (SOURCES register #61):
- * the ring appears without animation.
+ * follows the host's shape, as Compose's focusRingShape (material3 Ripple.kt@19991f2c L85–89).
+ *
+ * Motion (owner decision D19 (3), SOURCES register #61): Compose's inset ring. Its width and
+ * inset scale with a 0 → 1 interpolation (material3-ripple Ripple.kt@19991f2c L406–418) that
+ * grows on the fast spatial spring and shrinks on the fast effects spring (material3 Ripple.kt
+ * L852–853; material3-ripple Ripple.kt L327–340). Here the outline's width and offset do the same:
+ * at rest every ring element carries a zero-width outline, and the width and offset transition on
+ * those springs' linear() curves. None under reduced motion. Components that set their own
+ * `transition` list the ring's first: var(--_m3e-focus-ring-transition, outline-width,
+ * outline-offset) (the fallback, without this file, transitions nothing).
  */
 @layer m3e.base {
+  /*
+   * Every element that draws a ring, at rest: a zero-width ring (so the width can shrink back)
+   * and its transition. Focused, the ring's rules below switch it to the growing spring.
+   */
+  :where(
+    .m3e-focus-ring,
+    .m3e-button,
+    .m3e-icon-button,
+    .m3e-assist-chip,
+    .m3e-input-chip,
+    .m3e-suggestion-chip,
+    .m3e-fab,
+    .m3e-extended-fab,
+    .m3e-fab-menu__item,
+    .m3e-pane-scaffold__drag-handle,
+    .m3e-bottom-sheet__handle,
+    .m3e-time-picker__selector,
+    .m3e-time-picker__period-item,
+    .m3e-time-picker__label,
+    .m3e-time-picker__handle,
+    .m3e-time-scroll__field,
+    .m3e-date-picker__day,
+    .m3e-date-picker__year,
+    .m3e-date-picker__menu-button,
+    .m3e-date-picker__menu-item,
+    .m3e-card--interactive,
+    .m3e-filter-chip,
+    .m3e-segmented-button,
+    .m3e-navigation-item__state,
+    .m3e-checkbox__state,
+    .m3e-radio-button__state,
+    .m3e-switch__track,
+    .m3e-slider__handle,
+    .m3e-menu__item,
+    .m3e-list-item--interactive,
+    .m3e-navigation-drawer-item,
+    .m3e-tab,
+    .m3e-tab-panel,
+    .m3e-pane-scaffold__pane,
+    .m3e-search__field,
+    .m3e-search__result,
+    .m3e-pull-to-refresh__content
+  ),
+  :where(.m3e-carousel__item)::after {
+    --_m3e-focus-ring-in:
+      outline-width var(--m3e-sys-motion-spring-fast-spatial-duration)
+        var(--m3e-sys-motion-spring-fast-spatial-easing),
+      outline-offset var(--m3e-sys-motion-spring-fast-spatial-duration)
+        var(--m3e-sys-motion-spring-fast-spatial-easing);
+    --_m3e-focus-ring-out:
+      outline-width var(--m3e-sys-motion-spring-fast-effects-duration)
+        var(--m3e-sys-motion-spring-fast-effects-easing),
+      outline-offset var(--m3e-sys-motion-spring-fast-effects-duration)
+        var(--m3e-sys-motion-spring-fast-effects-easing);
+    --_m3e-focus-ring-transition: var(--_m3e-focus-ring-out);
+
+    outline: 0 solid var(--m3e-sys-color-secondary);
+    transition: var(--_m3e-focus-ring-transition);
+  }
+
+  /* No ring motion under reduced motion (D19 (3)): both lists transition nothing. */
+  @media (prefers-reduced-motion: reduce) {
+    :where(
+      .m3e-focus-ring,
+      .m3e-button,
+      .m3e-icon-button,
+      .m3e-assist-chip,
+      .m3e-input-chip,
+      .m3e-suggestion-chip,
+      .m3e-fab,
+      .m3e-extended-fab,
+      .m3e-fab-menu__item,
+      .m3e-pane-scaffold__drag-handle,
+      .m3e-bottom-sheet__handle,
+      .m3e-time-picker__selector,
+      .m3e-time-picker__period-item,
+      .m3e-time-picker__label,
+      .m3e-time-picker__handle,
+      .m3e-time-scroll__field,
+      .m3e-date-picker__day,
+      .m3e-date-picker__year,
+      .m3e-date-picker__menu-button,
+      .m3e-date-picker__menu-item,
+      .m3e-card--interactive,
+      .m3e-filter-chip,
+      .m3e-segmented-button,
+      .m3e-navigation-item__state,
+      .m3e-checkbox__state,
+      .m3e-radio-button__state,
+      .m3e-switch__track,
+      .m3e-slider__handle,
+      .m3e-menu__item,
+      .m3e-list-item--interactive,
+      .m3e-navigation-drawer-item,
+      .m3e-tab,
+      .m3e-tab-panel,
+      .m3e-pane-scaffold__pane,
+      .m3e-search__field,
+      .m3e-search__result,
+      .m3e-pull-to-refresh__content
+    ),
+    :where(.m3e-carousel__item)::after {
+      --_m3e-focus-ring-in: outline-width, outline-offset;
+      --_m3e-focus-ring-out: outline-width, outline-offset;
+    }
+  }
+
   :where(
     .m3e-focus-ring,
     .m3e-button,
@@ -30,12 +145,16 @@
     .m3e-date-picker__menu-button,
     .m3e-date-picker__menu-item
   ):focus-visible {
+    --_m3e-focus-ring-transition: var(--_m3e-focus-ring-in);
+
     outline: var(--m3e-sys-state-focus-indicator-thickness) solid var(--m3e-sys-color-secondary);
     outline-offset: var(--m3e-sys-state-focus-indicator-outer-offset);
   }
 
   /* Proxy host: the card draws the ring for its stretched action. */
   :where(.m3e-card--interactive):has(.m3e-card__action:focus-visible) {
+    --_m3e-focus-ring-transition: var(--_m3e-focus-ring-in);
+
     outline: var(--m3e-sys-state-focus-indicator-thickness) solid var(--m3e-sys-color-secondary);
     outline-offset: var(--m3e-sys-state-focus-indicator-outer-offset);
   }
@@ -46,12 +165,16 @@
    */
   :where(.m3e-filter-chip):has(> .m3e-filter-chip__input:focus-visible),
   :where(.m3e-segmented-button):has(> .m3e-segmented-button__input:focus-visible) {
+    --_m3e-focus-ring-transition: var(--_m3e-focus-ring-in);
+
     outline: var(--m3e-sys-state-focus-indicator-thickness) solid var(--m3e-sys-color-secondary);
     outline-offset: var(--m3e-sys-state-focus-indicator-outer-offset);
   }
 
   /* Proxy host: a navigation item rings its indicator pill (ripple focusRingShape). */
   :where(.m3e-navigation-item:focus-visible .m3e-navigation-item__state) {
+    --_m3e-focus-ring-transition: var(--_m3e-focus-ring-in);
+
     outline: var(--m3e-sys-state-focus-indicator-thickness) solid var(--m3e-sys-color-secondary);
     outline-offset: var(--m3e-sys-state-focus-indicator-outer-offset);
   }
@@ -64,6 +187,8 @@
     .m3e-checkbox__input:focus-visible ~ .m3e-checkbox__state,
     .m3e-radio-button__input:focus-visible ~ .m3e-radio-button__state
   ) {
+    --_m3e-focus-ring-transition: var(--_m3e-focus-ring-in);
+
     outline: var(--m3e-sys-state-focus-indicator-thickness) solid var(--m3e-sys-color-secondary);
     outline-offset: var(--m3e-sys-state-focus-indicator-outer-offset);
   }
@@ -73,6 +198,8 @@
    * inset-ring focusRingShape = trackShape and m3.material.io's focused switch).
    */
   :where(.m3e-switch__input:focus-visible ~ .m3e-switch__track) {
+    --_m3e-focus-ring-transition: var(--_m3e-focus-ring-in);
+
     outline: var(--m3e-sys-state-focus-indicator-thickness) solid var(--m3e-sys-color-secondary);
     outline-offset: var(--m3e-sys-state-focus-indicator-outer-offset);
   }
@@ -82,6 +209,8 @@
    * widen the track gaps (Compose's inset-ring mode pads them by 4dp; owner decision M8 #23).
    */
   :where(.m3e-slider__input:focus-visible + .m3e-slider__handle) {
+    --_m3e-focus-ring-transition: var(--_m3e-focus-ring-in);
+
     outline: var(--m3e-sys-state-focus-indicator-thickness) solid var(--m3e-sys-color-secondary);
     outline-offset: var(--m3e-sys-state-focus-indicator-outer-offset);
   }
@@ -96,6 +225,8 @@
     .m3e-carousel__item:focus-visible,
     .m3e-carousel__item:has(> .m3e-carousel__action:focus-visible)
   )::after {
+    --_m3e-focus-ring-transition: var(--_m3e-focus-ring-in);
+
     outline: var(--m3e-sys-state-focus-indicator-thickness) solid var(--m3e-sys-color-secondary);
     outline-offset: var(--m3e-sys-state-focus-indicator-inner-offset);
   }
@@ -120,19 +251,10 @@
     .m3e-tab-panel,
     .m3e-pane-scaffold__pane
   ):focus-visible {
+    --_m3e-focus-ring-transition: var(--_m3e-focus-ring-in);
+
     outline: var(--m3e-sys-state-focus-indicator-thickness) solid var(--m3e-sys-color-secondary);
     outline-offset: var(--m3e-sys-state-focus-indicator-inner-offset);
-  }
-
-  :where(
-      .m3e-menu__item,
-      .m3e-list-item--interactive,
-      .m3e-navigation-drawer-item,
-      .m3e-tab,
-      .m3e-tab-panel,
-      .m3e-pane-scaffold__pane
-    ):focus:not(:focus-visible) {
-    outline: none;
   }
 
   /*
@@ -142,11 +264,15 @@
    */
   :where(.m3e-search__field):has(.m3e-search__input:focus-visible),
   :where(.m3e-search__result)[data-focus-visible] {
+    --_m3e-focus-ring-transition: var(--_m3e-focus-ring-in);
+
     outline: var(--m3e-sys-state-focus-indicator-thickness) solid var(--m3e-sys-color-secondary);
     outline-offset: var(--m3e-sys-state-focus-indicator-inner-offset);
   }
 
-  :where(
+  @media (forced-colors: active) {
+    /* The ring keeps the system highlight while it shrinks back. */
+    :where(
       .m3e-focus-ring,
       .m3e-button,
       .m3e-icon-button,
@@ -161,16 +287,34 @@
       .m3e-time-picker__selector,
       .m3e-time-picker__period-item,
       .m3e-time-picker__label,
+      .m3e-time-picker__handle,
       .m3e-time-scroll__field,
       .m3e-date-picker__day,
       .m3e-date-picker__year,
       .m3e-date-picker__menu-button,
-      .m3e-date-picker__menu-item
-    ):focus:not(:focus-visible) {
-    outline: none;
-  }
+      .m3e-date-picker__menu-item,
+      .m3e-card--interactive,
+      .m3e-filter-chip,
+      .m3e-segmented-button,
+      .m3e-navigation-item__state,
+      .m3e-checkbox__state,
+      .m3e-radio-button__state,
+      .m3e-switch__track,
+      .m3e-slider__handle,
+      .m3e-menu__item,
+      .m3e-list-item--interactive,
+      .m3e-navigation-drawer-item,
+      .m3e-tab,
+      .m3e-tab-panel,
+      .m3e-pane-scaffold__pane,
+      .m3e-search__field,
+      .m3e-search__result,
+      .m3e-pull-to-refresh__content
+    ),
+    :where(.m3e-carousel__item)::after {
+      outline-color: Highlight;
+    }
 
-  @media (forced-colors: active) {
     :where(
       .m3e-focus-ring,
       .m3e-button,

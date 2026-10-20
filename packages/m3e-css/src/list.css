@@ -339,6 +339,7 @@
     cursor: pointer;
     user-select: none;
     transition:
+      var(--_m3e-focus-ring-transition, outline-width, outline-offset),
       border-radius var(--m3e-comp-list-item-morph-duration) var(--m3e-comp-list-item-morph-easing),
       background-color var(--_m3e-list-item-color-transition),
       color var(--_m3e-list-item-color-transition),
@@ -348,7 +349,7 @@
 
   /* m3e-react springs the corners itself (inline style, interruptible). */
   .m3e-list-item--interactive[data-spring] {
-    transition-property: background-color, color, box-shadow;
+    transition-property: outline-width, outline-offset, background-color, color, box-shadow;
   }
 
   /*

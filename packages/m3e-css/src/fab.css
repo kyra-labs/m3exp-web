@@ -105,7 +105,9 @@
     cursor: pointer;
     user-select: none;
     -webkit-tap-highlight-color: transparent;
-    transition: box-shadow var(--_m3e-fab-shadow-duration) var(--_m3e-fab-shadow-easing);
+    transition:
+      var(--_m3e-focus-ring-transition, outline-width, outline-offset),
+      box-shadow var(--_m3e-fab-shadow-duration) var(--_m3e-fab-shadow-easing);
   }
 
   :is(.m3e-fab, .m3e-extended-fab) > .m3e-icon {
@@ -184,6 +186,7 @@
     letter-spacing: var(--_m3e-extended-fab-tracking);
     white-space: nowrap;
     transition:
+      var(--_m3e-focus-ring-transition, outline-width, outline-offset),
       box-shadow var(--_m3e-fab-shadow-duration) var(--_m3e-fab-shadow-easing),
       grid-template-columns var(--m3e-comp-fab-defaults-extended-width-duration)
         var(--m3e-comp-fab-defaults-extended-width-easing);
@@ -241,7 +244,7 @@
 
   /* m3e-react springs the width and label alpha itself (inline styles). */
   .m3e-extended-fab[data-spring] {
-    transition-property: box-shadow;
+    transition-property: outline-width, outline-offset, box-shadow;
   }
 
   .m3e-extended-fab[data-spring] > .m3e-extended-fab__label {

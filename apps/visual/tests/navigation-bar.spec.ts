@@ -113,7 +113,8 @@ test('hover and focus show on the indicator pill, from anywhere on the item', as
   await page.getByTestId('v-home').focus();
   await page.keyboard.press('Tab');
   await expect(item).toBeFocused();
-  expect(await state.evaluate((el) => getComputedStyle(el).outlineStyle)).toBe('solid');
+  // The ring grows from a zero-width outline (D19 (3)): wait for its 3dp width.
+  await expect.poll(() => state.evaluate((el) => getComputedStyle(el).outlineWidth)).toBe('3px');
   const frame = await box(page.getByTestId('short-vertical'));
   await expect(page).toHaveScreenshot('navigation-bar-focused.png', {
     clip: { x: frame.x - 8, y: frame.y - 8, width: frame.width + 16, height: frame.height + 16 },
@@ -280,18 +281,11 @@ test.describe('badges', () => {
     await page.locator('#badges-heading').evaluate((el) => {
       el.scrollIntoView({ block: 'start' });
     });
-    const frames = page.locator('section[aria-labelledby="badges-heading"] .docs-nav-frame');
-    const first = await box(frames.first());
-    const wide = await box(frames.nth(1));
-    const last = await box(frames.last());
-    await expect(page).toHaveScreenshot('navigation-bar-badges.png', {
-      clip: {
-        x: first.x - 8,
-        y: first.y - 8,
-        width: Math.max(first.width, wide.width) + 16,
-        height: last.y + last.height - first.y + 16,
-      },
-    });
+    // A locator screenshot of the section: a clip computed from the frames' fractional boxes
+    // came out a pixel taller or shorter between runs (Firefox).
+    await expect(page.locator('section[aria-labelledby="badges-heading"]')).toHaveScreenshot(
+      'navigation-bar-badges.png',
+    );
     const bar = page.getByTestId('react-badges-bar');
     const inbox = bar.locator('.m3e-navigation-item').nth(1);
     await inbox.click();

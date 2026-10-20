@@ -452,6 +452,7 @@
     user-select: none;
     -webkit-tap-highlight-color: transparent;
     transition:
+      var(--_m3e-focus-ring-transition, outline-width, outline-offset),
       border-radius var(--m3e-sys-motion-spring-fast-spatial-duration)
         var(--m3e-sys-motion-spring-fast-spatial-easing),
       background-color var(--m3e-sys-motion-spring-fast-effects-duration)
@@ -658,11 +659,13 @@
   }
 
   /* The selected label lies under the handle, which would hide its inset ring: the handle draws
-     the ring instead, outside it like the other focus rings. */
+     the ring instead, outside it like the other focus rings (motion: focus-ring.css). */
   .m3e-time-picker__dial:has(
       > .m3e-time-picker__face > .m3e-time-picker__label[aria-checked='true']:focus-visible
     )
     > .m3e-time-picker__handle {
+    --_m3e-focus-ring-transition: var(--_m3e-focus-ring-in);
+
     outline: var(--m3e-sys-state-focus-indicator-thickness) solid var(--m3e-sys-color-secondary);
     outline-offset: var(--m3e-sys-state-focus-indicator-outer-offset);
   }
@@ -971,7 +974,7 @@
   /* --- Reduced motion, forced colors ------------------------------------------------------------ */
   @media (prefers-reduced-motion: reduce) {
     .m3e-time-picker__period-item {
-      transition-property: background-color, color;
+      transition-property: outline-width, outline-offset, background-color, color;
     }
   }
 

@@ -174,11 +174,12 @@ Requires Node 22.12+ (CI uses `.nvmrc`) and pnpm via Corepack.
 
 ```sh
 pnpm install
-pnpm build          # tsup ESM + d.ts for every package, then the docs site
+pnpm build          # ESM + d.ts for every package (tsup; m3e-elements' JS: rolldown), then the docs site
 pnpm lint           # ESLint + stylelint (tokens-only rules) + Prettier
 pnpm typecheck
 pnpm test           # Vitest
 pnpm size           # size-limit budgets (REQUIREMENTS §8)
+node tools/unbundled-closure.js  # per m3e-elements entry: what a no-bundler page downloads (D24)
 pnpm test:visual    # Playwright: Chromium/Firefox/WebKit × light/dark + axe (needs `pnpm build`)
 pnpm changeset      # add a changeset to every PR that changes a package
 pnpm codegen        # regenerate m3e-tokens from the vendored androidx token files

@@ -2813,7 +2813,7 @@ export const paneScaffoldDefaults = {
   paneScaffoldMotionEasing: "linear(0, 0.0017 0.63%, 0.0064 1.26%, 0.014 1.89%, 0.0241 2.53%, 0.0365 3.16%, 0.0562 4%, 0.073 4.63%, 0.0978 5.47%, 0.1178 6.11%, 0.1462 6.95%, 0.1994 8.42%, 0.2556 9.89%, 0.4279 14.32%, 0.4832 15.79%, 0.5363 17.26%, 0.5937 18.95%, 0.6407 20.42%, 0.6844 21.89%, 0.7249 23.37%, 0.762 24.84%, 0.7958 26.32%, 0.8264 27.79%, 0.8539 29.26%, 0.8785 30.74%, 0.9031 32.42%, 0.9244 34.11%, 0.9426 35.79%, 0.958 37.47%, 0.9709 39.16%, 0.9828 41.05%, 0.9923 42.95%, 0.9996 44.84%, 1.0057 46.95%, 1.0103 49.26%, 1.0133 51.79%, 1.015 55.16%, 1.0148 59.16%, 1.0036 81.47%, 1)",
   feedMarginCompact: 16,
   feedMargin: 24,
-  feedGap: 16,
+  feedGap: 8,
   feedColumnMinWidth: 240
 } as const;
 
@@ -3362,7 +3362,7 @@ export const sideSheetDefaults = {
   sideSheetModalContainerShapeEndStart: "var(--m3e-sys-shape-corner-large-start-end-start)",
   sideSheetDetachedContainerShape: "var(--m3e-sys-shape-corner-large)",
   sideSheetDetachedMargin: 16,
-  sideSheetDividerColor: "var(--m3e-sys-color-outline)",
+  sideSheetDividerColor: "var(--m3e-sys-color-outline-variant)",
   sideSheetHeadlineColor: "var(--m3e-sys-color-on-surface-variant)",
   sideSheetHeadlineFont: "var(--m3e-sys-typescale-title-large-font)",
   sideSheetHeadlineWeight: "var(--m3e-sys-typescale-title-large-weight)",

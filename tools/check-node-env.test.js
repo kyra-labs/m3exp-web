@@ -1,6 +1,7 @@
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { build } from 'esbuild';
+import { build as rolldown } from 'rolldown';
 import { describe, expect, it } from 'vitest';
 import { nodeEnvProblems } from './check-node-env.js';
 
@@ -39,6 +40,28 @@ describe('check-node-env', () => {
         platform: 'browser',
         ...options,
       }).then((r) => r.outputFiles[0].text);
+    expect(nodeEnvProblems(await bundle({}), true)).toEqual([MISSING]);
+    expect(nodeEnvProblems(await bundle({ define }), true)).toEqual([]);
+  });
+
+  // m3e-elements' JavaScript is built by rolldown (D24), whose browser platform substitutes it too.
+  it("m3e-elements' rolldown.config.ts keeps rolldown from substituting NODE_ENV", async () => {
+    const config = readFileSync(
+      new URL('../packages/m3e-elements/rolldown.config.ts', import.meta.url),
+      'utf8',
+    );
+    const define = { 'process.env.NODE_ENV': 'process.env.NODE_ENV' };
+    expect(config).toContain(`define: { 'process.env.NODE_ENV': 'process.env.NODE_ENV' }`);
+    const bundle = async (transform) => {
+      const { output } = await rolldown({
+        input: 'warn',
+        platform: 'browser',
+        write: false,
+        transform,
+        plugins: [{ name: 'warn', resolveId: (id) => id, load: () => warn }],
+      });
+      return output[0].code;
+    };
     expect(nodeEnvProblems(await bundle({}), true)).toEqual([MISSING]);
     expect(nodeEnvProblems(await bundle({ define }), true)).toEqual([]);
   });

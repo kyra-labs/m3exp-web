@@ -26,7 +26,9 @@ export function Save() {
 }
 ```
 
-Peer dependencies: `react` and `react-dom` 18.3+ or 19.
+Peer dependencies: `react` and `react-dom` 18.3+ or 19. `@kyralabs/m3e-elements` is installed as a
+dependency for the types this package's d.ts imports from it; the m3e-elements code the components
+use is bundled into this package (it registers no custom element), so nothing loads twice.
 
 Client-side rendering only (D6): the components carry no `'use client'` directive and are not
 supported under server rendering or React Server Components. In Astro, mount them with

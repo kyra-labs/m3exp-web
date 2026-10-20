@@ -171,14 +171,15 @@ for (const id of ['static-enabled-selected', 'static-enabled-unselected']) {
 test('focus: Tab enters a group at its selected radio (or the first) and rings its state layer', async ({
   page,
 }) => {
+  // The ring grows from a zero-width outline (D19 (3)): its width, polled.
   const ringed = (label: Locator) =>
-    label.locator('.m3e-radio-button__state').evaluate((el) => getComputedStyle(el).outlineStyle);
+    label.locator('.m3e-radio-button__state').evaluate((el) => getComputedStyle(el).outlineWidth);
   // From the sample group to the next group's selected radio.
   await radio(page, 'static-group-friends').locator('input').focus();
   await page.keyboard.press('Tab');
   const selected = radio(page, 'static-enabled-selected');
   await expect(selected.locator('input')).toBeFocused();
-  expect(await ringed(selected)).toBe('solid');
+  await expect.poll(() => ringed(selected)).toBe('3px');
   await expect(page).toHaveScreenshot('radio-button-static-enabled-selected-focused.png', {
     clip: await clipAround(selected),
   });
@@ -187,7 +188,7 @@ test('focus: Tab enters a group at its selected radio (or the first) and rings i
   const first = radio(page, 'static-no-label');
   await expect(first.locator('input')).toBeFocused();
   await expect(first.locator('input')).not.toBeChecked();
-  expect(await ringed(first)).toBe('solid');
+  await expect.poll(() => ringed(first)).toBe('3px');
   await expect(page).toHaveScreenshot('radio-button-static-unselected-focused.png', {
     clip: await clipAround(first),
   });

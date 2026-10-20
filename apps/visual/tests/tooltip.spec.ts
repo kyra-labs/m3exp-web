@@ -315,6 +315,44 @@ test('a rich tooltip with an action: Tab moves into it, Escape returns to the an
   await hidden(tooltip);
 });
 
+test('a rich tooltip with an action does not trap Tab (D21 (1)): on past the anchor, Shift+Tab back', async ({
+  page,
+}) => {
+  const info = page.locator('#el-info');
+  const tooltip = tip(page, 'el-info');
+  const action = tooltip.getByRole('button', { name: 'Request access' });
+  const next = page.locator('#el-manual');
+  await page.locator('#el-end').focus();
+  await page.keyboard.press('Tab');
+  await expect(info).toBeFocused();
+  await settled(tooltip);
+  await page.keyboard.press('Tab');
+  await expect(action).toBeFocused();
+  // Shift+Tab from its first control returns to the anchor; the tooltip stays.
+  await page.keyboard.press('Shift+Tab');
+  await expect(info).toBeFocused();
+  await expect(tooltip).toBeVisible();
+  await page.keyboard.press('Tab');
+  await expect(action).toBeFocused();
+  // Tab from its last control: the stop after the anchor. Persistent: it stays shown.
+  await page.keyboard.press('Tab');
+  await expect(next).toBeFocused();
+  await expect(tooltip).toBeVisible();
+  // Not persistent: it hides once focus leaves it.
+  await page.getByTestId('el-rich').evaluate((n) => {
+    (n as HTMLElement & { persistent: boolean }).persistent = false;
+  });
+  await page.keyboard.press('Shift+Tab');
+  await expect(action).toBeFocused();
+  await page.keyboard.press('Shift+Tab');
+  await expect(info).toBeFocused();
+  await page.keyboard.press('Tab');
+  await expect(action).toBeFocused();
+  await page.keyboard.press('Tab');
+  await expect(next).toBeFocused();
+  await hidden(tooltip);
+});
+
 test('a persistent tooltip stays after the pointer leaves; a click outside hides it', async ({
   page,
 }) => {

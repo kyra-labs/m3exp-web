@@ -22,7 +22,8 @@
  *
  * - Layouts: --multi-browse, --uncontained, --hero (start-aligned), --centered-hero (Compose's
  *   keyline math, m3e-motion carousel.ts) and --full-screen (CSS only, owner decision M9 #22: one
- *   item filling the container, scrolling vertically, 16dp apart, no padding or corners).
+ *   item filling the container, scrolling vertically, 16dp apart, no padding or corners; D19 (20),
+ *   SOURCES register #83).
  * - Snapping (owner decision M9 #23): every item snaps, one at a time (scroll-snap-stop), to its
  *   keyline (Compose's KeylineSnapPosition, a scroll margin the layout writes); the uncontained
  *   layout does not snap (noSnapFlingBehavior). The fling is the browser's.
@@ -31,11 +32,12 @@
  *   interactive item's mask is its link or button (.m3e-carousel__action): state layer and ripple
  *   over the content, no elevation. Static items take the focus themselves (tabindex="0"); every
  *   item is a tab stop and the layout's arrow keys move between them (owner decision M9 #26).
- * - Reduced motion (owner decision M9 #24, m3.material.io): items keep one size and are not
- *   masked; the layout stops writing the keyline variables.
+ * - Reduced motion (owner decision M9 #24, kept by D19 (21), register #84; m3.material.io): items
+ *   keep one size (the focal one) and are not masked; the layout stops writing the keyline
+ *   variables.
  * - Spacing and padding: --m3e-comp-carousel-item-spacing and
- *   --m3e-comp-carousel-content-padding-start / -end (CarouselDefaults: 0dp; the samples and
- *   m3.material.io use 8 / 16dp). Set them on the carousel.
+ *   --m3e-comp-carousel-content-padding-start / -end (CarouselDefaults: 0dp, D19 (19), register
+ *   #82; the samples and m3.material.io use 8 / 16dp). Set them on the carousel.
  * - JS hooks (the layout): [data-keylines] while it masks; --_m3e-carousel-item-size on the root;
  *   per item --_m3e-carousel-snap (its scroll margin), --_m3e-carousel-inset (the mask's inset on
  *   each side), --_m3e-carousel-translate (physical) and --_m3e-carousel-z; [data-scrolling] while
@@ -124,21 +126,17 @@
 
   /*
    * The item draws the mask's focus ring (the mask clips its own outline): the ring follows the
-   * mask's inset and translation. Color and thickness: focus-ring.css.
+   * mask's inset and translation. Color, thickness and motion: focus-ring.css (always rendered,
+   * empty and zero-width at rest, so the ring can grow and shrink).
    */
   .m3e-carousel__item::after {
     content: '';
     position: absolute;
     inset-block: 0;
     inset-inline: var(--_m3e-carousel-inset, 0);
-    display: none;
     border-radius: var(--_m3e-carousel-shape);
     pointer-events: none;
     translate: var(--_m3e-carousel-translate, 0) 0;
-  }
-
-  .m3e-carousel__item:is(:focus-visible, :has(> .m3e-carousel__action:focus-visible))::after {
-    display: block;
   }
 
   /* Full screen: one item filling the container, scrolling vertically (owner decision M9 #22). */

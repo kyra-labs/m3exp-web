@@ -172,6 +172,7 @@
     border-end-end-radius: var(--_m3e-button-group-end);
     border-end-start-radius: var(--_m3e-button-group-start);
     transition:
+      var(--_m3e-focus-ring-transition, outline-width, outline-offset),
       --_m3e-button-group-start var(--m3e-sys-motion-spring-fast-spatial-duration)
         var(--m3e-sys-motion-spring-fast-spatial-easing),
       --_m3e-button-group-end var(--m3e-sys-motion-spring-fast-spatial-duration)
@@ -220,7 +221,7 @@
 
   /* JavaScript springs the corners (inline style); CSS keeps the color transitions. */
   .m3e-button-group--connected > .m3e-button-group__item[data-spring] {
-    transition-property: background-color, color, box-shadow;
+    transition-property: outline-width, outline-offset, background-color, color, box-shadow;
   }
 }
 

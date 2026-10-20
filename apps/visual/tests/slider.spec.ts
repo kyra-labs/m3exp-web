@@ -315,9 +315,10 @@ test('drag: the handle halves at once, the value indicator shows; no ring for a 
     expect(ib.width).toBeCloseTo(48, 1);
     expect(ib.height).toBeCloseTo(44, 1);
     expect(hb.y - (ib.y + ib.height)).toBeCloseTo(12, 1);
+    // No ring: the handle's at-rest outline has no width (D19 (3)).
     expect(
-      await s.locator('.m3e-slider__handle').evaluate((el) => getComputedStyle(el).outlineStyle),
-    ).toBe('none');
+      await s.locator('.m3e-slider__handle').evaluate((el) => getComputedStyle(el).outlineWidth),
+    ).toBe('0px');
     if (group === 'element-sliders') {
       await expect(page).toHaveScreenshot('slider-dragging.png', {
         clip: {
@@ -344,7 +345,8 @@ test('focus: Tab to the handle rings it, halves it and shows the value; the gaps
   await page.keyboard.press('Tab');
   await expect(s.locator('input')).toBeFocused();
   const handle = s.locator('.m3e-slider__handle');
-  expect(await handle.evaluate((el) => getComputedStyle(el).outlineStyle)).toBe('solid');
+  // The ring grows from a zero-width outline (D19 (3)): wait for its 3dp width.
+  await expect.poll(() => handle.evaluate((el) => getComputedStyle(el).outlineWidth)).toBe('3px');
   expect(await handleWidth(s)).toBeCloseTo(2, 1);
   await expect(s.locator('.m3e-slider__value-indicator')).toHaveText('40');
   await expect(s.locator('.m3e-slider__value-indicator')).toBeVisible();

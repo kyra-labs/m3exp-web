@@ -673,7 +673,7 @@ function m3ioRows(): DatePickerDefault[] {
       'date-state-layer-color',
       `${M}.date.unselected.hover.state-layer.color`,
       'on-surface-variant',
-      'unselected days (hover / focus / pressed); TODO(verify) SOURCES register #88',
+      'unselected days (hover / focus / pressed); D19 (25), SOURCES register #88',
     ),
     color('date-today-state-layer-color', `${M}.date.today.hover.state-layer.color`, 'primary'),
     color(
@@ -685,7 +685,7 @@ function m3ioRows(): DatePickerDefault[] {
       'date-in-range-state-layer-color',
       `${M}.range-selection.date.in-range.hover.state-layer.color`,
       'on-primary-container',
-      'days inside a range (the content is on-secondary-container); TODO(verify) SOURCES register #88',
+      'days inside a range (the content is on-secondary-container; the DB’s value is kept: D19 (25), SOURCES register #88)',
     ),
     color(
       'year-state-layer-color',
@@ -703,7 +703,7 @@ function m3ioRows(): DatePickerDefault[] {
       'docked-container-height',
       `${D}.container.height`,
       456,
-      'TODO(verify) SOURCES register #87: the Specs redline measures 460dp',
+      'the DB’s value, not the Specs redline’s 460dp (D19 (24), SOURCES register #87)',
     ),
     row(
       'docked-container-shape',
@@ -728,7 +728,7 @@ function m3ioRows(): DatePickerDefault[] {
       'docked-date-container-size',
       `${D}.date.container.width`,
       48,
-      'the date cells (40dp state layer inside); TODO(verify) SOURCES register #87',
+      'the date cells (40dp state layer inside); D19 (24), SOURCES register #87',
     ),
     color(
       'docked-outside-month-color',

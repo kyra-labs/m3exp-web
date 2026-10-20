@@ -58,6 +58,14 @@ describe('arrow (CircularArrowProgressIndicator)', () => {
     },
   );
 
+  it('the web draws at density 1: the head 2.5° behind the arc’s end (D19 (23), register #86)', () => {
+    // drawArrow rotates by endAngle - strokeWidth.toPx() (L885), degrees minus pixels.
+    const g = pullToRefreshArrowGeometry(1);
+    expect(g.strokeWidth).toBe(f(2.5));
+    expect(g.arrowRotation).toBe(f(pullToRefreshArrowValues(1).endAngle - f(2.5)));
+    expect(g).toEqual(pullToRefreshArrowGeometry(1, 1));
+  });
+
   it('draws nothing below 40% (no sweep, no arrow)', () => {
     expect(pullToRefreshArrowPaths(pullToRefreshArrowGeometry(0.4))).toEqual({
       arc: '',

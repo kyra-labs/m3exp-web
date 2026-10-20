@@ -36,7 +36,11 @@ export interface BottomSheetLayoutOptions {
 
 const SHEET = 'm3e-bottom-sheet';
 const VARS = ['--_m3e-bs-translate', '--_m3e-bs-stretch', '--_m3e-bs-scrim'] as const;
-export { BOTTOM_SHEET_DRAG_HANDLE_LABEL, BOTTOM_SHEET_PANE_TITLE } from './strings.js';
+export {
+  BOTTOM_SHEET_DRAG_HANDLE_LABEL,
+  BOTTOM_SHEET_HANDLE_KEYS,
+  BOTTOM_SHEET_PANE_TITLE,
+} from './strings.js';
 
 /** Sets (or, for null, removes) an attribute, touching the DOM only when it changes. */
 const setAttr = (el: Element, name: string, value: string | null): void => {
@@ -46,6 +50,13 @@ const setAttr = (el: Element, name: string, value: string | null): void => {
 const px = (v: number) => `${String(Math.round(v * 100) / 100)}px`;
 const round = (v: number) => String(Math.round(v * 1e4) / 1e4);
 const EDITABLE = 'input, textarea, select, [contenteditable="true"]';
+const focusVisible = (el: Element): boolean => {
+  try {
+    return el.matches(':focus-visible');
+  } catch {
+    return true;
+  }
+};
 
 /**
  * Behavior of a `.m3e-bottom-sheet` (COMPONENT_SPEC §30), shared by `<m3e-bottom-sheet>` and
@@ -67,8 +78,11 @@ const EDITABLE = 'input, textarea, select, [contenteditable="true"]';
  *   started at the release velocity, asking `onValueChange` first.
  * - Drag handle (`.m3e-bottom-sheet__handle`): a click dismisses an expanded sheet, expands a
  *   partially expanded one, else shows it (the peek variant partially expands or hides);
- *   ArrowUp / ArrowDown expand / collapse or dismiss it (Compose's accessibility actions). Its
- *   press ripple comes from the `ripple.js` entry (as for the other plain m3e-css buttons).
+ *   ArrowUp / ArrowDown expand / collapse or dismiss it (Compose's accessibility actions,
+ *   announced by the handle's `aria-keyshortcuts`, DECISIONS D20 (9)). Its press ripple comes
+ *   from the `ripple.js` entry (as for the other plain m3e-css buttons).
+ * - Focus not obscured (DECISIONS D21 (3), WCAG 2.4.11): keyboard focus on something a partially
+ *   expanded sheet clips below its visible part expands it (asking first).
  * - Modal: `showModal()` (the page inert), the page scroll locked, Tab kept inside, focus moved to
  *   the first stop (the handle) once the opening motion rests (its tooltip is placed from there)
  *   and returned to the opener after it hides (`ModalSession`);
@@ -113,6 +127,7 @@ export class BottomSheetLayout {
     }
     root.addEventListener('click', this.#onClick, { signal });
     root.addEventListener('keydown', this.#onKeyDown, { signal });
+    root.addEventListener('focusin', this.#onFocusIn, { signal });
     if (typeof ResizeObserver !== 'undefined') {
       this.#observer = new ResizeObserver((entries) => {
         for (const entry of entries) {
@@ -562,6 +577,30 @@ export class BottomSheetLayout {
     ) {
       e.preventDefault();
       this.#settleToDismiss();
+    }
+  };
+
+  /**
+   * Focus Not Obscured (DECISIONS D21 (3), WCAG 2.4.11; M11 a11y audit M1): keyboard focus on an
+   * element that a partially expanded sheet clips (it ends below the root's visible part) expands
+   * the sheet to its next anchor, Expanded, asking first like the handle; under reduced motion it
+   * jumps, as every move. The content's own scroll region, whose top shows, does not count.
+   */
+  #onFocusIn = (e: FocusEvent): void => {
+    const target = e.target as Element | null;
+    const state = this.#state;
+    if (
+      !target ||
+      target === this.#content ||
+      !this.sheet?.contains(target) ||
+      state.currentValue !== 'partially-expanded' ||
+      state.targetValue !== 'partially-expanded' ||
+      !focusVisible(target)
+    ) {
+      return;
+    }
+    if (target.getBoundingClientRect().bottom > this.root.getBoundingClientRect().bottom + 0.5) {
+      this.expand();
     }
   };
 
