@@ -1,0 +1,49 @@
+---
+// AppBarWithSearch (COMPONENT_SPEC §11, §12): navigation, the site search and the actions.
+// Without JavaScript the brand link stands where the search bar goes, the menu button jumps to
+// the navigation (placed after the page by site.css) and the theme menu is hidden.
+import { REPO_URL, SITE_NAME } from '../data/site';
+---
+
+<header class="m3e-top-app-bar m3e-top-app-bar--search site-top-bar" id="site-top-bar">
+  <div class="m3e-top-app-bar__navigation">
+    <a
+      class="m3e-icon-button m3e-icon-button--standard site-menu-button"
+      id="site-menu-button"
+      href="#site-nav"
+      aria-label="Navigation menu"
+    >
+      <span class="m3e-icon" aria-hidden="true">menu</span>
+    </a>
+  </div>
+  <a class="site-brand" href="/">{SITE_NAME}</a>
+  <m3e-search
+    id="site-search"
+    class="site-js-only"
+    variant="full-screen"
+    label="Search the docs"
+    placeholder={`Search ${SITE_NAME}`}
+    results-label="Pages"></m3e-search>
+  <div class="m3e-top-app-bar__actions">
+    <button
+      type="button"
+      class="m3e-icon-button m3e-icon-button--standard site-js-only"
+      id="site-theme-button"
+      aria-label="Color theme"
+    >
+      <span class="m3e-icon" aria-hidden="true">contrast</span>
+    </button>
+    <m3e-menu id="site-theme-menu" anchor="site-theme-button" label="Color theme">
+      <m3e-menu-item type="radio" value="system" icon="brightness_auto">System</m3e-menu-item>
+      <m3e-menu-item type="radio" value="light" icon="light_mode">Light</m3e-menu-item>
+      <m3e-menu-item type="radio" value="dark" icon="dark_mode">Dark</m3e-menu-item>
+    </m3e-menu>
+    <a
+      class="m3e-icon-button m3e-icon-button--standard"
+      href={REPO_URL}
+      aria-label="Source code on GitHub"
+    >
+      <span class="m3e-icon" aria-hidden="true">code</span>
+    </a>
+  </div>
+</header>

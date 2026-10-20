@@ -1,0 +1,46 @@
+---
+// The site navigation as a `.m3e-navigation-drawer` (COMPONENT_SPEC §15). Rendered permanent;
+// chrome.ts switches it to the modal variant below the large window size class. Without
+// JavaScript, site.css shows it after the page there.
+import { NAV, isCurrent } from '../data/nav';
+import { SITE_NAME, VERSION } from '../data/site';
+
+interface Props {
+  pathname: string;
+}
+
+const { pathname } = Astro.props;
+const current = NAV.flatMap((s) => s.links)
+  .filter((l) => isCurrent(l.href, pathname))
+  .sort((a, b) => b.href.length - a.href.length)[0]?.href;
+---
+
+<div class="m3e-navigation-drawer site-drawer" id="site-drawer">
+  <div class="m3e-navigation-drawer__scrim" aria-hidden="true"></div>
+  <nav class="m3e-navigation-drawer__sheet" id="site-nav" aria-label="Site" data-pagefind-ignore>
+    <p class="m3e-navigation-drawer__headline site-drawer__brand">
+      <a href="/">{SITE_NAME}</a>
+      <span class="site-drawer__version">v{VERSION}</span>
+    </p>
+    {
+      NAV.map((section, i) => (
+        <>
+          {i > 0 && <hr class="m3e-navigation-drawer__divider" />}
+          {section.label && <h2 class="m3e-navigation-drawer__headline">{section.label}</h2>}
+          {section.links.map((link) => (
+            <a
+              class="m3e-navigation-drawer-item"
+              href={link.href}
+              aria-current={link.href === current ? 'page' : undefined}
+            >
+              <span class="m3e-icon m3e-navigation-drawer-item__icon" aria-hidden="true">
+                {link.icon}
+              </span>
+              <span class="m3e-navigation-drawer-item__label">{link.label}</span>
+            </a>
+          ))}
+        </>
+      ))
+    }
+  </nav>
+</div>

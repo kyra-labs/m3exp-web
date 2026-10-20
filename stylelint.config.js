@@ -39,6 +39,7 @@ export default {
     'packages/m3e-tokens/fonts/**',
     'packages/m3e-codegen/vendor/**',
     'apps/visual/playwright-report/**',
+    'apps/site/src/generated/**',
   ],
   rules: {
     'import-notation': 'string',
@@ -67,7 +68,19 @@ export default {
       },
     },
     {
-      files: ['packages/*/src/**/*.css'],
+      // The site (DECISIONS D27): .site-* shell classes; the tokens-only rules below apply too.
+      files: ['apps/site/**/*.css'],
+      rules: {
+        'selector-class-pattern': [
+          '^(m3e|site)-[a-z0-9]+(-[a-z0-9]+)*(__[a-z0-9]+(-[a-z0-9]+)*)?(--[a-z0-9]+(-[a-z0-9]+)*)?$',
+          {
+            message: 'Site classes are .site-<block>[__<part>][--<modifier>] (or m3e-css classes).',
+          },
+        ],
+      },
+    },
+    {
+      files: ['packages/*/src/**/*.css', 'apps/site/src/**/*.css'],
       rules: {
         'color-no-hex': true,
         'color-named': 'never',

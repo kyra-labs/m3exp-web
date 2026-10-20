@@ -18,6 +18,10 @@ export default defineConfig(
     'packages/m3e-codegen/vendor/',
     'apps/visual/test-results/',
     'apps/visual/playwright-report/',
+    'apps/site/src/generated/',
+    'apps/site/test-results/',
+    'apps/site/playwright-report/',
+    'apps/site/lighthouse/',
   ]),
   js.configs.recommended,
   {
@@ -36,7 +40,7 @@ export default defineConfig(
     languageOptions: { globals: globals.node },
   },
   {
-    files: ['packages/*/src/**/*.{ts,tsx}'],
+    files: ['packages/*/src/**/*.{ts,tsx}', 'apps/site/src/**/*.{ts,tsx,js}'],
     languageOptions: { globals: globals.browser },
   },
   {
@@ -63,7 +67,7 @@ export default defineConfig(
   // CLAUDE.md "Tokens only". Codegen emits literal values from pinned sources, so it is exempt;
   // m3e-shapes carries pinned unit-space geometry (MaterialShapes.kt), not design values.
   {
-    files: ['packages/*/src/**/*.{ts,tsx}'],
+    files: ['packages/*/src/**/*.{ts,tsx}', 'apps/site/src/**/*.{ts,tsx}'],
     ignores: [...TEST_FILES, 'packages/m3e-codegen/**', 'packages/m3e-shapes/**'],
     plugins: { m3e },
     rules: { 'm3e/no-literal-values': 'error' },

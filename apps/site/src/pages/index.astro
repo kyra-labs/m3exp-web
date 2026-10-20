@@ -1,0 +1,205 @@
+---
+import { materialShape, polygonToPath, toSvgPathData } from '@kyralabs/m3e-shapes';
+import CodeBlock from '../components/CodeBlock.astro';
+import Island from '../components/Island.astro';
+import Site from '../layouts/Site.astro';
+import { INSTALL, PLAYGROUND_URL, REPO_URL } from '../data/site';
+import '../styles/home.css';
+
+// The static loading indicator shape (m3e-css rotates it without JavaScript).
+const softBurst = toSvgPathData(polygonToPath(materialShape('SoftBurst')));
+
+const layers = [
+  {
+    name: 'Tokens',
+    pkg: '@kyralabs/m3e-tokens',
+    icon: 'palette',
+    text: 'Color, type, shape, motion and elevation as CSS custom properties and JS objects, generated from the Compose token files. Seed themes with createTheme or the m3e-theme CLI.',
+  },
+  {
+    name: 'CSS',
+    pkg: '@kyralabs/m3e-css',
+    icon: 'css',
+    text: 'Every component as framework-free classes. No JavaScript: buttons, cards, lists, chips, text fields and app bars render from markup alone.',
+  },
+  {
+    name: 'Custom elements',
+    pkg: '@kyralabs/m3e-elements',
+    icon: 'widgets',
+    text: 'Zero-dependency elements for the behavior CSS cannot do: menus, sheets, pickers, morphing shapes and springs. One small entry per element.',
+  },
+  {
+    name: 'React',
+    pkg: '@kyralabs/m3e-react',
+    icon: 'code_blocks',
+    text: 'React components on React Aria for behavior and accessibility and Motion for springs, rendering the same DOM as the elements and classes.',
+  },
+];
+
+const pillars = [
+  {
+    title: 'Motion that feels physical',
+    text: 'Expressive motion is built on springs. Spatial springs move position, size and shape and may overshoot; effects springs fade color and opacity without bouncing. Every component here runs the stiffness and damping Compose uses, interruptibly.',
+  },
+  {
+    title: 'Shapes that morph',
+    text: 'The 35 Material shapes, from Cookie to Soft Burst, are rounded polygons that morph into each other. The loading indicator, press states and selection all animate between shapes, with the graphics-shapes math ported line for line.',
+  },
+  {
+    title: 'Emphasis in type',
+    text: 'An emphasized style pairs with each of the 15 type styles to highlight headlines, actions and selected states, set in Google Sans Flex, the variable typeface M3 Expressive uses.',
+  },
+  {
+    title: 'New components',
+    text: 'Button groups, split buttons, the FAB menu, the loading indicator, wavy progress, floating and docked toolbars, flexible app bars, the short navigation bar and the wide navigation rail join the updated Material 3 set.',
+  },
+];
+---
+
+<Site
+  title="Material 3 Expressive for the web"
+  description="Material 3 Expressive for the web: tokens, CSS classes, zero-dependency custom elements and React components, matched to Jetpack Compose Material3."
+  wide
+>
+  <section class="site-hero" aria-labelledby="hero-title">
+    <div class="site-hero__intro">
+      <h1 id="hero-title">Material 3 Expressive for the web</h1>
+      <p class="site-lead">
+        Springs, shape morphing, emphasized type and the new expressive components, as design
+        tokens, CSS classes, custom elements and React components. Value for value, they follow
+        Jetpack Compose Material3 1.5.0-beta01.
+      </p>
+      <CodeBlock code={INSTALL} lang="sh" label="install command" />
+      <div class="site-hero__actions">
+        <a class="m3e-button m3e-button--filled m3e-button--size-m" href={REPO_URL}>
+          <span class="m3e-icon" aria-hidden="true">code</span>
+          Read the source
+        </a>
+        <a class="m3e-button m3e-button--tonal m3e-button--size-m" href={PLAYGROUND_URL}>
+          <span class="m3e-icon" aria-hidden="true">science</span>
+          Open the playground
+        </a>
+      </div>
+    </div>
+
+    <Island name="Hero" class="site-hero__demo">
+      <div class="site-hero-demo">
+        <article class="m3e-card m3e-card--filled site-hero-demo__controls">
+          <h2 class="site-hero-demo__title">Theme this site</h2>
+          <p class="site-hero-demo__hint">
+            A seed color and a scheme variant generate every color role with Material Color
+            Utilities. Turn on JavaScript to try it here.
+          </p>
+        </article>
+        <article class="m3e-card m3e-card--outlined site-hero-demo__stage">
+          <div class="site-hero-demo__row">
+            <div class="m3e-loading-indicator m3e-loading-indicator--contained" role="progressbar" aria-label="Loading example">
+              <svg class="m3e-loading-indicator__shape" viewBox="0 0 1 1" aria-hidden="true">
+                <path d={softBurst}></path>
+              </svg>
+            </div>
+            <button type="button" class="m3e-icon-button m3e-icon-button--tonal m3e-icon-button--size-m" aria-label="Like" aria-pressed="false">
+              <span class="m3e-icon" aria-hidden="true">favorite</span>
+            </button>
+            <button type="button" class="m3e-button m3e-button--filled m3e-button--size-m">
+              <span class="m3e-icon" aria-hidden="true">bolt</span>
+              Expressive
+            </button>
+          </div>
+          <div
+            class="m3e-linear-progress"
+            role="progressbar"
+            aria-label="Progress example"
+            aria-valuemin="0"
+            aria-valuemax="100"
+            aria-valuenow="60"
+            style="--m3e-comp-progress-indicator-value: 0.6"
+          >
+            <span class="m3e-linear-progress__track"></span>
+            <span class="m3e-linear-progress__indicator"></span>
+            <span class="m3e-linear-progress__stop"></span>
+          </div>
+          <div class="site-hero-demo__row">
+            <button type="button" class="m3e-icon-button m3e-icon-button--outlined" aria-label="Less progress">
+              <span class="m3e-icon" aria-hidden="true">remove</span>
+            </button>
+            <button type="button" class="m3e-icon-button m3e-icon-button--outlined" aria-label="More progress">
+              <span class="m3e-icon" aria-hidden="true">add</span>
+            </button>
+            <button type="button" class="m3e-fab" aria-label="Share">
+              <span class="m3e-icon" aria-hidden="true">share</span>
+            </button>
+          </div>
+        </article>
+      </div>
+    </Island>
+  </section>
+
+  <section aria-labelledby="what-title">
+    <h2 id="what-title">What is Material 3 Expressive?</h2>
+    <p>
+      Material 3 Expressive is Google's 2025 update to Material Design 3. It keeps Material 3's
+      color roles, type scale and components and adds motion, shape and emphasis that make
+      interfaces easier to scan and more engaging to use, along with a set of new and updated
+      components. m3exp-web brings it to the web, matched to the Compose implementation.
+    </p>
+    <ul class="site-pillars">
+      {
+        pillars.map((p) => (
+          <li class="m3e-card m3e-card--filled site-pillar">
+            <h3>{p.title}</h3>
+            <p>{p.text}</p>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+
+  <section aria-labelledby="layers-title">
+    <h2 id="layers-title">Four layers, one DOM</h2>
+    <p>
+      Use the layer that fits your stack. The CSS classes, the custom elements and the React
+      components render the same markup, so they mix on one page and share one theme.
+    </p>
+    <ul class="site-layers">
+      {
+        layers.map((layer) => (
+          <li class="m3e-card m3e-card--outlined site-layer">
+            <span class="m3e-icon site-layer__icon" aria-hidden="true">
+              {layer.icon}
+            </span>
+            <h3>{layer.name}</h3>
+            <p>
+              <code>{layer.pkg}</code>
+            </p>
+            <p>{layer.text}</p>
+          </li>
+        ))
+      }
+    </ul>
+    <p>
+      The umbrella package <code>@kyralabs/m3exp-web</code> re-exports all four.
+    </p>
+  </section>
+
+  <section aria-labelledby="fidelity-title">
+    <h2 id="fidelity-title">Built from the source</h2>
+    <ul>
+      <li>
+        Tokens are generated from the pinned androidx Compose Material3 token files, with a parity
+        table from every Kotlin token to the CSS variable it becomes.
+      </li>
+      <li>
+        Spring, shape, carousel and picker math is ported from Kotlin and checked against
+        reference output from the original sources, run on the JVM in CI.
+      </li>
+      <li>
+        Every component is screenshot-tested in Chromium, Firefox and WebKit, light and dark, and
+        checked with axe for accessibility.
+      </li>
+      <li>
+        Size budgets keep pages light: one custom element entry stays within 8 kB, min and brotli.
+      </li>
+    </ul>
+  </section>
+</Site>
