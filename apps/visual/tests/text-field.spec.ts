@@ -114,7 +114,7 @@ test.beforeEach(async ({ page }) => {
   await page.goto('/components/text-field/');
   await page.evaluate(() => document.fonts.ready);
   await expect(page.getByTestId('react-text-fields').locator('.m3e-text-field')).toHaveCount(6);
-  await expect(page.locator('m3e-text-field > .m3e-text-field')).toHaveCount(3);
+  await expect(page.locator('m3e-text-field > .m3e-text-field')).toHaveCount(5);
 });
 
 test('has no axe violations', async ({ page }) => {

@@ -1,4 +1,5 @@
 ---
+import DeprecationBanner from '../../components/DeprecationBanner.astro';
 import DockedToolbarPlayground from '../../islands/DockedToolbarPlayground.tsx';
 import Base from '../../layouts/Base.astro';
 
@@ -128,13 +129,42 @@ const rows = Array.from({ length: 30 }, (_, i) => `Row ${String(i + 1)}`);
         }
       </m3e-docked-toolbar>
     </div>
+    <p>
+      <code>color-style="vibrant"</code> (primary container), without a scroll behavior:
+    </p>
+    <div class="docs-nav-frame">
+      <m3e-docked-toolbar
+        label="Element vibrant actions"
+        color-style="vibrant"
+        data-testid="element-vibrant-toolbar"
+      >
+        {
+          items.map((item) => (
+            <button
+              type="button"
+              class={
+                item.filled
+                  ? 'm3e-icon-button m3e-icon-button--filled m3e-icon-button--width-wide'
+                  : 'm3e-icon-button'
+              }
+              aria-label={item.label}
+            >
+              <span class="m3e-icon" aria-hidden="true">
+                {item.icon}
+              </span>
+            </button>
+          ))
+        }
+      </m3e-docked-toolbar>
+    </div>
   </section>
 
   <section aria-labelledby="react-heading">
     <h2 id="react-heading">React</h2>
     <p>
-      <code>&lt;DockedToolbar arrangement scrollBehavior="exit-always" scrollTarget&gt;</code> over a
-      scrolling region, with the arrangement switchable. <code>scrollBehavior="exitAlways"</code> is
+      <code>&lt;DockedToolbar arrangement colorStyle scrollBehavior="exit-always" scrollTarget&gt;</code>{' '}
+      over a scrolling region, with the arrangement switchable, then a static{' '}
+      <code>colorStyle="vibrant"</code> toolbar. <code>scrollBehavior="exitAlways"</code> is
       the deprecated spelling (since 1.8, removed in 2.0; it warns once in development).
     </p>
     <DockedToolbarPlayground client:only="react" kind="docked" />
@@ -142,10 +172,12 @@ const rows = Array.from({ length: 30 }, (_, i) => `Row ${String(i + 1)}`);
 
   <section aria-labelledby="legacy-heading" data-deprecated>
     <h2 id="legacy-heading">Bottom app bar (deprecated)</h2>
-    <p class="docs-deprecated" role="note">
-      Deprecated (DECISIONS D4): the legacy <code>BottomAppBar</code> ships until 2.0 for migration and
-      gets no new features. Use the docked toolbar.
-    </p>
+    <DeprecationBanner
+      name="the legacy bottom app bar"
+      apis={['BottomAppBar', '.m3e-bottom-app-bar']}
+      replacement="the docked toolbar"
+      href="#css-heading"
+    />
     <p>
       Compose <code>BottomAppBar</code> with actions and a FAB: 80dp tall, actions from the start, the
       FAB 8dp below the top and 16dp from the end, colored secondary container with no shadow as in

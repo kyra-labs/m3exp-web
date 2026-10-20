@@ -12,7 +12,7 @@ const text = (label: string, testid: string) =>
   <link rel="stylesheet" href="/icons/docs-icons.css" slot="head" />
   <h1>Time pickers</h1>
   <p>
-    Time pickers (COMPONENT_SPEC §28) are Compose's <code>TimePicker</code> (a clock dial), <code>TimeInput</code> (two text fields) and the expressive <code>TimeScroll</code> (two infinite wheels), with <code>TimePickerDialog</code> and <code>VibrantTimePickerDialog</code> around them. The dial and AM/PM toggle buttons follow Compose's
+    Time pickers (COMPONENT_SPEC §28) are Compose's <code>TimePicker</code> (a clock dial), <code>TimeInput</code> (two text fields) and the expressive <code>TimeScroll</code> (two infinite wheels), with <code>TimePickerDialog</code> and <code>VibrantTimePickerDialog</code> around them. The dial and AM/PM toggle buttons follow Compose's{' '}
     <code>isUpdatedTimepickerToggleEnabled</code> design at the pinned version: the period is a pair of toggle buttons in primary container, bold when selected. The vibrant variants are the expressive overloads (larger, rounder fields; a filled field in place of the outlined one).
   </p>
   <p>
@@ -120,7 +120,7 @@ const text = (label: string, testid: string) =>
   <section aria-labelledby="react-heading">
     <h2 id="react-heading">React</h2>
     <p>
-      <code>&lt;TimePicker value defaultValue onChange is24Hour selection onSelectionChange vibrant layout locale labels&gt;</code>, <code>&lt;TimeInput vibrant uncontained onModeToggle&gt;</code> and <code>&lt;TimeScroll uncontained onModeToggle&gt;</code> render the same DOM as the elements (<code>onModeToggle(next)</code> gets the mode the toggle asks for: <code>'scroll'</code> from the input, <code>'input'</code> from the wheels).
+      <code>&lt;TimePicker value defaultValue onChange is24Hour selection onSelectionChange vibrant layout locale labels&gt;</code>, <code>&lt;TimeInput vibrant uncontained onModeToggle&gt;</code> and <code>&lt;TimeScroll uncontained onModeToggle&gt;</code> render the same DOM as the elements (<code>onModeToggle(next)</code> gets the mode the toggle asks for: <code>'scroll'</code> from the input, <code>'input'</code> from the wheels).{' '}
       <code>&lt;TimePickerDialog title modeToggleButton dismissButton confirmButton&gt;</code> and <code>&lt;VibrantTimePickerDialog&gt;</code> wrap a picker in <code>&lt;BasicAlertDialog&gt;</code>; <code>&lt;TimePickerModeToggle displayMode scroll onDisplayModeChange&gt;</code> (<code>onDisplayModeChange(next)</code> gets the mode to show) is the icon button with its tooltip that switches between the picker and the
       input (Compose's switchable sample).
     </p>

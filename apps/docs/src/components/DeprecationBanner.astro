@@ -1,0 +1,37 @@
+---
+// The D4 deprecation note every deprecated component's docs page carries (DECISIONS D4: shipped
+// until 2.0, no new features). One text pattern; the default slot adds page-specific notes.
+// Keep it inside the page's `[data-deprecated]` section: the visual specs look for
+// `[data-deprecated] .docs-deprecated`.
+interface Props {
+  /** What is deprecated, in running text, e.g. "the legacy navigation rail". */
+  name: string;
+  /** Its API names, shown as code after the name. */
+  apis?: string[];
+  /** The replacement, in running text, e.g. "the wide navigation rail". */
+  replacement: string;
+  /** The replacement's docs (a page or an anchor on this page). */
+  href: string;
+}
+
+const { name, apis = [], replacement, href } = Astro.props;
+const hasNote = Astro.slots.has('default');
+---
+
+<p class="docs-deprecated" role="note">
+  Deprecated (DECISIONS D4): {name}{
+    apis.length > 0 && (
+      <>
+        {' ('}
+        {apis.map((api, i) => (
+          <>
+            {i > 0 && ', '}
+            <code>{api}</code>
+          </>
+        ))}
+        {')'}
+      </>
+    )
+  }{' '}ships until 2.0 for migration and gets no new features; React warns once in development.
+  Use <a href={href}>{replacement}</a>.{hasNote && ' '}<slot />
+</p>

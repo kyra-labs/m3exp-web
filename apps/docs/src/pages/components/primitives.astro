@@ -1,4 +1,5 @@
 ---
+import PrimitivesPlayground from '../../islands/PrimitivesPlayground.tsx';
 import Base from '../../layouts/Base.astro';
 
 const containers = [
@@ -10,6 +11,7 @@ const containers = [
   ['container-highest', 'm3e-surface--container-highest'],
 ] as const;
 const levels = [0, 1, 2, 3, 4, 5] as const;
+const shapes = ['none', 'extra-small', 'small', 'medium', 'large', 'extra-large', 'full'] as const;
 const icons = ['home', 'search', 'favorite', 'settings', 'star', 'delete'] as const;
 ---
 
@@ -23,7 +25,10 @@ const icons = ['home', 'search', 'favorite', 'settings', 'star', 'delete'] as co
 
   <section aria-labelledby="surface-heading">
     <h2 id="surface-heading">Surface</h2>
-    <p>Tonal containers (no surface tint) and the six elevation levels.</p>
+    <p>
+      Tonal containers (no surface tint), <code>--variant</code> (surface variant colors), the six
+      elevation levels and the corner shapes (<code>--shape-none</code> to <code>--shape-full</code>).
+    </p>
     <ul class="docs-tiles">
       {
         containers.map(([label, modifier]) => (
@@ -32,6 +37,9 @@ const icons = ['home', 'search', 'favorite', 'settings', 'star', 'delete'] as co
           </li>
         ))
       }
+      <li class="docs-tile m3e-surface m3e-surface--variant m3e-surface--shape-medium" data-testid="surface-variant">
+        <code>variant</code>
+      </li>
     </ul>
     <ul class="docs-tiles">
       {
@@ -44,12 +52,21 @@ const icons = ['home', 'search', 'favorite', 'settings', 'star', 'delete'] as co
         ))
       }
     </ul>
+    <ul class="docs-tiles" data-testid="surface-shapes">
+      {
+        shapes.map((shape) => (
+          <li class={`docs-tile m3e-surface m3e-surface--container-highest m3e-surface--shape-${shape}`}>
+            <code>{shape}</code>
+          </li>
+        ))
+      }
+    </ul>
   </section>
 
   <section aria-labelledby="icon-heading">
     <h2 id="icon-heading">Icon</h2>
     <p>
-      <code>&lt;m3e-icon&gt;</code>, React <code>&lt;Icon&gt;</code> and
+      <code>&lt;m3e-icon&gt;</code>, React <code>&lt;Icon&gt;</code> and{' '}
       <code>.m3e-icon</code> render the same DOM. Rows: default, <code>fill</code>, weight 700, grade
       −25 with optical size 20.
     </p>
@@ -141,6 +158,18 @@ const icons = ['home', 'search', 'favorite', 'settings', 'star', 'delete'] as co
         </li>
       </ul>
     </div>
+  </section>
+
+  <section aria-labelledby="react-heading">
+    <h2 id="react-heading">React</h2>
+    <p>
+      <code>&lt;Icon name fill weight grade opticalSize label&gt;</code> and{' '}
+      <code>&lt;Surface container variant elevation shape&gt;</code> render the same DOM as the rows
+      above. <code>useStateLayer(hostRef?)</code> drives the ripple on your own element: spread its{' '}
+      <code>stateLayerProps</code> on the host and pass <code>onPressStart</code> /{' '}
+      <code>onPressEnd</code> to React Aria's <code>usePress</code> or <code>useButton</code>.
+    </p>
+    <PrimitivesPlayground client:only="react" />
   </section>
 </Base>
 

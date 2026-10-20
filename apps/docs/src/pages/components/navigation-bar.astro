@@ -1,4 +1,5 @@
 ---
+import DeprecationBanner from '../../components/DeprecationBanner.astro';
 import NavItems, { type Item } from '../../components/NavItems.astro';
 import NavigationPlayground from '../../islands/NavigationPlayground.tsx';
 import Base from '../../layouts/Base.astro';
@@ -73,7 +74,7 @@ const badged: Item[] = [
   <section aria-labelledby="element-heading">
     <h2 id="element-heading">Element</h2>
     <p>
-      <code>&lt;m3e-short-navigation-bar&gt;</code> with <code>&lt;m3e-navigation-item&gt;</code>
+      <code>&lt;m3e-short-navigation-bar&gt;</code> with <code>&lt;m3e-navigation-item&gt;</code>{' '}
       children renders the same contract; a press moves <code>selected</code> and fires a
       cancelable <code>selection-change</code>.
     </p>
@@ -123,10 +124,12 @@ const badged: Item[] = [
 
   <section aria-labelledby="legacy-heading" data-deprecated>
     <h2 id="legacy-heading">Navigation bar (deprecated)</h2>
-    <p class="docs-deprecated" role="note">
-      Deprecated (DECISIONS D4): the legacy <code>NavigationBar</code> ships until 2.0 for
-      migration and gets no new features (no element). Use the short navigation bar.
-    </p>
+    <DeprecationBanner
+      name="the legacy navigation bar"
+      apis={['NavigationBar', '.m3e-navigation-bar']}
+      replacement="the short navigation bar"
+      href="#vertical-heading">It has no element.</DeprecationBanner
+    >
     <div class="docs-nav-frame">
       <nav class="m3e-navigation-bar" aria-label="Legacy example" data-testid="legacy-bar">
         <NavItems items={items} prefix="l" />

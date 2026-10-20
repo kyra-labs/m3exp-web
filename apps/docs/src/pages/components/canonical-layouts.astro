@@ -1,5 +1,7 @@
 ---
 import CanonicalLayoutsPlayground from '../../islands/CanonicalLayoutsPlayground.tsx';
+import FeedLayoutPlayground from '../../islands/FeedLayoutPlayground.tsx';
+import SupportingPanePlayground from '../../islands/SupportingPanePlayground.tsx';
 import Base from '../../layouts/Base.astro';
 
 // Frame widths, one per window size class (compact, medium, expanded, large, extra-large).
@@ -21,7 +23,7 @@ const feed = ['Mountains', 'Coast', 'Forest', 'Desert', 'City', 'Lakes', 'Island
 <Base title="Canonical layouts">
   <h1>Canonical layouts</h1>
   <p>
-    List-detail and supporting pane (COMPONENT_SPEC §16a; Compose <code>ListDetailPaneScaffold</code>
+    List-detail and supporting pane (COMPONENT_SPEC §16a; Compose <code>ListDetailPaneScaffold</code>{' '}
     and <code>SupportingPaneScaffold</code>) and the feed (m3.material.io). Each layout sizes itself by
     its own width (a container query on <code>.m3e-layout</code>), so it adapts inside a navigation
     suite's content area or any pane. Pick a frame width below, or resize the window.
@@ -207,6 +209,16 @@ const feed = ['Mountains', 'Coast', 'Forest', 'Desert', 'City', 'Lakes', 'Island
         <CanonicalLayoutsPlayground client:only="react" />
       </div>
     </div>
+    <p>
+      <code>useSupportingPaneScaffoldNavigator()</code> and{' '}
+      <code>&lt;SupportingPaneScaffold navigator mainPane supportingPane extraPane&gt;</code>: the
+      supporting pane demo above, in React.
+    </p>
+    <div class="docs-layout-scroll">
+      <div class="docs-layout-frame" data-testid="react-supporting-frame" style="inline-size: 1000px">
+        <SupportingPanePlayground client:only="react" />
+      </div>
+    </div>
   </section>
 
   <section aria-labelledby="suite-heading">
@@ -334,6 +346,12 @@ const feed = ['Mountains', 'Coast', 'Forest', 'Desert', 'City', 'Lakes', 'Island
             }
           </div>
         </div>
+      </div>
+    </div>
+    <p>The same feed from React, <code>&lt;FeedLayout&gt;</code> with the cards as children:</p>
+    <div class="docs-layout-scroll">
+      <div class="docs-layout-frame docs-layout-frame--feed" data-testid="react-feed-frame" style="inline-size: 1000px">
+        <FeedLayoutPlayground client:only="react" />
       </div>
     </div>
   </section>

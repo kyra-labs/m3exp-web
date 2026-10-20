@@ -144,6 +144,42 @@ const items: Item[] = [
     </div>
   </section>
 
+  <section aria-labelledby="alignment-heading">
+    <h2 id="alignment-heading">Primary action alignment</h2>
+    <p>
+      With a bar the primary action floats above it at the end. <code>primary-action-alignment</code>{' '}
+      (element) / <code>primaryActionAlignment</code> (React), or the m3e-css modifiers{' '}
+      <code>--primary-action-start</code> and <code>--primary-action-center</code>, move it to the
+      start or the center (Compose's <code>primaryActionContentHorizontalAlignment</code>). Static
+      bars here.
+    </p>
+    <div class="docs-suite-alignments">
+      {
+        (['start', 'center'] as const).map((alignment) => (
+          <div class="docs-suite-frame docs-suite-frame--bar" data-testid={`static-primary-action-${alignment}`}>
+            <div
+              class={`m3e-navigation-suite m3e-navigation-suite--bar m3e-navigation-suite--primary-action-${alignment}`}
+            >
+              <nav class="m3e-short-navigation-bar" aria-label={`Primary action at the ${alignment}`}>
+                <NavItems items={items} prefix={`pa-${alignment}`} />
+              </nav>
+              <div class="m3e-navigation-suite__primary-action">
+                <button type="button" class="m3e-fab" aria-label={`Compose (${alignment})`}>
+                  <span class="m3e-icon" aria-hidden="true">
+                    edit
+                  </span>
+                </button>
+              </div>
+              <div class="m3e-navigation-suite__content docs-suite-content">
+                <p>FAB at the {alignment}.</p>
+              </div>
+            </div>
+          </div>
+        ))
+      }
+    </div>
+  </section>
+
   <section aria-labelledby="sources-heading">
     <h2 id="sources-heading">Sources</h2>
     <p>

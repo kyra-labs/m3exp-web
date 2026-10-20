@@ -492,6 +492,18 @@ button.docs-tile {
   outline: var(--m3e-comp-divider-thickness) solid var(--m3e-sys-color-outline-variant);
 }
 
+/* Primary action alignment: two phone-width bar suites side by side. */
+.docs-suite-alignments {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--m3e-sys-space-300);
+}
+
+.docs-suite-frame--bar {
+  inline-size: min(100%, calc(var(--m3e-sys-space-900) * 5));
+  block-size: calc(var(--m3e-sys-space-900) * 4);
+}
+
 .docs-suite-content {
   padding: var(--m3e-sys-space-200);
 }
@@ -679,6 +691,10 @@ button.docs-tile {
 
 .docs-fab-menu-frame--start {
   justify-content: flex-start;
+}
+
+.docs-fab-menu-frame--center {
+  justify-content: center;
 }
 
 .docs-fab-menu-frame--tall {

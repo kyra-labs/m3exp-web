@@ -139,8 +139,9 @@ test('focus ring on the indicator pill', async ({ page }) => {
   expect(await part(item, 'state').evaluate((el) => getComputedStyle(el).outlineStyle)).toBe(
     'solid',
   );
-  const frame = await box(page.getByTestId('rail-collapsed'));
-  await expect(page).toHaveScreenshot('navigation-rail-focused.png', { clip: frame });
+  // A locator screenshot: a clip measured from the frame's box was cropped wherever the frame
+  // reached past the viewport, so its height followed the text above it.
+  await expect(page.getByTestId('rail-collapsed')).toHaveScreenshot('navigation-rail-focused.png');
 });
 
 test.describe('forced colors', () => {
