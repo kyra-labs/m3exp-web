@@ -236,7 +236,7 @@ function dsdbDefaults(): ButtonGroupDefault[] {
         cite: BUTTON_GROUP_DSDB,
         ...(size === 'xsmall' && field === 'inner-corner.corner-size'
           ? {
-              note: 'TODO(verify) SOURCES #63: the m3.material.io Measurements caption says XS 4dp; the token DB says corner-value.small (8dp)',
+              note: 'SOURCES #63: Compose renders ConnectedButtonGroupSmallTokens.InnerCornerCornerSize (8dp) at every size (ButtonGroup.kt L195–245) and the token DB agrees; only the m3.material.io Measurements caption says XS 4dp',
             }
           : {}),
       });

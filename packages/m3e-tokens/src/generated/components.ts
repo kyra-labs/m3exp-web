@@ -2400,7 +2400,7 @@ export const navigationDrawerDefaults = {
   navigationDrawerHeadlineHeight: 56,
   navigationDrawerHeadlinePaddingInline: 28,
   navigationDrawerDividerInset: 28,
-  navigationDrawerDividerColor: "var(--m3e-sys-color-outline)"
+  navigationDrawerDividerColor: "var(--m3e-sys-color-outline-variant)"
 } as const;
 
 /** NavigationRailBaselineItemTokens */

@@ -36,7 +36,7 @@
     --m3e-comp-navigation-drawer-headline-height: 56px;
     --m3e-comp-navigation-drawer-headline-padding-inline: 28px;
     --m3e-comp-navigation-drawer-divider-inset: 28px;
-    --m3e-comp-navigation-drawer-divider-color: var(--m3e-sys-color-outline);
+    --m3e-comp-navigation-drawer-divider-color: var(--m3e-sys-color-outline-variant);
   }
   @media (prefers-reduced-motion: reduce) {
     :root {

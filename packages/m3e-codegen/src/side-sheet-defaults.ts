@@ -14,7 +14,7 @@
 //   (DrawerDefaults.scrimColor) at the open fraction;
 // - the spacing between the action buttons, which m3.material.io does not give, is AlertDialog's
 //   (ButtonsMainAxisSpacing; register #81).
-// Every m3.material.io value is TODO(verify) (D8; SOURCES register #48 and #78–#81). The Compose
+// The m3.material.io values that need an owner decision are SOURCES register #78–#81 (D8). The Compose
 // literals are read with targeted regexes and cited by line; CHECKS throw when the wiring
 // side-sheet.css and the side sheet layout assume changes upstream.
 import {

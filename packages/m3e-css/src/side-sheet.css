@@ -1,9 +1,9 @@
 /*
  * Side sheets (COMPONENT_SPEC §31; D8: Compose has no side sheet, m3.material.io is the only
- * reference, every value TODO(verify) in SOURCES). The standard sheet sits at the end of a flex
- * row and narrows the content beside it; the modal sheet is a dialog at the window's end edge over
- * a scrim. Static sheets need no JavaScript; the m3e-elements side sheet layout (<m3e-side-sheet>,
- * m3e-react's <SideSheet>) animates them and runs the modal window.
+ * reference; the values it leaves open are SOURCES register #78–#81). The standard sheet sits at
+ * the end of a flex row and narrows the content beside it; the modal sheet is a dialog at the
+ * window's end edge over a scrim. Static sheets need no JavaScript; the m3e-elements side sheet
+ * layout (<m3e-side-sheet>, m3e-react's <SideSheet>) animates them and runs the modal window.
  *
  *   <div style="display: flex">                                                    (standard)
  *     <main style="flex: 1; min-inline-size: 0">…</main>

@@ -6,7 +6,7 @@
 //
 // Plus the feed canonical layout, which has no Compose scaffold: its margins from m3.material.io
 // (source priority 2, CLAUDE.md) and two values m3.material.io does not state (TODO(verify),
-// SOURCES.md register).
+// SOURCES.md register #65 and #66).
 import { springToLinear } from '@kyralabs/m3e-motion';
 
 export interface PaneScaffoldDefault {
