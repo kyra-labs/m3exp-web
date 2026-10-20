@@ -1,0 +1,69 @@
+<div style="display: grid; gap: var(--m3e-sys-space-200); inline-size: 100%">
+  <m3e-search
+    variant="full-screen"
+    label="Search fruit (full-screen)"
+    placeholder="Search fruit (full-screen)"
+  >
+    <m3e-search-result value="apple" icon="history">Apple</m3e-search-result>
+    <m3e-search-result value="apricot" icon="history">Apricot</m3e-search-result>
+    <m3e-search-result value="banana" icon="history">Banana</m3e-search-result>
+    <m3e-search-result value="blueberry" icon="history">Blueberry</m3e-search-result>
+    <m3e-search-result value="cherry" icon="history">Cherry</m3e-search-result>
+    <m3e-search-result value="grape" icon="history">Grape</m3e-search-result>
+    <m3e-search-result value="kiwi" icon="history">Kiwi</m3e-search-result>
+    <m3e-search-result value="mango" icon="history">Mango</m3e-search-result>
+  </m3e-search>
+  <m3e-search
+    variant="full-screen-contained"
+    label="Search fruit (full-screen-contained)"
+    placeholder="Search fruit (full-screen-contained)"
+  >
+    <m3e-search-result value="apple" icon="history">Apple</m3e-search-result>
+    <m3e-search-result value="apricot" icon="history">Apricot</m3e-search-result>
+    <m3e-search-result value="banana" icon="history">Banana</m3e-search-result>
+    <m3e-search-result value="blueberry" icon="history">Blueberry</m3e-search-result>
+    <m3e-search-result value="cherry" icon="history">Cherry</m3e-search-result>
+    <m3e-search-result value="grape" icon="history">Grape</m3e-search-result>
+    <m3e-search-result value="kiwi" icon="history">Kiwi</m3e-search-result>
+    <m3e-search-result value="mango" icon="history">Mango</m3e-search-result>
+  </m3e-search>
+  <m3e-search variant="docked" label="Search fruit (docked)" placeholder="Search fruit (docked)">
+    <m3e-search-result value="apple" icon="history">Apple</m3e-search-result>
+    <m3e-search-result value="apricot" icon="history">Apricot</m3e-search-result>
+    <m3e-search-result value="banana" icon="history">Banana</m3e-search-result>
+    <m3e-search-result value="blueberry" icon="history">Blueberry</m3e-search-result>
+    <m3e-search-result value="cherry" icon="history">Cherry</m3e-search-result>
+    <m3e-search-result value="grape" icon="history">Grape</m3e-search-result>
+    <m3e-search-result value="kiwi" icon="history">Kiwi</m3e-search-result>
+    <m3e-search-result value="mango" icon="history">Mango</m3e-search-result>
+  </m3e-search>
+  <m3e-search
+    variant="docked-with-gap"
+    label="Search fruit (docked-with-gap)"
+    placeholder="Search fruit (docked-with-gap)"
+  >
+    <m3e-search-result value="apple" icon="history">Apple</m3e-search-result>
+    <m3e-search-result value="apricot" icon="history">Apricot</m3e-search-result>
+    <m3e-search-result value="banana" icon="history">Banana</m3e-search-result>
+    <m3e-search-result value="blueberry" icon="history">Blueberry</m3e-search-result>
+    <m3e-search-result value="cherry" icon="history">Cherry</m3e-search-result>
+    <m3e-search-result value="grape" icon="history">Grape</m3e-search-result>
+    <m3e-search-result value="kiwi" icon="history">Kiwi</m3e-search-result>
+    <m3e-search-result value="mango" icon="history">Mango</m3e-search-result>
+  </m3e-search>
+</div>
+<script>
+  // Filter the suggestions as the query changes: the search renders its result children.
+  for (const search of document.querySelectorAll('m3e-search')) {
+    const all = [...search.querySelectorAll('m3e-search-result')];
+    search.addEventListener('input', (event) => {
+      if (!(event.target instanceof HTMLInputElement)) return;
+      const query = event.target.value.trim().toLowerCase();
+      for (const result of all) result.remove();
+      search.append(...all.filter((r) => r.textContent.toLowerCase().includes(query)));
+    });
+    search.addEventListener('select', (event) => {
+      console.log('selected', event.detail.value);
+    });
+  }
+</script>

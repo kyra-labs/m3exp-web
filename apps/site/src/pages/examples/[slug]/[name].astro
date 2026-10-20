@@ -6,6 +6,7 @@ import '@kyralabs/m3exp-web/css/index.css';
 import '../../../generated/icons/site-icons.css';
 import '../../../styles/site.css';
 import { COMPONENTS } from '../../../data/components';
+import { runnableExample } from '../../../lib/example-modules';
 import themeInit from '../../../scripts/theme-init.js?raw';
 
 export function getStaticPaths() {
@@ -28,7 +29,7 @@ interface Props {
 }
 
 const { slug, name } = Astro.params;
-const { html } = Astro.props;
+const html = runnableExample(Astro.props.html);
 const entry = COMPONENTS.find((c) => c.slug === slug);
 const title = `${entry?.title ?? slug}: ${name.replace(/-/g, ' ')} (HTML)`;
 ---
@@ -43,6 +44,14 @@ const title = `${entry?.title ?? slug}: ${name.replace(/-/g, ' ')} (HTML)`;
     <title>{title} · m3exp-web</title>
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <script is:inline set:html={themeInit} />
+    <script is:inline>
+      // Example scripts await m3e-elements entries through this (lib/example-modules.ts); the
+      // page script below provides the loader once it has registered the example's elements.
+      let provide;
+      const loader = new Promise((resolve) => (provide = resolve));
+      window.m3eProvide = provide;
+      window.m3eImport = async (entry) => (await loader)(entry);
+    </script>
   </head>
   <body class="site-example-page">
     <main>
@@ -62,6 +71,13 @@ const title = `${entry?.title ?? slug}: ${name.replace(/-/g, ' ')} (HTML)`;
           .filter((e): e is string => e !== undefined),
       );
       await Promise.all([...entries].map((e) => ELEMENT_ENTRIES[e]?.()));
+      (window as unknown as { m3eProvide: (load: (entry: string) => unknown) => void }).m3eProvide(
+        (entry) => {
+          const load = ELEMENT_ENTRIES[entry];
+          if (!load) throw new Error(`m3e-elements has no entry ${entry}`);
+          return load();
+        },
+      );
       document.body.dataset['ready'] = '';
     </script>
   </body>

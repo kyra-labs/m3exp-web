@@ -1,0 +1,23 @@
+<m3e-floating-toolbar id="actions" expanded label="Actions" color-style="vibrant">
+  <button type="button" class="m3e-icon-button m3e-icon-button--standard" aria-label="Search">
+    <span class="m3e-icon" aria-hidden="true">search</span>
+  </button>
+  <button type="button" class="m3e-icon-button m3e-icon-button--standard" aria-label="Edit">
+    <span class="m3e-icon" aria-hidden="true">edit</span>
+  </button>
+  <button type="button" class="m3e-icon-button m3e-icon-button--standard" aria-label="Share">
+    <span class="m3e-icon" aria-hidden="true">share</span>
+  </button>
+  <button type="button" slot="fab" class="m3e-fab" aria-label="Collapse toolbar">
+    <span class="m3e-icon" aria-hidden="true">close</span>
+  </button>
+</m3e-floating-toolbar>
+<script>
+  const toolbar = document.getElementById('actions');
+  const fab = toolbar.querySelector('[slot="fab"]');
+  fab.addEventListener('click', () => {
+    toolbar.expanded = !toolbar.expanded;
+    fab.setAttribute('aria-label', toolbar.expanded ? 'Collapse toolbar' : 'Expand toolbar');
+    fab.querySelector('.m3e-icon').textContent = toolbar.expanded ? 'close' : 'add';
+  });
+</script>

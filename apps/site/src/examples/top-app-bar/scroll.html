@@ -1,0 +1,70 @@
+<div
+  id="inbox"
+  tabindex="0"
+  role="region"
+  aria-label="Inbox, scrollable"
+  style="
+    overflow: auto;
+    inline-size: 100%;
+    max-inline-size: var(--m3e-sys-window-width-medium);
+    block-size: var(--m3e-sys-window-height-medium);
+  "
+>
+  <header
+    class="m3e-top-app-bar m3e-top-app-bar--large-flexible"
+    style="position: sticky; inset-block-start: 0; z-index: 1"
+  >
+    <div class="m3e-top-app-bar__navigation">
+      <button type="button" class="m3e-icon-button m3e-icon-button--standard" aria-label="Back">
+        <span class="m3e-icon" aria-hidden="true">arrow_back</span>
+      </button>
+    </div>
+    <div class="m3e-top-app-bar__headline" aria-hidden="true">
+      <h4 class="m3e-top-app-bar__title">Inbox</h4>
+      <p class="m3e-top-app-bar__subtitle">20 messages</p>
+    </div>
+    <div class="m3e-top-app-bar__actions">
+      <button type="button" class="m3e-icon-button m3e-icon-button--standard" aria-label="Search">
+        <span class="m3e-icon" aria-hidden="true">search</span>
+      </button>
+    </div>
+    <div class="m3e-top-app-bar__expanded">
+      <div class="m3e-top-app-bar__headline">
+        <h4 class="m3e-top-app-bar__title">Inbox</h4>
+        <p class="m3e-top-app-bar__subtitle">20 messages</p>
+      </div>
+    </div>
+  </header>
+  <ul style="margin: 0; padding: var(--m3e-sys-space-200)">
+    <li style="padding-block: var(--m3e-sys-space-150)">Message 1</li>
+    <li style="padding-block: var(--m3e-sys-space-150)">Message 2</li>
+    <li style="padding-block: var(--m3e-sys-space-150)">Message 3</li>
+    <li style="padding-block: var(--m3e-sys-space-150)">Message 4</li>
+    <li style="padding-block: var(--m3e-sys-space-150)">Message 5</li>
+    <li style="padding-block: var(--m3e-sys-space-150)">Message 6</li>
+    <li style="padding-block: var(--m3e-sys-space-150)">Message 7</li>
+    <li style="padding-block: var(--m3e-sys-space-150)">Message 8</li>
+    <li style="padding-block: var(--m3e-sys-space-150)">Message 9</li>
+    <li style="padding-block: var(--m3e-sys-space-150)">Message 10</li>
+    <li style="padding-block: var(--m3e-sys-space-150)">Message 11</li>
+    <li style="padding-block: var(--m3e-sys-space-150)">Message 12</li>
+    <li style="padding-block: var(--m3e-sys-space-150)">Message 13</li>
+    <li style="padding-block: var(--m3e-sys-space-150)">Message 14</li>
+    <li style="padding-block: var(--m3e-sys-space-150)">Message 15</li>
+    <li style="padding-block: var(--m3e-sys-space-150)">Message 16</li>
+    <li style="padding-block: var(--m3e-sys-space-150)">Message 17</li>
+    <li style="padding-block: var(--m3e-sys-space-150)">Message 18</li>
+    <li style="padding-block: var(--m3e-sys-space-150)">Message 19</li>
+    <li style="padding-block: var(--m3e-sys-space-150)">Message 20</li>
+  </ul>
+</div>
+<script type="module">
+  import { attachTopAppBarScroll } from '@kyralabs/m3e-elements/top-app-bar.js';
+
+  const scroller = document.getElementById('inbox');
+  attachTopAppBarScroll(scroller.querySelector('.m3e-top-app-bar'), {
+    behavior: 'exit-until-collapsed',
+    target: scroller,
+    signal: new AbortController().signal,
+  });
+</script>

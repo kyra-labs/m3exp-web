@@ -1,0 +1,80 @@
+<div
+  style="
+    position: relative;
+    overflow: hidden;
+    inline-size: 100%;
+    max-inline-size: var(--m3e-sys-window-width-medium);
+    block-size: var(--m3e-sys-window-height-medium);
+  "
+>
+  <div
+    id="rows"
+    tabindex="0"
+    role="region"
+    aria-label="Rows, scrollable"
+    style="overflow: auto; block-size: 100%"
+  >
+    <ul style="margin: 0; padding: var(--m3e-sys-space-200)">
+      <li style="padding-block: var(--m3e-sys-space-150)">Row 1</li>
+      <li style="padding-block: var(--m3e-sys-space-150)">Row 2</li>
+      <li style="padding-block: var(--m3e-sys-space-150)">Row 3</li>
+      <li style="padding-block: var(--m3e-sys-space-150)">Row 4</li>
+      <li style="padding-block: var(--m3e-sys-space-150)">Row 5</li>
+      <li style="padding-block: var(--m3e-sys-space-150)">Row 6</li>
+      <li style="padding-block: var(--m3e-sys-space-150)">Row 7</li>
+      <li style="padding-block: var(--m3e-sys-space-150)">Row 8</li>
+      <li style="padding-block: var(--m3e-sys-space-150)">Row 9</li>
+      <li style="padding-block: var(--m3e-sys-space-150)">Row 10</li>
+      <li style="padding-block: var(--m3e-sys-space-150)">Row 11</li>
+      <li style="padding-block: var(--m3e-sys-space-150)">Row 12</li>
+      <li style="padding-block: var(--m3e-sys-space-150)">Row 13</li>
+      <li style="padding-block: var(--m3e-sys-space-150)">Row 14</li>
+      <li style="padding-block: var(--m3e-sys-space-150)">Row 15</li>
+      <li style="padding-block: var(--m3e-sys-space-150)">Row 16</li>
+      <li style="padding-block: var(--m3e-sys-space-150)">Row 17</li>
+      <li style="padding-block: var(--m3e-sys-space-150)">Row 18</li>
+      <li style="padding-block: var(--m3e-sys-space-150)">Row 19</li>
+      <li style="padding-block: var(--m3e-sys-space-150)">Row 20</li>
+      <li style="padding-block: var(--m3e-sys-space-150)">Row 21</li>
+      <li style="padding-block: var(--m3e-sys-space-150)">Row 22</li>
+      <li style="padding-block: var(--m3e-sys-space-150)">Row 23</li>
+      <li style="padding-block: var(--m3e-sys-space-150)">Row 24</li>
+      <li style="padding-block: var(--m3e-sys-space-150)">Row 25</li>
+      <li style="padding-block: var(--m3e-sys-space-150)">Row 26</li>
+      <li style="padding-block: var(--m3e-sys-space-150)">Row 27</li>
+      <li style="padding-block: var(--m3e-sys-space-150)">Row 28</li>
+      <li style="padding-block: var(--m3e-sys-space-150)">Row 29</li>
+      <li style="padding-block: var(--m3e-sys-space-150)">Row 30</li>
+    </ul>
+  </div>
+  <div
+    style="
+      position: absolute;
+      inset-block-end: var(--m3e-comp-floating-toolbar-defaults-screen-offset);
+      inset-inline: 0;
+      display: flex;
+      justify-content: center;
+    "
+  >
+    <m3e-floating-toolbar
+      expanded
+      label="Formatting"
+      scroll-behavior="exit-always"
+      scroll-target="rows"
+    >
+      <button type="button" class="m3e-icon-button m3e-icon-button--standard" aria-label="Bold">
+        <span class="m3e-icon" aria-hidden="true">format_bold</span>
+      </button>
+      <button type="button" class="m3e-icon-button m3e-icon-button--standard" aria-label="Italic">
+        <span class="m3e-icon" aria-hidden="true">format_italic</span>
+      </button>
+      <button
+        type="button"
+        class="m3e-icon-button m3e-icon-button--standard"
+        aria-label="Underline"
+      >
+        <span class="m3e-icon" aria-hidden="true">format_underlined</span>
+      </button>
+    </m3e-floating-toolbar>
+  </div>
+</div>
