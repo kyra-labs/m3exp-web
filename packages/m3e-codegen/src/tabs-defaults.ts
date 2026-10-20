@@ -18,6 +18,8 @@
 //   from the component tokens file").
 // Each value is read with a targeted regex and cited by line; CHECKS throw when the wiring
 // tabs.css and m3e-motion's tabs port assume changes upstream.
+// From m3.material.io where Compose has nothing (no badge API on Tab, no stacked-tab badge
+// sample): the badge's overlap on a stacked tab's icon (Tabs › Specs, D20 (1)).
 import { type FontMetrics, baselineShiftLiteral } from './compose-literals.js';
 import { kebabName } from './names.js';
 
@@ -321,6 +323,26 @@ const RULES: readonly Rule[] = [
   },
 ];
 
+/** m3.material.io page of the stacked-tab badge overlap (read 2026-10-13). */
+const PAGE =
+  'm3.material.io Tabs › Specs › Measurements (_dsm/content/m3/2026-10-13_06-10-19/f37f47ba-8e67-4f1e-98a3-3bea94879e52.json)';
+
+/** Values from m3.material.io (Compose has no stacked-tab badge). */
+const M3_ROWS: readonly TabsDefault[] = [
+  {
+    name: `${P}-stacked-badge-overlap`,
+    value: '6px',
+    js: 6,
+    raw: 'Overlap of badge on stacked icon = 6dp',
+    owner: 'm3.material.io',
+    member: 'Measurements › Overlap of badge on stacked icon',
+    file: 'm3.material.io',
+    line: 0,
+    cite: PAGE,
+    note: 'D20 (1): a stacked tab (icon above the label) badges its icon; the badge’s inline overlap on the icon, dot or count (the anatomy draws a count on the icon); vertically the BadgedBox offsets (Badge.kt). Text-only and leading-icon tabs keep the badge on the label (BadgedBox, TabSamples.kt LeadingIconTabs; D20 (1))',
+  },
+];
+
 /** Wiring tabs.css, m3e-motion's tabs port and the elements' TabsLayout assume. */
 const CHECKS: readonly [string, string, RegExp][] = [
   [
@@ -468,5 +490,6 @@ export function extractTabsDefaults(
       'the label baseline sits this × the font size below the middle of its line box: an icon + text tab places its label from it (tabs.css)',
     ),
   );
+  out.push(...M3_ROWS);
   return out;
 }

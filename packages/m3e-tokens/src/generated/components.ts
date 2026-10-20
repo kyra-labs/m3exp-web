@@ -946,7 +946,7 @@ export const alertDialogDefaults = {
   dialogScrimStiffness: "var(--m3e-sys-motion-spring-default-effects-stiffness)",
   dialogSlideDistance: 50,
   dialogEnterDuration: 500,
-  dialogEnterEasing: "cubic-bezier(0.3, 0, 0, 1)",
+  dialogEnterEasing: "var(--m3e-sys-motion-easing-emphasized)",
   dialogContainerCollapsedHeight: 0.35,
   dialogContainerEnterFadeDuration: 50,
   dialogContentEnterDelay: 50,
@@ -3935,7 +3935,8 @@ export const tabsDefaults = {
   tabsContentColorOutEasing: "var(--m3e-sys-motion-spring-fast-effects-easing)",
   tabsContentColorOutDampingRatio: "var(--m3e-sys-motion-spring-fast-effects-damping-ratio)",
   tabsContentColorOutStiffness: "var(--m3e-sys-motion-spring-fast-effects-stiffness)",
-  tabsLabelBaselineShift: 0.34
+  tabsLabelBaselineShift: 0.34,
+  tabsStackedBadgeOverlap: 6
 } as const;
 
 /** TextButtonTokens */

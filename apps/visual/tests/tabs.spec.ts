@@ -597,12 +597,14 @@ test.describe('springs (frames driven by the Playwright clock)', () => {
 });
 
 // Badges (M9 B2): on the label (TabSamples.kt LeadingIconTabs), on the icon when the label is
-// hidden; Tab keeps its badge inside itself (badgeBounds), LeadingIconTab does not.
+// hidden or the tab is stacked (D20 (1): m3.material.io Tabs › Specs, 6dp overlap on the icon;
+// the label first in the DOM); Tab keeps its badge inside itself (badgeBounds), LeadingIconTab
+// does not.
 test.describe('badges', () => {
   const badges = (page: Page, id: string) =>
     page.getByTestId(id).locator('.m3e-tab .m3e-badged-box > .m3e-badge');
 
-  test('the badge sits on the label (the icon when hidden) and is read after it', async ({
+  test('the badge sits on the label (the icon when stacked or hidden) and is read after it', async ({
     page,
   }) => {
     const primary = tabs(page, 'element-badges-primary');
@@ -617,16 +619,29 @@ test.describe('badges', () => {
     const react = tabs(page, 'react-badges-frame');
     await expect(react.nth(0)).toHaveAccessibleName('Inbox 1200 unread');
     await expect(react.nth(3)).toHaveAccessibleName('Starred 3');
-    for (const id of ['element-badges-primary', 'element-badges-icons', 'react-badges-frame']) {
-      // A Tab clamps a badge that would cross its end (Starred's 999+, by font metrics).
+    // Stacked: the badge on the icon, label first in the DOM (read "Photos 8").
+    await expect(primary.locator('.m3e-badged-box > .m3e-tab__icon')).toHaveCount(3);
+    await expect(primary.locator('.m3e-tab__label + .m3e-badged-box')).toHaveCount(3);
+    for (const badge of await badges(page, 'element-badges-primary').all()) {
+      await expectComposePlacement(badge, '.m3e-tab', { rulers: true, overlap: 6 });
+    }
+    for (const id of ['element-badges-icons', 'react-badges-frame']) {
+      // A Tab clamps a badge that would cross its end.
       for (const badge of await badges(page, id).all()) {
         await expectComposePlacement(badge, '.m3e-tab', { rulers: true });
       }
     }
-    // Stacked tabs keep their 72dp height and the label baseline (the box wraps the label).
+    // Stacked tabs keep their 72dp height, the icon above the label and the label baseline.
     for (const tab of await primary.all()) expect((await box(tab)).height).toBeCloseTo(72, 0);
     const plain = await box(primary.nth(0).locator('.m3e-tab__label'));
-    expect((await box(primary.nth(1).locator('.m3e-tab__label'))).y).toBeCloseTo(plain.y, 1);
+    const plainIcon = await box(primary.nth(0).locator('.m3e-tab__icon'));
+    for (const i of [1, 2, 3]) {
+      const label = await box(primary.nth(i).locator('.m3e-tab__label'));
+      const icon = await box(primary.nth(i).locator('.m3e-tab__icon'));
+      expect(label.y).toBeCloseTo(plain.y, 1);
+      expect(icon.y).toBeCloseTo(plainIcon.y, 1);
+      expect(icon.y + icon.height).toBeLessThan(label.y);
+    }
   });
 
   test('badgeBounds(): TabsLayout keeps a Tab’s badge inside it; LeadingIconTab overflows', async ({

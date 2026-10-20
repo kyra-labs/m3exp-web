@@ -311,20 +311,23 @@ describe('badges', () => {
     (box as HTMLElement).style.getPropertyValue('--_m3e-badged-box-bounds-top'),
   ];
 
-  it('wraps the label (the icon when the label is hidden) and renders the badge contract', async () => {
+  it('stacked tabs badge the icon, label first (D20 (1)); others the label (the icon when hidden)', async () => {
     const host = await mount(`<m3e-tabs>${BADGED}</m3e-tabs>`);
     const [inbox, chat, fav] = tabsOf(host);
     // (happy-dom lays nothing out: TabsLayout's bounds are 0px; tested below.)
     for (const box of host.rootElement!.querySelectorAll('.m3e-badged-box')) {
       box.removeAttribute('style');
     }
+    // Read "Inbox 999+": the label, then the badged icon (drawn above it by tabs.css).
     expect(inbox!.querySelector('.m3e-tab__content')!.innerHTML).toBe(
-      '<span class="m3e-icon m3e-tab__icon" aria-hidden="true">inbox</span>' +
-        '<span class="m3e-badged-box"><span class="m3e-tab__label">Inbox</span>' +
+      '<span class="m3e-tab__label">Inbox</span>' +
+        '<span class="m3e-badged-box">' +
+        '<span class="m3e-icon m3e-tab__icon" aria-hidden="true">inbox</span>' +
         '<span class="m3e-badge m3e-badge--large">' +
         '<span class="m3e-badge__text" aria-hidden="true">999+</span>' +
         '<span class="m3e-badge__label">999+</span></span></span>',
     );
+    expect(chat!.querySelector('.m3e-badged-box > .m3e-tab__label')).not.toBeNull();
     expect(chat!.querySelector('.m3e-badge')!.innerHTML).toBe(
       '<span class="m3e-badge__label">New notification</span>',
     );
@@ -337,6 +340,34 @@ describe('badges', () => {
       '<span class="m3e-icon m3e-tab__icon" aria-hidden="true">inbox</span>' +
         '<span class="m3e-tab__label">Inbox</span>',
     );
+  });
+
+  it('leading-icon tabs keep the badge on the label; switching rows moves it', async () => {
+    const host = await mount(`<m3e-tabs icon-position="leading">${BADGED}</m3e-tabs>`);
+    const [inbox] = tabsOf(host);
+    const parts = () =>
+      [...inbox!.querySelector('.m3e-tab__content')!.children].map((c) =>
+        c.classList.contains('m3e-badged-box')
+          ? `box(${[...c.children].map((p) => p.className).join(', ')})`
+          : c.className,
+      );
+    expect(parts()).toEqual([
+      'm3e-icon m3e-tab__icon',
+      'box(m3e-tab__label, m3e-badge m3e-badge--large)',
+    ]);
+    host.removeAttribute('icon-position');
+    await flush();
+    expect(parts()).toEqual([
+      'm3e-tab__label',
+      'box(m3e-icon m3e-tab__icon, m3e-badge m3e-badge--large)',
+    ]);
+    expect(inbox!.textContent).toBe('Inboxinbox999+999+');
+    host.setAttribute('icon-position', 'leading');
+    await flush();
+    expect(parts()).toEqual([
+      'm3e-icon m3e-tab__icon',
+      'box(m3e-tab__label, m3e-badge m3e-badge--large)',
+    ]);
   });
 
   it('TabsLayout keeps badges inside their tab (Tab.badgeBounds), LTR and RTL', async () => {

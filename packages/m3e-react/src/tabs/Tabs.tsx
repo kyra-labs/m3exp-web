@@ -36,7 +36,8 @@ export interface TabItem {
   isLabelHidden?: boolean | undefined;
   /**
    * A badge (Compose `BadgedBox` in the tab's text, TabSamples.kt LeadingIconTabs; m3.material.io:
-   * a large badge at the trailing edge): on the label, or on the icon when the label is hidden.
+   * a large badge at the trailing edge): on the label; on the icon when the label is hidden or
+   * sits under the icon (a stacked tab, m3.material.io Tabs › Specs; D20 (1)).
    * `true` or `''` the dot, a number (or digits) a count — `999+` above 999 — other text as is.
    */
   badge?: BadgeValue | false | undefined;
@@ -122,15 +123,26 @@ interface TabButtonProps {
   isSelected: boolean;
   controls: string | undefined;
   onSelect: (key: string) => void;
+  /** Icons above labels (`iconPosition="top"`). */
+  isStacked: boolean;
 }
 
 /** The m3e-css `.m3e-tab` contract; React Aria handles the press, the tab draws the ripple. */
-function TabButton({ item, id, isSelected, controls, onSelect }: TabButtonProps): ReactNode {
+function TabButton({
+  item,
+  id,
+  isSelected,
+  controls,
+  onSelect,
+  isStacked,
+}: TabButtonProps): ReactNode {
   const { key, label, icon, isDisabled = false, isLabelHidden = false } = item;
   const iconElement = icon === undefined ? null : <Icon name={icon} className="m3e-tab__icon" />;
   const labelElement = isLabelHidden ? null : <span className="m3e-tab__label">{label}</span>;
-  // The badge sits on the label (on the icon when the label is hidden), so it is read after it.
-  const anchor = isLabelHidden ? iconElement : labelElement;
+  // The badge is read after the label. A stacked tab (icon above the label) badges its icon and
+  // puts the label first in the DOM (D20 (1)); others badge the label (the icon, label hidden).
+  const stacked = isStacked && iconElement !== null && labelElement !== null;
+  const anchor = isLabelHidden || stacked ? iconElement : labelElement;
   const badge = anchor ? destinationBadge(item.badge, item.badgeLabel) : null;
   const ref = useRef<HTMLButtonElement>(null);
   const stateLayer = useStateLayer();
@@ -159,7 +171,7 @@ function TabButton({ item, id, isSelected, controls, onSelect }: TabButtonProps)
       ref={ref}
     >
       <span className="m3e-tab__content">
-        {isLabelHidden && badge ? null : iconElement}
+        {badge ? (stacked ? labelElement : isLabelHidden ? null : iconElement) : iconElement}
         {badge ? (
           <BadgedBox badge={<Badge label={isLabelHidden ? '' : badge.label}>{badge.text}</Badge>}>
             {anchor}
@@ -260,6 +272,7 @@ export const Tabs = /* @__PURE__ */ forwardRef(function Tabs(
               isSelected={item.key === selected}
               controls={panelKeys.has(item.key) ? panelId(base, index) : undefined}
               onSelect={select}
+              isStacked={iconPosition !== 'leading'}
             />
           ))}
         </div>

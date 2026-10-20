@@ -267,12 +267,15 @@ test('motion: Material Web open / close, the scrim on DefaultEffects (#9)', asyn
   await page.getByTestId('open-alert').click();
   const dialog = dialogOf(page, 'alert');
   await expect(dialog).toHaveAttribute('data-motion', 'enter');
-  const timings = await dialog.evaluate((n) =>
+  const [timings, enterEasing] = await dialog.evaluate((n): [string[], string] => [
     n.getAnimations({ subtree: true }).map((a) => {
       const t = a.effect!.getTiming();
       return `${(a as CSSAnimation).animationName} ${String(t.duration)} ${String(t.delay)}`;
     }),
-  );
+    getComputedStyle(n.querySelector('.m3e-dialog__container')!).animationTimingFunction,
+  ]);
+  // D20 (6): the slide opens on androidx's emphasized easing (MotionTokens.kt L40).
+  expect(enterEasing).toBe('cubic-bezier(0.2, 0, 0, 1)');
   // The DefaultEffects spring's duration token, in ms (the computed value may be in seconds).
   const effects = await page.evaluate(() => {
     const probe = document.createElement('div');

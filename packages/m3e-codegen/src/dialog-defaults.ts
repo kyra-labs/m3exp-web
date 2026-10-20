@@ -11,7 +11,9 @@
 // - Material Web (secondary source; owner decision M9 #9, SOURCES register): md-dialog's open /
 //   close animations (dialog/internal/animations.js with the EASING table of
 //   internal/motion/animation.js) and its window margin (dialog/internal/_dialog.scss), because
-//   neither androidx nor m3.material.io specifies dialog motion;
+//   neither androidx nor m3.material.io specifies dialog motion; except the open easing, which is
+//   androidx's emphasized easing (MotionTokens.EasingEmphasizedCubicBezier, the sys token) where
+//   Material Web uses its EASING.EMPHASIZED approximation (D20 (6), amends M9 #9);
 // - m3.material.io (owner decision M9 #11): the full-screen dialog, which Compose does not have,
 //   from the token DB (md.comp.full-screen-dialog) and the Specs table.
 // Each value is read with a targeted regex and cited by line; CHECKS throw when the wiring
@@ -37,6 +39,12 @@ export const DIALOG_DEFAULTS_SOURCES = [KT, BUTTON, SHEET, SAMPLES, ANDROID];
 export const DIALOG_MATERIAL_WEB_SOURCES = ['animations.js', 'animation.js', '_dialog.scss'];
 
 const P = '--m3e-comp-dialog';
+/** The vendored `MotionTokens.kt` and its citation path (`<dir>/MotionTokens.kt@<commit>`). */
+export interface MotionTokensSource {
+  text: string | undefined;
+  path: string;
+}
+
 /** Vendored Material Web file → its path in the package. */
 const WEB_PATHS: Readonly<Record<string, string>> = {
   'animations.js': 'dialog/internal/animations.js',
@@ -245,6 +253,7 @@ const lineAt = (text: string, m: RegExpExecArray, group = 1) =>
 function materialWebRows(
   sources: Readonly<Record<string, string>>,
   version: string,
+  motionTokens: MotionTokensSource,
 ): DialogDefault[] {
   const js = normalizeText(sources['animations.js'], 'animations.js');
   const easingJs = normalizeText(sources['animation.js'], 'animation.js');
@@ -314,20 +323,29 @@ function materialWebRows(
     slideLine,
     'open: the slide and the container growth (TODO(verify) SOURCES register #72: no androidx or m3.material.io dialog motion; owner decision M9 #9)',
   );
-  const enterEasingLine = lineAt(
-    easingJs,
-    find(easingJs, new RegExp(`\\n\\s*(${enterEasing}): '`), enterEasing),
+  // D20 (6): the open easing is androidx's emphasized easing (the sys token), not Material Web's
+  // EASING.EMPHASIZED "approximated with unknown accuracy" (animation.js).
+  if (enterEasing !== 'EMPHASIZED')
+    throw new Error(`dialog-defaults: Material Web opens on EASING.${enterEasing}, not EMPHASIZED`);
+  const motion = normalizeText(motionTokens.text, 'MotionTokens.kt');
+  const emphasized = find(
+    motion,
+    /inline val (EasingEmphasizedCubicBezier): CubicBezierEasing\n\s*get\(\) = CubicBezierEasing\(0\.2f, 0\.0f, 0\.0f, 1\.0f\)/,
+    'MotionTokens.EasingEmphasizedCubicBezier',
   );
-  row(
-    `${P}-enter-easing`,
-    easing(enterEasing),
-    easing(enterEasing),
-    `EASING.${enterEasing}`,
-    'EASING',
-    'animation.js',
-    enterEasingLine,
-    'open: the slide and the container growth (Material Web’s approximation of the emphasized easing)',
-  );
+  const emphasizedLine = lineAt(motion, emphasized);
+  out.push({
+    name: `${P}-enter-easing`,
+    value: 'var(--m3e-sys-motion-easing-emphasized)',
+    js: 'var(--m3e-sys-motion-easing-emphasized)',
+    raw: 'MotionTokens.EasingEmphasizedCubicBezier = CubicBezierEasing(0.2f, 0.0f, 0.0f, 1.0f)',
+    owner: 'MotionTokens',
+    member: 'EasingEmphasizedCubicBezier',
+    file: 'MotionTokens.kt',
+    line: emphasizedLine,
+    cite: `${motionTokens.path} L${String(emphasizedLine)}`,
+    note: `open: the slide and the container growth. D20 (6), amends M9 #9: androidx's emphasized easing (m3.material.io's CSS fallback, Standard, is the same curve) in place of Material Web's EASING.${enterEasing} ${easing(enterEasing)} (animation.js: "approximated with unknown accuracy"); Material Web's timing is kept`,
+  });
 
   const grow = find(
     js,
@@ -628,10 +646,11 @@ function fullScreenRows(): DialogDefault[] {
 export function extractDialogDefaults(
   sources: Readonly<Record<string, string>>,
   materialWebVersion: string,
+  motionTokens: MotionTokensSource,
 ): DialogDefault[] {
   return [
     ...extractLiterals('dialog-defaults', DIALOG_DEFAULTS_SOURCES, RULES, CHECKS, sources),
-    ...materialWebRows(sources, materialWebVersion),
+    ...materialWebRows(sources, materialWebVersion, motionTokens),
     ...fullScreenRows(),
   ];
 }
