@@ -591,6 +591,37 @@
     letter-spacing: var(--m3e-comp-date-picker-modal-range-selection-header-headline-tracking);
   }
 
+  /*
+   * The range headline is a row of texts (DateRangePickerHeadline L514–534, no maxLines): the start
+   * and the delimiter keep their width and the end date wraps when the row is too narrow.
+   */
+  .m3e-date-picker--range :where(.m3e-date-picker__headline > span) {
+    flex: none;
+  }
+
+  .m3e-date-picker--range :where(.m3e-date-picker__headline > span:last-child) {
+    flex: 0 1 auto;
+    min-inline-size: 0;
+    white-space: normal;
+  }
+
+  /*
+   * In a full-screen dialog (DatePickerSamples.kt DateRangePickerSample L261–307): the dialog and
+   * its header row take the picker's container color and, full-screen, the picker spans the window.
+   */
+  .m3e-dialog--full-screen:has(.m3e-date-picker--range) {
+    --m3e-comp-full-screen-dialog-container-color: var(
+      --m3e-comp-date-picker-modal-container-color
+    );
+    --m3e-comp-full-screen-dialog-header-container-color: var(
+      --m3e-comp-date-picker-modal-container-color
+    );
+  }
+
+  .m3e-dialog--full-screen .m3e-dialog__content:has(.m3e-date-picker--range) {
+    padding-inline: 0;
+  }
+
   /* The range picker fills its container (a full-screen dialog): the month list scrolls. */
   .m3e-date-picker--range {
     flex: 1 1 auto;
@@ -605,7 +636,7 @@
     min-block-size: 0;
   }
 
-  .m3e-date-picker--range .m3e-date-picker__pane[data-pane='picker'] {
+  .m3e-date-picker--range .m3e-date-picker__pane[data-pane='picker']:not([hidden]) {
     display: flex;
     flex: 1 1 auto;
     flex-direction: column;

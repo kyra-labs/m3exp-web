@@ -1326,3 +1326,18 @@ button.docs-layout-item:focus-visible {
   font: var(--m3e-sys-typescale-label-large-weight) var(--m3e-sys-typescale-label-large-size) /
     var(--m3e-sys-typescale-label-large-line-height) var(--m3e-sys-typescale-label-large-font);
 }
+
+/* Date pickers: a phone-sized frame for the range picker, which fills its container. */
+.docs-date-range-frame {
+  display: flex;
+  flex-direction: column;
+  inline-size: min(100%, 412px);
+  block-size: 600px;
+  border-radius: var(--m3e-sys-shape-corner-large);
+  overflow: hidden;
+  background: var(--m3e-sys-color-surface-container-high);
+}
+
+.docs-date-docked {
+  min-block-size: 520px;
+}

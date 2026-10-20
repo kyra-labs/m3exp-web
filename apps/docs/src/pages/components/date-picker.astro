@@ -1,12 +1,31 @@
 ---
+import DatePickerPlayground from '../../islands/DatePickerPlayground.tsx';
 import Base from '../../layouts/Base.astro';
+
+// Every example sets displayed-month, so the page looks the same on any day (today's date is
+// still marked when it is in view).
+const text = (label: string, testid: string, slot = '') =>
+  `<button type="button" class="m3e-button m3e-button--text" data-dialog-close data-testid="${testid}"${slot ? ` slot="${slot}"` : ''}>${label}</button>`;
 ---
 
 <Base title="Date pickers">
   <link rel="stylesheet" href="/icons/docs-icons.css" slot="head" />
   <h1>Date pickers</h1>
+  <p>
+    Date pickers (COMPONENT_SPEC §27) are Compose's <code>DatePicker</code> (a calendar with a year grid, switchable to a date input), <code>DateRangePicker</code> (a scrolling list of months with the range band, switchable to start / end inputs) and <code>DatePickerDialog</code>, plus m3.material.io's docked date picker (a date field
+    whose calendar drops down below it; Compose has none). Dates are UTC midnights, as Compose's states: ISO strings (<code>2025-08-17</code>) on the elements, milliseconds in React.
+  </p>
+  <p>
+    The calendar is an APG grid: arrows move a day or a week, Home / End go to the week's ends, Page Up / Down go a month (with Shift, a year), Enter or Space pick, and crossing a month's edge pages. The arrows page on Compose's <code>spring()</code>; a touch or pen swipe pages one month. The month and year button opens the year grid (a listbox,
+    three years a row). The first day of the week, the names and the digits come from <code>Intl</code> for the nearest <code>lang</code>; the input's pattern is the locale's short date (<code>MM/DD/YYYY</code> in en-US), checked by a port of Compose's validator.
+  </p>
+
   <section aria-labelledby="modal-heading">
     <h2 id="modal-heading">Date picker (element)</h2>
+    <p>
+      <code>&lt;m3e-date-picker value displayed-month year-range="1900-2100" display-mode="picker | input" hide-mode-toggle no-title no-headline&gt;</code> fires <code>change</code> (<code>detail: {'{'} value {'}'}</code>), <code>display-mode-change</code> and <code>displayed-month-change</code>. The
+      <code>selectableDates</code> property takes Compose's <code>isSelectableDate(utcMillis)</code> / <code>isSelectableYear(year)</code>; <code>labels</code> overrides the strings.
+    </p>
     <div class="docs-time-picker-row">
       <figure>
         <figcaption>Calendar</figcaption>
@@ -16,21 +35,124 @@ import Base from '../../layouts/Base.astro';
         <figcaption>Input</figcaption>
         <m3e-date-picker data-testid="input" value="2025-08-17" display-mode="input"></m3e-date-picker>
       </figure>
+      <figure>
+        <figcaption>Weekdays from 2022, years 2020–2030</figcaption>
+        <m3e-date-picker data-testid="selectable" displayed-month="2025-08" year-range="2020-2030"></m3e-date-picker>
+      </figure>
     </div>
   </section>
+
   <section aria-labelledby="range-heading">
-    <h2 id="range-heading">Range (element)</h2>
-    <div style="block-size: 560px; inline-size: 360px; display: flex; flex-direction: column;">
-      <m3e-date-range-picker data-testid="range" start="2025-08-10" end="2025-08-20" displayed-month="2025-08" style="display: contents"></m3e-date-range-picker>
+    <h2 id="range-heading">Date range picker (element)</h2>
+    <p>
+      <code>&lt;m3e-date-range-picker start end&gt;</code> takes the same attributes and fires <code>change</code> (<code>detail: {'{'} start, end {'}'}</code>; the end is null while only a start is picked). It fills its container: show it in <code>&lt;m3e-dialog variant="full-screen"&gt;</code>, as Compose's samples
+      do.
+    </p>
+    <div class="docs-time-picker-row">
+      <figure>
+        <figcaption>Range</figcaption>
+        <div class="docs-date-range-frame">
+          <m3e-date-range-picker data-testid="range" start="2025-08-10" end="2025-08-20" displayed-month="2025-08"></m3e-date-range-picker>
+        </div>
+      </figure>
+      <figure>
+        <figcaption>Range input</figcaption>
+        <div class="docs-date-range-frame">
+          <m3e-date-range-picker data-testid="range-input" start="2025-08-10" end="2025-08-20" display-mode="input"></m3e-date-range-picker>
+        </div>
+      </figure>
     </div>
   </section>
+
   <section aria-labelledby="docked-heading">
-    <h2 id="docked-heading">Docked (element)</h2>
-    <m3e-docked-date-picker data-testid="docked" value="2025-08-17"></m3e-docked-date-picker>
-    <div style="block-size: 480px"></div>
+    <h2 id="docked-heading">Docked date picker (element)</h2>
+    <p>
+      <code>&lt;m3e-docked-date-picker value label year-range&gt;</code>: type a date or open the calendar from the field's button. The calendar's navigation row has the month and the year, each between arrows and with a menu; the other months' days show dimmed. Picking a day fills the field and closes the calendar; Escape or a click outside
+      closes it. Methods <code>show()</code> / <code>close()</code>.
+    </p>
+    <div class="docs-date-docked">
+      <m3e-docked-date-picker data-testid="docked" value="2025-08-17"></m3e-docked-date-picker>
+    </div>
+  </section>
+
+  <section aria-labelledby="dialog-heading">
+    <h2 id="dialog-heading">Dialogs (element)</h2>
+    <p>
+      Compose's <code>DatePickerDialog</code>: put the picker in a <code>.m3e-date-picker-dialog</code> surface (<code>__content</code>, <code>__actions</code>) inside <code>&lt;m3e-dialog variant="custom"&gt;</code>. The range picker goes in a full-screen dialog with a Save action.
+    </p>
+    <div class="docs-button-row">
+      <button type="button" class="m3e-button m3e-button--filled" data-dialog-open="dialog" data-testid="open-dialog">Date picker dialog</button>
+      <button type="button" class="m3e-button m3e-button--tonal" data-dialog-open="dialog-range" data-testid="open-dialog-range">Range picker dialog</button>
+    </div>
+    <p>Picked: <output data-testid="dialog-result">none</output></p>
+
+    <m3e-dialog data-testid="dialog" variant="custom" label="Select date">
+      <div class="m3e-date-picker-dialog">
+        <div class="m3e-date-picker-dialog__content">
+          <m3e-date-picker value="2025-08-17" displayed-month="2025-08"></m3e-date-picker>
+        </div>
+        <div class="m3e-date-picker-dialog__actions">
+          <Fragment set:html={text('Cancel', 'dialog-cancel') + text('OK', 'dialog-ok')} />
+        </div>
+      </div>
+    </m3e-dialog>
+
+    <m3e-dialog data-testid="dialog-range" variant="full-screen" label="Select dates">
+      <m3e-date-range-picker start="2025-08-10" end="2025-08-20" displayed-month="2025-08"></m3e-date-range-picker>
+      <Fragment set:html={text('Save', 'dialog-range-save', 'actions')} />
+    </m3e-dialog>
+  </section>
+
+  <section aria-labelledby="react-heading">
+    <h2 id="react-heading">React</h2>
+    <p>
+      <code>&lt;DatePicker selectedDateMillis defaultSelectedDateMillis onSelectedDateChange displayedMonthMillis displayMode onDisplayModeChange yearRange selectableDates showModeToggle title headline locale labels&gt;</code>, <code>&lt;DateRangePicker selectedStartDateMillis selectedEndDateMillis onSelectedRangeChange …&gt;</code>
+      and <code>&lt;DockedDatePicker selectedDateMillis onSelectedDateChange label …&gt;</code> render the same DOM as the elements. <code>&lt;DatePickerDialog dismissButton confirmButton&gt;</code> wraps a picker in <code>&lt;BasicAlertDialog&gt;</code>; put the range picker in <code>&lt;FullScreenDialog action&gt;</code>.
+    </p>
+    <DatePickerPlayground client:only="react" />
   </section>
 </Base>
 
 <script>
   import '@kyralabs/m3exp-web/elements';
+
+  type DialogHost = HTMLElement & { show(): void; close(): void };
+  type Picker = HTMLElement & {
+    value?: string | null;
+    start?: string | null;
+    end?: string | null;
+    selectableDates?: unknown;
+  };
+
+  // Compose's DatePickerSamples: weekends can't be picked, nor years before 2022.
+  const selectable = document.querySelector<Picker>('[data-testid="selectable"]');
+  if (selectable) {
+    selectable.selectableDates = {
+      isSelectableDate: (utcMillis: number) => {
+        const day = new Date(utcMillis).getUTCDay();
+        return day !== 0 && day !== 6;
+      },
+      isSelectableYear: (year: number) => year >= 2022,
+    };
+  }
+
+  for (const button of document.querySelectorAll<HTMLButtonElement>('[data-dialog-open]')) {
+    button.addEventListener('click', () => {
+      document
+        .querySelector<DialogHost>(`m3e-dialog[data-testid="${button.dataset['dialogOpen'] ?? ''}"]`)
+        ?.show();
+    });
+  }
+  const result = document.querySelector('[data-testid="dialog-result"]');
+  document.addEventListener('click', (e) => {
+    const target = (e.target as Element | null)?.closest<HTMLElement>('[data-dialog-close]');
+    const dialog = target?.closest<DialogHost>('m3e-dialog');
+    if (!target || !dialog) return;
+    if (target.textContent !== 'Cancel' && result) {
+      const picker = dialog.querySelector<Picker>('m3e-date-picker, m3e-date-range-picker');
+      if (picker?.localName === 'm3e-date-picker') result.textContent = picker.value ?? 'none';
+      else if (picker) result.textContent = `${picker.start ?? '?'} – ${picker.end ?? '?'}`;
+    }
+    dialog.close();
+  });
 </script>

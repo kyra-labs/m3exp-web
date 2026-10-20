@@ -193,7 +193,10 @@ export class DateRangePickerLayout extends DatePickerBase<DateRangePickerLayoutO
       { signal },
     );
     if (typeof ResizeObserver !== 'undefined') {
+      // Built while hidden (a closed dialog), the months measure 0: measure once they show.
       this.#resize = new ResizeObserver(() => {
+        if (!this.#height) this.#measure();
+        this.#window();
         for (const item of this.#items.values()) renderBand(item.grid, item.month, this.#state());
       });
       this.#resize.observe(this.#scroller);
