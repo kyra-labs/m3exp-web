@@ -91,12 +91,62 @@ const shapes = ['round', 'square'] as const;
         )
       }
     </div>
+    <h3>Disabled</h3>
+    <p>
+      Native <code>disabled</code> on the items (here the whole standard group, and one item of a
+      connected group): the disabled button colors, no state layer.
+    </p>
+    <div class="docs-button-groups" data-testid="static-disabled">
+      <div
+        class="m3e-button-group m3e-button-group--standard m3e-button-group--size-s"
+        role="group"
+        aria-label="Disabled standard group"
+      >
+        {
+          ['Back', 'Play', 'Next'].map((text, i) => (
+            <button
+              type="button"
+              disabled
+              class:list={[
+                'm3e-button',
+                i === 1 ? 'm3e-button--filled' : 'm3e-button--tonal',
+                'm3e-button--size-s',
+                'm3e-button--round',
+                'm3e-button-group__item',
+              ]}
+            >
+              {text}
+            </button>
+          ))
+        }
+      </div>
+      <div
+        class="m3e-button-group m3e-button-group--connected m3e-button-group--size-s"
+        role="radiogroup"
+        aria-label="Connected group with a disabled item"
+      >
+        {
+          views.map((text, i) => (
+            <button
+              type="button"
+              role="radio"
+              aria-checked={i === 0 ? 'true' : 'false'}
+              tabindex={i === 0 ? '0' : '-1'}
+              disabled={i === 2}
+              class="m3e-button m3e-button--filled m3e-button--size-s m3e-button--round m3e-button-group__item"
+            >
+              {text}
+            </button>
+          ))
+        }
+      </div>
+    </div>
   </section>
 
   <section aria-labelledby="elements-heading">
     <h2 id="elements-heading">Custom element</h2>
     <p>
-      <code>&lt;m3e-button-group variant size shape button-variant selection-mode disallow-empty-selection overflow overflow-label label&gt;</code> with <code>&lt;m3e-button-group-item value icon selected disabled label&gt;</code> children. Events: <code>selection-change</code> on the group (<code>&#123; value, selected, values &#125;</code>) and <code>action</code> on the item (<code>&#123; value &#125;</code>). Deprecated since 1.8 (removed in 2.0): the <code>selection-required</code> attribute (use <code>disallow-empty-selection</code>) and the group's <code>change</code> event (it still fires, with the same detail, after <code>selection-change</code>). Arrow keys, Home and End move focus. As in Compose (<code>ButtonGroupDefaults.OverflowIndicator</code>), the overflow button has a built-in plain tooltip: its name (<code>overflow-label</code>, default “More options”), shown above it on hover, keyboard focus or a long press; it repeats the name, so screen readers skip it.
+      <code>&lt;m3e-button-group variant size shape button-variant selection-mode disallow-empty-selection overflow overflow-label label disabled&gt;</code> with <code>&lt;m3e-button-group-item value icon selected disabled label&gt;</code> children. Events: <code>selection-change</code> on the group (<code>&#123; value, selected, values &#125;</code>) and <code>action</code> on the item (<code>&#123; value &#125;</code>). Deprecated since 1.8 (removed in 2.0): the <code>selection-required</code> attribute (use <code>disallow-empty-selection</code>) and the group's <code>change</code> event (it still fires, with the same detail, after <code>selection-change</code>). Arrow keys, Home and End move focus. As in Compose (<code>ButtonGroupDefaults.OverflowIndicator</code>), the overflow button has a built-in plain tooltip: its name (<code>overflow-label</code>, default “More options”), shown above it on hover, keyboard focus or a long press; it repeats the name, so screen readers skip it.
     </p>
     <div class="docs-button-group-demos" data-testid="elements">
       <m3e-button-group label="Playback" button-variant="tonal" data-testid="el-standard">
@@ -132,6 +182,25 @@ const shapes = ['round', 'square'] as const;
           >Underline</m3e-button-group-item
         >
       </m3e-button-group>
+
+      <m3e-button-group disabled label="Playback (disabled)" button-variant="tonal" data-testid="el-disabled">
+        <m3e-button-group-item value="previous" icon="skip_previous">Previous</m3e-button-group-item>
+        <m3e-button-group-item value="play" icon="play_arrow" variant="filled">Play</m3e-button-group-item>
+        <m3e-button-group-item value="next" icon="skip_next">Next</m3e-button-group-item>
+      </m3e-button-group>
+
+      <div class="docs-button-group-connected">
+      <m3e-button-group
+        variant="connected"
+        selection-mode="single"
+        label="Place (one disabled)"
+        data-testid="el-item-disabled"
+      >
+        <m3e-button-group-item value="work" icon="work" selected>Work</m3e-button-group-item>
+        <m3e-button-group-item value="restaurant" icon="restaurant">Restaurant</m3e-button-group-item>
+        <m3e-button-group-item value="coffee" icon="coffee" disabled>Coffee</m3e-button-group-item>
+      </m3e-button-group>
+      </div>
 
       <div class="docs-button-group-resizable" data-testid="el-overflow-box">
         <m3e-button-group overflow label="Edit" data-testid="el-overflow">
@@ -179,7 +248,7 @@ const shapes = ['round', 'square'] as const;
   <section aria-labelledby="react-heading">
     <h2 id="react-heading">React</h2>
     <p>
-      <code>&lt;ButtonGroup variant size shape buttonVariant selectionMode selectedKeys onSelectionChange onAction overflow overflowLabel&gt;</code> with <code>&lt;ButtonGroupItem id icon variant isDisabled onPress&gt;</code> children. The buttons are React Aria (<code>useButton</code>, or <code>useToggleButtonGroupItem</code> when selectable); the motion, roving focus and overflow measurement are the same code the element runs. The overflow button's tooltip is <code>&lt;TooltipTrigger&gt;</code> + <code>&lt;PlainTooltip&gt;</code> (<code>overflowLabel</code> renames both).
+      <code>&lt;ButtonGroup variant size shape buttonVariant selectionMode selectedKeys onSelectionChange onAction overflow overflowLabel isDisabled&gt;</code> with <code>&lt;ButtonGroupItem id icon variant isDisabled onPress&gt;</code> children; <code>isDisabled</code> on the group disables every item. The buttons are React Aria (<code>useButton</code>, or <code>useToggleButtonGroupItem</code> when selectable); the motion, roving focus and overflow measurement are the same code the element runs. The overflow button's tooltip is <code>&lt;TooltipTrigger&gt;</code> + <code>&lt;PlainTooltip&gt;</code> (<code>overflowLabel</code> renames both).
     </p>
     <ButtonGroupPlayground client:only="react" />
   </section>

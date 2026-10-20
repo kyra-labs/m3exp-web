@@ -63,8 +63,8 @@ const rowClass = (row: StaticRow) =>
   <link rel="stylesheet" href="/icons/docs-icons.css" slot="head" />
   <h1>Tabs</h1>
   <p>
-    Primary and secondary tabs (COMPONENT_SPEC §17; Compose <code>PrimaryTabRow</code>,
-    <code>SecondaryTabRow</code>, <code>PrimaryScrollableTabRow</code>,
+    Primary and secondary tabs (COMPONENT_SPEC §17; Compose <code>PrimaryTabRow</code>,{' '}
+    <code>SecondaryTabRow</code>, <code>PrimaryScrollableTabRow</code>,{' '}
     <code>SecondaryScrollableTabRow</code> with <code>Tab</code> and <code>LeadingIconTab</code>).
     Fixed rows split the width into equal tabs; scrollable rows size tabs to their labels (at least
     90dp) after a 52dp edge padding. The primary indicator spans the selected tab's content, the
@@ -81,9 +81,9 @@ const rowClass = (row: StaticRow) =>
   <section aria-labelledby="static-heading">
     <h2 id="static-heading">Static rows (m3e-css)</h2>
     <p>
-      Plain HTML with m3e-css classes: <code>.m3e-tabs</code> (<code>--primary</code> /
-      <code>--secondary</code>, <code>--scrollable</code>, <code>--leading-icon</code>), a
-      <code>role="tablist"</code> <code>__list</code> and <code>.m3e-tab</code> buttons. The
+      Plain HTML with m3e-css classes: <code>.m3e-tabs</code> (<code>--primary</code> /{' '}
+      <code>--secondary</code>, <code>--scrollable</code>, <code>--leading-icon</code>), a{' '}
+      <code>role="tablist"</code> <code>__list</code> and <code>.m3e-tab</code> buttons. The{' '}
       <code>aria-selected="true"</code> tab draws the indicator.
     </p>
     <div class="docs-tabs-frames">
@@ -122,8 +122,8 @@ const rowClass = (row: StaticRow) =>
   <section aria-labelledby="element-heading">
     <h2 id="element-heading">Element</h2>
     <p>
-      <code>&lt;m3e-tabs variant scrollable icon-position label selected&gt;</code> with
-      <code>&lt;m3e-tab value icon disabled label-hidden&gt;</code> children and a
+      <code>&lt;m3e-tabs variant scrollable icon-position label selected&gt;</code> with{' '}
+      <code>&lt;m3e-tab value icon disabled label-hidden&gt;</code> children and a{' '}
       <code>&lt;m3e-tab-panel value&gt;</code> per tab; <code>selection-change</code> (cancelable)
       when another tab is pressed.
     </p>
@@ -200,8 +200,8 @@ const rowClass = (row: StaticRow) =>
   <section aria-labelledby="react-heading">
     <h2 id="react-heading">React</h2>
     <p>
-      <code>&lt;Tabs variant scrollable iconPosition items selectedKey onSelectionChange&gt;</code>
-      (or <code>&lt;Tab id icon&gt;</code> children) followed by its
+      <code>&lt;Tabs variant scrollable iconPosition items selectedKey onSelectionChange&gt;</code>{' '}
+      (or <code>&lt;Tab id icon&gt;</code> children) followed by its{' '}
       <code>&lt;TabPanel id&gt;</code>s; the same DOM as the element.
     </p>
     <TabsPlayground client:only="react" />

@@ -1,4 +1,5 @@
 ---
+import DeprecationBanner from '../../components/DeprecationBanner.astro';
 import SegmentedButtonPlayground from '../../islands/SegmentedButtonPlayground.tsx';
 import Base from '../../layouts/Base.astro';
 
@@ -76,9 +77,13 @@ const ROWS: Row[] = [
   <link rel="stylesheet" href="/icons/docs-icons.css" slot="head" />
   <h1>Segmented button</h1>
   <div data-deprecated>
-    <p class="docs-deprecated" role="note">
-      Deprecated (DECISIONS D4): the segmented button ships until 2.0 for migration and gets no new features. Use the <a href="/components/button-group/">connected button group</a> (<code>.m3e-button-group--connected</code>, <code>&lt;ButtonGroup variant="connected" selectionMode="single | multiple"&gt;</code>), which m3.material.io recommends instead since the M3 Expressive update. React warns once in development.
-    </p>
+    <DeprecationBanner
+      name="the segmented button"
+      apis={['.m3e-segmented-button', 'SingleChoiceSegmentedButtonRow', 'MultiChoiceSegmentedButtonRow']}
+      replacement="the connected button group"
+      href="/components/button-group/#connected-heading"
+      >m3.material.io recommends it instead since the M3 Expressive update: <code>.m3e-button-group--connected</code>, <code>&lt;ButtonGroup variant="connected" selectionMode="single | multiple"&gt;</code>.</DeprecationBanner
+    >
   </div>
   <p>
     Segmented buttons (COMPONENT_SPEC §37; Compose <code>SingleChoiceSegmentedButtonRow</code> / <code>MultiChoiceSegmentedButtonRow</code> with <code>SegmentedButton</code>) on native inputs: radios for a single choice in a <code>role="radiogroup"</code>, checkboxes for several in a <code>role="group"</code>. The buttons share the widest one's width and overlap by their 1dp outline; the row is 48dp high for the touch targets, the 40dp buttons centered in it. Selecting scales the check in from its bottom corner on the fast spatial spring while the label slides aside; unselecting removes the check at once and slides the label back. No JavaScript is needed: arrow keys move a single choice and wrap (WebKit stops at the ends), Tab enters at the selected button, Space selects or toggles.

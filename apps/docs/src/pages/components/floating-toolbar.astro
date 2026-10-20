@@ -15,16 +15,18 @@ const fabItems = [
   { icon: 'share', label: 'Share' },
 ];
 
-/** Static (CSS-only) toolbars: orientation × expanded × FAB. */
+/** Static (CSS-only) toolbars: orientation × expanded × FAB (at the end, or at the start). */
 const statics = [
-  { id: 'horizontal', vertical: false, expanded: true, fab: false, vibrant: false },
-  { id: 'horizontal-collapsed', vertical: false, expanded: false, fab: false, vibrant: false },
-  { id: 'vertical', vertical: true, expanded: true, fab: false, vibrant: true },
-  { id: 'vertical-collapsed', vertical: true, expanded: false, fab: false, vibrant: true },
-  { id: 'fab', vertical: false, expanded: true, fab: true, vibrant: true },
-  { id: 'fab-collapsed', vertical: false, expanded: false, fab: true, vibrant: true },
-  { id: 'vertical-fab', vertical: true, expanded: true, fab: true, vibrant: false },
-  { id: 'vertical-fab-collapsed', vertical: true, expanded: false, fab: true, vibrant: false },
+  { id: 'horizontal', vertical: false, expanded: true, fab: false, fabStart: false, vibrant: false },
+  { id: 'horizontal-collapsed', vertical: false, expanded: false, fab: false, fabStart: false, vibrant: false },
+  { id: 'vertical', vertical: true, expanded: true, fab: false, fabStart: false, vibrant: true },
+  { id: 'vertical-collapsed', vertical: true, expanded: false, fab: false, fabStart: false, vibrant: true },
+  { id: 'fab', vertical: false, expanded: true, fab: true, fabStart: false, vibrant: true },
+  { id: 'fab-collapsed', vertical: false, expanded: false, fab: true, fabStart: false, vibrant: true },
+  { id: 'vertical-fab', vertical: true, expanded: true, fab: true, fabStart: false, vibrant: false },
+  { id: 'vertical-fab-collapsed', vertical: true, expanded: false, fab: true, fabStart: false, vibrant: false },
+  { id: 'fab-start', vertical: false, expanded: true, fab: true, fabStart: true, vibrant: false },
+  { id: 'vertical-fab-start', vertical: true, expanded: true, fab: true, fabStart: true, vibrant: true },
 ] as const;
 
 const classes = (s: (typeof statics)[number]) =>
@@ -34,6 +36,7 @@ const classes = (s: (typeof statics)[number]) =>
     s.vibrant && 'm3e-floating-toolbar--vibrant',
     !s.expanded && 'm3e-floating-toolbar--collapsed',
     s.fab && 'm3e-floating-toolbar--with-fab',
+    s.fabStart && 'm3e-floating-toolbar--fab-start',
   ]
     .filter(Boolean)
     .join(' ');
@@ -57,7 +60,9 @@ const classes = (s: (typeof statics)[number]) =>
       Plain HTML with m3e-css classes in their static states. Without JavaScript the with-FAB toolbar
       folds on the fast spatial curve and leading/trailing items show or hide at once; set{' '}
       <code>inert</code> on hidden parts yourself. The springs, roving focus and scroll behaviors come
-      from <code>&lt;m3e-floating-toolbar&gt;</code> or React.
+      from <code>&lt;m3e-floating-toolbar&gt;</code> or React. The last two put the FAB at the start
+      (<code>--fab-start</code>, before the bar in the DOM; element <code>fab-position="start"</code>,
+      React <code>fabPosition="start"</code>).
     </p>
     <div class="docs-floating-toolbar-grid" data-testid="statics">
       {
@@ -70,6 +75,20 @@ const classes = (s: (typeof statics)[number]) =>
               aria-label={`Static ${s.id}`}
               data-testid={`static-${s.id}`}
             >
+              {s.fabStart && (
+                <div class="m3e-floating-toolbar__fab">
+                  <button
+                    type="button"
+                    class="m3e-fab"
+                    aria-label={s.expanded ? 'Collapse toolbar' : 'Expand toolbar'}
+                    tabindex={s.expanded ? '-1' : '0'}
+                  >
+                    <span class="m3e-icon" aria-hidden="true">
+                      {s.expanded ? 'close' : 'add'}
+                    </span>
+                  </button>
+                </div>
+              )}
               <div class="m3e-floating-toolbar__bar" inert={s.fab && !s.expanded}>
                 {!s.fab && (
                   <div class="m3e-floating-toolbar__leading" inert={!s.expanded}>
@@ -106,7 +125,7 @@ const classes = (s: (typeof statics)[number]) =>
                   </div>
                 )}
               </div>
-              {s.fab && (
+              {s.fab && !s.fabStart && (
                 <div class="m3e-floating-toolbar__fab">
                   <button
                     type="button"
@@ -174,7 +193,28 @@ const classes = (s: (typeof statics)[number]) =>
             </button>
           ))
         }
-        <button type="button" class="m3e-fab" slot="fab" aria-label="Collapse toolbar" id="element-fab">
+        <button type="button" class="m3e-fab" slot="fab" aria-label="Collapse toolbar" data-fab-toggle>
+          <span class="m3e-icon" aria-hidden="true">close</span>
+        </button>
+      </m3e-floating-toolbar>
+    </div>
+    <div class="docs-floating-toolbar-row">
+      <m3e-floating-toolbar
+        expanded
+        fab-position="start"
+        label="Actions, FAB at the start"
+        data-testid="element-fab-start-toolbar"
+      >
+        {
+          fabItems.map((item) => (
+            <button type="button" class="m3e-icon-button" aria-label={item.label}>
+              <span class="m3e-icon" aria-hidden="true">
+                {item.icon}
+              </span>
+            </button>
+          ))
+        }
+        <button type="button" class="m3e-fab" slot="fab" aria-label="Collapse toolbar" data-fab-toggle>
           <span class="m3e-icon" aria-hidden="true">close</span>
         </button>
       </m3e-floating-toolbar>
@@ -188,8 +228,8 @@ const classes = (s: (typeof statics)[number]) =>
       toolbar, and the two scroll behaviors over a scrolling region: <code>exit-always</code> hides the
       toolbar on scroll down and brings it back on scroll up (a partly hidden toolbar snaps when
       scrolling stops); <code>collapse</code> collapses it after 40dp down and expands it after 40dp up.
-      Deprecated since 1.8 (removed in 2.0; each warns once in development): <code>expanded</code>
-      (use <code>isExpanded</code>) and <code>scrollBehavior="exitAlways"</code> (use
+      Deprecated since 1.8 (removed in 2.0; each warns once in development): <code>expanded</code>{' '}
+      (use <code>isExpanded</code>) and <code>scrollBehavior="exitAlways"</code> (use{' '}
       <code>"exit-always"</code>).
     </p>
     <FloatingToolbarPlayground client:only="react" />
@@ -198,7 +238,7 @@ const classes = (s: (typeof statics)[number]) =>
   <section aria-labelledby="sources-heading">
     <h2 id="sources-heading">Sources</h2>
     <p>
-      androidx Compose Material3 1.5.0-beta01 (<code>19991f2c</code>): <code>FloatingToolbar.kt</code>
+      androidx Compose Material3 1.5.0-beta01 (<code>19991f2c</code>): <code>FloatingToolbar.kt</code>{' '}
       (vendored; layouts, <code>FloatingToolbarDefaults</code>, <code>exitAlwaysScrollBehavior</code>,{' '}
       <code>floatingToolbarVerticalNestedScroll</code>), <code>FloatingToolbarTokens.kt</code> and the
       values Compose renders in <code>components/floating-toolbar-defaults.css</code>;{' '}
@@ -220,13 +260,12 @@ const classes = (s: (typeof statics)[number]) =>
     toggle.textContent = toolbar.expanded ? 'Collapse' : 'Expand';
   });
 
-  const fabToolbar = document.querySelector<HTMLElement & { expanded: boolean }>(
-    '[data-testid="element-fab-toolbar"]',
-  )!;
-  const fab = document.querySelector<HTMLButtonElement>('#element-fab')!;
-  fab.addEventListener('click', () => {
-    fabToolbar.expanded = !fabToolbar.expanded;
-    fab.setAttribute('aria-label', fabToolbar.expanded ? 'Collapse toolbar' : 'Expand toolbar');
-    fab.querySelector('.m3e-icon')!.textContent = fabToolbar.expanded ? 'close' : 'add';
-  });
+  for (const fab of document.querySelectorAll<HTMLButtonElement>('[data-fab-toggle]')) {
+    const fabToolbar = fab.closest<HTMLElement & { expanded: boolean }>('m3e-floating-toolbar')!;
+    fab.addEventListener('click', () => {
+      fabToolbar.expanded = !fabToolbar.expanded;
+      fab.setAttribute('aria-label', fabToolbar.expanded ? 'Collapse toolbar' : 'Expand toolbar');
+      fab.querySelector('.m3e-icon')!.textContent = fabToolbar.expanded ? 'close' : 'add';
+    });
+  }
 </script>

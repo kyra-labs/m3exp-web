@@ -28,7 +28,7 @@ const entries: Entry[] = [
   <link rel="stylesheet" href="/icons/docs-icons.css" slot="head" />
   <h1>Navigation drawer</h1>
   <p>
-    Navigation drawers (COMPONENT_SPEC §15; Compose <code>PermanentNavigationDrawer</code>,
+    Navigation drawers (COMPONENT_SPEC §15; Compose <code>PermanentNavigationDrawer</code>,{' '}
     <code>DismissibleNavigationDrawer</code> and <code>ModalNavigationDrawer</code> with their drawer
     sheets and <code>NavigationDrawerItem</code>). Static drawers are plain HTML with m3e-css
     classes. Opening animates on the default spatial spring and closing on the fast effects spring
@@ -46,7 +46,7 @@ const entries: Entry[] = [
     <h2 id="standard-heading">Standard (permanent) and modal (static)</h2>
     <p>
       A standard sheet (<code>surface</code>, square corners) in the layout next to the content, and
-      a modal sheet (<code>surface-container-low</code>, large end corners) over the 32%
+      a modal sheet (<code>surface-container-low</code>, large end corners) over the 32%{' '}
       <code>scrim</code>. The modal frame contains its fixed sheet only for this page.
     </p>
     <div class="docs-drawer-frames">
@@ -112,9 +112,9 @@ const entries: Entry[] = [
   <section aria-labelledby="element-heading">
     <h2 id="element-heading">Dismissible and modal (element)</h2>
     <p>
-      <code>&lt;m3e-navigation-drawer variant="dismissible | modal"&gt;</code> with
+      <code>&lt;m3e-navigation-drawer variant="dismissible | modal"&gt;</code> with{' '}
       <code>&lt;m3e-navigation-item&gt;</code> children (<code>badge</code> adds the trailing text);
-      other children (headlines, dividers) move into the sheet in order. <code>show()</code>,
+      other children (headlines, dividers) move into the sheet in order. <code>show()</code>,{' '}
       <code>close()</code>, <code>toggle()</code>; Escape closes; arrow keys move between items. The
       dismissible drawer pushes the content beside it.
     </p>
@@ -171,7 +171,7 @@ const entries: Entry[] = [
     <p>
       <code>&lt;NavigationDrawer variant items selectedKey onSelectionChange isOpen onOpenChange /&gt;</code>:
       one component for the three drawers, so an adaptive layout can switch the variant without
-      losing the selection. Items may be destinations, <code>{`{ type: 'headline' }`}</code> or
+      losing the selection. Items may be destinations, <code>{`{ type: 'headline' }`}</code> or{' '}
       <code>{`{ type: 'divider' }`}</code>.
     </p>
     <DrawerPlayground client:only="react" />

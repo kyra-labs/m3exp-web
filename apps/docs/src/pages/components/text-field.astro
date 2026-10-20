@@ -23,8 +23,8 @@ const VARIANTS = [
   <section aria-labelledby="static-heading" id="static-text-fields">
     <h2 id="static-heading">Static (m3e-css)</h2>
     <p>
-      <code>.m3e-text-field</code> (<code>--outlined</code>, <code>--label-above</code>, <code>--multiline</code>) &gt; <code>__container</code> with the <code>__label</code>, the <code>__input</code> and the optional <code>__leading</code> / <code>__trailing</code> icons, <code>__prefix</code> / <code>__suffix</code> and, when outlined, the <code>__outline</code> fieldset whose
-      <code>__notch</code> legend repeats the label text; then an optional <code>__supporting</code> row with the <code>__supporting-text</code> and the <code>__counter</code>. Give the input a placeholder (<code>placeholder=" "</code> when no text is wanted): the resting label uses
+      <code>.m3e-text-field</code> (<code>--outlined</code>, <code>--label-above</code>, <code>--multiline</code>) &gt; <code>__container</code> with the <code>__label</code>, the <code>__input</code> and the optional <code>__leading</code> / <code>__trailing</code> icons, <code>__prefix</code> / <code>__suffix</code> and, when outlined, the <code>__outline</code> fieldset whose{' '}
+      <code>__notch</code> legend repeats the label text; then an optional <code>__supporting</code> row with the <code>__supporting-text</code> and the <code>__counter</code>. Give the input a placeholder (<code>placeholder=" "</code> when no text is wanted): the resting label uses{' '}
       <code>:placeholder-shown</code> to know the field is empty.
     </p>
     {
@@ -52,12 +52,14 @@ const VARIANTS = [
   <section aria-labelledby="element-heading">
     <h2 id="element-heading">Element</h2>
     <p>
-      <code>&lt;m3e-text-field&gt;</code> renders the same contract from attributes and adds what CSS cannot: the live character counter and, where <code>field-sizing: content</code> is missing, the growing textarea.
+      <code>&lt;m3e-text-field&gt;</code> renders the same contract from attributes and adds what CSS cannot: the live character counter and, where <code>field-sizing: content</code> is missing, the growing textarea. The last two show <code>invalid</code> with <code>error-text</code> (shown instead of the supporting text) and <code>disabled</code>.
     </p>
     <div class="docs-text-field-grid">
       <m3e-text-field label="Name" supporting-text="As on your passport" data-testid="element-filled"></m3e-text-field>
       <m3e-text-field variant="outlined" label="Bio" maxlength="20" leading-icon="person" data-testid="element-outlined"></m3e-text-field>
       <m3e-text-field variant="outlined" label="Notes" multiline data-testid="element-multiline"></m3e-text-field>
+      <m3e-text-field label="Email" value="ali@" invalid error-text="Enter a full email address" supporting-text="We never share it" trailing-icon="error" data-testid="element-error"></m3e-text-field>
+      <m3e-text-field variant="outlined" label="Account" value="Kyra Labs" disabled supporting-text="Set by your administrator" data-testid="element-disabled"></m3e-text-field>
     </div>
   </section>
 

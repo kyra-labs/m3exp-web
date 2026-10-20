@@ -8,6 +8,8 @@ test.describe('primitives', () => {
     await page.goto('/components/primitives/');
     await page.evaluate(() => document.fonts.ready);
     await expect(page.locator('m3e-icon .m3e-icon').first()).toHaveText('home');
+    // The client:only React island.
+    await expect(page.getByTestId('react-primitives')).toBeVisible();
   });
 
   test('has no axe violations', async ({ page }) => {

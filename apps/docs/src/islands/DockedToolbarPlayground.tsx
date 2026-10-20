@@ -64,7 +64,7 @@ function Scroller({
   );
 }
 
-/** React docked toolbar (arrangement switch) or the deprecated bottom app bar, exit-always. */
+/** React docked toolbar (arrangement switch, vibrant) or the deprecated bottom app bar, exit-always. */
 export default function DockedToolbarPlayground({ kind }: { kind: 'docked' | 'legacy' }) {
   const scroller = useRef<HTMLDivElement>(null);
   const [arrangement, setArrangement] = useState<DockedToolbarArrangement>('spread');
@@ -122,6 +122,15 @@ export default function DockedToolbarPlayground({ kind }: { kind: 'docked' | 'le
           scrollTarget={scroller}
           className="docs-docked-toolbar-docked"
           data-testid="react-toolbar"
+        >
+          {items()}
+        </DockedToolbar>
+      </div>
+      <div className="docs-nav-frame">
+        <DockedToolbar
+          aria-label="React vibrant actions"
+          colorStyle="vibrant"
+          data-testid="react-vibrant-toolbar"
         >
           {items()}
         </DockedToolbar>

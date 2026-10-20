@@ -1,4 +1,5 @@
 ---
+import DeprecationBanner from '../../components/DeprecationBanner.astro';
 import StaticListItem from '../../components/StaticListItem.astro';
 import ListPlayground from '../../islands/ListPlayground.tsx';
 import Base from '../../layouts/Base.astro';
@@ -97,7 +98,7 @@ import Base from '../../layouts/Base.astro';
   <section aria-labelledby="react-heading">
     <h2 id="react-heading">React</h2>
     <p>
-      <code>&lt;List selectionMode selectedKeys onSelectionChange onAction disabledKeys aria-label&gt;</code> with <code>&lt;ListItem id leadingContent trailingContent overlineContent supportingContent selectionControl selectionControlPosition threeLine isDisabled isDragged&gt;</code> and <code>&lt;SegmentedListItem&gt;</code>: a static <code>ul</code>
+      <code>&lt;List selectionMode selectedKeys onSelectionChange onAction disabledKeys aria-label&gt;</code> with <code>&lt;ListItem id leadingContent trailingContent overlineContent supportingContent selectionControl selectionControlPosition threeLine isDisabled isDragged&gt;</code> and <code>&lt;SegmentedListItem&gt;</code>: a static <code>ul</code>{' '}
       without <code>selectionMode</code> or <code>onAction</code>, else React Aria <code>useListBox</code> / <code>useOption</code> (the corners spring, interruptibly).
     </p>
     <ListPlayground client:only="react" />
@@ -105,9 +106,12 @@ import Base from '../../layouts/Base.astro';
 
   <section aria-labelledby="legacy-heading" data-deprecated>
     <h2 id="legacy-heading">Legacy list item (deprecated)</h2>
-    <p class="docs-deprecated" role="note">
-      Deprecated (DECISIONS D4): the non-expressive list item (Compose's <code>ListItem(headlineContent, …)</code>, deprecated upstream too; React <code>&lt;ListItem headlineContent&gt;</code>, m3e-css <code>.m3e-list-item--baseline</code>) ships until 2.0 for migration and gets no new features. Use the expressive list item.
-    </p>
+    <DeprecationBanner
+      name="the non-expressive list item"
+      apis={['<ListItem headlineContent>', '.m3e-list-item--baseline']}
+      replacement="the expressive list item"
+      href="#static-heading">Compose deprecates its <code>ListItem(headlineContent, …)</code> too.</DeprecationBanner
+    >
     <ul class="m3e-list docs-list-divided docs-list-legacy" aria-label="Legacy list items" data-testid="legacy">
       <StaticListItem baseline leading="favorite" headline="One line list item with 24x24 icon" />
       <StaticListItem baseline leading="favorite" headline="Two line list item with trailing" supporting="Secondary text" trailing="meta" />

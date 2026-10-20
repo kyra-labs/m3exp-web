@@ -203,6 +203,49 @@ import '@kyralabs/m3e-elements/circular-progress.js';
 host's `aria-label` (or `label`) names the progress bar. Flat indicators also work without JS
 (markup in the m3e-css files).
 
+## Top app bar
+
+```js
+import { attachTopAppBarScroll } from '@kyralabs/m3e-elements/top-app-bar.js';
+
+const controller = new AbortController();
+attachTopAppBarScroll(document.querySelector('.m3e-top-app-bar'), {
+  behavior: 'exit-until-collapsed',
+  signal: controller.signal,
+});
+```
+
+```html
+<header class="m3e-top-app-bar m3e-top-app-bar--medium-flexible">
+  <div class="m3e-top-app-bar__navigation">…menu button…</div>
+  <div class="m3e-top-app-bar__headline" aria-hidden="true">
+    <p class="m3e-top-app-bar__title">Inbox</p>
+  </div>
+  <div class="m3e-top-app-bar__actions">…icon buttons…</div>
+  <div class="m3e-top-app-bar__expanded">
+    <div class="m3e-top-app-bar__headline"><p class="m3e-top-app-bar__title">Inbox</p></div>
+  </div>
+</header>
+```
+
+There is no top app bar element: the bars (small, center-aligned, medium and large flexible,
+two-rows) are m3e-css markup (load `top-app-bar.css`), and the `top-app-bar.js` entry registers
+nothing. `attachTopAppBarScroll(bar, { behavior, target, signal })` adds Compose's scroll
+behaviors: `pinned` (default; only the container color reacts), `enter-always` (the bar, or a
+two-rows bar's `__expanded` row, collapses on scroll down and returns on any scroll up) or
+`exit-until-collapsed` (it expands again when the content comes back to its start). `target` is
+the scrolling element (default: the window); aborting `signal` detaches it and clears what it
+wrote. It writes `data-scroll-behavior`, `data-scrolled` (content scrolled under the bar) and the
+private height offset and title fractions m3e-css reads; a partly collapsed bar snaps open or
+closed when scrolling stops, and opens when focus moves into a hidden part. On a two-rows bar (one
+with an `__expanded` row) the top row's headline is the collapsed title: mark it `aria-hidden`, as
+above; the function moves `aria-hidden` to whichever headline Compose hides. Custom two-rows
+heights (Compose's `collapsedHeight` / `expandedHeight`) are public custom properties on the bar
+or an ancestor: `--m3e-comp-top-app-bar-container-collapsed-height` and
+`--m3e-comp-top-app-bar-container-expanded-height` (the private `--_m3e-top-app-bar-*-height`
+still work and are deprecated since 1.8). m3e-react's `<TopAppBar scrollBehavior>` calls the same
+function.
+
 ## Search
 
 ```js
@@ -596,6 +639,39 @@ builds in. `action-on-new-line` puts the action under the text. `hostState` is t
 `SnackbarHostState`, which can also be shared or driven from code); the `snackbar-layout.js` entry
 (`SnackbarHostState`, `SnackbarHostController`) is shared with m3e-react's `<SnackbarHost>`, which
 renders the same DOM.
+
+## Bottom sheet
+
+```html
+<button class="m3e-button m3e-button--filled" onclick="sheet.show()">Show bottom sheet</button>
+<m3e-bottom-sheet id="sheet" variant="modal">…content…</m3e-bottom-sheet>
+
+<div style="position: relative; block-size: 480px">
+  <main>…</main>
+  <m3e-bottom-sheet value="partially-expanded" peek-height="128" skip-hidden-state label="Details">
+    …content…
+  </m3e-bottom-sheet>
+</div>
+```
+
+`<m3e-bottom-sheet>` (Compose `BottomSheet` / `ModalBottomSheet`) renders a `.m3e-bottom-sheet`
+inside itself (load m3e-css `bottom-sheet.css`); its child nodes are the content. `variant`:
+`standard` (default; fixed to the bottom of its positioned container, a region named `label`) or
+`modal` (a native `<dialog>` over a scrim: the page inert, Tab kept inside, focus back on the
+opener when it hides). `value` (reflected): `hidden` (default), `partially-expanded` or
+`expanded`; `open` (reflected) is whether `value` is not `hidden`, and setting it shows or hides
+the sheet like `show()` / `hide()`. `skip-partially-expanded` drops the partially expanded state;
+`peek-height` (px, standard only; empty: 56) shows that much of the sheet when partially expanded
+(Compose `sheetPeekHeight`) and `skip-hidden-state` then drops `hidden`. `no-drag-handle`,
+`drag-handle-label` (default "Drag handle"; the handle has the plain tooltip Compose builds in),
+`gestures-disabled` and `label` (default "Bottom Sheet"). Methods `show()`, `hide()`, `expand()`,
+`partialExpand()`. When the sheet asks to move (the handle, a drag, Escape, the scrim, a method)
+it fires a cancelable `value-change` (`detail: { value }`; `preventDefault()` keeps the current
+value) and then, when that shows or hides it, a cancelable `open-change` (`detail: { open }`), as
+the other modal elements do; setting `value` or `open` fires nothing. The behavior lives in the
+`bottom-sheet-layout.js` entry (`BottomSheetLayout`), imported when the element first renders
+(`ready` resolves once it runs) and shared with m3e-react's `<BottomSheet>` and
+`<ModalBottomSheet>`, which render the same DOM.
 
 ## Side sheet
 

@@ -11,9 +11,9 @@ const richText =
   <link rel="stylesheet" href="/icons/docs-icons.css" slot="head" />
   <h1>Tooltips</h1>
   <p>
-    Plain and rich tooltips (COMPONENT_SPEC §33, Compose <code>PlainTooltip</code> /
+    Plain and rich tooltips (COMPONENT_SPEC §33, Compose <code>PlainTooltip</code> /{' '}
     <code>RichTooltip</code> in a <code>TooltipBox</code>). A <strong>plain</strong> tooltip is a short
-    description of its anchor; a <strong>rich</strong> one adds a subhead and an action. The
+    description of its anchor; a <strong>rich</strong> one adds a subhead and an action. The{' '}
     <code>&lt;m3e-tooltip&gt;</code> element (m3e-elements) and <code>&lt;TooltipTrigger&gt;</code> (m3e-react)
     share one controller: hovering the anchor with a mouse shows the tooltip at once, and it stays while the anchor or the
     tooltip is hovered and hides 1.5 s after the pointer leaves both;
@@ -72,12 +72,12 @@ const richText =
     <h2 id="elements-heading">Custom element</h2>
     <p>
       An <code>&lt;m3e-tooltip anchor="…"&gt;</code> next to its anchor; its text content becomes
-      the tooltip. <code>position</code> (<code>above</code>, <code>below</code>, <code>left</code>,
-      <code>right</code>, <code>start</code>, <code>end</code>), <code>caret</code>,
-      <code>persistent</code> (stays until a click outside or Escape), <code>manual</code> (only
-      <code>show()</code> / <code>hide()</code> / <code>open</code>), and for
-      <code>variant="rich"</code> a <code>subhead</code> and an <code>action</code>. Events:
-      <code>open-change</code> with <code>&#123; open &#125;</code> and a cancelable
+      the tooltip. <code>position</code> (<code>above</code>, <code>below</code>, <code>left</code>,{' '}
+      <code>right</code>, <code>start</code>, <code>end</code>), <code>caret</code>,{' '}
+      <code>persistent</code> (stays until a click outside or Escape), <code>manual</code> (only{' '}
+      <code>show()</code> / <code>hide()</code> / <code>open</code>), and for{' '}
+      <code>variant="rich"</code> a <code>subhead</code> and an <code>action</code>. Events:{' '}
+      <code>open-change</code> with <code>&#123; open &#125;</code> and a cancelable{' '}
       <code>action</code>. Tab from the anchor moves into a tooltip with an action.
     </p>
     <div class="docs-tooltip-demos" data-testid="elements">
@@ -144,7 +144,7 @@ const richText =
     <p>
       A <code>&lt;TooltipTrigger&gt;</code> around an anchor (a component that forwards its ref)
       and a <code>&lt;PlainTooltip&gt;</code> or <code>&lt;RichTooltip subhead action
-      onAction&gt;</code>. <code>isPersistent</code>, <code>position</code>, <code>isOpen</code> /
+      onAction&gt;</code>. <code>isPersistent</code>, <code>position</code>, <code>isOpen</code> /{' '}
       <code>defaultOpen</code> / <code>onOpenChange</code> and <code>isDisabled</code> live on the
       trigger, <code>caret</code> on the tooltip.
     </p>

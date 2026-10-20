@@ -132,3 +132,32 @@ describe('licensing (D9)', () => {
     expect(notice).toContain('ported to TypeScript by Kyra Labs');
   });
 });
+
+describe('package READMEs', () => {
+  /** The `## <heading>` section of a README, up to the next `## `. */
+  const section = (path, heading) => {
+    const text = read(path);
+    const start = text.indexOf(`\n## ${heading}\n`);
+    expect(start, `${path} has a "## ${heading}" section`).toBeGreaterThan(-1);
+    const end = text.indexOf('\n## ', start + 1);
+    return text.slice(start, end === -1 ? undefined : end);
+  };
+
+  it('m3e-react lists every runtime export', async () => {
+    const exports = Object.keys(await import('../packages/m3e-react/src/index.ts'));
+    const text = section('packages/m3e-react/README.md', 'Components and hooks');
+    const items = [...text.matchAll(/^- `(\w+)`:/gm)].map((m) => m[1]);
+    const helpers = [...text.matchAll(/`(\w+ClassName)`/g)].map((m) => m[1]);
+    expect(new Set(items).size).toBe(items.length);
+    expect([...items, ...new Set(helpers)].sort()).toEqual(exports.sort());
+  });
+
+  it('m3e-css lists every component file', () => {
+    const files = readdirSync(new URL('packages/m3e-css/src/', root)).filter(
+      (f) => f.endsWith('.css') && f !== 'index.css',
+    );
+    const text = section('packages/m3e-css/README.md', 'Components');
+    const listed = [...text.matchAll(/^- `([\w-]+\.css)`:/gm)].map((m) => m[1]);
+    expect(listed.sort()).toEqual(files.sort());
+  });
+});

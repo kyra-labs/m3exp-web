@@ -3,7 +3,7 @@ import { useState } from 'react';
 
 type Key = string | number;
 
-/** React button groups: standard with press expansion, connected single-select, overflow. */
+/** React button groups: standard with press expansion, connected single-select, disabled, overflow. */
 export default function ButtonGroupPlayground() {
   const [view, setView] = useState<Set<Key>>(new Set(['week']));
   const [last, setLast] = useState('none');
@@ -41,6 +41,39 @@ export default function ButtonGroupPlayground() {
           <ButtonGroupItem id="day">Day</ButtonGroupItem>
           <ButtonGroupItem id="week">Week</ButtonGroupItem>
           <ButtonGroupItem id="month">Month</ButtonGroupItem>
+        </ButtonGroup>
+      </div>
+
+      <ButtonGroup
+        aria-label="Playback (React, disabled)"
+        buttonVariant="tonal"
+        isDisabled
+        data-testid="react-disabled"
+      >
+        <ButtonGroupItem id="previous" icon="skip_previous">
+          Previous
+        </ButtonGroupItem>
+        <ButtonGroupItem id="play" icon="play_arrow" variant="filled">
+          Play
+        </ButtonGroupItem>
+        <ButtonGroupItem id="next" icon="skip_next">
+          Next
+        </ButtonGroupItem>
+      </ButtonGroup>
+
+      <div className="docs-button-group-connected">
+        <ButtonGroup
+          variant="connected"
+          selectionMode="single"
+          defaultSelectedKeys={['day']}
+          aria-label="View (React, one disabled)"
+          data-testid="react-item-disabled"
+        >
+          <ButtonGroupItem id="day">Day</ButtonGroupItem>
+          <ButtonGroupItem id="week">Week</ButtonGroupItem>
+          <ButtonGroupItem id="month" isDisabled>
+            Month
+          </ButtonGroupItem>
         </ButtonGroup>
       </div>
 

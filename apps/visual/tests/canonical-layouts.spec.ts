@@ -62,6 +62,8 @@ async function open(page: Page, width: number = WIDTHS.expanded) {
   await page.goto('/components/canonical-layouts/');
   await page.evaluate(() => document.fonts.ready);
   await expect(scaffoldOf(page, 'react-frame')).toHaveAttribute('data-managed', '');
+  await expect(scaffoldOf(page, 'react-supporting-frame')).toHaveAttribute('data-managed', '');
+  await expect(page.getByTestId('react-feed')).toBeVisible();
   // The pane motion and drag handle entries load right after the layouts start.
   await page.waitForLoadState('networkidle');
   await setWidth(page, width);
