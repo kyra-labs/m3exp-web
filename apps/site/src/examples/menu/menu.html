@@ -1,0 +1,23 @@
+<button type="button" id="edit-button" class="m3e-button m3e-button--tonal">
+  <span class="m3e-button__label">Edit</span>
+</button>
+<m3e-menu anchor="edit-button" label="Edit">
+  <m3e-menu-group aria-label="Clipboard">
+    <m3e-menu-item value="cut" icon="content_cut" trailing-text="Ctrl+X">Cut</m3e-menu-item>
+    <m3e-menu-item value="copy" icon="content_copy" trailing-text="Ctrl+C">Copy</m3e-menu-item>
+    <m3e-menu-item value="paste" icon="content_paste" trailing-text="Ctrl+V" disabled
+      >Paste</m3e-menu-item
+    >
+  </m3e-menu-group>
+  <m3e-menu-group label="More" divider>
+    <m3e-menu-item value="rename" icon="edit" supporting-text="Change the file name"
+      >Rename</m3e-menu-item
+    >
+    <m3e-menu-item value="delete" icon="delete">Delete</m3e-menu-item>
+  </m3e-menu-group>
+</m3e-menu>
+<script>
+  document.querySelector('m3e-menu[anchor="edit-button"]').addEventListener('action', (event) => {
+    console.log(event.detail.value);
+  });
+</script>
