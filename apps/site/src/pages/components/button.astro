@@ -1,0 +1,16 @@
+---
+import '@kyralabs/m3e-css/button.css';
+import ComponentPage from '../../layouts/ComponentPage.astro';
+---
+
+<ComponentPage
+  slug="button"
+  examples={[
+    { name: 'variants', title: 'Color configurations', description: 'Filled for the main action, tonal and elevated for secondary ones, outlined and text for low emphasis.' },
+    { name: 'sizes', title: 'Sizes', description: 'Extra small to extra large. Small (40dp) is the default; label and icon grow with the size.' },
+    { name: 'shapes', title: 'Shapes', description: 'Round (default) or square. Press any button: its corners morph on a spring.' },
+    { name: 'icons', title: 'Icons', description: 'A leading `icon` or a `trailingIcon`.' },
+    { name: 'toggle', title: 'Toggle buttons', description: '`ToggleButton` adds `aria-pressed`; selected round buttons turn square and change color.' },
+    { name: 'states', title: 'Disabled and links', description: 'Disabled buttons leave the tab order unless `focusableWhenDisabled`; with `href` the button renders a link.' },
+  ]}
+/>

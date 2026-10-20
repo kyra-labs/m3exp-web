@@ -1,0 +1,14 @@
+---
+import '@kyralabs/m3e-css/loading-indicator.css';
+import '@kyralabs/m3e-css/slider.css';
+import ComponentPage from '../../layouts/ComponentPage.astro';
+---
+
+<ComponentPage
+  slug="loading-indicator"
+  examples={[
+    { name: 'indeterminate', title: 'Indeterminate', description: 'Seven Material shapes morph into each other while the indicator turns. With reduced motion it holds still.' },
+    { name: 'determinate', title: 'Determinate', description: 'With `progress` (0–1) the shape morphs by the value.' },
+    { name: 'shapes', title: 'Your own shapes', description: 'Any `RoundedPolygon`s from `@kyralabs/m3e-shapes` (React only).' },
+  ]}
+/>

@@ -1,0 +1,98 @@
+---
+// API of one custom element, generated from the m3e-elements sources (scripts/api.js).
+import { API, deprecationText } from '../lib/api';
+import { block, inline } from '../lib/markdown';
+import CodeBlock from './CodeBlock.astro';
+import ScrollTable from './ScrollTable.astro';
+
+interface Props {
+  tag: string;
+}
+
+const { tag } = Astro.props;
+const api = API.elements[tag];
+if (!api) throw new Error(`m3e-elements registers no <${tag}>`);
+const deprecated = deprecationText(api.deprecated);
+const typeOf = (a: (typeof api.attributes)[number]) =>
+  a.type === 'Boolean' ? 'boolean' : a.type === 'Number' ? 'number' : (a.declaredType ?? 'string').replace(/ \| null \| undefined$/, '').replace(/ \| undefined$/, '');
+---
+
+<section class="site-api" aria-labelledby={`api-${tag}`}>
+  <h3 id={`api-${tag}`}><code>{`<${tag}>`}</code></h3>
+  {
+    deprecated !== null && (
+      <p class="site-note site-note--warning" role="note">
+        <strong>Deprecated.</strong> <Fragment set:html={inline(deprecated)} />
+      </p>
+    )
+  }
+  <CodeBlock code={`import '@kyralabs/m3e-elements/${api.entry}.js';`} lang="js" label={`import for ${tag}`} />
+  {api.description && <div class="site-api__description" set:html={block(api.description)} />}
+  {
+    api.attributes.length > 0 && (
+      <ScrollTable label={`${tag} attributes`}>
+        <table>
+          <thead>
+            <tr>
+              <th scope="col">Attribute</th>
+              <th scope="col">Property</th>
+              <th scope="col">Type</th>
+              <th scope="col">Notes</th>
+            </tr>
+          </thead>
+          <tbody>
+            {api.attributes.map((a) => (
+              <tr>
+                <th scope="row">
+                  <code>{a.attribute}</code>
+                </th>
+                <td>
+                  <code>{a.property}</code>
+                </td>
+                <td>
+                  <code>{typeOf(a)}</code>
+                </td>
+                <td>
+                  {a.reflect && 'Reflected. '}
+                  {a.deprecated !== null && <span class="site-api__deprecated">Deprecated. </span>}
+                  <Fragment set:html={inline([deprecationText(a.deprecated) ?? '', a.description].filter(Boolean).join(' '))} />
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </ScrollTable>
+    )
+  }
+  {
+    api.events.length > 0 && (
+      <ScrollTable label={`${tag} events`}>
+        <table>
+          <thead>
+            <tr>
+              <th scope="col">Event</th>
+              <th scope="col">Detail</th>
+              <th scope="col">Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            {api.events.map((e) => (
+              <tr>
+                <th scope="row">
+                  <code>{e.name}</code>
+                </th>
+                <td>
+                  <code>{e.detail}</code>
+                </td>
+                <td>
+                  {e.deprecated !== null && <span class="site-api__deprecated">Deprecated. </span>}
+                  <Fragment set:html={inline([deprecationText(e.deprecated) ?? '', e.description].filter(Boolean).join(' '))} />
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </ScrollTable>
+    )
+  }
+</section>

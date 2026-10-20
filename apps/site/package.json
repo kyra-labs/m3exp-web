@@ -4,15 +4,17 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "pnpm icons && astro dev",
-    "build": "pnpm icons && astro build && pagefind --site dist --output-subdir pagefind",
+    "dev": "pnpm icons && pnpm api && astro dev",
+    "build": "pnpm icons && pnpm api && astro build && pagefind --site dist --output-subdir pagefind",
     "preview": "astro preview",
-    "typecheck": "astro check",
+    "typecheck": "node scripts/api.js --stub-if-missing && astro check",
     "icons": "node scripts/icons.js",
     "check:links": "node scripts/check-links.js",
     "test:a11y": "playwright test",
     "lighthouse": "node scripts/lighthouse.js",
-    "serve": "node scripts/serve.js"
+    "serve": "node scripts/serve.js",
+    "api": "node scripts/api.js",
+    "check:components": "node scripts/check-components.js"
   },
   "dependencies": {
     "@astrojs/react": "7.0.1",

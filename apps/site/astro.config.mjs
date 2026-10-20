@@ -14,5 +14,9 @@ export default defineConfig({
   // compression would delete a line break that touches a tag. Pages are served compressed.
   compressHTML: false,
   server: { port: 4322 },
-  integrations: [react(), sitemap()],
+  integrations: [
+    react(),
+    // The HTML example pages are demos, not documentation.
+    sitemap({ filter: (page) => !page.includes('/examples/') }),
+  ],
 });

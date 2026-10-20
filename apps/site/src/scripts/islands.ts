@@ -11,10 +11,18 @@ interface IslandModule {
 }
 
 const islands = import.meta.glob<IslandModule>('../islands/*.tsx');
+const examples = import.meta.glob<IslandModule>('../examples/*/*.tsx');
+
+/** `Hero` → src/islands/Hero.tsx; `example:button/variants` → src/examples/button/variants.tsx. */
+function loader(name: string): (() => Promise<IslandModule>) | undefined {
+  return name.startsWith('example:')
+    ? examples[`../examples/${name.slice('example:'.length)}.tsx`]
+    : islands[`../islands/${name}.tsx`];
+}
 
 async function mount(el: HTMLElement): Promise<void> {
   const name = el.dataset.island;
-  const load = islands[`../islands/${name ?? ''}.tsx`];
+  const load = loader(name ?? '');
   if (!load) {
     console.error(`Unknown island "${name ?? ''}"`);
     return;

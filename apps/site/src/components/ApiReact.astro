@@ -1,0 +1,74 @@
+---
+// API of one m3e-react export, generated from its .d.ts (scripts/api.js).
+import { API, deprecationText } from '../lib/api';
+import { block, inline } from '../lib/markdown';
+import ScrollTable from './ScrollTable.astro';
+
+interface Props {
+  name: string;
+}
+
+const { name } = Astro.props;
+const api = API.react[name];
+if (!api) throw new Error(`m3e-react exports no ${name}`);
+const label = api.kind === 'component' ? `<${name}>` : `${name}()`;
+const deprecated = deprecationText(api.deprecated);
+// Documented props first, event handlers after them, deprecated ones last (stable otherwise).
+const rank = (p: (typeof api.props)[number]) =>
+  (p.deprecated !== null ? 4 : 0) + (/^on[A-Z]/.test(p.name) ? 2 : 0) + (p.description ? 0 : 1);
+const props = [...api.props].sort((a, b) => rank(a) - rank(b));
+---
+
+<section class="site-api" aria-labelledby={`api-${name}`}>
+  <h3 id={`api-${name}`}><code>{label}</code></h3>
+  {
+    deprecated !== null && (
+      <p class="site-note site-note--warning" role="note">
+        <strong>Deprecated.</strong> <Fragment set:html={inline(deprecated)} />
+      </p>
+    )
+  }
+  {api.description && <div class="site-api__description" set:html={block(api.description)} />}
+  {
+    props.length > 0 && (
+      <ScrollTable label={`${name} props`}>
+        <table>
+          <thead>
+            <tr>
+              <th scope="col">Prop</th>
+              <th scope="col">Type</th>
+              <th scope="col">Default</th>
+              <th scope="col">Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            {props.map((p) => (
+              <tr>
+                <th scope="row">
+                  <code>{p.name}</code>
+                  {!p.optional && <span class="site-api__required"> required</span>}
+                </th>
+                <td>
+                  <code>{p.values ?? p.type}</code>
+                </td>
+                <td class="site-api__default">{p.default ? <code>{p.default}</code> : null}</td>
+                <td>
+                  {p.deprecated !== null && (
+                    <span class="site-api__deprecated">Deprecated{deprecationText(p.deprecated) ? ': ' : '.'}</span>
+                  )}
+                  {p.deprecated !== null && <Fragment set:html={inline(deprecationText(p.deprecated) ?? '')} />}{' '}
+                  <Fragment set:html={inline(p.description)} />
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </ScrollTable>
+    )
+  }
+  {
+    api.inherits.length > 0 && (
+      <p class="site-api__inherits">Also accepts {api.inherits.join(' and ')} not listed here.</p>
+    )
+  }
+</section>

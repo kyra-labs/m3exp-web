@@ -1,0 +1,18 @@
+<button type="button" class="m3e-button m3e-button--tonal" id="show-saved">Show a snackbar</button>
+<button type="button" class="m3e-button m3e-button--outlined" id="show-undo">With an action</button>
+<m3e-snackbar-host id="snackbars"></m3e-snackbar-host>
+
+<script type="module">
+  const host = document.getElementById('snackbars');
+  document.getElementById('show-saved').addEventListener('click', () => {
+    host.showSnackbar('Photo saved');
+  });
+  document.getElementById('show-undo').addEventListener('click', async () => {
+    const result = await host.showSnackbar({
+      message: 'Message archived',
+      actionLabel: 'Undo',
+      withDismissAction: true,
+    });
+    console.log(result); // 'action-performed' | 'dismissed'
+  });
+</script>
