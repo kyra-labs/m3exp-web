@@ -73,3 +73,13 @@ describe('mergeChangelogs', () => {
     expect(merged[1]?.changes[0]?.kind).toBe('Major');
   });
 });
+
+describe('mergeChangelogs order', () => {
+  it('sorts versions numerically, newest first', () => {
+    const release = (version: string) =>
+      `## ${version}\n\n### Patch Changes\n\n- ${version.replace(/\./g, '')}aaaa: Fix.\n`;
+    const md = ['1.9.0', '1.10.0', '1.2.0'].map(release).join('\n');
+    const merged = mergeChangelogs([parseChangelog(md, 'm3e-css')]);
+    expect(merged.map((r) => r.version)).toEqual(['1.10.0', '1.9.0', '1.2.0']);
+  });
+});
