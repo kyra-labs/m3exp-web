@@ -188,7 +188,12 @@ function staticProperties(cls, classes) {
     const opts = {};
     if (ts.isObjectLiteralExpression(p.initializer)) {
       for (const o of p.initializer.properties) {
-        if (ts.isPropertyAssignment(o)) opts[o.name.getText()] = o.initializer.getText();
+        if (!ts.isPropertyAssignment(o)) continue;
+        // `attribute: false as const` is `false`.
+        let value = o.initializer;
+        while (ts.isAsExpression(value) || ts.isSatisfiesExpression(value))
+          value = value.expression;
+        opts[o.name.getText()] = value.getText();
       }
     }
     const declared = cls.members.find((m) => m.name?.getText() === name);
@@ -210,6 +215,13 @@ function staticProperties(cls, classes) {
       description: doc.text,
       deprecated: doc.tags.deprecated ?? null,
     });
+  }
+  for (const p of props) {
+    if (p.attribute !== null && !/^[a-z][a-z0-9-]*$/.test(p.attribute)) {
+      throw new Error(
+        `${cls.name?.getText() ?? '?'}.${p.property}: unreadable attribute ${p.attribute}`,
+      );
+    }
   }
   // A subclass may redeclare a property; keep the last.
   return [...new Map(props.map((p) => [p.property, p])).values()];

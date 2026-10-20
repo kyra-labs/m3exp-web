@@ -1,0 +1,28 @@
+<button type="button" id="open-time" class="m3e-button m3e-button--tonal">Pick a time</button>
+<p>Time: <output id="time-value">18:00</output></p>
+<m3e-dialog id="time-dialog" variant="custom" label="Select time">
+  <div class="m3e-time-picker-dialog">
+    <div class="m3e-time-picker-dialog__title">Select time</div>
+    <div class="m3e-time-picker-dialog__content">
+      <m3e-time-picker hour="18" minute="0"></m3e-time-picker>
+    </div>
+    <div class="m3e-time-picker-dialog__actions">
+      <span class="m3e-time-picker-dialog__spacer"></span>
+      <button type="button" class="m3e-button m3e-button--text" data-action="cancel">Cancel</button>
+      <button type="button" class="m3e-button m3e-button--text" data-action="ok">OK</button>
+    </div>
+  </div>
+</m3e-dialog>
+<script>
+  const dialog = document.getElementById('time-dialog');
+  const picker = dialog.querySelector('m3e-time-picker');
+  document.getElementById('open-time').addEventListener('click', () => dialog.show());
+  dialog.addEventListener('click', (event) => {
+    const action = event.target.closest('[data-action]')?.dataset.action;
+    if (action === 'ok') {
+      document.getElementById('time-value').textContent =
+        `${String(picker.hour).padStart(2, '0')}:${String(picker.minute).padStart(2, '0')}`;
+    }
+    if (action) dialog.close();
+  });
+</script>

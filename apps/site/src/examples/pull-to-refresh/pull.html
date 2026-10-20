@@ -1,0 +1,63 @@
+<div
+  style="
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr);
+    inline-size: 100%;
+    max-inline-size: var(--m3e-sys-window-width-medium);
+    block-size: var(--m3e-sys-window-height-medium);
+  "
+>
+  <div style="display: flex; align-items: center; justify-content: space-between">
+    <p style="padding-inline: var(--m3e-sys-space-200)">
+      Refreshed <output id="refresh-count">0</output> times.
+    </p>
+    <button
+      type="button"
+      id="refresh-button"
+      class="m3e-icon-button m3e-icon-button--standard"
+      aria-label="Refresh"
+    >
+      <span class="m3e-icon" aria-hidden="true">refresh</span>
+    </button>
+  </div>
+  <m3e-pull-to-refresh id="feed">
+    <ul style="margin: 0; padding: var(--m3e-sys-space-200)">
+      <li style="padding-block: var(--m3e-sys-space-150)">Item 1</li>
+      <li style="padding-block: var(--m3e-sys-space-150)">Item 2</li>
+      <li style="padding-block: var(--m3e-sys-space-150)">Item 3</li>
+      <li style="padding-block: var(--m3e-sys-space-150)">Item 4</li>
+      <li style="padding-block: var(--m3e-sys-space-150)">Item 5</li>
+      <li style="padding-block: var(--m3e-sys-space-150)">Item 6</li>
+      <li style="padding-block: var(--m3e-sys-space-150)">Item 7</li>
+      <li style="padding-block: var(--m3e-sys-space-150)">Item 8</li>
+      <li style="padding-block: var(--m3e-sys-space-150)">Item 9</li>
+      <li style="padding-block: var(--m3e-sys-space-150)">Item 10</li>
+      <li style="padding-block: var(--m3e-sys-space-150)">Item 11</li>
+      <li style="padding-block: var(--m3e-sys-space-150)">Item 12</li>
+      <li style="padding-block: var(--m3e-sys-space-150)">Item 13</li>
+      <li style="padding-block: var(--m3e-sys-space-150)">Item 14</li>
+      <li style="padding-block: var(--m3e-sys-space-150)">Item 15</li>
+      <li style="padding-block: var(--m3e-sys-space-150)">Item 16</li>
+      <li style="padding-block: var(--m3e-sys-space-150)">Item 17</li>
+      <li style="padding-block: var(--m3e-sys-space-150)">Item 18</li>
+      <li style="padding-block: var(--m3e-sys-space-150)">Item 19</li>
+      <li style="padding-block: var(--m3e-sys-space-150)">Item 20</li>
+    </ul>
+  </m3e-pull-to-refresh>
+</div>
+<script>
+  const feed = document.getElementById('feed');
+  const button = document.getElementById('refresh-button');
+  const count = document.getElementById('refresh-count');
+  // The keyboard and mouse path: the same refresh a pull fires.
+  button.addEventListener('click', () => feed.refresh());
+  feed.addEventListener('refresh', () => {
+    feed.refreshing = true;
+    button.disabled = true;
+    setTimeout(() => {
+      count.textContent = String(Number(count.textContent) + 1);
+      feed.refreshing = false;
+      button.disabled = false;
+    }, 1500);
+  });
+</script>

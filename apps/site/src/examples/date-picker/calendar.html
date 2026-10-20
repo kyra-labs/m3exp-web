@@ -1,0 +1,7 @@
+<m3e-date-picker id="calendar" value="2025-08-17" displayed-month="2025-08"></m3e-date-picker>
+<p>Selected: <output id="calendar-value">2025-08-17</output></p>
+<script>
+  document.getElementById('calendar').addEventListener('change', (event) => {
+    document.getElementById('calendar-value').textContent = event.detail.value ?? 'none';
+  });
+</script>
