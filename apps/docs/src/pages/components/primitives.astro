@@ -1,4 +1,5 @@
 ---
+import Sources from '../../components/Sources.astro';
 import PrimitivesPlayground from '../../islands/PrimitivesPlayground.tsx';
 import Base from '../../layouts/Base.astro';
 
@@ -174,6 +175,29 @@ const icons = ['home', 'search', 'favorite', 'settings', 'star', 'delete'] as co
     </p>
     <PrimitivesPlayground client:only="react" />
   </section>
+
+  <Sources>
+    <p>
+      androidx Compose Material3 1.5.0-beta01 (<code>19991f2c</code>):{' '}
+      <code>tokens/StateTokens.kt</code> L22–25 (the state-layer opacities),{' '}
+      <code>tokens/ElevationTokens.kt</code> L24–40 (the levels), <code>tokens/ShapeTokens.kt</code>{' '}
+      L28–81 (the corners) and the surface container roles of the generated color scheme;
+      material3-ripple <code>Ripple.kt</code> (<code>StateLayer</code> L433–503) for the press
+      circle. The focus ring takes the component's shape, as Compose's <code>focusRingShape</code>{' '}
+      (material3 <code>Ripple.kt</code> L85–89), and grows on the fast spatial spring and shrinks on
+      the fast effects spring like Compose's inset ring (material3 <code>Ripple.kt</code> L852–853;
+      material3-ripple <code>Ripple.kt</code> L327–340, L406–418; SOURCES register #61, DECISIONS
+      D19 (3)). FOUNDATIONS_SPEC §5 and §6.
+    </p>
+    <p>
+      Material Symbols 2.975 (google/material-design-icons@<code>49d4db35</code>,{' '}
+      <code>variablefont/</code>; the FILL, wght, GRAD and opsz axes), Rounded by default (DECISIONS
+      D5, D12; SOURCES register #9). The focus ring from the m3.material.io token DB
+      (<code>md.sys.state.focus-indicator</code>: 3dp thick, 2dp outer offset; SOURCES register
+      #15). The shadow geometry from Material Web 2.5.0{' '}
+      <code>elevation/internal/_elevation.scss</code> (Compose draws platform shadows).
+    </p>
+  </Sources>
 </Base>
 
 <script>

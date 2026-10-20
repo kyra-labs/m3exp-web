@@ -1,5 +1,7 @@
 ---
 import DeprecationBanner from '../../components/DeprecationBanner.astro';
+import Sources from '../../components/Sources.astro';
+import StateEventsNote from '../../components/StateEventsNote.astro';
 import StaticListItem from '../../components/StaticListItem.astro';
 import ListPlayground from '../../islands/ListPlayground.tsx';
 import Base from '../../layouts/Base.astro';
@@ -63,6 +65,7 @@ import Base from '../../layouts/Base.astro';
       <code>&lt;m3e-list label selection-mode="single | multiple | none" disallow-empty-selection&gt;</code> wraps <code>.m3e-list-item</code>s (<code>data-value</code> keys them) into a <code>role="listbox"</code> of options: one tab stop, Down / Right next and Up / Left previous (wrapping), Home / End, typeahead; click, Space or Enter toggles an option (<code>selection-change</code>), or
       activates it with <code>selection-mode="none"</code> (<code>action</code>). <code>selection</code> is the deprecated name of <code>selection-mode</code> (since 1.8, removed in 2.0). A checkbox, radio button or switch in a slot is the option's indicator: the option is the control, so the indicator is made <code>inert</code> and follows <code>aria-selected</code>.
     </p>
+    <StateEventsNote events={['selection-change']} />
     <div class="docs-list-grid">
       <m3e-list label="Single selection" selection-mode="single" data-testid="element-single">
         <StaticListItem tag="div" value="1" control="radio" trailing="icon:favorite" headline="Item 1" supporting="Additional info" />
@@ -118,16 +121,37 @@ import Base from '../../layouts/Base.astro';
       <StaticListItem baseline leading="favorite" headline="Three line list item" overline="OVERLINE" supporting="Secondary text" trailing="meta" />
     </ul>
   </section>
+
+  <Sources>
+    <p>
+      androidx Compose Material3 1.5.0-beta01 (<code>19991f2c</code>): <code>ListTokens.kt</code>{' '}
+      and <code>ReorderListTokens.kt</code> as read by <code>ListItem.kt</code>{' '}
+      (<code>InteractiveListItem</code> L1462–1660; the motion L1502–1505; the slot text styles
+      L1569–1573; the 12dp spacing L1988–1993; the three-line alignment breakpoint L1999–2002; the
+      legacy item's paddings L1275–1289) and <code>ListItemDefaults.kt</code>{' '}
+      (<code>ContentPadding</code> L42–65, the shapes, colors and elevation),{' '}
+      <code>ComposeMaterial3Flags.kt</code> (heights by text lines, L141) and{' '}
+      <code>ListSamples.kt</code>; generated into <code>components/list-defaults.css</code> (lines
+      in <code>PARITY.md</code>).
+    </p>
+    <p>
+      m3.material.io Lists (Specs for the avatar, image and video sizes; Accessibility, page{' '}
+      <code>6d4033c2-f92c-4c43-b585-b3bce8468d48</code>, for the listbox keyboard). SOURCES register
+      #37; DECISIONS D4 for the legacy list item.
+    </p>
+  </Sources>
 </Base>
 
 <script>
   import '@kyralabs/m3exp-web/elements';
 
   const log = document.querySelector('[data-testid="element-log"]');
-  document.addEventListener('selection-change', (e) => {
-    const { values } = (e as CustomEvent<{ values: string[] }>).detail;
-    if (log) log.textContent = `Selected: ${values.join(', ') || 'none'}`;
-  });
+  for (const list of document.querySelectorAll('m3e-list')) {
+    list.addEventListener('selection-change', (e) => {
+      if (e.target !== list) return; // state events bubble in 1.x (DECISIONS D25)
+      if (log) log.textContent = `Selected: ${e.detail.values.join(', ') || 'none'}`;
+    });
+  }
   document.addEventListener('action', (e) => {
     const { value } = (e as CustomEvent<{ value: string }>).detail;
     if (log) log.textContent = `Opened: ${value}`;

@@ -1,4 +1,6 @@
 ---
+import Sources from '../../components/Sources.astro';
+import StateEventsNote from '../../components/StateEventsNote.astro';
 import DatePickerPlayground from '../../islands/DatePickerPlayground.tsx';
 import Base from '../../layouts/Base.astro';
 
@@ -26,6 +28,7 @@ const text = (label: string, testid: string, slot = '') =>
       <code>&lt;m3e-date-picker value displayed-month year-range="1900-2100" display-mode="picker | input" hide-mode-toggle no-title no-headline&gt;</code> fires <code>change</code> (<code>detail: {'{'} value {'}'}</code>; the date field's native <code>input</code> / <code>change</code> do not reach the host), <code>display-mode-change</code> and <code>displayed-month-change</code>. The{' '}
       <code>selectableDates</code> property takes Compose's <code>isSelectableDate(utcMillis)</code> / <code>isSelectableYear(year)</code>; <code>labels</code> overrides the strings.
     </p>
+    <StateEventsNote events={['display-mode-change', 'displayed-month-change']} />
     <div class="docs-time-picker-row">
       <figure>
         <figcaption>Calendar</figcaption>
@@ -111,6 +114,30 @@ const text = (label: string, testid: string, slot = '') =>
     </p>
     <DatePickerPlayground client:only="react" />
   </section>
+
+  <Sources>
+    <p>
+      androidx Compose Material3 1.5.0-beta01 (<code>19991f2c</code>):{' '}
+      <code>DatePickerModalTokens.kt</code> and <code>DateInputModalTokens.kt</code> as read by{' '}
+      <code>DatePicker.kt</code>, <code>DateRangePicker.kt</code>, <code>DateInput.kt</code> (the
+      input transformations, L380–444), <code>DateRangeInput.kt</code>,{' '}
+      <code>DatePickerDialog.kt</code> / <code>DatePickerDialog.android.kt</code> and{' '}
+      <code>internal/CalendarModel*.kt</code> (drift-tested in{' '}
+      <code>date-picker-sources.test.ts</code>); the values Compose renders that are not tokens
+      (cells and rows, paddings, the year grid, the dialog actions, the motion) in{' '}
+      <code>components/date-picker-defaults.css</code> (lines in <code>PARITY.md</code>). The
+      calendar math is checked against a JVM run of the vendored Kotlin.
+    </p>
+    <p>
+      m3.material.io Date pickers (Specs redlines for the docked picker, page <code>523144a0</code>;
+      Accessibility for the docked year arrows and the input format) and its token DB
+      (<code>TOKEN_TABLE.01c5310367774eb8</code>, <code>md.comp.date-picker.docked</code>; the{' '}
+      <code>md.comp.date-picker.modal.*</code> state layers). SOURCES register #44, #87 (the 456dp
+      docked picker, DECISIONS D19 (24)), #88 (the state layers, D19 (25)), #89 and #90 (Compose's
+      live input mask, D19 (26)); DECISIONS D20 (5) for the docked picker's Shift+M / Shift+Y,
+      announced with <code>aria-keyshortcuts</code>.
+    </p>
+  </Sources>
 </Base>
 
 <script>

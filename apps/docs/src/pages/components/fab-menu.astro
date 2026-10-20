@@ -1,4 +1,6 @@
 ---
+import Sources from '../../components/Sources.astro';
+import StateEventsNote from '../../components/StateEventsNote.astro';
 import FabMenuPlayground from '../../islands/FabMenuPlayground.tsx';
 import Base from '../../layouts/Base.astro';
 
@@ -100,6 +102,7 @@ const classes = (s: (typeof statics)[number]) =>
       and End move between items, Tab cycles between the items and the close button, and Escape or a
       press outside closes the menu.
     </p>
+    <StateEventsNote events={['open-change']} />
     <div class="docs-fab-menu-row">
       <div class="docs-fab-menu-frame">
         <m3e-fab-menu label="Share" icon="share" data-testid="element-menu">
@@ -127,8 +130,7 @@ const classes = (s: (typeof statics)[number]) =>
     <FabMenuPlayground client:only="react" />
   </section>
 
-  <section aria-labelledby="sources-heading">
-    <h2 id="sources-heading">Sources</h2>
+  <Sources>
     <p>
       androidx Compose Material3 1.5.0-beta01 (<code>19991f2c</code>):{' '}
       <code>FloatingActionButtonMenu.kt</code> (vendored), <code>FabMenuBaselineTokens.kt</code> and the
@@ -136,7 +138,7 @@ const classes = (s: (typeof statics)[number]) =>
       <code>FloatingActionButtonMenuSamples.kt</code> for the Add → Close icon swap. m3.material.io FAB
       menu (2–6 items, color sets, focus order, placement).
     </p>
-  </section>
+  </Sources>
 </Base>
 
 <script>

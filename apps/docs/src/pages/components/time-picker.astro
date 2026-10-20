@@ -1,4 +1,6 @@
 ---
+import Sources from '../../components/Sources.astro';
+import StateEventsNote from '../../components/StateEventsNote.astro';
 import TimePickerPlayground from '../../islands/TimePickerPlayground.tsx';
 import Base from '../../layouts/Base.astro';
 
@@ -26,6 +28,7 @@ const text = (label: string, testid: string) =>
       <code>&lt;m3e-time-picker hour minute hour-cycle="12 | 24" selection="hour | minute" vibrant layout="auto | vertical | horizontal"&gt;</code> fires <code>change</code> (<code>detail: {'{'} hour, minute {'}'}</code>; the inputs' native <code>input</code> / <code>change</code> do not reach the host) and <code>selection-change</code> (<code>detail: {'{'} value {'}'}</code>, <code>'hour' | 'minute'</code>; its <code>selection</code> key is deprecated since 1.8, removed in 2.0). <code>layout="auto"</code> lays the picker out horizontally in a landscape
       window, as Compose.
     </p>
+    <StateEventsNote events={['selection-change']} />
     <div class="docs-time-picker-row">
       <figure>
         <figcaption>12-hour</figcaption>
@@ -126,6 +129,27 @@ const text = (label: string, testid: string) =>
     </p>
     <TimePickerPlayground client:only="react" />
   </section>
+
+  <Sources>
+    <p>
+      androidx Compose Material3 1.5.0-beta01 (<code>19991f2c</code>):{' '}
+      <code>TimePickerTokens.kt</code> and <code>TimeInputTokens.kt</code> as read by{' '}
+      <code>TimePicker.kt</code> (the vibrant fields, the dial radii and <code>MaxDistance</code>,{' '}
+      <code>AnalogTimePickerState</code>'s spring), <code>TimePickerDialog.kt</code>,{' '}
+      <code>ScrollField.kt</code>, <code>TimeFormat.android.kt</code> /{' '}
+      <code>TimePicker.android.kt</code>, <code>ComposeMaterial3Flags.kt</code>{' '}
+      (<code>isUpdatedTimepickerToggleEnabled</code>, L117–127) and foundation{' '}
+      <code>gestures/snapping/SnapFlingBehavior.kt</code> (<code>MinFlingVelocityDp</code>,
+      L432–433); values in <code>components/time-picker-defaults.css</code> (lines in{' '}
+      <code>PARITY.md</code>). The math is checked against a JVM run of the vendored Kotlin.
+    </p>
+    <p>
+      m3.material.io Time pickers (page <code>ec8e6da4…</code>: the baseline dial and input) and its
+      token DB (<code>TOKEN_TABLE.39f4b152dd9bd292</code>, <code>md.comp.time-picker</code> and{' '}
+      <code>md.comp.time-input</code>), which agrees with every token both define. SOURCES register
+      #45.
+    </p>
+  </Sources>
 </Base>
 
 <script>

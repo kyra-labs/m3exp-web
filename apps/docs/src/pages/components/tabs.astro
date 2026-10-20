@@ -1,4 +1,6 @@
 ---
+import Sources from '../../components/Sources.astro';
+import StateEventsNote from '../../components/StateEventsNote.astro';
 import TabsPlayground from '../../islands/TabsPlayground.tsx';
 import Base from '../../layouts/Base.astro';
 
@@ -127,6 +129,7 @@ const rowClass = (row: StaticRow) =>
       <code>&lt;m3e-tab-panel value&gt;</code> per tab; <code>selection-change</code> (cancelable)
       when another tab is pressed.
     </p>
+    <StateEventsNote events={['selection-change']} />
     <div class="docs-tabs-frames">
       <div class="docs-tabs-frame">
         <m3e-tabs id="element-primary" label="Media" selected="videos" data-testid="element-primary">
@@ -244,6 +247,29 @@ const rowClass = (row: StaticRow) =>
     </div>
     <TabsPlayground client:only="react" badges />
   </section>
+
+  <Sources>
+    <p>
+      androidx Compose Material3 1.5.0-beta01 (<code>19991f2c</code>):{' '}
+      <code>PrimaryNavigationTabTokens.kt</code> and <code>SecondaryNavigationTabTokens.kt</code> as
+      read by <code>TabRow.kt</code> (the divider L161, the indicator and scroll on default spatial
+      L406 / L525, the 24dp minimum indicator width L461, <code>TabIndicatorOffsetNode</code>{' '}
+      L680–751, the scrollable row's minimum tab width L981 and edge padding L987, the indicators
+      L1053–1084, <code>ScrollableTabData</code> L1133–1185) and <code>Tab.kt</code> (the heights
+      L297–361 and L416–420, the text padding L301 / L424, the icon and text placement L377–414 and
+      L428–438), <code>DividerTokens.kt</code>, <code>TypographyTokens.kt</code> and{' '}
+      <code>TabSamples.kt</code>; values in <code>components/tabs-defaults.css</code> (lines in{' '}
+      <code>PARITY.md</code>). A stacked tab badges its icon with the label first, as{' '}
+      <code>TabBaselineLayout</code> emits the text before the icon (<code>Tab.kt</code> L298–305);
+      otherwise badges as on the badge page.
+    </p>
+    <p>
+      m3.material.io Tabs (Specs measurements, among them "Overlap of badge on stacked icon 6dp" for
+      stacked tabs, DECISIONS D20 (1); Guidelines; Accessibility keyboard table;{' '}
+      <code>_dsm/content/m3/2026-10-13_06-10-19/f37f47ba-8e67-4f1e-98a3-3bea94879e52.json</code>).
+      SOURCES register #34.
+    </p>
+  </Sources>
 </Base>
 
 <script>

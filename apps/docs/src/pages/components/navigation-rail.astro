@@ -1,6 +1,8 @@
 ---
 import DeprecationBanner from '../../components/DeprecationBanner.astro';
 import NavItems, { type Item } from '../../components/NavItems.astro';
+import Sources from '../../components/Sources.astro';
+import StateEventsNote from '../../components/StateEventsNote.astro';
 import NavigationPlayground from '../../islands/NavigationPlayground.tsx';
 import Base from '../../layouts/Base.astro';
 
@@ -71,6 +73,7 @@ const badged: Item[] = [
       <code>&lt;m3e-wide-navigation-rail&gt;</code> with <code>&lt;m3e-navigation-item&gt;</code>{' '}
       children; other children go to the header. The menu button calls <code>toggle()</code>.
     </p>
+    <StateEventsNote events={['selection-change', 'expanded-change']} />
     <div class="docs-rail-frames">
       <m3e-wide-navigation-rail
         label="Element example"
@@ -198,6 +201,28 @@ const badged: Item[] = [
       </nav>
     </div>
   </section>
+
+  <Sources>
+    <p>
+      androidx Compose Material3 1.5.0-beta01 (<code>19991f2c</code>):{' '}
+      <code>NavigationRailCollapsedTokens.kt</code>, <code>NavigationRailExpandedTokens.kt</code>,{' '}
+      <code>NavigationRailColorTokens.kt</code>, <code>NavigationRailBaselineItemTokens.kt</code>,{' '}
+      <code>NavigationRailVerticalItemTokens.kt</code>,{' '}
+      <code>NavigationRailHorizontalItemTokens.kt</code> and <code>ScrimTokens.kt</code> as read by{' '}
+      <code>WideNavigationRail.kt</code> (the springs L324–325, L593–600, L732 and L826–831; the
+      width measure policy L373–476; <code>placeAnimatedLabelAndIcon</code> L1103–1199;{' '}
+      <code>WideNavigationRailDefaults</code> L1251–1252 and L1285–1287; the modal container
+      L1537–1541), <code>WideNavigationRailState.kt</code> (L87) and <code>NavigationItem.kt</code>{' '}
+      (L488–493, L1212); androidMain <code>WideNavigationRail.android.kt</code> and{' '}
+      <code>res/values/strings.xml</code> (L139–142); <code>Scrim.kt</code>;{' '}
+      <code>NavigationRailSamples.kt</code> (the responsive, modal and dismissible modal samples);
+      the legacy <code>NavigationRail.kt</code> (badge bounds L542). Values in{' '}
+      <code>components/navigation-defaults.css</code> (lines in <code>PARITY.md</code>).
+    </p>
+    <p>
+      SOURCES register #32; DECISIONS D4 for the legacy navigation rail.
+    </p>
+  </Sources>
 </Base>
 
 <script>
@@ -217,7 +242,8 @@ const badged: Item[] = [
     button.addEventListener('click', () => {
       rail.toggle();
     });
-    rail.addEventListener('expanded-change', () => {
+    rail.addEventListener('expanded-change', (e) => {
+      if (e.target !== rail) return; // state events bubble in 1.x (DECISIONS D25)
       queueMicrotask(sync);
     });
   }
