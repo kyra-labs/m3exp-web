@@ -37,6 +37,13 @@ export default function Variants() {
       />
       <TopAppBar
         headingLevel={4}
+        variant="two-rows"
+        title="Two rows"
+        navigationIcon={menu}
+        actions={actions}
+      />
+      <TopAppBar
+        headingLevel={4}
         variant="large-flexible"
         title="Large flexible"
         navigationIcon={menu}
