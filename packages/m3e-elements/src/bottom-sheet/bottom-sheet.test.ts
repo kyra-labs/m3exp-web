@@ -85,6 +85,8 @@ describe('<m3e-bottom-sheet> contract (COMPONENT_SPEC §30)', () => {
     ]);
     const handle = sheet.querySelector('button')!;
     expect(handle.getAttribute('aria-label')).toBe('Drag handle');
+    // D20 (9): the arrow keys (Compose's accessibility actions) are announced.
+    expect(handle.getAttribute('aria-keyshortcuts')).toBe('ArrowUp ArrowDown');
     // Owner decision M9 #30 with #2: the tooltip repeats the name, so it is aria-hidden.
     const tip = sheet.querySelector('.m3e-tooltip')!;
     expect([tip.getAttribute('role'), tip.getAttribute('aria-hidden'), tip.textContent]).toEqual([
@@ -199,6 +201,8 @@ describe('the drag handle (BottomSheetImpl clickable, SheetDefaults DragHandleWi
     host.value = 'partially-expanded';
     await flush();
     expect(key(handle, 'ArrowUp').defaultPrevented).toBe(false);
+    // Without the keys, no aria-keyshortcuts (D20 (9)).
+    expect(handle.hasAttribute('aria-keyshortcuts')).toBe(false);
   });
 
   it('skip-partially-expanded: show() expands; the handle of an expanded sheet dismisses', async () => {
@@ -374,6 +378,63 @@ describe('BottomSheetLayout geometry and drags', () => {
     expect(layout.value).toBe('partially-expanded');
     key(inside, 'Escape');
     expect(layout.value).toBe('hidden');
+    layout.destroy();
+  });
+
+  it('keyboard focus on content a partially expanded sheet clips expands it (D21 (3), WCAG 2.4.11)', () => {
+    const { root } = standard();
+    const asked: string[] = [];
+    let allow = false;
+    const layout = new BottomSheetLayout(root, {
+      value: 'partially-expanded',
+      onValueChange: (v) => {
+        asked.push(v);
+        return allow;
+      },
+    });
+    layout.setValue('partially-expanded', false);
+    // The root (the visible part) ends at 800; the sheet shows its top 400px.
+    root.getBoundingClientRect = () => new DOMRect(0, 0, 400, 800);
+    const inside = root.querySelector<HTMLButtonElement>('#inside')!;
+    const content = root.querySelector<HTMLElement>('.m3e-bottom-sheet__content')!;
+    const at = (el: HTMLElement, top: number, height: number) => {
+      el.getBoundingClientRect = () => new DOMRect(0, top, 100, height);
+    };
+    const refocus = (el: HTMLElement) => {
+      el.blur();
+      el.focus();
+    };
+    // In view: nothing to do.
+    at(inside, 700, 40);
+    refocus(inside);
+    // The content's own scroll region (its top shows) does not count.
+    at(content, 450, 650);
+    content.tabIndex = 0;
+    refocus(content);
+    expect(asked).toEqual([]);
+    // Clipped below the visible part (wholly or partly): asks to expand; a veto keeps it.
+    at(inside, 780, 40);
+    refocus(inside);
+    expect(asked).toEqual(['expanded']);
+    expect(layout.value).toBe('partially-expanded');
+    // Mouse focus (no :focus-visible) does not move the sheet.
+    const matches = inside.matches.bind(inside);
+    Object.defineProperty(inside, 'matches', {
+      configurable: true,
+      value: (selector: string) => selector !== ':focus-visible' && matches(selector),
+    });
+    at(inside, 900, 40);
+    refocus(inside);
+    expect(asked).toEqual(['expanded']);
+    Reflect.deleteProperty(inside, 'matches');
+    allow = true;
+    refocus(inside);
+    expect(asked).toEqual(['expanded', 'expanded']);
+    expect(layout.value).toBe('expanded');
+    // Expanded: focus moves nothing.
+    layout.setValue('expanded', false);
+    refocus(inside);
+    expect(asked).toHaveLength(2);
     layout.destroy();
   });
 

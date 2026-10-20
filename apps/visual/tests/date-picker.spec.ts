@@ -420,6 +420,25 @@ test.describe('behavior', () => {
     await expect(popup).toBeHidden();
   });
 
+  test('docked: Shift+M / Shift+Y go to the month / year menus, announced (D20 (5))', async ({
+    page,
+  }) => {
+    const docked = root(page, 'docked');
+    const popup = docked.locator('.m3e-date-picker--docked');
+    const month = popup.locator('.m3e-date-picker__menu-button').first();
+    const year = popup.locator('.m3e-date-picker__menu-button').nth(1);
+    await docked.locator('.m3e-text-field__trailing button').click();
+    await expect(day(popup, utc(2025, 8, 17))).toBeFocused();
+    await expect(month).toHaveAttribute('aria-keyshortcuts', 'Shift+M');
+    await expect(year).toHaveAttribute('aria-keyshortcuts', 'Shift+Y');
+    await page.keyboard.press('Shift+Y');
+    await expect(year).toBeFocused();
+    await page.keyboard.press('Shift+M');
+    await expect(month).toBeFocused();
+    await page.keyboard.press('Escape');
+    await expect(popup).toBeHidden();
+  });
+
   test('dialogs: OK reports the picked date, Save the range', async ({ page }) => {
     await page.getByTestId('open-dialog').click();
     const dialog = page.getByTestId('dialog');

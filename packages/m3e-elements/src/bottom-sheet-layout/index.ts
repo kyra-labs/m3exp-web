@@ -2,6 +2,7 @@
 // <BottomSheet> / <ModalBottomSheet>: anchors, springs, drags, the drag handle, the modal window.
 export {
   BOTTOM_SHEET_DRAG_HANDLE_LABEL,
+  BOTTOM_SHEET_HANDLE_KEYS,
   BOTTOM_SHEET_PANE_TITLE,
   BottomSheetLayout,
   type BottomSheetLayoutOptions,

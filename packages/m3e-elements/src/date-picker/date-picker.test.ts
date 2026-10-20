@@ -269,13 +269,22 @@ describe('<m3e-docked-date-picker> typing', () => {
     expect(input.value).toBe('08/14/2025');
   });
 
-  it('Shift + M / Shift + Y go to the month / year drop-downs', async () => {
+  it('Shift + M / Shift + Y go to the month / year drop-downs, in the popup only; announced (D20 (5))', async () => {
     const { root } = await mount(
       '<m3e-docked-date-picker value="2025-08-17" lang="en-US"></m3e-docked-date-picker>',
       'm3e-docked-date-picker',
     );
-    root.querySelector<HTMLButtonElement>('.m3e-text-field__trailing button')!.click();
     const [month, year] = root.querySelectorAll<HTMLButtonElement>('.m3e-date-picker__menu-button');
+    expect([
+      month!.getAttribute('aria-keyshortcuts'),
+      year!.getAttribute('aria-keyshortcuts'),
+    ]).toEqual(['Shift+M', 'Shift+Y']);
+    // Scoped to the focused popup: the field types the letters.
+    const input = root.querySelector<HTMLInputElement>('input')!;
+    input.focus();
+    key(input, 'M', true);
+    expect(document.activeElement).toBe(input);
+    root.querySelector<HTMLButtonElement>('.m3e-text-field__trailing button')!.click();
     key(document.activeElement!, 'M', true);
     expect(document.activeElement).toBe(month);
     key(document.activeElement!, 'Y', true);

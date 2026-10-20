@@ -6,6 +6,7 @@ import type {
 } from '../bottom-sheet-layout/bottom-sheet-layout.js';
 import {
   BOTTOM_SHEET_DRAG_HANDLE_LABEL,
+  BOTTOM_SHEET_HANDLE_KEYS,
   BOTTOM_SHEET_PANE_TITLE,
 } from '../bottom-sheet-layout/strings.js';
 import type { TooltipController } from '../tooltip-popup/tooltip-popup.js';
@@ -283,6 +284,8 @@ export class M3eBottomSheet extends M3eElement {
       const tip = (this.#tip ??= this.#createTip(doc));
       const handleLabel = this.dragHandleLabel ?? BOTTOM_SHEET_DRAG_HANDLE_LABEL;
       setAttr(handle, 'aria-label', handleLabel);
+      // The arrow keys (Compose's expand / collapse / dismiss actions), DECISIONS D20 (9).
+      setAttr(handle, 'aria-keyshortcuts', this.gesturesDisabled ? null : BOTTOM_SHEET_HANDLE_KEYS);
       if (tip.textContent !== handleLabel) tip.textContent = handleLabel;
       parts.push(handle, tip);
     }
