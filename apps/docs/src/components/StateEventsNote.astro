@@ -1,0 +1,25 @@
+---
+// The 1.x note on bubbling state events (DECISIONS D25, API audit M9): one per page that
+// documents an element's state events. Every listener in the docs scripts carries the guard.
+interface Props {
+  /** The state events this page's elements fire, e.g. ['open-change']. */
+  events: string[];
+}
+
+const { events } = Astro.props;
+---
+
+<p class="docs-note" role="note">
+  {
+    events.map((event, i) => (
+      <>
+        {i > 0 && (i === events.length - 1 ? ' and ' : ', ')}
+        <code>{event}</code>
+      </>
+    ))
+  }{' '}{events.length > 1 ? 'bubble' : 'bubbles'} in 1.x, like every state event: a listener on
+  an element also hears the same event from an element nested inside it, such as a tooltip in a
+  dialog or a time picker in a tab panel. Check the target first:{' '}
+  <code>if (e.target !== host) return;</code>. DECISIONS D25 proposes that 2.0 stop bubbling state
+  events; item events such as <code>action</code> keep bubbling.
+</p>

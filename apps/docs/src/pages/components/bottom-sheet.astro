@@ -1,4 +1,6 @@
 ---
+import Sources from '../../components/Sources.astro';
+import StateEventsNote from '../../components/StateEventsNote.astro';
 import BottomSheetPlayground from '../../islands/BottomSheetPlayground.tsx';
 import Base from '../../layouts/Base.astro';
 
@@ -26,6 +28,7 @@ const items = (n: number) =>
     <p>
       <code>&lt;m3e-bottom-sheet variant="modal"&gt;</code>: <code>show()</code> (or setting <code>open</code>) opens it partially expanded (<code>skip-partially-expanded</code>: expanded); the child nodes are the content. <code>open</code> reflects whether <code>value</code> is not <code>hidden</code>; <code>value-change</code> (<code>&#123; value &#125;</code>) and then, when the sheet shows or hides, <code>open-change</code> (<code>&#123; open &#125;</code>) are cancelable when the sheet asks. The page is inert while it is open, Tab stays inside and focus returns to the opener when it hides. The first one is Compose's <code>ModalBottomSheetSample</code>.
     </p>
+    <StateEventsNote events={['value-change', 'open-change']} />
     <div class="docs-button-row">
       <button type="button" class="m3e-button m3e-button--filled" data-sheet-open="modal" data-testid="open-modal">Show bottom sheet</button>
       <button type="button" class="m3e-button m3e-button--tonal" data-sheet-open="modal-skip" data-testid="open-modal-skip">Skip partially expanded</button>
@@ -84,6 +87,33 @@ const items = (n: number) =>
     </p>
     <BottomSheetPlayground client:only="react" />
   </section>
+
+  <Sources>
+    <p>
+      androidx Compose Material3 1.5.0-beta01 (<code>19991f2c</code>):{' '}
+      <code>SheetBottomTokens.kt</code> as read by <code>SheetDefaults.kt</code>{' '}
+      (<code>BottomSheetDefaults</code> L512–589: shape, color and the 32 × 4dp drag handle;{' '}
+      <code>SheetMaxWidth</code> L536) and <code>BottomSheet.kt</code>{' '}
+      (<code>BottomSheetImpl</code>, anchors L293–328), <code>ModalBottomSheet.kt</code> (the scrim,
+      L143–157), <code>BottomSheetScaffold.kt</code>, <code>Scrim.kt</code> (L50–79),{' '}
+      <code>ComposeMaterial3Flags.kt</code> and <code>ModalBottomSheet.android.kt</code>; foundation{' '}
+      <code>gestures/AnchoredDraggable.kt</code> (L1485–1514, L1716–1790) and{' '}
+      <code>gestures/snapping/SnapFlingBehavior.kt</code>; material3 res <code>strings.xml</code>{' '}
+      L79–87 and compose/ui res <code>strings.xml</code> L46; the values Compose renders that are
+      not tokens in <code>components/bottom-sheet-defaults.css</code> (lines in{' '}
+      <code>PARITY.md</code>). <code>BottomSheetSamples.kt</code> for the examples; the device tests{' '}
+      <code>AnchoredDraggableStateTest.kt</code>, <code>BottomSheetTest.kt</code>,{' '}
+      <code>ModalBottomSheetTest.kt</code> and <code>SheetStateTest.kt</code> are ported as
+      reference tests.
+    </p>
+    <p>
+      m3.material.io Bottom sheets (Specs, Accessibility; token DB{' '}
+      <code>md.comp.sheet.bottom</code>). SOURCES register #47 and #77 (no margins, as Compose;
+      owner decision M9 #12); DECISIONS D20 (9) for the handle's ArrowUp / ArrowDown (announced with{' '}
+      <code>aria-keyshortcuts</code>) and D21 (3): focus that enters content below a partially
+      expanded sheet expands it (WCAG 2.4.11).
+    </p>
+  </Sources>
 </Base>
 
 <script>

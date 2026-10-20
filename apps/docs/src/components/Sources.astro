@@ -1,0 +1,12 @@
+---
+// The Sources section every component docs page ends with (DECISIONS D26): the androidx files
+// (at the /SOURCE_PIN commit, with line refs where COMPONENT_SPEC / SOURCES / PARITY.md give
+// them), the m3.material.io pages and the SOURCES register items / DECISIONS rows that set
+// values androidx does not. The default slot holds the page's paragraphs; build them from
+// COMPONENT_SPEC and SOURCES only, never from memory.
+---
+
+<section aria-labelledby="sources-heading">
+  <h2 id="sources-heading">Sources</h2>
+  <slot />
+</section>

@@ -1,4 +1,5 @@
 ---
+import Sources from '../../components/Sources.astro';
 import BadgePlayground from '../../islands/BadgePlayground.tsx';
 import Base from '../../layouts/Base.astro';
 
@@ -124,4 +125,22 @@ const counts = [
       Navigation bar, rail and suite destinations and tabs build the badge in: set <code>badge</code> on the item (<a href="/components/navigation-bar/">bars</a>, <a href="/components/navigation-rail/">rails</a>, <a href="/components/navigation-suite/">suite</a>, <a href="/components/tabs/">tabs</a>). The navigation drawer's <code>badge</code> stays trailing text in the label color, as Compose's <code>NavigationDrawerItem</code> draws it.
     </p>
   </section>
+
+  <Sources>
+    <p>
+      androidx Compose Material3 1.5.0-beta01 (<code>19991f2c</code>): <code>BadgeTokens.kt</code>{' '}
+      (the 6dp dot, the 16dp large badge, full corners, error and on-error, label small) as read by{' '}
+      <code>Badge.kt</code> (<code>Badge</code> L151–189, <code>BadgeDefaults.containerColor</code>{' '}
+      L192–196) and the literals Compose renders there (the 4dp padding L201–202, the{' '}
+      <code>BadgedBox</code> offsets 12 / 14 / 6dp L208–218) in{' '}
+      <code>components/badge-defaults.css</code> (lines in <code>PARITY.md</code>);{' '}
+      <code>BadgeSamples.kt</code> for the "New notification" label and the "8" / "999+" counts; the
+      navigation items keep the badge inside them with <code>badgeBounds()</code>{' '}
+      (<code>NavigationItem.kt</code> L571, L624).
+    </p>
+    <p>
+      m3.material.io Badges: at most four characters, "+" over 999 (owner decision M9 #6). SOURCES
+      register #51.
+    </p>
+  </Sources>
 </Base>

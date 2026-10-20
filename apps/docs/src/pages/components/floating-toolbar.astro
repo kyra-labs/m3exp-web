@@ -1,4 +1,5 @@
 ---
+import Sources from '../../components/Sources.astro';
 import FloatingToolbarPlayground from '../../islands/FloatingToolbarPlayground.tsx';
 import Base from '../../layouts/Base.astro';
 
@@ -235,8 +236,7 @@ const classes = (s: (typeof statics)[number]) =>
     <FloatingToolbarPlayground client:only="react" />
   </section>
 
-  <section aria-labelledby="sources-heading">
-    <h2 id="sources-heading">Sources</h2>
+  <Sources>
     <p>
       androidx Compose Material3 1.5.0-beta01 (<code>19991f2c</code>): <code>FloatingToolbar.kt</code>{' '}
       (vendored; layouts, <code>FloatingToolbarDefaults</code>, <code>exitAlwaysScrollBehavior</code>,{' '}
@@ -245,7 +245,7 @@ const classes = (s: (typeof statics)[number]) =>
       <code>FloatingToolbarSamples.kt</code> for the screen offset and the FAB toggling{' '}
       <code>expanded</code>.
     </p>
-  </section>
+  </Sources>
 </Base>
 
 <script>

@@ -1,4 +1,5 @@
 ---
+import Sources from '../../components/Sources.astro';
 import CheckboxPlayground from '../../islands/CheckboxPlayground.tsx';
 import Base from '../../layouts/Base.astro';
 
@@ -115,6 +116,22 @@ const label = (s: State) => s[0]!.toUpperCase() + s.slice(1);
     </p>
     <CheckboxPlayground client:only="react" />
   </section>
+
+  <Sources>
+    <p>
+      androidx Compose Material3 1.5.0-beta01 (<code>19991f2c</code>):{' '}
+      <code>CheckboxTokens.kt</code> as read by <code>Checkbox.kt</code> (<code>CheckboxImpl</code>{' '}
+      L487–534, the check points L713–718, the draw and cross-centre motion L595–650 and L1040–1049,
+      the sizes L1063–1067), <code>ComposeMaterial3Flags.kt</code>{' '}
+      (<code>isCheckboxStylingFixEnabled</code>, L41–49; the flag-on styling is used, owner decision
+      M8) and <code>CheckboxSamples.kt</code>; both stylings are generated into{' '}
+      <code>components/checkbox-defaults.css</code> (lines in <code>PARITY.md</code>).
+    </p>
+    <p>
+      m3.material.io Checkbox (Specs; token DB <code>TOKEN_TABLE.31f16b44fe03b0c0</code>,{' '}
+      <code>md.comp.checkbox</code> for the state-layer colors). SOURCES register #39.
+    </p>
+  </Sources>
 </Base>
 
 <script>

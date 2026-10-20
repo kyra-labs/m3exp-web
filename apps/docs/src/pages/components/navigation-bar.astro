@@ -1,6 +1,8 @@
 ---
 import DeprecationBanner from '../../components/DeprecationBanner.astro';
 import NavItems, { type Item } from '../../components/NavItems.astro';
+import Sources from '../../components/Sources.astro';
+import StateEventsNote from '../../components/StateEventsNote.astro';
 import NavigationPlayground from '../../islands/NavigationPlayground.tsx';
 import Base from '../../layouts/Base.astro';
 
@@ -78,6 +80,7 @@ const badged: Item[] = [
       children renders the same contract; a press moves <code>selected</code> and fires a
       cancelable <code>selection-change</code>.
     </p>
+    <StateEventsNote events={['selection-change']} />
     <div class="docs-nav-frame">
       <m3e-short-navigation-bar label="Element example" selected="home" data-testid="element-bar">
         <m3e-navigation-item value="home" icon="home">Home</m3e-navigation-item>
@@ -142,6 +145,25 @@ const badged: Item[] = [
       </nav>
     </div>
   </section>
+
+  <Sources>
+    <p>
+      androidx Compose Material3 1.5.0-beta01 (<code>19991f2c</code>):{' '}
+      <code>ShortNavigationBar.kt</code> (the item measurement L519 / L581, the Centered arrangement
+      and <code>TopIconIndicatorToLabelPadding</code>) reading <code>NavigationBarTokens.kt</code>,{' '}
+      <code>NavigationBarVerticalItemTokens.kt</code> and{' '}
+      <code>NavigationBarHorizontalItemTokens.kt</code> (there is no ShortNavigationBar token file);{' '}
+      <code>NavigationItem.kt</code> (the indicator on default spatial, L1225–1230; the badge bounds
+      L571 / L624); the legacy <code>NavigationBar.kt</code> (badge bounds L536); badges as{' '}
+      <code>NavigationSuiteScaffold.kt</code> builds them (L1569–1579) and{' '}
+      <code>BadgeSamples.kt</code>. Layout literals in{' '}
+      <code>components/navigation-defaults.css</code> (lines in <code>PARITY.md</code>).
+    </p>
+    <p>
+      m3.material.io: a badge is read after its navigation destination. SOURCES register #31;
+      DECISIONS D4 for the legacy navigation bar.
+    </p>
+  </Sources>
 </Base>
 
 <script>

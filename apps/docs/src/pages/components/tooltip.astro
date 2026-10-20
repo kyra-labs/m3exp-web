@@ -1,4 +1,6 @@
 ---
+import Sources from '../../components/Sources.astro';
+import StateEventsNote from '../../components/StateEventsNote.astro';
 import TooltipPlayground from '../../islands/TooltipPlayground.tsx';
 import Base from '../../layouts/Base.astro';
 
@@ -83,6 +85,7 @@ const richText =
       trap focus: Tab from its last control moves on to what follows the anchor, Shift+Tab from its
       first returns to the anchor, and it hides when focus leaves it unless it is persistent.
     </p>
+    <StateEventsNote events={['open-change']} />
     <div class="docs-tooltip-demos" data-testid="elements">
       {
         positions.map((position) => (
@@ -174,6 +177,27 @@ const richText =
       </div>
     </div>
   </section>
+
+  <Sources>
+    <p>
+      androidx Compose Material3 1.5.0-beta01 (<code>19991f2c</code>):{' '}
+      <code>PlainTooltipTokens.kt</code> and <code>RichTooltipTokens.kt</code> as read by{' '}
+      <code>Tooltip.kt</code> (<code>SpacingBetweenTooltipAndAnchor</code> L1449,{' '}
+      <code>TooltipMinHeight</code> L1451, <code>TooltipMinWidth</code> L1453 and the literals after
+      them) and <code>internal/BasicTooltip.kt</code> (the long-press timeout, L221); values in{' '}
+      <code>components/tooltip-defaults.css</code> (lines in <code>PARITY.md</code>).
+    </p>
+    <p>
+      The 400ms long press is Android's default long-press timeout, which Compose reads
+      (<code>internal/BasicTooltip.kt</code> L221, <code>AndroidViewConfiguration.android.kt</code>{' '}
+      L31–32; SOURCES register #71, DECISIONS D19 (10)).
+    </p>
+    <p>
+      m3.material.io Tooltips (tooltips "disappear 1.5 seconds after navigating away"). A rich
+      tooltip with an action does not trap Tab (DECISIONS D21 (1), WCAG 2.1.2). SOURCES register
+      #50.
+    </p>
+  </Sources>
 </Base>
 
 <script>

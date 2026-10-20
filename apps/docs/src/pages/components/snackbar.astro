@@ -1,4 +1,5 @@
 ---
+import Sources from '../../components/Sources.astro';
 import SnackbarPlayground from '../../islands/SnackbarPlayground.tsx';
 import Base from '../../layouts/Base.astro';
 
@@ -82,6 +83,26 @@ const long =
     </p>
     <SnackbarPlayground client:only="react" />
   </section>
+
+  <Sources>
+    <p>
+      androidx Compose Material3 1.5.0-beta01 (<code>19991f2c</code>):{' '}
+      <code>SnackbarTokens.kt</code> (the 68dp two-line height, L72–73) as read by{' '}
+      <code>Snackbar.kt</code> (<code>SnackbarDefaults</code> L577–601, the shadow L118, the text
+      styles L120–121, the rows L286–331 and L495–574, the styling-fix layout L603–622, the host
+      padding L272), <code>SnackbarHost.kt</code> (the durations L100–107 and L305–306, the
+      accessibility timeout L298–317, the scale and fade L340–357, L408, L418),{' '}
+      <code>Scaffold.kt</code> (the placement L234–288, <code>FabSpacing</code> L369–370),{' '}
+      <code>ScaffoldSamples.kt</code>, <code>ComposeMaterial3Flags.kt</code>{' '}
+      (<code>isSnackbarStylingFixEnabled</code>, on here: owner decision M9 #19) and material3 res{' '}
+      <code>strings.xml</code> L28–31; values in <code>components/snackbar-defaults.css</code>{' '}
+      (lines in <code>PARITY.md</code>).
+    </p>
+    <p>
+      m3.material.io Snackbar (Guidelines, Accessibility; token DB <code>md.comp.snackbar</code>).
+      SOURCES register #49, #75 (the hover and focus pause, DECISIONS D19 (14)) and #76.
+    </p>
+  </Sources>
 </Base>
 
 <script>

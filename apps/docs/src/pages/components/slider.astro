@@ -1,4 +1,5 @@
 ---
+import Sources from '../../components/Sources.astro';
 import SliderPlayground from '../../islands/SliderPlayground.tsx';
 import Base from '../../layouts/Base.astro';
 
@@ -175,6 +176,27 @@ const VERTICAL: StaticSlider[] = [
     </p>
     <SliderPlayground client:only="react" />
   </section>
+
+  <Sources>
+    <p>
+      androidx Compose Material3 1.5.0-beta01 (<code>19991f2c</code>): <code>SliderTokens.kt</code>{' '}
+      (the XS set) as read by <code>Slider.kt</code> (<code>TrackHeight</code>,{' '}
+      <code>ThumbWidth</code>, <code>ThumbHeight</code>, <code>ThumbTrackGapSize</code> and{' '}
+      <code>TrackInsideCornerSize</code> L3338–3351; the layout L878–1082; <code>drawTrack</code>{' '}
+      L2398–2671; <code>ThumbContent</code> L2727–2773; <code>defaultSliderColors</code> L1716–1757;
+      the keys L1084–1215; <code>RangeSliderState</code> L3639–3720; "Range start" / "Range end"
+      L1429–1430) and <code>SliderSamples.kt</code> (the value label's <code>PlainTooltip</code>,
+      L168–170); values in <code>components/slider-defaults.css</code> (lines in{' '}
+      <code>PARITY.md</code>).
+    </p>
+    <p>
+      m3.material.io token DB (<code>TOKEN_TABLE.0045edb815f2325e</code>,{' '}
+      <code>md.comp.slider.xsmall</code> … <code>xlarge</code>) for the S–XL sizes and the inset
+      icon, and Sliders › Specs (Measurements; the 48 × 44dp value indicator pill). SOURCES register
+      #42, #68 (the 44dp M handle, DECISIONS D19 (8)), #69 and #70 (the S–XL stop indicator as
+      Compose's <code>drawTrack</code> places it, L2550–2566, D19 (9)).
+    </p>
+  </Sources>
 </Base>
 
 <script>
