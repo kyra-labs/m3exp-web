@@ -1,10 +1,50 @@
-# m3exp-web
+<p align="center">
+  <a href="https://m3e.kyralabs.dev/">
+    <img src=".github/assets/m3exp-readme-banner.png" alt="M3 Expressive Web: one token source, four layers, zero MUI defaults" width="100%">
+  </a>
+</p>
 
-Material 3 Expressive for the web: `@kyralabs/m3exp-web`. Fidelity target: Jetpack Compose
-Material3 1.5.0-beta01 (see `SOURCES.md` and `/SOURCE_PIN`).
+<h1 align="center">
+  <img src=".github/assets/m3exp-logo.png" alt="" width="40" height="40" align="center">
+  M3 Expressive Web
+</h1>
 
-Read `DECISIONS.md`, `REQUIREMENTS.md` and `ROADMAP.md` first. `CLAUDE.md` lists the standing
-rules for contributors.
+<p align="center">
+  Material 3 Expressive for the web: tokens, CSS, custom elements and React, faithful to Jetpack
+  Compose Material3.
+</p>
+
+<p align="center">
+  by&nbsp;
+  <a href="https://kyralabs.dev">
+    <img src="https://github.com/kyra-labs/.github/raw/main/profile/assets/kyra-labs-logo.png" alt="Kyra Labs" height="32" align="center">
+  </a>
+</p>
+
+<p align="center">
+  <a href="https://m3e.kyralabs.dev/"><strong>Documentation</strong></a>
+  ·
+  <a href="https://m3e.kyralabs.dev/components/">Components</a>
+  ·
+  <a href="https://m3epg.kyralabs.dev">Playground</a>
+  ·
+  <a href="https://www.npmjs.com/package/@kyralabs/m3exp-web">npm</a>
+</p>
+
+<p align="center">
+  <a href="https://www.npmjs.com/package/@kyralabs/m3exp-web"><img src="https://img.shields.io/npm/v/@kyralabs/m3exp-web?label=npm&color=d84a4a" alt="npm version"></a>
+  <a href="https://github.com/kyra-labs/m3exp-web/actions/workflows/ci.yml"><img src="https://github.com/kyra-labs/m3exp-web/actions/workflows/ci.yml/badge.svg?branch=main" alt="CI"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-Apache--2.0-00687a" alt="License: Apache 2.0"></a>
+</p>
+
+---
+
+**M3 Expressive Web** (`@kyralabs/m3exp-web`) brings Material 3 Expressive to the web. Fidelity
+target: Jetpack Compose Material3 1.5.0-beta01 (see `SOURCES.md` and `/SOURCE_PIN`). Guides,
+component pages with live demos and API tables are at **<https://m3e.kyralabs.dev/>**.
+
+Contributors: read `DECISIONS.md`, `REQUIREMENTS.md` and `ROADMAP.md` first. `CLAUDE.md` lists the
+standing rules.
 
 ## Packages
 
@@ -81,8 +121,9 @@ export function Save() {
 }
 ```
 
-The docs site, <https://m3epg.kyralabs.dev>, has a page per component with its variants in each
-layer it has. The per-layer READMEs list the APIs: [`m3e-css`](packages/m3e-css/README.md)
+The docs site, <https://m3e.kyralabs.dev/>, has getting-started guides for React, Astro and plain
+HTML and a page per component with live demos, code for each layer and generated API tables; the
+playground, <https://m3epg.kyralabs.dev>, shows every variant and state. The per-layer READMEs list the APIs: [`m3e-css`](packages/m3e-css/README.md)
 (component classes), [`m3e-elements`](packages/m3e-elements/README.md) (elements, attributes,
 events) and [`m3e-react`](packages/m3e-react/README.md) (components and hooks).
 
@@ -202,3 +243,6 @@ docker run --rm -it -v "$PWD":/work -w /work --ipc=host mcr.microsoft.com/playwr
 ## License
 
 Apache 2.0. See `LICENSE` and `NOTICE` (D9).
+
+M3 Expressive Web is an independent project by [Kyra Labs](https://kyralabs.dev), not affiliated with
+or endorsed by Google. Material Design is a Google design system.
