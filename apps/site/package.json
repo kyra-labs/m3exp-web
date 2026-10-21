@@ -10,6 +10,7 @@
     "typecheck": "node scripts/api.js --stub-if-missing && astro check",
     "icons": "node scripts/icons.js",
     "check:links": "node scripts/check-links.js",
+    "check:seo": "node scripts/check-seo.js",
     "test:a11y": "playwright test",
     "lighthouse": "node scripts/lighthouse.js",
     "serve": "node scripts/serve.js",
@@ -40,6 +41,7 @@
     "chrome-launcher": "1.2.2",
     "lighthouse": "13.5.0",
     "pagefind": "1.5.2",
+    "sharp": "0.35.5",
     "shiki": "4.5.0",
     "typescript": "6.0.3"
   }

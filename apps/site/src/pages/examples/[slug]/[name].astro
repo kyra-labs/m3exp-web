@@ -6,6 +6,7 @@ import '@kyralabs/m3exp-web/css/index.css';
 import '../../../generated/icons/site-icons.css';
 import '../../../styles/site.css';
 import { COMPONENTS } from '../../../data/components';
+import { SITE_NAME } from '../../../data/site';
 import { runnableExample } from '../../../lib/example-modules';
 import themeInit from '../../../scripts/theme-init.js?raw';
 
@@ -41,8 +42,9 @@ const title = `${entry?.title ?? slug}: ${name.replace(/-/g, ' ')} (HTML)`;
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="color-scheme" content="light dark" />
     <meta name="robots" content="noindex" />
-    <title>{title} · m3exp-web</title>
-    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <title>{`${title} · ${SITE_NAME}`}</title>
+    <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <script is:inline set:html={themeInit} />
     <script is:inline>
       // Example scripts await m3e-elements entries through this (lib/example-modules.ts); the

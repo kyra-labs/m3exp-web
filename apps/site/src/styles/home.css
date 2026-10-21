@@ -22,6 +22,51 @@
   letter-spacing: var(--m3e-sys-typescale-display-medium-emphasized-tracking);
 }
 
+.site-hero h1:has(+ .site-hero__tagline) {
+  margin-block-end: var(--m3e-sys-space-100);
+}
+
+.site-hero h1 + .site-hero__tagline {
+  margin-block: 0 var(--m3e-sys-space-300);
+  color: var(--m3e-sys-color-primary);
+  font-family: var(--m3e-sys-typescale-headline-small-emphasized-font);
+  font-size: var(--m3e-sys-typescale-headline-small-emphasized-size);
+  font-weight: var(--m3e-sys-typescale-headline-small-emphasized-weight);
+  line-height: var(--m3e-sys-typescale-headline-small-emphasized-line-height);
+  letter-spacing: var(--m3e-sys-typescale-headline-small-emphasized-tracking);
+}
+
+.site-hero__brand {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--m3e-sys-space-200);
+  align-items: center;
+}
+
+.site-hero__logo {
+  inline-size: var(--m3e-sys-space-900);
+  block-size: var(--m3e-sys-space-900);
+}
+
+/* "by [Kyra Labs logo]": a 48dp target whose name is "by Kyra Labs". */
+.site-hero__org {
+  display: inline-flex;
+  gap: var(--m3e-sys-space-100);
+  align-items: center;
+  min-block-size: var(--m3e-sys-space-600);
+  color: var(--m3e-sys-color-on-surface-variant);
+  font-family: var(--m3e-sys-typescale-title-medium-font);
+  font-size: var(--m3e-sys-typescale-title-medium-size);
+  font-weight: var(--m3e-sys-typescale-title-medium-weight);
+  line-height: var(--m3e-sys-typescale-title-medium-line-height);
+  text-decoration: none;
+}
+
+.site-hero__org-logo {
+  inline-size: auto;
+  block-size: var(--m3e-sys-space-500);
+}
+
 .site-hero__actions {
   display: flex;
   flex-wrap: wrap;

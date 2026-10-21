@@ -2,6 +2,9 @@
 // AppBarWithSearch (COMPONENT_SPEC §11, §12): navigation, the site search and the actions.
 // Without JavaScript the brand link stands where the search bar goes, the menu button jumps to
 // the navigation (placed after the page by site.css) and the theme menu is hidden.
+import { Image } from 'astro:assets';
+import { space } from '@kyralabs/m3e-tokens';
+import { projectLogo } from '../data/brand';
 import { REPO_URL, SITE_NAME } from '../data/site';
 ---
 
@@ -16,7 +19,18 @@ import { REPO_URL, SITE_NAME } from '../data/site';
       <span class="m3e-icon" aria-hidden="true">menu</span>
     </a>
   </div>
-  <a class="site-brand" href="/">{SITE_NAME}</a>
+  <a class="site-brand" href="/">
+    <Image
+      class="site-logo"
+      src={projectLogo}
+      alt=""
+      width={space.space400}
+      height={space.space400}
+      densities={[1, 2]}
+      loading="eager"
+    />
+    {SITE_NAME}
+  </a>
   <m3e-search
     id="site-search"
     class="site-js-only"

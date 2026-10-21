@@ -6,10 +6,13 @@ import { FOUNDATIONS, GUIDES } from '../data/nav';
 
 interface Props {
   title: string;
+  /** The lead under the title; also the meta description unless `summary` is given. */
   description: string;
+  /** The meta description, when the lead is longer than search results show (160 characters). */
+  summary?: string;
 }
 
-const { title, description } = Astro.props;
+const { title, description, summary } = Astro.props;
 const series = [
   { label: 'Guides', pages: GUIDES },
   { label: 'Foundations', pages: FOUNDATIONS },
@@ -20,7 +23,7 @@ const previous = index > 0 ? pages[index - 1] : undefined;
 const next = index >= 0 ? pages[index + 1] : undefined;
 ---
 
-<Site title={title} description={description}>
+<Site title={title} description={summary ?? description}>
   <h1>{title}</h1>
   <p class="site-lead">{description}</p>
   <slot />

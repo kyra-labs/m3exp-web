@@ -1,0 +1,3 @@
+# Cloudflare Pages redirects. The privacy policy lives at /privacy/; the .html form some tools
+# and app stores expect redirects there.
+/privacy.html /privacy/ 301
