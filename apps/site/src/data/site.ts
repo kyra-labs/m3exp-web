@@ -14,3 +14,5 @@ export const INSTALL = 'npm install @kyralabs/m3exp-web @kyralabs/m3e-tokens';
 
 export const ORG_NAME = 'Kyra Labs';
 export const ORG_URL = 'https://kyralabs.dev';
+/** Where privacy questions and requests go (the privacy policy). */
+export const CONTACT_EMAIL = 'contact@kyralabs.dev';

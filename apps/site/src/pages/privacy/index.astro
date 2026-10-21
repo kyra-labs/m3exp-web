@@ -3,7 +3,14 @@
 // (src/scripts/theme.ts for the stored settings, Pagefind for search, no third-party requests);
 // change this page in the same PR as any change that makes one of them untrue.
 import Site from '../../layouts/Site.astro';
-import { ORG_NAME, ORG_URL, REPO_URL, SITE_NAME, SITE_URL } from '../../data/site';
+import {
+  CONTACT_EMAIL,
+  ORG_NAME,
+  ORG_URL,
+  REPO_URL,
+  SITE_NAME,
+  SITE_URL,
+} from '../../data/site';
 
 const UPDATED = '2026-10-21';
 const updatedText = new Date(`${UPDATED}T00:00:00Z`).toLocaleDateString('en', {
@@ -107,7 +114,9 @@ const host = new URL(SITE_URL).host;
 
   <h2 id="contact">Contact</h2>
   <p>
-    Questions about this policy go to {ORG_NAME} through <a href={ORG_URL}>kyralabs.dev</a>, or as an
-    <a href={`${REPO_URL}/issues`}>issue on GitHub</a>.
+    For questions about this policy or a privacy request, email {ORG_NAME} at
+    <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>. Please don't put personal details in a
+    public <a href={`${REPO_URL}/issues`}>GitHub issue</a>; issues are for questions about the
+    library itself.
   </p>
 </Site>
