@@ -1,13 +1,26 @@
 ---
+import { Image } from 'astro:assets';
 import { materialShape, polygonToPath, toSvgPathData } from '@kyralabs/m3e-shapes';
+import { space } from '@kyralabs/m3e-tokens';
 import CodeBlock from '../components/CodeBlock.astro';
 import Island from '../components/Island.astro';
 import Site from '../layouts/Site.astro';
-import { INSTALL, PLAYGROUND_URL, REPO_URL } from '../data/site';
+import { kyraLogo, projectLogo } from '../data/brand';
+import {
+  INSTALL,
+  ORG_NAME,
+  ORG_URL,
+  PLAYGROUND_URL,
+  REPO_URL,
+  SITE_NAME,
+  SITE_TAGLINE,
+} from '../data/site';
 import '../styles/home.css';
 
 // The static loading indicator shape (m3e-css rotates it without JavaScript).
 const softBurst = toSvgPathData(polygonToPath(materialShape('SoftBurst')));
+const kyraHeight = space.space500;
+const kyraWidth = Math.round((kyraHeight * kyraLogo.width) / kyraLogo.height);
 
 const layers = [
   {
@@ -63,7 +76,31 @@ const pillars = [
 >
   <section class="site-hero" aria-labelledby="hero-title">
     <div class="site-hero__intro">
-      <h1 id="hero-title">Material 3 Expressive for the web</h1>
+      <div class="site-hero__brand">
+        <Image
+          class="site-hero__logo"
+          src={projectLogo}
+          alt=""
+          width={space.space900}
+          height={space.space900}
+          densities={[1, 2]}
+          loading="eager"
+        />
+        <a class="site-hero__org" href={ORG_URL}>
+          <span>by</span>
+          <Image
+            class="site-hero__org-logo"
+            src={kyraLogo}
+            alt={ORG_NAME}
+            width={kyraWidth}
+            height={kyraHeight}
+            densities={[1, 2]}
+            loading="eager"
+          />
+        </a>
+      </div>
+      <h1 id="hero-title">{SITE_NAME}</h1>
+      <p class="site-hero__tagline">{SITE_TAGLINE}</p>
       <p class="site-lead">
         Springs, shape morphing, emphasized type and the new expressive components, as design
         tokens, CSS classes, custom elements and React components. Value for value, they follow
@@ -145,7 +182,7 @@ const pillars = [
       Material 3 Expressive is Google's 2025 update to Material Design 3. It keeps Material 3's
       color roles, type scale and components and adds motion, shape and emphasis that make
       interfaces easier to scan and more engaging to use, along with a set of new and updated
-      components. m3exp-web brings it to the web, matched to the Compose implementation.
+      components. M3 Expressive Web brings it to the web, matched to the Compose implementation.
     </p>
     <ul class="site-pillars">
       {

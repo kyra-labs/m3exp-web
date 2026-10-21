@@ -1,3 +1,11 @@
 # Cloudflare Pages headers. Astro fingerprints /_astro/ files, so they never change.
 /_astro/*
   Cache-Control: public, max-age=31536000, immutable
+
+# The pages.dev hosts (the production and preview deployments) copy m3e.kyralabs.dev: keep them
+# out of search indexes. Their canonical links already point to the custom domain.
+https://:project.pages.dev/*
+  X-Robots-Tag: noindex
+
+https://:version.:project.pages.dev/*
+  X-Robots-Tag: noindex

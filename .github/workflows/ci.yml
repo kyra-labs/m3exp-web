@@ -246,6 +246,8 @@ jobs:
         run: pnpm --filter @kyralabs/site check:components
       - name: Links and anchors resolve
         run: pnpm --filter @kyralabs/site check:links
+      - name: Titles, descriptions, canonical URLs, social cards and the sitemap
+        run: pnpm --filter @kyralabs/site check:seo
       - name: axe, console errors, icons, 360px layout, no-JS rendering, keyboard
         run: pnpm --filter @kyralabs/site test:a11y
       - name: Lighthouse (mobile; perf >= 90, a11y and SEO 100)

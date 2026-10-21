@@ -57,7 +57,9 @@ DECISIONS.md  SOURCES.md  REQUIREMENTS.md  FOUNDATIONS_SPEC.md  COMPONENT_SPEC.m
 - The official site, m3e.kyralabs.dev: Astro static pages, React islands mounted in the browser only (D6), built with our own components. `apps/docs` stays the playground and the page set `apps/visual` opens; never restyle or move it for the site.
 - **Apply:** tokens only (stylelint and ESLint `m3e/no-literal-values` cover `apps/site/src`; site classes are `.site-…`), the accessibility rules above (≥48px targets, visible `:focus-visible`, ARIA, `prefers-reduced-motion`, `forced-colors`), icons through `.m3e-icon` / `Icon`, licensing (D9).
 - **Do not apply:** one component per PR, the Compose-fidelity review and its catalog screenshots, and the package "Done means" items (visual baselines, size-limit, DOM snapshots, changesets). Site-only PRs add no changeset (`apps/site` is private) and skip the visual suite.
-- CI's `site` job builds the site and runs the link check, axe, the no-JavaScript and 360px checks and Lighthouse (performance ≥ 90, accessibility and SEO 100) on every PR.
+- CI's `site` job builds the site and runs the link check, the SEO check (titles ≤ 60 characters, descriptions 50–160, unique; canonical URLs, social card, sitemap), axe, the no-JavaScript and 360px checks and Lighthouse (performance ≥ 90, accessibility and SEO 100) on every PR.
+- **Name and brand:** the site is "M3 Expressive Web" by Kyra Labs (`SITE_NAME`, `src/data/brand.ts`); `m3exp-web` is only the npm and repository name.
+- **Privacy policy (`/privacy/`):** it states facts about the site (no cookies, analytics or third-party requests; the theme keys in local storage; local search). A change that makes one of them untrue updates the page in the same PR.
 - Content comes from source: API tables are generated at build time from the `.d.ts`, READMEs and COMPONENT_SPEC, never written by hand. Pages import the m3e-css files of the components they show, not `css/index.css`.
 - A library bug found while building the site gets an issue and a fix in the library; the site does not work around it.
 

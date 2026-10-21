@@ -1,0 +1,113 @@
+---
+// The site's privacy policy. Every statement here is a fact about the site's own code
+// (src/scripts/theme.ts for the stored settings, Pagefind for search, no third-party requests);
+// change this page in the same PR as any change that makes one of them untrue.
+import Site from '../../layouts/Site.astro';
+import { ORG_NAME, ORG_URL, REPO_URL, SITE_NAME, SITE_URL } from '../../data/site';
+
+const UPDATED = '2026-10-21';
+const updatedText = new Date(`${UPDATED}T00:00:00Z`).toLocaleDateString('en', {
+  day: 'numeric',
+  month: 'long',
+  year: 'numeric',
+  timeZone: 'UTC',
+});
+const host = new URL(SITE_URL).host;
+---
+
+<Site
+  title="Privacy policy"
+  description={`How ${SITE_NAME} handles your data: no cookies, analytics or ads, theme settings kept in your browser, search that runs on your device.`}
+>
+  <h1>Privacy policy</h1>
+  <p class="site-lead">
+    This site doesn't use cookies, analytics or advertising, and it never asks for personal
+    information. Your theme settings stay in your browser.
+  </p>
+  <p>Last updated <time datetime={UPDATED}>{updatedText}</time>.</p>
+
+  <h2 id="who">Who we are</h2>
+  <p>
+    {SITE_NAME} ({host}) is the documentation site of the open-source <code>@kyralabs</code> packages,
+    run by <a href={ORG_URL}>{ORG_NAME}</a>. This policy covers this site only.
+  </p>
+
+  <h2 id="hosting">When you visit</h2>
+  <p>
+    The site is a set of static pages hosted on <a href="https://www.cloudflare.com/">Cloudflare</a>
+    Pages. To deliver the pages and protect them against abuse, Cloudflare processes the technical
+    data your browser sends with every request: your IP address, the page you asked for, your
+    browser's user agent and the time. Cloudflare handles this data under the
+    <a href="https://www.cloudflare.com/privacypolicy/">Cloudflare privacy policy</a>. {ORG_NAME} adds
+    no analytics, tracking or logging of its own, and doesn't use this data to identify visitors.
+    Cloudflare may show us aggregate figures, such as the number of requests.
+  </p>
+  <p>
+    Fonts, icons, scripts, images and the search index all come from this site. Pages make no
+    requests to other services: no web fonts from Google, no CDNs, no embeds.
+  </p>
+
+  <h2 id="cookies">Cookies</h2>
+  <p>
+    The site sets no cookies. Cloudflare may set a strictly necessary security cookie when it needs
+    to check that a request comes from a person rather than a bot.
+  </p>
+
+  <h2 id="storage">What's stored in your browser</h2>
+  <p>
+    When you change the color theme, the site remembers your choice in your browser's local storage
+    so that every page uses it. Nothing in local storage is sent to us or to anyone else.
+  </p>
+  <ul>
+    <li>
+      <code>m3e-site:mode</code>: light or dark, if you picked one in the theme menu. Choosing System
+      removes it.
+    </li>
+    <li>
+      <code>m3e-site:theme-seed</code> and <code>m3e-site:theme-css</code>: the seed color and the
+      generated theme, if you applied one from the home page or the color theme builder. Resetting
+      the theme on the home page removes them.
+    </li>
+  </ul>
+  <p>You can also delete them at any time by clearing this site's data in your browser settings.</p>
+
+  <h2 id="search">Search</h2>
+  <p>
+    Search runs on your device. The search box downloads the site's index from this site and looks
+    up your words in your browser; what you type is never sent anywhere.
+  </p>
+
+  <h2 id="packages">The packages themselves</h2>
+  <p>
+    The <code>@kyralabs</code> packages you install from npm contain no telemetry and make no network
+    requests. Fonts and icons are files you serve from your own site.
+  </p>
+
+  <h2 id="links">Links to other sites</h2>
+  <p>
+    Pages link to other sites, such as GitHub, npm, the playground and material.io. Their own privacy
+    policies apply once you follow a link.
+  </p>
+
+  <h2 id="rights">Your rights</h2>
+  <p>
+    Because {ORG_NAME} doesn't collect or store personal data about visitors, there is normally
+    nothing for us to give you a copy of, correct or delete. For data Cloudflare processes, you can
+    use the rights described in Cloudflare's policy. If you have a question or a request, contact us
+    as below.
+  </p>
+
+  <h2 id="changes">Changes to this policy</h2>
+  <p>
+    If the site changes how it handles data, this page changes with it and the date above is
+    updated. Every earlier version is in the <a href={`${REPO_URL}/commits/main/apps/site/src/pages/privacy/index.astro`}
+      >history of this page</a
+    > on GitHub.
+  </p>
+
+  <h2 id="contact">Contact</h2>
+  <p>
+    Questions about this policy go to {ORG_NAME} through <a href={ORG_URL}>kyralabs.dev</a>, or as an
+    <a href={`${REPO_URL}/issues`}>issue on GitHub</a>.
+  </p>
+</Site>

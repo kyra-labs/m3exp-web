@@ -2,11 +2,23 @@
 // The site shell (DECISIONS D27): a top app bar with search, a navigation drawer (permanent from
 // the large window size class, modal below) and the page. Everything is m3e-css markup, so the
 // page reads with JavaScript off; src/scripts/chrome.ts adds the drawer, search and theme menu.
+import { getImage, Image } from 'astro:assets';
+import { space } from '@kyralabs/m3e-tokens';
 import '../styles/base.css';
 import '../styles/site.css';
 import NavDrawer from '../components/NavDrawer.astro';
 import TopBar from '../components/TopBar.astro';
-import { SITE_NAME, SITE_TAGLINE } from '../data/site';
+import { kyraLogo, OG_IMAGE } from '../data/brand';
+import {
+  NPM_URL,
+  ORG_NAME,
+  ORG_URL,
+  PLAYGROUND_URL,
+  REPO_URL,
+  SITE_NAME,
+  SITE_TAGLINE,
+} from '../data/site';
+import { breadcrumbList, homeGraph, jsonLd } from '../lib/structured-data';
 import themeInit from '../scripts/theme-init.js?raw';
 
 interface Props {
@@ -22,8 +34,21 @@ interface Props {
 
 const { title, description, wide = false, noindex = false } = Astro.props;
 const pathname = Astro.url.pathname;
-const fullTitle = pathname === '/' ? `${SITE_NAME}: ${SITE_TAGLINE}` : `${title} · ${SITE_NAME}`;
+const isHome = pathname === '/';
+const fullTitle = isHome ? `${SITE_NAME}: ${SITE_TAGLINE}` : `${title} · ${SITE_NAME}`;
 const canonical = new URL(pathname, Astro.site).href;
+const ogImage = new URL(OG_IMAGE.image.src, Astro.site).href;
+
+// The Kyra Labs logo at the footer's height (the logo is wider than tall), and a 512 px wide PNG
+// for the Organization's schema.org logo (search engines ask for at least 112 px).
+const kyraHeight = space.space400;
+const kyraWidth = Math.round((kyraHeight * kyraLogo.width) / kyraLogo.height);
+const orgLogo = await getImage({ src: kyraLogo, width: 512, format: 'png' });
+const structuredData = noindex
+  ? null
+  : isHome
+    ? homeGraph(description, new URL(orgLogo.src, Astro.site).href)
+    : breadcrumbList(pathname, title);
 ---
 
 <!doctype html>
@@ -41,15 +66,34 @@ const canonical = new URL(pathname, Astro.site).href;
     <meta name="color-scheme" content="light dark" />
     <title>{fullTitle}</title>
     <meta name="description" content={description} />
+    <meta name="author" content={ORG_NAME} />
     {!noindex && <link rel="canonical" href={canonical} />}
-    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    {noindex && <meta name="robots" content="noindex" />}
+    <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <meta name="apple-mobile-web-app-title" content="M3E" />
+    <link rel="manifest" href="/site.webmanifest" />
     <link rel="sitemap" href="/sitemap-index.xml" />
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content={SITE_NAME} />
+    <meta property="og:locale" content="en_US" />
     <meta property="og:title" content={fullTitle} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
-    {noindex && <meta name="robots" content="noindex" />}
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content={String(OG_IMAGE.image.width)} />
+    <meta property="og:image:height" content={String(OG_IMAGE.image.height)} />
+    <meta property="og:image:alt" content={OG_IMAGE.alt} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image:alt" content={OG_IMAGE.alt} />
+    {
+      structuredData && (
+        <script is:inline type="application/ld+json" set:html={jsonLd(structuredData)} />
+      )
+    }
     <script is:inline set:html={themeInit} />
     <slot name="head" />
   </head>
@@ -64,11 +108,31 @@ const canonical = new URL(pathname, Astro.site).href;
         </div>
         <footer class="site-footer">
           <slot name="footer" />
+          <div class="site-footer__bar">
+            <a class="site-footer__org" href={ORG_URL}>
+              <span>{SITE_NAME} by</span>
+              <Image
+                class="site-footer__logo"
+                src={kyraLogo}
+                alt={ORG_NAME}
+                width={kyraWidth}
+                height={kyraHeight}
+                densities={[1, 2]}
+              />
+            </a>
+            <ul class="site-footer__links">
+              <li><a href="/privacy/">Privacy policy</a></li>
+              <li><a href={REPO_URL}>GitHub</a></li>
+              <li><a href={NPM_URL}>npm</a></li>
+              <li><a href={PLAYGROUND_URL}>Playground</a></li>
+            </ul>
+          </div>
           <p>
-            Apache-2.0. Google Sans Flex (SIL Open Font License 1.1) and Material Symbols
-            (Apache-2.0) ship with their licenses. "Google", "Google Sans" and "Material Design" are
-            trademarks of Google LLC; m3exp-web is a Kyra Labs project, not affiliated with or
-            endorsed by Google.
+            © {new Date().getFullYear()}
+            {ORG_NAME}. Code under the Apache License 2.0. Google Sans Flex (SIL Open Font License
+            1.1) and Material Symbols (Apache-2.0) ship with their licenses. "Google", "Google Sans"
+            and "Material Design" are trademarks of Google LLC; {SITE_NAME} is an independent Kyra
+            Labs project, not affiliated with or endorsed by Google.
           </p>
         </footer>
       </main>

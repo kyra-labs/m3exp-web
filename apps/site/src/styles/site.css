@@ -70,8 +70,11 @@ m3e-search:not(:defined) {
 }
 
 .site-brand {
+  display: inline-flex;
   grid-area: 1 / 2;
+  gap: var(--m3e-sys-space-150);
   place-self: center start;
+  align-items: center;
   padding-inline: var(--m3e-sys-space-100);
   color: var(--m3e-sys-color-on-surface);
   font-family: var(--m3e-sys-typescale-title-large-font);
@@ -124,6 +127,10 @@ m3e-search:not(:defined) {
 }
 
 .site-drawer__brand > a {
+  display: inline-flex;
+  gap: var(--m3e-sys-space-150);
+  align-items: center;
+  min-block-size: var(--m3e-sys-space-600);
   color: inherit;
   text-decoration: none;
 }
@@ -187,6 +194,55 @@ m3e-search:not(:defined) {
 
 .site-main--wide .site-footer {
   max-inline-size: var(--m3e-sys-window-width-large);
+}
+
+.site-footer__bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--m3e-sys-space-100) var(--m3e-sys-space-300);
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* "M3 Expressive Web by [Kyra Labs logo]": one 48dp target. */
+.site-footer__org {
+  display: inline-flex;
+  gap: var(--m3e-sys-space-100);
+  align-items: center;
+  min-block-size: var(--m3e-sys-space-600);
+  color: var(--m3e-sys-color-on-surface);
+  font-family: var(--m3e-sys-typescale-title-small-font);
+  font-size: var(--m3e-sys-typescale-title-small-size);
+  font-weight: var(--m3e-sys-typescale-title-small-weight);
+  line-height: var(--m3e-sys-typescale-title-small-line-height);
+  text-decoration: none;
+}
+
+.site-footer__logo {
+  inline-size: auto;
+  block-size: var(--m3e-sys-space-400);
+}
+
+.site-footer__links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 var(--m3e-sys-space-200);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.site-footer__links a {
+  display: inline-flex;
+  align-items: center;
+  min-block-size: var(--m3e-sys-space-600);
+}
+
+/* The project logo next to the name, in the drawer and the no-JavaScript top bar. */
+.site-logo {
+  flex: none;
+  inline-size: var(--m3e-sys-space-400);
+  block-size: var(--m3e-sys-space-400);
 }
 
 /* --- Prose ------------------------------------------------------------------------------------ */
