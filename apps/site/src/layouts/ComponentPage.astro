@@ -12,6 +12,7 @@ import Site from './Site.astro';
 import { componentBySlug } from '../data/components';
 import { PLAYGROUND_URL } from '../data/site';
 import { API, deprecationText, specField } from '../lib/api';
+import { componentDescription } from '../lib/component-description';
 import { block, inline } from '../lib/markdown';
 
 interface ExampleMeta {
@@ -24,7 +25,7 @@ interface ExampleMeta {
 interface Props {
   slug: string;
   examples: ExampleMeta[];
-  /** One sentence for search engines; defaults to the spec's purpose. */
+  /** One sentence for search engines; defaults to one built from the entry and its layers. */
   description?: string;
 }
 
@@ -34,16 +35,24 @@ if (!entry) throw new Error(`No component ${slug} in src/data/components.ts`);
 const spec = API.spec[entry.spec];
 const rawPurpose = specField(spec, 'Purpose');
 const purpose = rawPurpose ? rawPurpose.charAt(0).toUpperCase() + rawPurpose.slice(1) : undefined;
-const metaDescription = description ?? entry.summary;
 
 const components = entry.react.filter((n) => API.react[n]?.kind === 'component');
 const helpers = entry.react.filter((n) => API.react[n]?.kind !== 'component');
+// The layers the page documents: the facts line and the meta description both say these.
+const layers = {
+  css: entry.css.length > 0,
+  elements: entry.elements.length > 0,
+  react: components.length > 0,
+};
 // D4: the page banner when every React component on it is deprecated; partly deprecated pages
 // (a legacy bar next to its replacement) show the note on the deprecated API only.
 const pageDeprecation =
   components.length > 0 && components.every((n) => API.react[n]?.deprecated !== null)
     ? deprecationText(API.react[components[0] ?? '']?.deprecated ?? null)
     : null;
+const metaDescription =
+  description ??
+  componentDescription(entry.title, entry.summary, layers, { deprecated: pageDeprecation !== null });
 
 const a11y = [specField(spec, 'Keyboard/ARIA', 'Keyboard', 'ARIA'), specField(spec, 'Behavior')].filter(
   (x): x is string => Boolean(x),
@@ -59,7 +68,9 @@ const tokensProse = tokens
 
 <Site title={entry.title} description={metaDescription} wide>
   <article class="site-component" data-component={slug}>
-    <p class="site-component__group">{entry.group}</p>
+    <p class="site-component__group">
+      {pageDeprecation === null ? 'Material 3 Expressive' : 'Material 3'} · {entry.group}
+    </p>
     <h1>{entry.title}</h1>
     <p class="site-lead">{entry.summary}</p>
     {
@@ -73,7 +84,7 @@ const tokensProse = tokens
     }
     <ul class="site-component__facts">
       <li>COMPONENT_SPEC §{entry.spec}</li>
-      <li>{[entry.css.length > 0 && 'CSS', entry.elements.length > 0 && 'custom elements', components.length > 0 && 'React'].filter(Boolean).join(' · ')}</li>
+      <li>{[layers.css && 'CSS', layers.elements && 'custom elements', layers.react && 'React'].filter(Boolean).join(' · ')}</li>
       {
         entry.playground && (
           <li>

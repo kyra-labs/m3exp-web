@@ -1,8 +1,10 @@
 // SEO check for the built site (apps/site/dist). For every indexable page: a title of at most 60
 // characters and a description of 50–160 (what search results show uncut), both unique; a
 // canonical URL that is the page's own; og:url equal to it; an absolute og:image that exists; one
-// h1; JSON-LD that parses. The sitemap lists exactly the indexable pages, robots.txt points to it,
-// and noindex pages stay out. Usage: node scripts/check-seo.js
+// h1; JSON-LD that parses. The home page's JSON-LD names the site (one WebSite node, the one
+// Google takes the site name from) and Kyra Labs (one Organization node, the same @id on every
+// Kyra Labs site). The sitemap lists exactly the indexable pages, robots.txt points to it, and
+// noindex pages stay out. Usage: node scripts/check-seo.js
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { dirname, join, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -11,6 +13,8 @@ const DIST = join(dirname(dirname(fileURLToPath(import.meta.url))), 'dist');
 const SITE_ORIGIN = 'https://m3e.kyralabs.dev';
 const TITLE_MAX = 60;
 const DESCRIPTION = [50, 160];
+const SITE_NAME = 'M3 Expressive Web';
+const ORGANIZATION_ID = 'https://kyralabs.dev/#organization';
 
 const decode = (s) =>
   s
@@ -67,14 +71,31 @@ for (const file of pages) {
   const h1s = html.match(/<h1[\s>]/g)?.length ?? 0;
   if (h1s !== 1) fail(`${h1s} h1 elements`);
 
+  const nodes = [];
   for (const [, json] of html.matchAll(
     /<script type="application\/ld\+json">([\s\S]*?)<\/script>/g,
   )) {
     try {
-      JSON.parse(json);
+      const data = JSON.parse(json);
+      for (const item of [data].flat()) nodes.push(...(item['@graph'] ?? [item]));
     } catch (error) {
       fail(`JSON-LD does not parse: ${error.message}`);
     }
+  }
+
+  if (path === '/') {
+    const ofType = (type) => nodes.filter((n) => [n['@type']].flat().includes(type));
+    const sites = ofType('WebSite');
+    if (sites.length !== 1) fail(`${sites.length} WebSite nodes in the JSON-LD (want 1)`);
+    else {
+      if (sites[0].name !== SITE_NAME)
+        fail(`WebSite name is "${sites[0].name}", not "${SITE_NAME}"`);
+      if (sites[0].url !== canonical)
+        fail(`WebSite url is ${sites[0].url}, not the canonical ${canonical}`);
+    }
+    const orgs = ofType('Organization').filter((n) => n['@id'] === ORGANIZATION_ID);
+    if (orgs.length !== 1)
+      fail(`${orgs.length} Organization nodes with @id ${ORGANIZATION_ID} (want 1)`);
   }
 }
 

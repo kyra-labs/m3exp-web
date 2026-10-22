@@ -36,10 +36,10 @@ const layers = [
     text: 'Every component as framework-free classes. No JavaScript: buttons, cards, lists, chips, text fields and app bars render from markup alone.',
   },
   {
-    name: 'Custom elements',
+    name: 'Web components',
     pkg: '@kyralabs/m3e-elements',
     icon: 'widgets',
-    text: 'Zero-dependency elements for the behavior CSS cannot do: menus, sheets, pickers, morphing shapes and springs. One small entry per element.',
+    text: 'Zero-dependency custom elements for the behavior CSS cannot do: menus, sheets, pickers, morphing shapes and springs. One small entry per element.',
   },
   {
     name: 'React',
@@ -71,7 +71,7 @@ const pillars = [
 
 <Site
   title="Material 3 Expressive for the web"
-  description="Material 3 Expressive for the web: tokens, CSS classes, zero-dependency custom elements and React components, matched to Jetpack Compose Material3."
+  description="Material 3 Expressive for the web: tokens, CSS classes, zero-dependency web components and React components, matched to Jetpack Compose Material3."
   wide
 >
   <section class="site-hero" aria-labelledby="hero-title">
@@ -103,8 +103,8 @@ const pillars = [
       <p class="site-hero__tagline">{SITE_TAGLINE}</p>
       <p class="site-lead">
         Springs, shape morphing, emphasized type and the new expressive components, as design
-        tokens, CSS classes, custom elements and React components. Value for value, they follow
-        Jetpack Compose Material3 1.5.0-beta01.
+        tokens, CSS classes, web components (custom elements) and React components. Value for
+        value, they follow Jetpack Compose Material3 1.5.0-beta01.
       </p>
       <CodeBlock code={INSTALL} lang="sh" label="install command" />
       <div class="site-hero__actions">
@@ -242,5 +242,11 @@ const pillars = [
         Size budgets keep pages light: one custom element entry stays within 8 kB, min and brotli.
       </li>
     </ul>
+    <p>
+      Sites built with {SITE_NAME} include <a href="https://kyralabs.dev/">Kyra Labs</a>, the
+      <a href="https://pingogram.kyralabs.dev/">Pingogram website</a>,
+      <a href="https://antecedent.kyralabs.dev/">Antecedent</a> and
+      <a href="https://spenzia.kyralabs.dev/">Spenzia</a>.
+    </p>
   </section>
 </Site>

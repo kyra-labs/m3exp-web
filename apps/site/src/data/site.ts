@@ -5,6 +5,8 @@ import umbrella from '@kyralabs/m3exp-web/package.json';
 /** The project's display name. `m3exp-web` stays the npm and repository name. */
 export const SITE_NAME = 'M3 Expressive Web';
 export const SITE_TAGLINE = 'Material 3 Expressive for the web';
+/** What the home page's <title> adds after the site name (the hero keeps SITE_TAGLINE). */
+export const HOME_TITLE_SUFFIX = 'Material 3 Expressive web components';
 export const SITE_URL = 'https://m3e.kyralabs.dev';
 export const VERSION: string = umbrella.version;
 export const REPO_URL = 'https://github.com/kyra-labs/m3exp-web';

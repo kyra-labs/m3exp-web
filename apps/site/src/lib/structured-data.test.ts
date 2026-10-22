@@ -22,14 +22,39 @@ describe('breadcrumbList', () => {
 
 describe('homeGraph', () => {
   it('names Kyra Labs as the publisher of the site and the author of the library', () => {
-    const graph = homeGraph(
-      'Tokens, CSS, elements and React.',
-      'https://m3e.kyralabs.dev/logo.png',
-    );
+    const graph = homeGraph('Tokens, CSS, elements and React.');
     const [org, site, code] = graph['@graph'];
     expect(org).toMatchObject({ '@type': 'Organization', name: 'Kyra Labs' });
     expect(site).toMatchObject({ '@type': 'WebSite', publisher: { '@id': org?.['@id'] } });
-    expect(code).toMatchObject({ '@type': 'SoftwareSourceCode', author: { '@id': org?.['@id'] } });
+    expect(code).toMatchObject({
+      '@type': 'SoftwareSourceCode',
+      '@id': 'https://m3e.kyralabs.dev/#library',
+      author: { '@id': org?.['@id'] },
+    });
+  });
+
+  it('keeps the WebSite node the site name comes from', () => {
+    const site = homeGraph('Tokens, CSS, elements and React.')['@graph'][1];
+    expect(site).toMatchObject({
+      '@type': 'WebSite',
+      name: 'M3 Expressive Web',
+      alternateName: 'm3exp-web',
+      url: 'https://m3e.kyralabs.dev/',
+    });
+  });
+
+  it('describes Kyra Labs exactly as every Kyra Labs site does', () => {
+    expect(homeGraph('Tokens, CSS, elements and React.')['@graph'][0]).toEqual({
+      '@type': 'Organization',
+      '@id': 'https://kyralabs.dev/#organization',
+      name: 'Kyra Labs',
+      url: 'https://kyralabs.dev/',
+      logo: 'https://kyralabs.dev/web-app-manifest-512x512.png',
+      description:
+        'Kyra Labs is an independent, one-person app studio building practical, privacy-conscious apps for everyday life.',
+      email: 'contact@kyralabs.dev',
+      sameAs: ['https://github.com/kyra-labs', 'https://www.instagram.com/kyra__labs/'],
+    });
   });
 });
 

@@ -1,0 +1,5 @@
+# Cloudflare Pages headers for the playground (m3epg.kyralabs.dev, m3epg.pages.dev and its
+# previews). It is a test bench for the components, not documentation: keep every page out of
+# search indexes so it does not compete with the official site, m3e.kyralabs.dev.
+/*
+  X-Robots-Tag: noindex
