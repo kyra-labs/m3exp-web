@@ -55,6 +55,31 @@ describe('componentDescription', () => {
     );
   });
 
+  it('drops the layers from the lead before it drops the summary', () => {
+    expect(
+      componentDescription(
+        'Search',
+        'A search bar that expands into a full-screen or docked view of suggestions and results.',
+        all,
+      ),
+    ).toBe(
+      'Material 3 Expressive search for the web. A search bar that expands into a full-screen or docked view of suggestions and results.',
+    );
+  });
+
+  it('describes a deprecated component without calling it Material 3 Expressive', () => {
+    expect(
+      componentDescription(
+        'Segmented button',
+        'Deprecated (DECISIONS D4): a row of segments for single or multiple choice. Use a connected button group instead.',
+        { css: true, elements: false, react: true },
+        { deprecated: true },
+      ),
+    ).toBe(
+      'Segmented button for the web, deprecated in Material 3 Expressive. A row of segments for single or multiple choice. Use a connected button group instead.',
+    );
+  });
+
   it('gives every component page a unique description of 50–160 characters', () => {
     const descriptions = COMPONENTS.map((c) =>
       componentDescription(c.title, c.summary, {

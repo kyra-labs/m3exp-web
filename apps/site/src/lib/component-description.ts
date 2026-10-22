@@ -34,24 +34,41 @@ function shortenings(summary: string): string[] {
   return [summary, ...cuts.reverse().map((i) => `${summary.slice(0, i)}.`)];
 }
 
+/** The deprecation prefix some summaries carry (an internal reference, not for search results). */
+const DEPRECATED_PREFIX = /^Deprecated \(DECISIONS D\d+\):\s*/;
+
 /**
  * "Material 3 Expressive date pickers for the web in CSS, web components and React." followed by
  * as much of the summary as fits in 160 characters. Custom elements are named "web components",
- * the term people search for. Falls back to the summary when nothing fits.
+ * the term people search for. When the layers make the lead too long for the summary, the lead
+ * drops them before the summary is cut. A deprecated component (D4) is not called Material 3
+ * Expressive: "Segmented button for the web, deprecated in Material 3 Expressive." Falls back to the
+ * summary when nothing fits.
  */
 export function componentDescription(
   title: string,
   summary: string,
   layers: ComponentLayers,
+  { deprecated = false }: { deprecated?: boolean } = {},
 ): string {
   const names = [
     layers.css && 'CSS',
     layers.elements && 'web components',
     layers.react && 'React',
   ].filter((name): name is string => Boolean(name));
-  const lead = `Material 3 Expressive ${inSentence(title)} for the web${
-    names.length > 0 ? ` in ${listOf(names)}` : ''
-  }.`;
-  const candidates = [...shortenings(summary).map((text) => `${lead} ${text}`), lead];
-  return candidates.find((text) => text.length >= MIN && text.length <= MAX) ?? summary;
+  const text = summary.replace(DEPRECATED_PREFIX, '');
+  const body = text.charAt(0).toUpperCase() + text.slice(1);
+  const leads = deprecated
+    ? [`${title} for the web, deprecated in Material 3 Expressive.`]
+    : [
+        `Material 3 Expressive ${inSentence(title)} for the web${
+          names.length > 0 ? ` in ${listOf(names)}` : ''
+        }.`,
+        `Material 3 Expressive ${inSentence(title)} for the web.`,
+      ];
+  const candidates = [
+    ...leads.flatMap((lead) => shortenings(body).map((part) => `${lead} ${part}`)),
+    ...leads,
+  ];
+  return candidates.find((c) => c.length >= MIN && c.length <= MAX) ?? summary;
 }

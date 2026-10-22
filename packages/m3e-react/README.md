@@ -38,7 +38,7 @@ supported under server rendering or React Server Components. In Astro, mount the
 
 Every runtime export, grouped as in COMPONENT_SPEC. Each one renders the m3e-css classes of its
 component (the same DOM as the matching `<m3e-*>` element, where there is one); props follow
-React Aria (`on<Event>`, `is<State>`). The docs site, <https://m3epg.kyralabs.dev>, shows each one
+React Aria (`on<Event>`, `is<State>`). The docs site, <https://m3e.kyralabs.dev/components/>, shows each one
 next to its CSS and element versions. Prop types are exported as `<Name>Props`.
 
 ### Primitives

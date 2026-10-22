@@ -44,13 +44,15 @@ const layers = {
   elements: entry.elements.length > 0,
   react: components.length > 0,
 };
-const metaDescription = description ?? componentDescription(entry.title, entry.summary, layers);
 // D4: the page banner when every React component on it is deprecated; partly deprecated pages
 // (a legacy bar next to its replacement) show the note on the deprecated API only.
 const pageDeprecation =
   components.length > 0 && components.every((n) => API.react[n]?.deprecated !== null)
     ? deprecationText(API.react[components[0] ?? '']?.deprecated ?? null)
     : null;
+const metaDescription =
+  description ??
+  componentDescription(entry.title, entry.summary, layers, { deprecated: pageDeprecation !== null });
 
 const a11y = [specField(spec, 'Keyboard/ARIA', 'Keyboard', 'ARIA'), specField(spec, 'Behavior')].filter(
   (x): x is string => Boolean(x),
@@ -66,7 +68,9 @@ const tokensProse = tokens
 
 <Site title={entry.title} description={metaDescription} wide>
   <article class="site-component" data-component={slug}>
-    <p class="site-component__group">Material 3 Expressive · {entry.group}</p>
+    <p class="site-component__group">
+      {pageDeprecation === null ? 'Material 3 Expressive' : 'Material 3'} · {entry.group}
+    </p>
     <h1>{entry.title}</h1>
     <p class="site-lead">{entry.summary}</p>
     {
