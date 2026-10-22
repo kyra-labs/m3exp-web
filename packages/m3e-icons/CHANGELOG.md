@@ -1,5 +1,17 @@
 # @kyralabs/m3e-icons
 
+## 1.9.0
+
+### Patch Changes
+
+- ec5f344: Point npm homepage links to the official site, m3e.kyralabs.dev. Every published package's
+  `homepage` is now https://m3e.kyralabs.dev/ (it was the package's folder on GitHub), and the
+  umbrella README links the docs there; the m3e-react README's docs link goes to the site's component pages. No code changes.
+- Updated dependencies [29b49ac]
+- Updated dependencies [c18723b]
+- Updated dependencies [ec5f344]
+  - @kyralabs/m3e-tokens@1.9.0
+
 ## 1.8.0
 
 ### Patch Changes

@@ -1,5 +1,13 @@
 # @kyralabs/m3e-shapes
 
+## 1.9.0
+
+### Patch Changes
+
+- ec5f344: Point npm homepage links to the official site, m3e.kyralabs.dev. Every published package's
+  `homepage` is now https://m3e.kyralabs.dev/ (it was the package's folder on GitHub), and the
+  umbrella README links the docs there; the m3e-react README's docs link goes to the site's component pages. No code changes.
+
 ## 1.8.0
 
 ### Patch Changes
