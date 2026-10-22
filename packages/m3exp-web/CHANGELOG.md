@@ -1,5 +1,62 @@
 # @kyralabs/m3exp-web
 
+## 1.9.0
+
+### Minor Changes
+
+- 29b49ac: M11 owner items (DECISIONS D20):
+  
+  - Tabs (D20 (1)): a stacked tab (icon above the label) now puts its badge on the icon, overlapping
+    it by 6dp (m3.material.io Tabs › Specs, "Overlap of badge on stacked icon";
+    `--m3e-comp-tabs-stacked-badge-overlap`), with the label first in the DOM so the tab still reads
+    "label, badge" (Compose `TabBaselineLayout` order, Tab.kt L298–305). `<m3e-tabs>` and React
+    `<Tabs>` render the same markup; m3e-css keeps styling the earlier markup. Leading-icon,
+    text-only and icon-only tabs are unchanged.
+  - Dialog (D20 (6), amends M9 #9): the open motion uses androidx's emphasized easing
+    `cubic-bezier(0.2, 0, 0, 1)` (`--m3e-comp-dialog-enter-easing` is now
+    `var(--m3e-sys-motion-easing-emphasized)`, `MotionTokens.kt` L40) instead of Material Web's
+    `cubic-bezier(0.3, 0, 0, 1)` approximation; the timing is unchanged.
+  - Size limits (D20 (3)): the `date-picker-layout` entry may reach 12 kB and the date picker set
+    16 kB (D18 (2), (3)); nothing in the bundles changes.
+
+### Patch Changes
+
+- 48991db: Keyboard and focus fixes from the M11 accessibility decisions (DECISIONS D20 (5), D20 (9), D21;
+  no API change), identical in elements and React. A rich tooltip with an action no longer traps
+  Tab (WCAG 2.1.2): Tab from its last control moves to the tab stop after the anchor, Shift+Tab
+  from its first returns to the anchor, and focus leaving it hides it unless it is persistent;
+  Shift+Tab on the anchor is the browser's again. In a partially expanded bottom sheet, keyboard
+  focus on something the sheet clips below its visible part (the peek sheet's controls) expands the
+  sheet, asking first through `value-change` / `onValueChange` (WCAG 2.4.11); under reduced motion
+  it jumps. The bottom sheet's drag handle announces its ArrowUp / ArrowDown keys with
+  `aria-keyshortcuts` while gestures are enabled, and the docked date picker's month and year menu
+  buttons announce the popup's Shift+M / Shift+Y with `aria-keyshortcuts`.
+- c18723b: The owner's picks for the last open `TODO(verify)` register items (M11, DECISIONS D19; the
+  register is at zero). The keyboard focus ring now animates like Compose's inset ring: it grows on
+  the fast spatial spring and shrinks on the fast effects spring (no motion under
+  `prefers-reduced-motion`); at rest and when focused it looks as before. A component that sets its
+  own `transition` on a ring element lists `var(--_m3e-focus-ring-transition, outline-width,
+  outline-offset)` first. The feed layout's gap is 8dp (`--m3e-comp-feed-gap`, m3.material.io Cards
+  "Padding between cards 8dp max"; was 16dp). The side sheet divider is outline-variant
+  (`--m3e-comp-side-sheet-divider-color`, the divider token and the color legend; was outline). A
+  touch long press shows a tooltip after 400ms, Android's default long-press timeout that Compose
+  reads (was 500ms), in `<m3e-tooltip>` and `<TooltipTrigger>` alike. Docs: the Theme page notes
+  that `variant: 'fidelity'` is the closest to Material Theme Builder, and the snackbar page notes
+  WCAG 2.2.1 and m3.material.io's web requirement for timed snackbars.
+- ec5f344: Point npm homepage links to the official site, m3e.kyralabs.dev. Every published package's
+  `homepage` is now https://m3e.kyralabs.dev/ (it was the package's folder on GitHub), and the
+  umbrella README links the docs there; the m3e-react README's docs link goes to the site's component pages. No code changes.
+- Updated dependencies [48991db]
+- Updated dependencies [d0396d8]
+- Updated dependencies [29b49ac]
+- Updated dependencies [846dc5e]
+- Updated dependencies [c18723b]
+- Updated dependencies [ec5f344]
+  - @kyralabs/m3e-elements@1.9.0
+  - @kyralabs/m3e-react@1.9.0
+  - @kyralabs/m3e-tokens@1.9.0
+  - @kyralabs/m3e-css@1.9.0
+
 ## 1.8.0
 
 ### Minor Changes
