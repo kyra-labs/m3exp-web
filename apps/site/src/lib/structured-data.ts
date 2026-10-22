@@ -1,6 +1,14 @@
 // schema.org JSON-LD for search engines: the site, its publisher and the library on the home
 // page, and a breadcrumb trail on every other page.
-import { ORG_NAME, ORG_URL, REPO_URL, SITE_NAME, SITE_URL, VERSION } from '../data/site';
+import {
+  CONTACT_EMAIL,
+  ORG_NAME,
+  ORG_URL,
+  REPO_URL,
+  SITE_NAME,
+  SITE_URL,
+  VERSION,
+} from '../data/site';
 
 /** Section index pages, by path: the middle crumbs. */
 const SECTIONS: Record<string, string> = {
@@ -34,20 +42,30 @@ export function breadcrumbList(pathname: string, title: string) {
   };
 }
 
+/**
+ * Kyra Labs, the publisher. The node is identical on every Kyra Labs site (kyralabs.dev holds the
+ * reference copy), so search engines read one organization; its logo is kyralabs.dev's stable
+ * 512 px icon rather than a hashed asset URL from this build.
+ */
+const ORGANIZATION = {
+  '@type': 'Organization',
+  '@id': `${ORG_URL}/#organization`,
+  name: ORG_NAME,
+  url: `${ORG_URL}/`,
+  logo: `${ORG_URL}/web-app-manifest-512x512.png`,
+  description:
+    'Kyra Labs is an independent, one-person app studio building practical, privacy-conscious apps for everyday life.',
+  email: CONTACT_EMAIL,
+  sameAs: ['https://github.com/kyra-labs', 'https://www.instagram.com/kyra__labs/'],
+};
+
 /** The site, Kyra Labs as its publisher and the library itself, for the home page. */
-export function homeGraph(description: string, logoUrl: string) {
-  const org = { '@id': `${ORG_URL}/#organization` };
+export function homeGraph(description: string) {
+  const org = { '@id': ORGANIZATION['@id'] };
   return {
     '@context': 'https://schema.org',
     '@graph': [
-      {
-        '@type': 'Organization',
-        ...org,
-        name: ORG_NAME,
-        url: ORG_URL,
-        logo: logoUrl,
-        sameAs: ['https://github.com/kyra-labs'],
-      },
+      ORGANIZATION,
       {
         '@type': 'WebSite',
         '@id': `${SITE_URL}/#website`,
@@ -60,6 +78,7 @@ export function homeGraph(description: string, logoUrl: string) {
       },
       {
         '@type': 'SoftwareSourceCode',
+        '@id': `${SITE_URL}/#library`,
         name: SITE_NAME,
         alternateName: '@kyralabs/m3exp-web',
         description,

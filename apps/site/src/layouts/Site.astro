@@ -2,7 +2,7 @@
 // The site shell (DECISIONS D27): a top app bar with search, a navigation drawer (permanent from
 // the large window size class, modal below) and the page. Everything is m3e-css markup, so the
 // page reads with JavaScript off; src/scripts/chrome.ts adds the drawer, search and theme menu.
-import { getImage, Image } from 'astro:assets';
+import { Image } from 'astro:assets';
 import { space } from '@kyralabs/m3e-tokens';
 import '../styles/base.css';
 import '../styles/site.css';
@@ -10,13 +10,13 @@ import NavDrawer from '../components/NavDrawer.astro';
 import TopBar from '../components/TopBar.astro';
 import { kyraLogo, OG_IMAGE } from '../data/brand';
 import {
+  HOME_TITLE_SUFFIX,
   NPM_URL,
   ORG_NAME,
   ORG_URL,
   PLAYGROUND_URL,
   REPO_URL,
   SITE_NAME,
-  SITE_TAGLINE,
 } from '../data/site';
 import { breadcrumbList, homeGraph, jsonLd } from '../lib/structured-data';
 import themeInit from '../scripts/theme-init.js?raw';
@@ -35,19 +35,17 @@ interface Props {
 const { title, description, wide = false, noindex = false } = Astro.props;
 const pathname = Astro.url.pathname;
 const isHome = pathname === '/';
-const fullTitle = isHome ? `${SITE_NAME}: ${SITE_TAGLINE}` : `${title} · ${SITE_NAME}`;
+const fullTitle = isHome ? `${SITE_NAME}: ${HOME_TITLE_SUFFIX}` : `${title} · ${SITE_NAME}`;
 const canonical = new URL(pathname, Astro.site).href;
 const ogImage = new URL(OG_IMAGE.image.src, Astro.site).href;
 
-// The Kyra Labs logo at the footer's height (the logo is wider than tall), and a 512 px wide PNG
-// for the Organization's schema.org logo (search engines ask for at least 112 px).
+// The Kyra Labs logo at the footer's height (the logo is wider than tall).
 const kyraHeight = space.space400;
 const kyraWidth = Math.round((kyraHeight * kyraLogo.width) / kyraLogo.height);
-const orgLogo = await getImage({ src: kyraLogo, width: 512, format: 'png' });
 const structuredData = noindex
   ? null
   : isHome
-    ? homeGraph(description, new URL(orgLogo.src, Astro.site).href)
+    ? homeGraph(description)
     : breadcrumbList(pathname, title);
 ---
 
@@ -68,7 +66,13 @@ const structuredData = noindex
     <meta name="description" content={description} />
     <meta name="author" content={ORG_NAME} />
     {!noindex && <link rel="canonical" href={canonical} />}
-    {noindex && <meta name="robots" content="noindex" />}
+    {
+      noindex ? (
+        <meta name="robots" content="noindex" />
+      ) : (
+        <meta name="robots" content="max-image-preview:large" />
+      )
+    }
     <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="shortcut icon" href="/favicon.ico" />

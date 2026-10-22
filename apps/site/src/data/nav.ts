@@ -19,7 +19,7 @@ export const GUIDES: NavLink[] = [
   { href: '/get-started/', label: 'Overview', icon: 'rocket_launch' },
   { href: '/get-started/react/', label: 'React with Vite', icon: 'deployed_code' },
   { href: '/get-started/astro/', label: 'Astro', icon: 'rocket' },
-  { href: '/get-started/html/', label: 'Plain HTML and CDN', icon: 'html' },
+  { href: '/get-started/html/', label: 'Web components in plain HTML', icon: 'html' },
   { href: '/get-started/fonts-and-icons/', label: 'Fonts and icons', icon: 'match_case' },
   { href: '/get-started/theming/', label: 'Theming', icon: 'palette' },
   { href: '/get-started/ripple/', label: 'Ripple for plain HTML', icon: 'touch_app' },
