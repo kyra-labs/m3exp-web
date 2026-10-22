@@ -45,5 +45,6 @@ axis) instead, import that profile from `@kyralabs/m3e-tokens` together with its
 `theme.css` and `@kyralabs/m3e-css/index.css`, in place of `./css/index.css`. Import one profile,
 not two: they all register the same family.
 
-See the [repository](https://github.com/kyra-labs/m3exp-web) for docs. Apache-2.0; see `LICENSE`
-and `NOTICE`.
+See [M3 Expressive Web](https://m3e.kyralabs.dev/) for the docs and the
+[repository](https://github.com/kyra-labs/m3exp-web) for the source. Apache-2.0; see `LICENSE` and
+`NOTICE`.
